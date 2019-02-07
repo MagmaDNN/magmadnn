@@ -84,12 +84,10 @@ error_t memorymanager<T>::copy_from(const memorymanager<T>& src) {
             break;
         case HOST:
 			std::copy(src.host_ptr, src.host_ptr + src.size, this->host_ptr);
-            //std::memcpy(this->host_ptr, src.host_ptr, this->size * sizeof(T));
             break;
         case MANAGED:
             // assumes src is synced
 			std::copy(src.host_ptr, src.host_ptr + src.size, this->host_ptr);
-            //std::memcpy(this->host_ptr, src.host_ptr, this->size * sizeof(T));
             // TODO alert cpu change
             this->sync();
             break;
@@ -111,11 +109,9 @@ error_t memorymanager<T>::copy_from_host(T *src) {
             fprintf(stderr, "not yet implemented\n"); break;
         case HOST:
 			std::copy(src, src + this->size, this->host_ptr);
-            //std::memcpy(this->host_ptr, src, this->size * sizeof(T)); break;
         case MANAGED:
             // TODO
 			std::copy(src, src + this->size, this->host_ptr);
-            //std::memcpy(this->host_ptr, src, this->size * sizeof(T));
             // TODO alert cpu modified
             this->sync(); break;
         case CUDA_MANAGED:

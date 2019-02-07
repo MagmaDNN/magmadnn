@@ -7,7 +7,8 @@
 
 int main(int argc, char** argv) {
 
-    printf("it works\n");
+    memorymanager<float> *mm = new memorymanager<float> (10, HOST, 0);
 
+    delete mm;
     return 0;
 }

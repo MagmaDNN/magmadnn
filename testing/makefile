@@ -20,4 +20,4 @@ clean:
 	rm *.o
 
 # don't remove intermediate .o files
-.PRECIOUS: %.o
+#.PRECIOUS: %.o

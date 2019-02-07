@@ -2,7 +2,7 @@
 
 template <typename T>
 memorymanager<T>::memorymanager(unsigned int size, memory_t mem_type, device_t device_id) : 
-    size(size), mem_type(mem_type), device_id(device_id) {
+    mem_type(mem_type), device_id(device_id), size(size) {
 
         switch (mem_type) {
             case DEVICE:
@@ -75,7 +75,7 @@ T memorymanager<T>::get(unsigned int idx) {
     switch (mem_type) {
         case DEVICE:
             // TODO
-            return NULL;
+            return (T) 0;
         case HOST:
             return host_ptr[idx];
         case MANAGED:
@@ -83,9 +83,9 @@ T memorymanager<T>::get(unsigned int idx) {
             return host_ptr[idx];
         case CUDA_MANAGED:
             // TODO
-            return NULL;
+            return (T) 0;
         default:
-            return NULL;
+            return (T) 0;
     }
 }
 
@@ -122,3 +122,11 @@ template <typename T>
 T* memorymanager<T>::get_cuda_managed_ptr() {
     return cuda_managed_ptr;
 }
+
+
+
+
+/* COMPILE FOR INT, FLOAT, AND DOUBLE */
+template class memorymanager<int>;
+template class memorymanager<float>;
+template class memorymanager<double>;

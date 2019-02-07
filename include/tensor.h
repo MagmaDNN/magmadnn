@@ -1,3 +1,11 @@
+/**
+ * @file tensor.h
+ * @author Daniel Nichols
+ * @version 0.1
+ * @date 2019-02-07
+ * 
+ * @copyright Copyright (c) 2019
+ */
 #pragma once
 
 #include <vector>

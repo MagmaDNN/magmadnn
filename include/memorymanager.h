@@ -13,6 +13,11 @@
 #include <assert.h>
 #include "types.h"
 
+// include cuda files if on GPU
+#ifdef __HAS_CUDA__
+#include <cuda.h>
+#endif
+
 template <typename T>
 class memorymanager {
 public:

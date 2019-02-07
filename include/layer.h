@@ -3,7 +3,7 @@
 
 
 template <typename T>
-class Layer <T> {
+class Layer {
 public:
 	Layer();
 	

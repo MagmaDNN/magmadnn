@@ -12,6 +12,7 @@ template <typename T>
 memorymanager<T>::memorymanager(unsigned int size, memory_t mem_type, device_t device_id) : 
     mem_type(mem_type), device_id(device_id), size(size) {
 
+        // initialize based on the chosen memory type
         switch (mem_type) {
             case DEVICE:
                 init_device(); break;
@@ -28,6 +29,7 @@ memorymanager<T>::memorymanager(unsigned int size, memory_t mem_type, device_t d
 
 template <typename T>
 void memorymanager<T>::init_device() {
+
     fprintf(stderr, "Memory type not yet implemented.\n");
 }
 
@@ -53,12 +55,14 @@ template <typename T>
 memorymanager<T>::~memorymanager<T>() {
     switch (mem_type) {
         case DEVICE:
+            // TODO
             break;
         case HOST:
             free(host_ptr); break;
         case MANAGED:
             free(host_ptr); break;
         case CUDA_MANAGED:
+            // TODO
             break;
         default:
             break;

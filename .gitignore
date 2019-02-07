@@ -30,3 +30,9 @@
 *.exe
 *.out
 *.app
+
+# make.inc files
+make.inc
+
+# vscode stuff
+.vscode/*

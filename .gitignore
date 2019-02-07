@@ -36,3 +36,6 @@ make.inc
 
 # vscode stuff
 .vscode/*
+
+# executable files
+testing/bin/*

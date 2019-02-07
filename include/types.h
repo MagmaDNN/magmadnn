@@ -17,6 +17,4 @@ typedef enum memory_t {
 } memory_t;
 
 typedef unsigned int device_t;
-
-
 typedef unsigned int error_t;

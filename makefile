@@ -56,14 +56,16 @@ ARCH_FLAGS ?= cr
 RANLIB ?= ranlib
 RANLIB_FLAGS ?= -no_warning_for_no_symbols
 
+# set EXT to .dylib and FLAG to -dynamiclib for MAC OS
+LIBSHARED_EXT ?= .so
+LIBSHARED_FLAG ?= -shared
 
 libstatic ?= lib/libdanielnn.a
-libshared ?= lib/libdanielnn.so
+libshared ?= lib/libdanielnn$(LIBSHARED_EXT)
 
 lib: static shared
 static: $(libstatic)
 shared: $(libshared)
-
 
 $(libstatic): 
 	@echo "==== building static lib ===="
@@ -73,7 +75,7 @@ $(libstatic):
 
 $(libshared):
 	@echo "==== building shared lib ===="
-	$(CXX) -shared -o $@ $(OBJ_FILES) -L./lib 
+	$(CXX) $(LIBSHARED_FLAG) $(FPIC) -o $@ $(OBJ_FILES) -L./lib 
 	@echo 
 
 
@@ -82,12 +84,14 @@ TESTING_DIR ?= testing
 testing:
 	$(MAKE) -C $(TESTING_DIR)
 
+
 install: $(TARGET_DIRS) lib
 	@echo "==== installing libs ===="
 	cp -r ./include $(prefix)/include
 	cp $(libstatic) $(prefix)/lib
 	cp $(libshared) $(prefix)/lib
 	@echo
+
 
 clean:
 	rm $(wildcard $(TARGET_DIRS)/*.o)

@@ -13,13 +13,13 @@ int main(int argc, char** argv) {
     float *arr = new float[size];
 
     // set values of memory manager
-    for (int i = 0; i < mm->get_size(); i++) {
+    for (int i = 0; i < (int) mm->get_size(); i++) {
         mm->set(i, i*i * (0.333));
         arr[i] = 0.5 * i;
     }
 
     // print the values
-    for (int i = 0; i < mm->get_size(); i++) {
+    for (int i = 0; i < (int) mm->get_size(); i++) {
         printf("%d: %.3f\n", i, mm->get(i));
     }
 
@@ -27,7 +27,7 @@ int main(int argc, char** argv) {
     mm->copy_from_host(arr);
     printf("\nnew vals:\n");
     // print the values
-    for (int i = 0; i < mm->get_size(); i++) {
+    for (int i = 0; i < (int) mm->get_size(); i++) {
         printf("%d: %.3f\n", i, mm->get(i));
     }
 

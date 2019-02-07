@@ -42,10 +42,9 @@ public:
 		memory_t mem_type;
         device_t device_id;
         
+        unsigned int size;
         T* host_ptr;
         T* device_ptr;
         T* cuda_managed_ptr;
-        unsigned int size;
-
 };
 

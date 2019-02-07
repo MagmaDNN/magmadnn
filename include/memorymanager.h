@@ -9,6 +9,8 @@
 #pragma once
 
 #include <vector>
+#include <algorithm>
+#include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
 #include "types.h"

@@ -8,6 +8,8 @@
  */
 #include "memorymanager.h"
 
+
+
 template <typename T>
 memorymanager<T>::memorymanager(unsigned int size, memory_t mem_type, device_t device_id) : 
     mem_type(mem_type), device_id(device_id), size(size) {
@@ -35,7 +37,7 @@ void memorymanager<T>::init_device() {
 
 template <typename T>
 void memorymanager<T>::init_host() {
-    host_ptr = (T *) malloc(size * sizeof(T));
+    host_ptr = (T *) std::malloc(size * sizeof(T));
 
     /* assert malloc was successful */
     assert( host_ptr != NULL );
@@ -58,9 +60,9 @@ memorymanager<T>::~memorymanager<T>() {
             // TODO
             break;
         case HOST:
-            free(host_ptr); break;
+            std::free(host_ptr); break;
         case MANAGED:
-            free(host_ptr); break;
+            std::free(host_ptr); break;
         case CUDA_MANAGED:
             // TODO
             break;
@@ -81,11 +83,13 @@ error_t memorymanager<T>::copy_from(const memorymanager<T>& src) {
             fprintf(stderr, "not implemented\n");
             break;
         case HOST:
-            memcpy(this->host_ptr, src.host_ptr, this->size * sizeof(T));
+			std::copy(src.host_ptr, src.host_ptr + src.size, this->host_ptr);
+            //std::memcpy(this->host_ptr, src.host_ptr, this->size * sizeof(T));
             break;
         case MANAGED:
             // assumes src is synced
-            memcpy(this->host_ptr, src.host_ptr, this->size * sizeof(T));
+			std::copy(src.host_ptr, src.host_ptr + src.size, this->host_ptr);
+            //std::memcpy(this->host_ptr, src.host_ptr, this->size * sizeof(T));
             // TODO alert cpu change
             this->sync();
             break;
@@ -106,10 +110,12 @@ error_t memorymanager<T>::copy_from_host(T *src) {
             // TODO
             fprintf(stderr, "not yet implemented\n"); break;
         case HOST:
-            memcpy(this->host_ptr, src, this->size * sizeof(T)); break;
+			std::copy(src, src + this->size, this->host_ptr);
+            //std::memcpy(this->host_ptr, src, this->size * sizeof(T)); break;
         case MANAGED:
             // TODO
-            memcpy(this->host_ptr, src, this->size * sizeof(T));
+			std::copy(src, src + this->size, this->host_ptr);
+            //std::memcpy(this->host_ptr, src, this->size * sizeof(T));
             // TODO alert cpu modified
             this->sync(); break;
         case CUDA_MANAGED:
@@ -193,6 +199,8 @@ T* memorymanager<T>::get_ptr() {
             return (T*) NULL;
         case CUDA_MANAGED:
             return get_cuda_managed_ptr();
+		default:
+			return (T*) NULL;
     }
 }
 

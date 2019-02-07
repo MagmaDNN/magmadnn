@@ -141,6 +141,21 @@ T* memorymanager<T>::get_cuda_managed_ptr() {
     return cuda_managed_ptr;
 }
 
+template <typename T>
+T* memorymanager<T>::get_ptr() {
+    switch (mem_type) {
+        case DEVICE:
+            return get_device_ptr();
+        case HOST:
+            return get_host_ptr();
+        case MANAGED:
+            fprintf(stderr, "memorymanager::get_ptr() is not defined for MANAGED type memory\n");
+            return (T*) NULL;
+        case CUDA_MANAGED:
+            return get_cuda_managed_ptr();
+    }
+}
+
 
 
 

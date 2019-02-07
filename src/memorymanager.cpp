@@ -81,6 +81,12 @@ error_t memorymanager<T>::copy_from_host(T *src) {
 }
 
 template <typename T>
+error_t memorymanager<T>::sync() {
+    // TODO
+    return (error_t) 0;
+}
+
+template <typename T>
 T memorymanager<T>::get(unsigned int idx) {
     assert( idx < size );
 

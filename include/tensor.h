@@ -48,7 +48,7 @@ public:
 	 */
 	void set(const std::vector<int>& idx, T val);	
 	
-	memorymanager<T> get_memory_manager() { return this->mem_manager; }
+	memorymanager<T>* get_memory_manager() { return this->mem_manager; }
 	std::vector<int> get_shape() { return this->shape; }
 	device_t get_device_id() { return this->device_id; }
 

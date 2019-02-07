@@ -7,7 +7,7 @@
 
 template <typename T>
 class memorymanager {
-
+public:
     /** MemoryManager class to keep track of a memory address across devices.
      *  @param size the size of the memory to allocate/manage
      *  @param mem_type what memory type will this data belong to

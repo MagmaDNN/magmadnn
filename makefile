@@ -21,7 +21,7 @@ LIBS =
 OPTIMIZATION_LEVEL ?= -O3
 WARNINGS ?= -Wall
 FPIC ?= -fPIC
-CXX_VERSION = -std=c++11
+CXX_VERSION ?= -std=c++11
 
 # the entire flags for compilation
 CXXFLAGS = $(OPTIMIZATION_LEVEL) $(WARNINGS) $(CXX_VERSION) $(FPIC) -MMD

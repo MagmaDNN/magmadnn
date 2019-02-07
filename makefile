@@ -82,6 +82,13 @@ TESTING_DIR ?= testing
 testing:
 	$(MAKE) -C $(TESTING_DIR)
 
+install: $(TARGET_DIRS) lib
+	@echo "==== installing libs ===="
+	cp -r ./include $(prefix)/include
+	cp $(libstatic) $(prefix)/lib
+	cp $(libshared) $(prefix)/lib
+	@echo
+
 clean:
 	rm $(wildcard $(TARGET_DIRS)/*.o)
 

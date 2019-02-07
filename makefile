@@ -82,9 +82,8 @@ TESTING_DIR ?= testing
 testing:
 	$(MAKE) -C $(TESTING_DIR)
 
-clean: 
+clean:
 	rm $(wildcard $(TARGET_DIRS)/*.o)
-	$(MAKE) -C testing clean
 
 
 .PHONY: $(TARGET_DIRS) testing

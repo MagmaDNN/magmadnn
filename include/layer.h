@@ -6,6 +6,7 @@
  * 
  * @copyright Copyright (c) 2019
  */
+#pragma once
 
 
 template <typename T>
@@ -19,6 +20,3 @@ private:
 	
 
 };
-
-
-#endif

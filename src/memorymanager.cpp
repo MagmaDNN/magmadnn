@@ -70,13 +70,53 @@ memorymanager<T>::~memorymanager<T>() {
 }
 
 template <typename T>
-error_t memorymanager<T>::copy_from(memorymanager<T> src) {
+error_t memorymanager<T>::copy_from(const memorymanager<T>& src) {
+    // stay within same memory type and size for now
+    assert( this->mem_type == src.mem_type );
+    assert( this->size == src.size );
+
+    switch (mem_type) {
+        case DEVICE:
+            // TODO
+            fprintf(stderr, "not implemented\n");
+            break;
+        case HOST:
+            memcpy(this->host_ptr, src.host_ptr, this->size * sizeof(T));
+            break;
+        case MANAGED:
+            // assumes src is synced
+            memcpy(this->host_ptr, src.host_ptr, this->size * sizeof(T));
+            // TODO alert cpu change
+            this->sync();
+            break;
+        case CUDA_MANAGED:
+            // TODO
+            fprintf(stderr, "not yet implemented\n");
+            break;
+    }
 
     return 0;
 }
 
 template <typename T>
 error_t memorymanager<T>::copy_from_host(T *src) {
+
+    switch (mem_type) {
+        case DEVICE:
+            // TODO
+            fprintf(stderr, "not yet implemented\n"); break;
+        case HOST:
+            memcpy(this->host_ptr, src, this->size * sizeof(T)); break;
+        case MANAGED:
+            // TODO
+            memcpy(this->host_ptr, src, this->size * sizeof(T));
+            // TODO alert cpu modified
+            this->sync(); break;
+        case CUDA_MANAGED:
+            // TODO
+            fprintf(stderr, "not yet implemented\n"); break;
+    }
+
     return 0;
 }
 

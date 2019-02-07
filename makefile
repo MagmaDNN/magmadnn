@@ -42,7 +42,9 @@ TARGET_DIRS = src
 all: $(TARGET_DIRS)
 
 $(TARGET_DIRS):
+	@echo "==== Building Sources ===="
 	$(MAKE) -C $@
+	@echo
 
 
 OBJ_FILES := $(wildcard $(TARGET_DIRS)/*.o)

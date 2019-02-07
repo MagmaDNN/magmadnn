@@ -2,6 +2,7 @@
 
 #include <vector>
 #include "types.h"
+#include "memorymanager.h"
 
 template <typename T>
 class tensor {
@@ -17,7 +18,7 @@ public:
 	 * @param device the type of device
 	 * @param device_id the id of the device to be used
 	 */
-	tensor(std::vector<int> shape, device_t device, device_id_t device_id);
+	tensor(std::vector<int> shape, device_t device_id);
 
 	/** Initializes tensor with the given shape. Creates a new memory manager for this tensor. Sets every value of tensor to _fill_.
 	 * @param shape a vector of axis sizes
@@ -31,7 +32,7 @@ public:
 	 * @param device device type tensor will use
 	 * @param device_id id of device to use
 	 */
-	tensor(std::vector<int> shape, T fill, device_t device, device_id_t device_id);
+	tensor(std::vector<int> shape, T fill, device_t device_id);
 
 	~tensor();
 
@@ -49,17 +50,15 @@ public:
 	
 	memorymanager<T> get_memory_manager() { return this->mem_manager; }
 	std::vector<int> get_shape() { return this->shape; }
-	device_t get_device_type() { return this->device; }
-	device_id_t get_device_id() { return this->device_id; }
+	device_t get_device_id() { return this->device_id; }
 
 private:
-	init(std::vector<int>& shape, T fill, device_t device, device_id_t device_id);
+	void init(std::vector<int>& shape, T fill, device_t device_id);
 	int get_flattened_index(const std::vector<int>& idx);
 
 	memorymanager<T> *mem_manager;	/* allocated by init */
 	
 	std::vector<int> shape;	/* tensor axes (shape) */
-	device_t device;		/* device enum - CUDA or HOST */
-	device_id_t device_id;	/* device number i.e. gpu0 or cpu1 */
+	device_t device_id;		/* device number i.e. gpu0 or cpu1 */
 
 };

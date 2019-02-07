@@ -1,11 +1,14 @@
 #pragma once
 
 
-typedef enum device_t {
+typedef enum memory_t {
+	DEVICE,
+	HOST,
+	MANAGED,
+	CUDA_MANAGED
+} memory_t;
 
-	CUDA,
-	HOST
+typedef unsigned int device_t;
 
-} device_t;
 
-typedef device_id_t unsigned int;
+typedef unsigned int error_t;

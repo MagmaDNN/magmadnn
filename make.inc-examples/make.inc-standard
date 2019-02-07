@@ -1,0 +1,31 @@
+# rename this file to make.inc and place it in the same directory as the main makefile
+# a file to set makefile rules, targets, and settings
+# use it to set make parameters
+# uncomment (remove #) to set a parameter
+
+# install location
+# prefix = /usr/local
+
+# define which compilers to use
+#CXX = g++
+#NVCC = nvcc
+
+# compiler options
+#OPTIMIZATION_LEVEL = -O3
+#WARNINGS = -Wall
+#CXX_VERSION = -std=c++11
+
+# the extension for object files
+#o_ext = .o
+
+# what type of shared/dynamic library to create
+# should only set to dylib if on MAC OS
+#LIBSHARED_EXT = .dylib
+#LIBSHARED_FLAG = -dynamiclib
+
+# other library settings
+#ARCH = ar
+#ARCH_FLAGS = cr
+#RANLIB = ranlib
+#RANLIB_FLAGS = -no_warning_for_no_symbols
+

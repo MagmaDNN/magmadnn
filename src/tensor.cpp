@@ -81,7 +81,6 @@ void tensor<T>::set(const std::vector<int>& idx, T val) {
 
 template <typename T>
 unsigned int tensor<T>::get_flattened_index(const std::vector<int>& idx) {
-    // TODO
     unsigned int jump_size = 1; // the total amout to jump to get to next axis
     unsigned int flattened_idx = 0;
 

@@ -11,10 +11,12 @@
 namespace skepsi {
 
 typedef enum memory_t {
-	DEVICE,
 	HOST,
+	#ifdef _HAS_CUDA_
+	DEVICE,
 	MANAGED,
 	CUDA_MANAGED
+	#endif
 } memory_t;
 
 typedef unsigned int device_t;

@@ -53,9 +53,11 @@ public:
     /** If MANAGED or CUDA_MANAGED this ensures that data is the same on all devices. It 
      * will wait for any gpu kernels to finish before copying data. If HOST or DEVICE memory
      * this does nothing.
+     * @param gpu_was_modified If true then data will be copied from gpu to cpu, else if false vice-versa.
+     * By default true.
      * @return an error code
      */
-    skepsi_error_t sync();
+    skepsi_error_t sync(bool gpu_was_modified=true);
 
     /** Changes the device this memory manager points to. Note that the memory type
      *  is still the same, but the device_id will be different.
@@ -75,21 +77,22 @@ public:
      */
     void set(unsigned int idx, T val);
 
-
-    /** returns a CUDA pointer
-     *  @return a pointer to the memory on a cuda device.
-     */
-    T* get_device_ptr();
-
     /** returns a CPU pointer to the data.
      *  @return cpu pointer
      */
     T* get_host_ptr();
+
+    #ifdef _HAS_CUDA_
+    /** returns a CUDA pointer
+     *  @return a pointer to the memory on a cuda device.
+     */
+    T* get_device_ptr();
     
     /** returns the managed CUDA memory.
      *  @return pointer to data memory
      */
     T* get_cuda_managed_ptr();
+    #endif
     
     /** Returns a pointer to whatever memory type this is using. Is not
      *  defined for MANAGED memory type (returns NULL).
@@ -104,25 +107,30 @@ public:
 
 private:
 
-    /** init with DEVICE parameters */
-    void init_device();
-
     /** init with HOST parameters */
     void init_host();
+
+    #ifdef _HAS_CUDA_
+    /** init with DEVICE parameters */
+    void init_device();
 
     /** init with MANAGED parameters */
     void init_managed();
 
     /** init with CUDA_MANAGED parameters */
     void init_cuda_managed();
+    #endif
 
 	memory_t mem_type;
     device_t device_id;
         
     unsigned int size;
     T* host_ptr;
+
+    #ifdef _HAS_CUDA_
     T* device_ptr;
     T* cuda_managed_ptr;
+    #endif
 };
 
 }

@@ -1,4 +1,4 @@
-# This makefile can build and install the danielnn library
+# This makefile can build and install the skepsi library
 
 include make.inc
 
@@ -10,7 +10,7 @@ CUDADIR ?= /usr/local/cuda
 MAGMADIR ?= /usr/local/magma
 
 # install location
-prefix ?= /usr/local/danielnn
+prefix ?= /usr/local/skepsi
 
 # headers needed for library compilation
 INC = -I./include
@@ -62,8 +62,8 @@ RANLIB_FLAGS ?= -no_warning_for_no_symbols
 LIBSHARED_EXT ?= .so
 LIBSHARED_FLAG ?= -shared
 
-libstatic ?= lib/libdanielnn.a
-libshared ?= lib/libdanielnn$(LIBSHARED_EXT)
+libstatic ?= lib/libskepsi.a
+libshared ?= lib/libskepsi$(LIBSHARED_EXT)
 
 lib: static shared
 static: $(libstatic)

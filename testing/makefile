@@ -11,7 +11,7 @@ DEST = ./bin
 all: $(TARGETS)
 
 %.out: %.o
-	$(CXX) $(TESTING_FLAGS) -o $(DEST)/$(@:.out=) $< $(LIBDIRS) $(LIBS) -L$(LIB_PATH) -ldanielnn
+	$(CXX) $(TESTING_FLAGS) -o $(DEST)/$(@:.out=) $< $(LIBDIRS) $(LIBS) -L$(LIB_PATH) -lskepsi
 
 %.o: %.cpp
 	$(CXX) $(TESTING_FLAGS) -o $@ -c $< $(INC) -I../include

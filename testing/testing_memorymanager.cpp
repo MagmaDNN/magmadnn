@@ -1,9 +1,9 @@
 /*
-    This is a test for the memorymanager class in danielnn
+    This is a test for the memorymanager class in skepsi
 */
 
 #include <stdio.h>
-#include "danielnn.h"
+#include "skepsi.h"
 
 int main(int argc, char** argv) {
 

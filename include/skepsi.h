@@ -1,5 +1,5 @@
 /**
- * @file danielnn.h
+ * @file skepsi.h
  * @author Daniel Nichols
  * @version 0.1
  * @date 2019-02-07
@@ -8,7 +8,7 @@
  */
 #pragma once
 
-/* include all danielnn header files */
+/* include all skepsi header files */
 
 #include "types.h"
 

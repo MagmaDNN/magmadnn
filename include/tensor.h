@@ -59,16 +59,25 @@ public:
 	void set(const std::vector<int>& idx, T val);	
 	
 	memorymanager<T>* get_memory_manager() { return this->mem_manager; }
-	std::vector<int> get_shape() { return this->shape; }
+
+	/** returns a <i>copy</i> of the shape of this tensor.
+	 * @return std::vector<int> 
+	 */
+	std::vector<unsigned int> get_shape() { return this->shape; }
+
+	/** returns the number of elements in tensor
+	 * @return unsigned int total number of elements in tensor
+	 */
+	unsigned int get_size() { return this->size; }
 	device_t get_device_id() { return this->device_id; }
 
 private:
-	void init(std::vector<int>& shape, T fill, device_t device_id);
-	int get_flattened_index(const std::vector<int>& idx);
+	unsigned int get_flattened_index(const std::vector<int>& idx);
 
 	memorymanager<T> *mem_manager;	/* allocated by init */
 	
-	std::vector<int> shape;	/* tensor axes (shape) */
+	std::vector<unsigned int> shape;	/* tensor axes (shape) */
+	unsigned int size;		/* total number of elements in tensor */
 	device_t device_id;		/* device number i.e. gpu0 or cpu1 */
 
 };

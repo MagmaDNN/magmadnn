@@ -35,16 +35,26 @@ T tensor<T>::get(const std::vector<int>& idx) {
 
 
 template <typename T>
-void tensor<T>::set(const std::vector<int>& idx, T val) { }
-
-
-template <typename T>
-void tensor<T>::init(std::vector<int>& shape, T fill, device_t device_id) { }
+T tensor<T>::get(const std::vector<int>& idx) { 
+    return mem_manager->get( get_flattened_index(idx) );
+}
 
 template <typename T>
-int tensor<T>::get_flattened_index(const std::vector<int>& idx) {
+void tensor<T>::set(const std::vector<int>& idx, T val) { 
+    mem_manager->set( get_flattened_index(idx), val );
+}
+
+template <typename T>
+unsigned int tensor<T>::get_flattened_index(const std::vector<int>& idx) {
     // TODO
-    return 0;
+    unsigned int jump_size = 1; // the total amout to jump to get to next axis
+    unsigned int flattened_idx = 0;
+
+    for (int i = ((int)idx.size()) - 1; i >= 0; i--) {
+        flattened_idx += idx[i] * jump_size;
+        jump_size *= shape[i];
+    }
+    return flattened_idx;
  }
 
 

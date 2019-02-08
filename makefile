@@ -56,7 +56,7 @@ OBJ_FILES := $(wildcard $(TARGET_DIRS)/*.o)
 ARCH ?= ar
 ARCH_FLAGS ?= cr
 RANLIB ?= ranlib
-RANLIB_FLAGS ?= -no_warning_for_no_symbols
+RANLIB_FLAGS ?= 
 
 # set EXT to .dylib and FLAG to -dynamiclib for MAC OS
 LIBSHARED_EXT ?= .so
@@ -71,12 +71,14 @@ shared: $(libshared)
 
 $(libstatic): 
 	@echo "==== building static lib ===="
+	mkdir -p lib
 	$(ARCH) $(ARCH_FLAGS) $@ $(OBJ_FILES)
 	$(RANLIB) $(RANLIB_FLAGS) $@
 	@echo 
 
 $(libshared):
 	@echo "==== building shared lib ===="
+	mkdir -p lib
 	$(CXX) $(LIBSHARED_FLAG) $(FPIC) -o $@ $(OBJ_FILES) -L./lib 
 	@echo 
 
@@ -89,7 +91,10 @@ testing:
 
 install: $(TARGET_DIRS) lib
 	@echo "==== installing libs ===="
-	cp -r ./include $(prefix)/include
+	mkdir -p $(prefix)
+	mkdir -p $(prefix)/include
+	mkdir -p $(prefix)/lib
+	cp -r ./include/* $(prefix)/include
 	cp $(libstatic) $(prefix)/lib
 	cp $(libshared) $(prefix)/lib
 	@echo

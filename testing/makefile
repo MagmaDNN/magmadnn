@@ -8,7 +8,10 @@ TESTING_FLAGS := $(OPTIMIZATION_LEVEL) $(WARNINGS) $(CXX_VERSION)
 LIB_PATH = ../lib
 DEST = ./bin
 
-all: $(TARGETS)
+all: $(DEST) $(TARGETS)
+
+$(DEST):
+	mkdir -p $@
 
 %.out: %.o
 	$(CXX) $(TESTING_FLAGS) -o $(DEST)/$(@:.out=) $< $(LIBDIRS) $(LIBS) -L$(LIB_PATH) -lskepsi

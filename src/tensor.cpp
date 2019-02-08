@@ -8,6 +8,7 @@
  */
 #include "tensor.h"
 
+namespace skepsi {
 
 template <typename T>
 tensor<T>::tensor(std::vector<int> shape) { }
@@ -52,3 +53,5 @@ int tensor<T>::get_flattened_index(const std::vector<int>& idx) {
 template class tensor<int>;
 template class tensor<float>;
 template class tensor<double>;
+
+} // namespace skepsi

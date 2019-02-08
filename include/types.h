@@ -8,6 +8,7 @@
  */
 #pragma once
 
+namespace skepsi {
 
 typedef enum memory_t {
 	DEVICE,
@@ -18,3 +19,5 @@ typedef enum memory_t {
 
 typedef unsigned int device_t;
 typedef unsigned int skepsi_error_t;
+
+} // namespace skepsi

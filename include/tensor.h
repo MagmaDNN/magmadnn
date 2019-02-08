@@ -12,6 +12,8 @@
 #include "types.h"
 #include "memorymanager.h"
 
+namespace skepsi {
+
 template <typename T>
 class tensor {
 public:
@@ -70,3 +72,5 @@ private:
 	device_t device_id;		/* device number i.e. gpu0 or cpu1 */
 
 };
+
+} // namespace skepsi

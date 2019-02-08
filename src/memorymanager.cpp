@@ -8,7 +8,7 @@
  */
 #include "memorymanager.h"
 
-
+namespace skepsi {
 
 template <typename T>
 memorymanager<T>::memorymanager(unsigned int size, memory_t mem_type, device_t device_id) : 
@@ -207,3 +207,5 @@ T* memorymanager<T>::get_ptr() {
 template class memorymanager<int>;
 template class memorymanager<float>;
 template class memorymanager<double>;
+
+} // namespace skepsi

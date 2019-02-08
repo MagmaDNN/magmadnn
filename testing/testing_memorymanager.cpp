@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include "skepsi.h"
 
+using namespace skepsi;
+
 int main(int argc, char** argv) {
 
     int size = 4;

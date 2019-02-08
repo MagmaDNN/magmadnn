@@ -20,6 +20,8 @@
 #include <cuda.h>
 #endif
 
+namespace skepsi {
+
 template <typename T>
 class memorymanager {
 public:
@@ -123,3 +125,4 @@ private:
     T* cuda_managed_ptr;
 };
 
+}

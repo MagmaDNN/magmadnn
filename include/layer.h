@@ -9,6 +9,8 @@
 #pragma once
 
 
+namespace skepsi {
+
 template <typename T>
 class Layer {
 public:
@@ -20,3 +22,5 @@ private:
 	
 
 };
+
+} // namespace skepsi

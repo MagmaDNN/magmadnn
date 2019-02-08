@@ -7,6 +7,6 @@ OBJ_FILES = $(patsubst %.cpp, %.o, $(SRC_FILES))
 all: $(OBJ_FILES)
 
 %.o: %.cpp
-	$(CXX) $(CXXFLAGS) -o $@ -c $<  -I../include
+	$(CXX) $(CXXFLAGS) -o $@ -c $<  $(INC) -I../include
 
 -include $(OBJ_FILES:.o=.d)

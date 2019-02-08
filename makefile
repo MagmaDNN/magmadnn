@@ -6,6 +6,7 @@ include make.inc
 CXX ?= g++
 NVCC ?= nvcc
 
+
 CUDADIR ?= /usr/local/cuda
 MAGMADIR ?= /usr/local/magma
 
@@ -13,9 +14,18 @@ MAGMADIR ?= /usr/local/magma
 prefix ?= /usr/local/skepsi
 
 # headers needed for library compilation
-INC = -I./include
-LIBDIRS = 
+INC = -I./include 
+LIBDIRS =
 LIBS = 
+
+# do we have cuda installed?
+ifneq ($(shell which nvcc),)
+CUDA_MACRO = -D_HAS_CUDA_
+INC += -I$(CUDADIR)/include
+LIBDIRS += -L$(CUDADIR)/lib64
+LIBS += -lcudart
+endif
+
 
 # individual flags for compilation
 OPTIMIZATION_LEVEL ?= -O3
@@ -24,12 +34,18 @@ FPIC ?= -fPIC
 CXX_VERSION ?= -std=c++11
 
 # the entire flags for compilation
-CXXFLAGS = $(OPTIMIZATION_LEVEL) $(WARNINGS) $(CXX_VERSION) $(FPIC) -MMD
-NVCCFLAGS = $(OPTIMIZATION_LEVEL) -Xcompiler "$(FPIC) $(WARNINGS)"
+CXXFLAGS := $(OPTIMIZATION_LEVEL) $(WARNINGS) $(CXX_VERSION) $(CUDA_MACRO) $(FPIC) -MMD
+NVCCFLAGS := $(OPTIMIZATION_LEVEL) -Xcompiler "$(CXXFLAGS)"
+
 
 # make these available to child makefiles
 export CXX
 export NVCC
+export INC
+export LIBDIRS
+export LIBS
+export CUDADIR
+export MAGMADIR
 export OPTIMIZATION_LEVEL
 export WARNINGS
 export CXX_VERSION

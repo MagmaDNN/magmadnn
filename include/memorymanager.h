@@ -16,7 +16,7 @@
 #include "types.h"
 
 // include cuda files if on GPU
-#ifdef __HAS_CUDA__
+#ifdef _HAS_CUDA_
 #include <cuda.h>
 #endif
 

@@ -18,6 +18,7 @@
 // include cuda files if on GPU
 #ifdef _HAS_CUDA_
 #include <cuda.h>
+#include <cuda_runtime_api.h>
 #endif
 
 namespace skepsi {

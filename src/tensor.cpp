@@ -11,26 +11,61 @@
 namespace skepsi {
 
 template <typename T>
-tensor<T>::tensor(std::vector<int> shape) { }
+tensor<T>::tensor(std::vector<unsigned int> shape) {
+    init(shape, TENSOR_DEFAULT_FILLER, TENSOR_DEFAULT_MEM_TYPE, TENSOR_DEFAULT_DEVICE_ID);
+ }
+
+ template <typename T>
+tensor<T>::tensor(std::vector<unsigned int> shape, memory_t mem_type) {
+    init(shape, TENSOR_DEFAULT_FILLER, mem_type, TENSOR_DEFAULT_DEVICE_ID);
+ }
 
 template <typename T>
-tensor<T>::tensor(std::vector<int> shape, device_t device_id) { }
+tensor<T>::tensor(std::vector<unsigned int> shape, memory_t mem_type, device_t device_id) { 
+    init(shape, TENSOR_DEFAULT_FILLER, mem_type, device_id);
+}
 
 template <typename T>
-tensor<T>::tensor(std::vector<int> shape, T fill) { }
+tensor<T>::tensor(std::vector<unsigned int> shape, tensor_filler_t filler) { 
+    init(shape, filler, TENSOR_DEFAULT_MEM_TYPE, TENSOR_DEFAULT_DEVICE_ID);
+}
+
+template <typename T>
+tensor<T>::tensor(std::vector<unsigned int> shape, tensor_filler_t filler, memory_t mem_type) { 
+    init(shape, filler, mem_type, TENSOR_DEFAULT_DEVICE_ID);
+}
 
 
 template <typename T>
-tensor<T>::tensor(std::vector<int> shape, T fill, device_t device_id) { }
+tensor<T>::tensor(std::vector<unsigned int> shape, tensor_filler_t filler, memory_t mem_type, device_t device_id) { 
+    init(shape, filler, mem_type, device_id);
+}
 
 template <typename T>
-tensor<T>::~tensor() { }
+tensor<T>::~tensor() { 
+    delete mem_manager;
+}
 
 
 template <typename T>
-T tensor<T>::get(const std::vector<int>& idx) { 
-    // TODO
-    return (T) 0;
+void tensor<T>::init(std::vector<unsigned int>& shape, tensor_filler_t filler, memory_t mem_type, device_t device_id) {
+    // tensor must have at least 1 axis
+    assert( shape.size() != 0 );
+
+    // initialize class variables
+    this->shape = shape;
+    this->mem_type = mem_type;
+    this->device_id = device_id;
+
+    // calculate the total number of elements
+    this->size = 1;
+    for (unsigned int i = 0; i < shape.size(); i++) {
+        this->size *= shape[i];
+    }
+
+    // create memory manager
+    this->mem_manager = new memorymanager<T> (size, mem_type, device_id);
+
 }
 
 

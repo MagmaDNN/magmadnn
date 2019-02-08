@@ -72,7 +72,7 @@ memorymanager<T>::~memorymanager<T>() {
 }
 
 template <typename T>
-error_t memorymanager<T>::copy_from(const memorymanager<T>& src) {
+skepsi_error_t memorymanager<T>::copy_from(const memorymanager<T>& src) {
     // stay within same memory type and size for now
     assert( this->mem_type == src.mem_type );
     assert( this->size == src.size );
@@ -101,7 +101,7 @@ error_t memorymanager<T>::copy_from(const memorymanager<T>& src) {
 }
 
 template <typename T>
-error_t memorymanager<T>::copy_from_host(T *src) {
+skepsi_error_t memorymanager<T>::copy_from_host(T *src) {
 
     switch (mem_type) {
         case DEVICE:
@@ -123,9 +123,9 @@ error_t memorymanager<T>::copy_from_host(T *src) {
 }
 
 template <typename T>
-error_t memorymanager<T>::sync() {
+skepsi_error_t memorymanager<T>::sync() {
     // TODO
-    return (error_t) 0;
+    return (skepsi_error_t) 0;
 }
 
 template <typename T>

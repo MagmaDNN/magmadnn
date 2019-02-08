@@ -39,27 +39,27 @@ public:
      *  @param src the memorymanager to copy data from
      *  @return the error code (0 - no error, 1 - src ptr not allocated)
      */
-    error_t copy_from(const memorymanager<T>& src);
+    skepsi_error_t copy_from(const memorymanager<T>& src);
 
     /** copies memory from a host ptr into this memorymanager. will throw an error if it
      *  reaches the end of src allocated mem before this is filled.
      *  @param src the array to copy into this.
      *  @return the error code (0 - good, 1 - not enough memory)
      */
-    error_t copy_from_host(T *src);
+    skepsi_error_t copy_from_host(T *src);
 
     /** If MANAGED or CUDA_MANAGED this ensures that data is the same on all devices. It 
      * will wait for any gpu kernels to finish before copying data. If HOST or DEVICE memory
      * this does nothing.
      * @return an error code
      */
-    error_t sync();
+    skepsi_error_t sync();
 
     /** Changes the device this memory manager points to. Note that the memory type
      *  is still the same, but the device_id will be different.
      *  @return an error code (0 - ok)
      */
-    error_t set_device(device_t device_id);
+    skepsi_error_t set_device(device_t device_id);
 
     /** Returns the value at idx. Error if idx is out of range.
      *  @param idx index to retrieve

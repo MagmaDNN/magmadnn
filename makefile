@@ -62,8 +62,8 @@ RANLIB_FLAGS ?=
 LIBSHARED_EXT ?= .so
 LIBSHARED_FLAG ?= -shared
 
-libstatic ?= lib/libskepsi.a
-libshared ?= lib/libskepsi$(LIBSHARED_EXT)
+libstatic := lib/libskepsi.a
+libshared := lib/libskepsi$(LIBSHARED_EXT)
 
 lib: static shared
 static: $(libstatic)

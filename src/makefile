@@ -2,11 +2,11 @@
 
 
 SRC_FILES = $(wildcard *.cpp)
-OBJ_FILES = $(patsubst %.cpp, %.o, $(SRC_FILES))
+OBJ_FILES = $(patsubst %.cpp,%.o,$(SRC_FILES))
 
 all: $(OBJ_FILES)
 
 %.o: %.cpp
-	$(CXX) $(CXXFLAGS) -o $@ -c $<  $(INC) -I../include
+	$(CXX) $(CXXFLAGS) -o $@ -c $<  $(INC) -I../include 
 
 -include $(OBJ_FILES:.o=.d)

@@ -24,6 +24,7 @@ void test_host_copy(unsigned int size) {
 
 	printf("Success!\n");
 
+	#ifdef _HAS_CUDA_
 	printf("\nTesting host->device copy...  ");
 
 	memorymanager<float> *m3 = new memorymanager<float> (size, DEVICE, (device_t) 0);
@@ -31,10 +32,11 @@ void test_host_copy(unsigned int size) {
 	m3->copy_from(*m1);
 
 	printf("Success!\n");
+	delete m3;
+	#endif
 
 	delete m1;
 	delete m2;
-	delete m3;
 }
 
 

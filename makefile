@@ -49,6 +49,7 @@ export MAGMADIR
 export OPTIMIZATION_LEVEL
 export WARNINGS
 export CXX_VERSION
+export CUDA_MACRO
 export CXXFLAGS
 export NVCCFLAGS
 

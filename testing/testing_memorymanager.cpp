@@ -3,36 +3,50 @@
 */
 
 #include <stdio.h>
+#include <assert.h>
 #include "skepsi.h"
 
 using namespace skepsi;
 
+void test_host_copy(unsigned int size) {
+	
+	printf("\nTesting host->host copy...  ");
+
+	memorymanager<float> *m1 = new memorymanager<float> (size, HOST, (device_t) 0);
+	memorymanager<float> *m2 = new memorymanager<float> (size, HOST, (device_t) 0);
+
+	for (int i = 0; i < (int)m1->get_size(); i++) m1->set(i, 2*i);
+
+	m2->copy_from(*m1);
+
+	for (int i = 0; i < (int) m2->get_size(); i++) 
+		assert( m1->get(i) == m2->get(i) );
+
+	printf("Success!\n");
+
+	printf("\nTesting host->device copy...  ");
+
+	memorymanager<float> *m3 = new memorymanager<float> (size, DEVICE, (device_t) 0);
+
+	m3->copy_from(*m1);
+
+	printf("Success!\n");
+
+	delete m1;
+	delete m2;
+	delete m3;
+}
+
+
 int main(int argc, char** argv) {
 
-    int size = 4;
+	unsigned int test_size = 10;
 
-    memorymanager<float> *mm = new memorymanager<float> (size, HOST, 0);
-    float *arr = new float[size];
+	if (argc == 2) test_size = atoi(argv[1]);
 
-    // set values of memory manager
-    for (int i = 0; i < (int) mm->get_size(); i++) {
-        mm->set(i, i*i * (0.333));
-        arr[i] = 0.5 * i;
-    }
+	test_host_copy(test_size);
 
-    // print the values
-    for (int i = 0; i < (int) mm->get_size(); i++) {
-        printf("%d: %.3f\n", i, mm->get(i));
-    }
 
-    // copy in new vals
-    mm->copy_from_host(arr);
-    printf("\nnew vals:\n");
-    // print the values
-    for (int i = 0; i < (int) mm->get_size(); i++) {
-        printf("%d: %.3f\n", i, mm->get(i));
-    }
 
-    delete mm;
     return 0;
 }

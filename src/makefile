@@ -4,9 +4,17 @@
 SRC_FILES = $(wildcard *.cpp)
 OBJ_FILES = $(patsubst %.cpp,%.o,$(SRC_FILES))
 
-all: $(OBJ_FILES)
+CU_FILES = $(wildcard *.cu)
+CU_OBJ_FILES = $(patsubst %.cu,%.o,$(CU_FILES))
 
-%.o: %.cpp
+all: $(CU_OBJ_FILES) $(OBJ_FILES)
+
+
+$(CU_OBJ_FILES): %.o: %.cu
+	$(NVCC) $(NVCCFLAGS) -o $@ -c $< $(INC) -I../include
+
+
+$(OBJ_FILES): %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -o $@ -c $<  $(INC) -I../include 
 
 -include $(OBJ_FILES:.o=.d)

@@ -42,6 +42,20 @@ public:
      *  @param src the memorymanager to copy data from
      *  @return the error code (0 - no error, 1 - src ptr not allocated)
      */
+    skepsi_error_t copy_from(const memorymanager<T>& src, unsigned int begin_idx, unsigned int size);
+
+    /** Copies the data from src memory manager into the pointer here. Asserts that
+     *  src and this have the same size.
+     *  @param src the memorymanager to copy data from
+     *  @return the error code (0 - no error, 1 - src ptr not allocated)
+     */
+    skepsi_error_t copy_from(const memorymanager<T>& src, unsigned int size);
+
+    /** Copies the data from src memory manager into the pointer here. Asserts that
+     *  src and this have the same size.
+     *  @param src the memorymanager to copy data from
+     *  @return the error code (0 - no error, 1 - src ptr not allocated)
+     */
     skepsi_error_t copy_from(const memorymanager<T>& src);
 
     /** copies memory from a host ptr into this memorymanager. will throw an error if it
@@ -49,7 +63,31 @@ public:
      *  @param src the array to copy into this.
      *  @return the error code (0 - good, 1 - not enough memory)
      */
-    skepsi_error_t copy_from_host(T *src);
+    skepsi_error_t copy_from_host(T *src, unsigned int begin_idx, unsigned int size);
+
+
+    #ifdef _HAS_CUDA_
+    /** copies memory from a device ptr into this memorymanager. will throw an error if it
+     *  reaches the end of src allocated mem before this is filled.
+     *  @param src the array to copy into this.
+     *  @return the error code (0 - good, 1 - not enough memory)
+     */
+    skepsi_error_t copy_from_device(T *src, unsigned int begin_idx, unsigned int size);
+
+    /** copies memory from a managed ptr into this memorymanager. will throw an error if it
+     *  reaches the end of src allocated mem before this is filled.
+     *  @param src the array to copy into this.
+     *  @return the error code (0 - good, 1 - not enough memory)
+     */
+    skepsi_error_t copy_from_managed(T *host_src, T *device_src, unsigned int begin_idx, unsigned int size);
+
+    /** copies memory from a cuda managed ptr into this memorymanager. will throw an error if it
+     *  reaches the end of src allocated mem before this is filled.
+     *  @param src the array to copy into this.
+     *  @return the error code (0 - good, 1 - not enough memory)
+     */
+    skepsi_error_t copy_from_cudamanaged(T *src, unsigned int begin_idx, unsigned int size);
+    #endif
 
     /** If MANAGED or CUDA_MANAGED this ensures that data is the same on all devices. It 
      * will wait for any gpu kernels to finish before copying data. If HOST or DEVICE memory

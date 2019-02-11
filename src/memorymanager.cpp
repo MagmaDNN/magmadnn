@@ -36,21 +36,21 @@ void memorymanager<T>::init_host() {
     host_ptr = (T *) std::malloc(size * sizeof(T));
 }
 
-#ifdef _CUDA_HOST_
+#ifdef _HAS_CUDA_
 template <typename T>
 void memorymanager<T>::init_device() {
-    cudaMalloc(&device_ptr, size * sizeof(T));
+    cudaMalloc((void**) &device_ptr, size * sizeof(T));
 }
 
 template <typename T>
 void memorymanager<T>::init_managed() {
     host_ptr = (T *) std::malloc(size * sizeof(T));
-    cudaMalloc(&device_ptr, size * sizeof(T));
+    cudaMalloc((void**) &device_ptr, size * sizeof(T));
 }
 
 template <typename T>
 void memorymanager<T>::init_cuda_managed() {
-    cudaMallocManaged(&cuda_managed_ptr, size * sizeof(T));
+    cudaMallocManaged((void**) &cuda_managed_ptr, size * sizeof(T));
 }
 #endif
 
@@ -85,8 +85,8 @@ skepsi_error_t memorymanager<T>::copy_from(const memorymanager<T>& src, unsigned
         return copy_from_device(src.device_ptr, begin_idx, copy_size);
     } else if (src.mem_type == MANAGED) {
         return copy_from_managed(src.host_ptr, src.device_ptr, begin_idx, copy_size);
-    } else if (src.mem_type == CUDAMANAGED) {
-        return copy_from_cudamanaged(src.managed_ptr, begin_idx, copy_size);
+    } else if (src.mem_type == CUDA_MANAGED) {
+        return copy_from_cudamanaged(src.cuda_managed_ptr, begin_idx, copy_size);
     }
     #endif
     
@@ -122,7 +122,7 @@ skepsi_error_t memorymanager<T>::copy_from_host(T *src, unsigned int begin_idx, 
             return (skepsi_error_t) 0;
         case CUDA_MANAGED:
             // host --> cmanaged
-            std::copy(src+begin_idx, (src+begin_idx) + copy_size, managed_ptr);
+            std::copy(src+begin_idx, (src+begin_idx) + copy_size, cuda_managed_ptr);
             sync(false);
             return (skepsi_error_t) 0;
         #endif
@@ -135,26 +135,28 @@ skepsi_error_t memorymanager<T>::copy_from_host(T *src, unsigned int begin_idx, 
 template <typename T>
 skepsi_error_t memorymanager<T>::copy_from_device(T *src, unsigned int begin_idx, unsigned int copy_size) {
 
+	skepsi_error_t err = (skepsi_error_t) 0;
+
     switch (mem_type) {
         case HOST:
             // device --> host
-            return cudaMemcpy(host_ptr, src+begin_idx, copy_size*sizeof(T), cudaMemcpyDeviceToHost);
+            err = cudaMemcpy(host_ptr, src+begin_idx, copy_size*sizeof(T), cudaMemcpyDeviceToHost);
         case DEVICE:
             // device --> device
-            return cudaMemcpy(device_ptr, src+begin_idx, copy_size*sizeof(T), cudaMemcpyDeviceToDevice);
+            err = cudaMemcpy(device_ptr, src+begin_idx, copy_size*sizeof(T), cudaMemcpyDeviceToDevice);
         case MANAGED:
             // device --> managed
-            skepsi_error_t err = cudaMemcpy(device_ptr, src+begin_idx, copy_size*sizeof(T), cudaMemcpyDeviceToDevice);
+            err = cudaMemcpy(device_ptr, src+begin_idx, copy_size*sizeof(T), cudaMemcpyDeviceToDevice);
             sync(true);
             return err;
         case CUDA_MANAGED:
             // device --> cmanaged
-            skepsi_error_t err = cudaMemcpy(managed_ptr, src+begin_idx, copy_size*sizeof(T), cudaMemcpyDeviceToDevice);
+            err = cudaMemcpy(cuda_managed_ptr, src+begin_idx, copy_size*sizeof(T), cudaMemcpyDeviceToDevice);
             sync(true);
             return err;
     }
 
-    return (skepsi_error_t) 1;
+    return err;
 }
 
 template <typename T>
@@ -174,7 +176,7 @@ skepsi_error_t memorymanager<T>::copy_from_managed(T *host_src, T *device_src, u
             return (skepsi_error_t) 0;
         case CUDA_MANAGED:
             // managed --> cmanaged
-            std::copy(host_src+begin_idx, (host_src+begin_idx) + copy_size, managed_ptr);
+            std::copy(host_src+begin_idx, (host_src+begin_idx) + copy_size, cuda_managed_ptr);
             sync(false);
             return (skepsi_error_t) 0;
     }
@@ -199,7 +201,7 @@ skepsi_error_t memorymanager<T>::copy_from_cudamanaged(T *src, unsigned int begi
             sync(false);
             return (skepsi_error_t) 0;
         case CUDA_MANAGED:
-            std::copy(src+begin_idx, (src+begin_idx) + copy_size, managed_ptr);
+            std::copy(src+begin_idx, (src+begin_idx) + copy_size, cuda_managed_ptr);
             sync(false);
             return (skepsi_error_t) 0;
     }
@@ -245,7 +247,7 @@ T memorymanager<T>::get(unsigned int idx) {
         case MANAGED:
             return host_ptr[idx];
         case CUDA_MANAGED:
-            return managed_ptr[idx];
+            return cuda_managed_ptr[idx];
         #endif
     }
     return (T) 0;
@@ -268,7 +270,7 @@ void memorymanager<T>::set(unsigned int idx, T val) {
             // TODO: set device pointer
             break;
         case CUDA_MANAGED:
-            managed_ptr[idx] = val; break;
+            cuda_managed_ptr[idx] = val; break;
         #endif
     }
 }

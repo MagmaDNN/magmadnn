@@ -1,26 +1,28 @@
 # This makefile can build and install the skepsi library
 
+# incluse any user-defined compile options (pre-sets)
 include make.inc
 
-# compilers
+# compilers for c++ and cu
 CXX ?= g++
 NVCC ?= nvcc
 
-
+# locations of cuda and magma installations
 CUDADIR ?= /usr/local/cuda
 MAGMADIR ?= /usr/local/magma
 
-# install location
+# where to install skepsi (make must have sudo access if prefix is root privileged)
 prefix ?= /usr/local/skepsi
 
 # headers needed for library compilation
 INC = -I./include 
+
+# libs to link with
 LIBDIRS =
 LIBS = 
 
-
+# use nvcc to determine if we should compile for gpu or not
 USE_CUDA = 0
-# do we have cuda installed?
 ifneq ($(shell which nvcc),)
 CUDA_MACRO = -D_HAS_CUDA_
 INC += -I$(CUDADIR)/include
@@ -57,21 +59,26 @@ export USE_CUDA
 export CXXFLAGS
 export NVCCFLAGS
 
+
+# default extension for object files
 o_ext ?= o
+
+# where are the source files (files that need to be compiled) found
 TARGET_DIRS = src
 
 all: $(TARGET_DIRS)
 
 $(TARGET_DIRS):
 	@echo "==== Building Sources ===="
+	# step into source directories and use their makefiles
 	$(MAKE) -C $@
 	@echo
 
+# collect all the object files from the source directories
+OBJ_FILES = $(wildcard $(TARGET_DIRS)/*.o)
 
-OBJ_FILES := $(wildcard $(TARGET_DIRS)/*.o)
 
-
-# make the libs
+# MAKE THE LIB FILES
 
 # archiver and flags
 ARCH ?= ar
@@ -107,9 +114,12 @@ $(libshared):
 # make the testers
 TESTING_DIR ?= testing
 testing:
+	# step into the testing directories and call their makefiles
 	$(MAKE) -C $(TESTING_DIR)
 
 
+# build the library first, then link the lib together.
+# install copies the newly made libs into prefix
 install: $(TARGET_DIRS) lib
 	@echo "==== installing libs ===="
 	mkdir -p $(prefix)
@@ -120,7 +130,7 @@ install: $(TARGET_DIRS) lib
 	cp $(libshared) $(prefix)/lib
 	@echo
 
-
+# TODO: change to call clean on subdirectory makefiles
 clean:
 	rm $(wildcard $(TARGET_DIRS)/*.o)
 

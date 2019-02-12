@@ -11,28 +11,9 @@
 #include <vector>
 #include "types.h"
 #include "memorymanager.h"
+#include "tensor_utilities.h"
 
 namespace skepsi {
-
-/**	 Different ways to initialize the tensor on creation.
- */
-typedef enum tensor_fill_t {
-	UNIFORM,
-	GLOROT,
-	CONSTANT,
-	ZERO,
-	ONE,
-	NONE
-} tensor_fill_t;	
-
-/** Defines how to fill a tensor and with what parameters.
- * fill_type: use UNIFORM, GLOROT, CONSTANT, ZERO, ONE, or NONE @see tensor_fill_t
- * values: the parameters for the fill_type
- */
-typedef struct tensor_filler_t {
-	tensor_fill_t fill_type;
-	std::vector<double> values;
-} tensor_filler_t;
 
 /* Default values for tensors.
    Initialize to CPU 0 if not indicated otherwise.

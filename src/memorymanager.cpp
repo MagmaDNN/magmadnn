@@ -242,8 +242,7 @@ T memorymanager<T>::get(unsigned int idx) {
             return host_ptr[idx];
         #ifdef _HAS_CUDA_
         case DEVICE:
-            // TODO
-            return (T) 0;
+            return get_device_array_element(device_ptr, idx);
         case MANAGED:
             return host_ptr[idx];
         case CUDA_MANAGED:
@@ -263,11 +262,10 @@ void memorymanager<T>::set(unsigned int idx, T val) {
             host_ptr[idx] = val; break;
         #ifdef _HAS_CUDA_
         case DEVICE:
-            // TODO
-            break;
+            set_device_array_ptr(device_ptr, idx, val); break;
         case MANAGED:
             host_ptr[idx] = val;
-            // TODO: set device pointer
+            set_device_array_ptr(device_ptr, idx, val);
             break;
         case CUDA_MANAGED:
             cuda_managed_ptr[idx] = val; break;

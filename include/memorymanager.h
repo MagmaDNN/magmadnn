@@ -19,7 +19,7 @@
 #ifdef _HAS_CUDA_
 #include <cuda.h>
 #include <cuda_runtime_api.h>
-#include "memory_utilities.h"
+#include "memory_utilities_device.h"
 #endif
 
 namespace skepsi {
@@ -144,6 +144,11 @@ public:
      * @return unsigned int  the size of this memory manager
      */
     unsigned int get_size() { return size; }
+
+    /** Returns the memory type of this memory manager.
+     * @return memory_t 
+     */
+    memory_t get_memory_type() { return mem_type; }
 
 private:
 

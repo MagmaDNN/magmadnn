@@ -40,7 +40,7 @@ CXX_VERSION ?= -std=c++11
 
 # the entire flags for compilation
 CXXFLAGS := $(OPTIMIZATION_LEVEL) $(WARNINGS) $(CXX_VERSION) $(CUDA_MACRO) $(FPIC) -MMD
-NVCCFLAGS := $(OPTIMIZATION_LEVEL) -Xcompiler "$(CXXFLAGS)"
+NVCCFLAGS := $(CXX_VERSION) $(OPTIMIZATION_LEVEL) -Xcompiler "$(CXXFLAGS)"
 
 
 # make these available to child makefiles

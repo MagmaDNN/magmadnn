@@ -39,3 +39,7 @@ make.inc
 
 # executable files
 testing/bin/*
+
+# doxygen folders
+docs/html/*
+docs/latex/*

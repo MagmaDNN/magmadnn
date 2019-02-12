@@ -29,6 +29,6 @@ T get_device_array_element(T *arr, unsigned int idx);
 template <typename T>
 void set_device_array_element(T *arr, unsigned int idx, T val);
 
-}; // namespace skepsi
+} // namespace skepsi
 
 #endif

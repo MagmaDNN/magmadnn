@@ -53,9 +53,9 @@ template <typename T>
 void set_device_array_element(T *arr, unsigned int idx, T val) {
 	kernel_set_device_array_element <<<1, 1>>> (arr, idx, val);
 }
-template int set_device_array_element(int *arr, unsigned int idx, int val);
-template float set_device_array_element(float *arr, unsigned int idx, float val);
-template double set_device_array_element(double *arr, unsigned int idx, double val);
+template void set_device_array_element(int *arr, unsigned int idx, int val);
+template void set_device_array_element(float *arr, unsigned int idx, float val);
+template void set_device_array_element(double *arr, unsigned int idx, double val);
 
 
-}; // namespace skepsi
+} // namespace skepsi

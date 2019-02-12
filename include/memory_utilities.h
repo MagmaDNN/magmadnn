@@ -12,7 +12,8 @@
 
 namespace skepsi {
 
-/**	gets the device array element at idx.
+/**	gets the device array element at idx. Note: This is slow. Favor copy_from for faster
+    getting of large chunks of memory.
 	@param arr the device array
 	@param idx the index to retrieve the array from
 	@return T the value of arr[idx] on the device
@@ -21,7 +22,8 @@ template <typename T>
 T get_device_array_element(T *arr, unsigned int idx);
 
 
-/** Sets an element on a device.
+/** Sets an element on a device. Note: This is slow. Favor copy_from for faster
+    setting of large chunks of memory.
 	@param arr device array
 	@param idx index to set
 	@param val value to set arr[idx]

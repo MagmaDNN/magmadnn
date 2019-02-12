@@ -20,6 +20,7 @@ __global__ void kernel_get_device_array_element(T *arr, unsigned int idx, T *res
 /**	gets the device array element at idx.
 	@param arr the device array
 	@param idx the index to retrieve the array from
+	@return T the value of arr[idx] on the device
 */
 template <typename T>
 T get_device_array_element(T *arr, unsigned int idx) {
@@ -33,11 +34,33 @@ T get_device_array_element(T *arr, unsigned int idx) {
 
 	return host_value;
 }
-
 template int get_device_array_element(int *arr, unsigned int idx);
 template float get_device_array_element(float *arr, unsigned int idx);
 template double get_device_array_element(double *arr, unsigned int idx);
 
+
+/** Sets an element on a device.
+	@param arr device array
+	@param idx index to set
+	@param val value to set arr[idx]
+*/
+template <typename T>
+__global__ void kernel_set_device_array_element(T *arr, unsigned int idx, T val) {
+	arr[idx] = val;
+}
+
+/** Sets an element on a device.
+	@param arr device array
+	@param idx index to set
+	@param val value to set arr[idx]
+*/
+template <typename T>
+void set_device_array_element(T *arr, unsigned int idx, T val) {
+	kernel_set_device_array_element <<<1, 1>>> (arr, idx, val);
+}
+template int set_device_array_element(int *arr, unsigned int idx, int val);
+template float set_device_array_element(float *arr, unsigned int idx, float val);
+template double set_device_array_element(double *arr, unsigned int idx, double val);
 
 
 }; // namespace skepsi

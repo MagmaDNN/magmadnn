@@ -114,8 +114,10 @@ $(libshared):
 # make the testers
 TESTING_DIR ?= testing
 testing:
+	@echo "==== building testing sources ===="
 	# step into the testing directories and call their makefiles
 	$(MAKE) -C $(TESTING_DIR)
+	@echo
 
 
 # build the library first, then link the lib together.

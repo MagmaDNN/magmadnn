@@ -4,8 +4,10 @@
 SRC_FILES = $(wildcard *.cpp)
 OBJ_FILES = $(patsubst %.cpp,%.o,$(SRC_FILES))
 
+ifeq ($(USE_CUDA),1)
 CU_FILES = $(wildcard *.cu)
 CU_OBJ_FILES = $(patsubst %.cu,%.o,$(CU_FILES))
+endif
 
 all: $(CU_OBJ_FILES) $(OBJ_FILES)
 

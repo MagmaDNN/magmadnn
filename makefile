@@ -18,12 +18,15 @@ INC = -I./include
 LIBDIRS =
 LIBS = 
 
+
+USE_CUDA = 0
 # do we have cuda installed?
 ifneq ($(shell which nvcc),)
 CUDA_MACRO = -D_HAS_CUDA_
 INC += -I$(CUDADIR)/include
 LIBDIRS += -L$(CUDADIR)/lib64
 LIBS += -lcudart
+USE_CUDA = 1
 endif
 
 
@@ -50,6 +53,7 @@ export OPTIMIZATION_LEVEL
 export WARNINGS
 export CXX_VERSION
 export CUDA_MACRO
+export USE_CUDA
 export CXXFLAGS
 export NVCCFLAGS
 

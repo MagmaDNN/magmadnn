@@ -134,7 +134,7 @@ install: $(TARGET_DIRS) lib
 
 # TODO: change to call clean on subdirectory makefiles
 clean:
-	rm $(wildcard $(TARGET_DIRS)/*.o)
+	rm $(wildcard $(TARGET_DIRS)/*.o $(TARGET_DIRS)/*/*.o)
 
 
 .PHONY: $(TARGET_DIRS) testing

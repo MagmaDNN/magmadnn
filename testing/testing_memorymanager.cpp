@@ -8,74 +8,106 @@
 
 using namespace skepsi;
 
-void test_host_copy(unsigned int size) {
-	
-	printf("\nTesting host->host copy...  ");
-
-	memorymanager<float> *m1 = new memorymanager<float> (size, HOST, (device_t) 0);
-	memorymanager<float> *m2 = new memorymanager<float> (size, HOST, (device_t) 0);
-
-	for (int i = 0; i < (int)m1->get_size(); i++) m1->set(i, 2*i);
-
-	m2->copy_from(*m1);
-
-	for (int i = 0; i < (int) m2->get_size(); i++) 
-		assert( m1->get(i) == m2->get(i) );
-	
-	delete m2;
-	printf("Success!\n");
-
-
-	#ifdef _HAS_CUDA_
-	printf("\nTesting host->device copy...  ");
-
-	memorymanager<float> *m3 = new memorymanager<float> (size, DEVICE, (device_t) 0);
-
-	m3->copy_from(*m1);
-
-	printf("Success!\n");
-	delete m3;
-
-	printf("\nTesting host->managed copy...  ");
-	memorymanager<float> *m4 = new memorymanager<float> (size, MANAGED, (device_t) 0);
-
-	m4->copy_from(*m1);
-	m4->sync(false);
-
-	for (int i = 0; i < (int) m4->get_size(); i++) {
-		assert( m1->get(i) == m4->get(i) );
+const char* get_memory_type_name(memory_t mem) {
+	switch (mem) {
+		case HOST: 			return "HOST";
+		case DEVICE: 		return "DEVICE";
+		case MANAGED: 		return "MANAGED";
+		case CUDA_MANAGED: 	return "CUDA_MANAGED";
+		default: 			return "UNDEFINED_MEMORY_TYPE";
 	}
-	
-	delete m4;
-	printf("Success!\n");
+}
 
-	printf("\nTesting host->cudamanaged copy...  ");
-	memorymanager<float> *m5 = new memorymanager<float> (size, CUDA_MANAGED, (device_t) 0);
+void test_get_set(memory_t mem, int size, bool verbose) {
+	float val = 1.125f;
 	
-	m5->copy_from(*m1);
-	m5->sync();
+	if (verbose) printf("Testing %s get/set...  ", get_memory_type_name(mem));
 
-	for (int i = 0; i < (int) m5->get_size(); i++) {
-		assert( m1->get(i) == m5->get(i) );
+	memorymanager<float> *mm = new memorymanager<float> (size, mem, (device_t) 0);
+
+	// set
+	for (int i = 0; i < (int) size; i++) {
+		mm->set(i, i*val);
 	}
 
-	delete m5;
-	printf("Success!\n");
-	#endif
+	// test
+	for (int i = 0; i < (int) size; i++) {
+		assert( mm->get(i) == i*val );
+	}
 
-	delete m1;
+	delete mm;	
+
+	if (verbose) printf("Success!\n");
+}
+
+
+void test_copy(memory_t src, memory_t dst, int size, bool verbose) {
+
+	if (verbose) printf("Testing %s->%s copy...  ", get_memory_type_name(src), get_memory_type_name(dst));
+
+	// create
+	memorymanager<float> *mm_src = new memorymanager<float> (size, src, (device_t) 0);
+	memorymanager<float> *mm_dst = new memorymanager<float> (size, dst, (device_t) 0);
+
+	// fill in mm_src
+	for (int i = 0; i < size; i++) mm_src->set(i, 2*i+1);
+
+	// copy mm_src into mm_dst
+	mm_dst->copy_from(*mm_src);
+
+	// test for success
+	for (int i = 0; i < size; i++) 
+		assert( mm_src->get(i) == mm_src->get(i) );
+
+	// free
+	delete mm_src;
+	delete mm_dst;
+
+	if (verbose) printf("Success!\n");
 }
 
 
 int main(int argc, char** argv) {
 
-	unsigned int test_size = 10;
+	unsigned int test_size = 100;
 
 	if (argc == 2) test_size = atoi(argv[1]);
 
-	test_host_copy(test_size);
+	// get/set
+	test_get_set(HOST, test_size, true);
+	#ifdef _HAS_CUDA_
+	test_get_set(DEVICE, test_size, true);
+	test_get_set(MANAGED, test_size, true);
+	test_get_set(CUDA_MANAGED, test_size, true);
+	#endif
 
+	// test copy
+	// host to ...
+	test_copy(HOST, HOST, test_size, true);
 
+	#ifdef _HAS_CUDA_
+	test_copy(HOST, DEVICE, test_size, true);
+	test_copy(HOST, MANAGED, test_size, true);
+	test_copy(HOST, CUDA_MANAGED, test_size, true);
+
+	// device to ..
+ 	test_copy(DEVICE, HOST, test_size, true);
+	test_copy(DEVICE, DEVICE, test_size, true);
+	test_copy(DEVICE, MANAGED, test_size, true);
+	test_copy(DEVICE, CUDA_MANAGED, test_size, true);
+
+	// managed to ..
+ 	test_copy(MANAGED, HOST, test_size, true);
+	test_copy(MANAGED, DEVICE, test_size, true);
+	test_copy(MANAGED, MANAGED, test_size, true);
+	test_copy(MANAGED, CUDA_MANAGED, test_size, true);
+
+	// cuda_managed to ..
+ 	test_copy(CUDA_MANAGED, HOST, test_size, true);
+	test_copy(CUDA_MANAGED, DEVICE, test_size, true);
+	test_copy(CUDA_MANAGED, MANAGED, test_size, true);
+	test_copy(CUDA_MANAGED, CUDA_MANAGED, test_size, true);
+	#endif
 
     return 0;
 }

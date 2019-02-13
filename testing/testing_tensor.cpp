@@ -2,17 +2,27 @@
 
 using namespace skepsi;
 
-void test_indexing();
+const char* get_memory_type_name(memory_t mem);
+void test_indexing(memory_t mem, bool verbose);
 
 int main(int argc, char **argv) {
     
-    test_indexing();
+	// test indexing	
+    test_indexing(HOST, true);
+	#ifdef _HAS_CUDA_
+	test_indexing(DEVICE, true);
+	test_indexing(MANAGED, true);
+	test_indexing(CUDA_MANAGED, true);
+	#endif
 
     return 0;
 }
 
-void test_indexing() {
-    tensor<float> *t = new tensor<float> ({4, 3, 2});
+void test_indexing(memory_t mem, bool verbose) {
+
+	if (verbose) printf("Testing indexing on device %s...  ", get_memory_type_name(mem));
+	
+    tensor<float> *t = new tensor<float> ({4, 3, 2}, mem);
 
     // test
     for (int i = 0; i < 4; i++)
@@ -23,7 +33,21 @@ void test_indexing() {
     for (int i = 0; i < 4; i++)
         for (int j = 0; j < 3; j++)
             for (int k = 0; k < 2; k++)
-                printf("t[%d, %d, %d] = %.2f\n", i, j, k, t->get({i,j,k}));
+				assert( t->get({i,j,k}) == i*j*k );
     
     delete t;
+
+	if (verbose) printf("Success!\n");
 }
+
+
+const char* get_memory_type_name(memory_t mem) {
+	switch (mem) {
+		case HOST: 			return "HOST";
+		case DEVICE: 		return "DEVICE";
+		case MANAGED: 		return "MANAGED";
+		case CUDA_MANAGED: 	return "CUDA_MANAGED";
+		default: 			return "UNDEFINED_MEMORY_TYPE";
+	}
+}
+

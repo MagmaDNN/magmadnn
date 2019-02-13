@@ -63,20 +63,27 @@ template void fill_glorot(memorymanager<double>&, const std::vector<double>&);
 
 template <typename T>
 void fill_constant(memorymanager<T> &m, const std::vector<double>& params) {
+    assert( params.size() >= 1 );
+
+    // assume first param is constant value
+    T val = (T) params[0];
+
     switch (m.get_memory_type()) {
         case HOST:
-            // TODO
+            std::memset(m.get_host_ptr(), val, m.get_size()*sizeof(T));
             break;
             
         #ifdef _HAS_CUDA_
         case DEVICE:
-            // TODO
+            cudaMemset(m.get_device_ptr(), val, m.get_size()*sizeof(T));
             break;
         case MANAGED:
-            // TODO
+            cudaMemset(m.get_device_ptr(), val, m.get_size()*sizeof(T));
+            std::memset(m.get_host_ptr(), val, m.get_size()*sizeof(T));
             break;
         case CUDA_MANAGED:
-            // TODO
+            std::memset(m.get_cuda_managed_ptr(), val, m.get_size()*sizeof(T));
+            m.sync(false);
             break;
         #endif
     }
@@ -88,23 +95,8 @@ template void fill_constant(memorymanager<double>&, const std::vector<double>&);
 
 template <typename T>
 void fill_zero(memorymanager<T> &m, const std::vector<double>& params) {
-    switch (m.get_memory_type()) {
-        case HOST:
-            // TODO
-            break;
-            
-        #ifdef _HAS_CUDA_
-        case DEVICE:
-            // TODO
-            break;
-        case MANAGED:
-            // TODO
-            break;
-        case CUDA_MANAGED:
-            // TODO
-            break;
-        #endif
-    }
+    // use fill_constant
+    fill_constant(m, {0});
 }
 template void fill_zero(memorymanager<int>&, const std::vector<double>&);
 template void fill_zero(memorymanager<float>&, const std::vector<double>&);
@@ -113,23 +105,8 @@ template void fill_zero(memorymanager<double>&, const std::vector<double>&);
 
 template <typename T>
 void fill_one(memorymanager<T> &m, const std::vector<double>& params) {
-    switch (m.get_memory_type()) {
-        case HOST:
-            // TODO
-            break;
-            
-        #ifdef _HAS_CUDA_
-        case DEVICE:
-            // TODO
-            break;
-        case MANAGED:
-            // TODO
-            break;
-        case CUDA_MANAGED:
-            // TODO
-            break;
-        #endif
-    }
+    // use fill_constant
+    fill_constant(m, {1});
 }
 template void fill_one(memorymanager<int>&, const std::vector<double>&);
 template void fill_one(memorymanager<float>&, const std::vector<double>&);

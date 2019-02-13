@@ -68,9 +68,9 @@ TARGET_DIRS = src
 
 all: $(TARGET_DIRS)
 
+# step into source directories and use their makefiles
 $(TARGET_DIRS):
 	@echo "==== Building Sources ===="
-	# step into source directories and use their makefiles
 	$(MAKE) -C $@
 	@echo
 

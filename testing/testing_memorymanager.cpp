@@ -11,9 +11,11 @@ using namespace skepsi;
 const char* get_memory_type_name(memory_t mem) {
 	switch (mem) {
 		case HOST: 			return "HOST";
+		#ifdef _HAS_CUDA_
 		case DEVICE: 		return "DEVICE";
 		case MANAGED: 		return "MANAGED";
 		case CUDA_MANAGED: 	return "CUDA_MANAGED";
+		#endif
 		default: 			return "UNDEFINED_MEMORY_TYPE";
 	}
 }

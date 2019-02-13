@@ -6,7 +6,7 @@
  * 
  * @copyright Copyright (c) 2019
  */
-#include "memory_utilities_device.h"
+#include "memory/memory_utilities_device.h"
 
 
 namespace skepsi {

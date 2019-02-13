@@ -9,7 +9,7 @@
 #pragma once
 
 #include <vector>
-#include "memorymanager.h"
+#include "memory/memorymanager.h"
 
 #ifdef _HAS_CUDA_
 #include "fill_utilities_device.h"

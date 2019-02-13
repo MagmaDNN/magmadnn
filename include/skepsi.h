@@ -12,7 +12,7 @@
 
 #include "types.h"
 
-#include "memorymanager.h"
-#include "tensor.h"
+#include "memory/memorymanager.h"
+#include "tensor/tensor.h"
 
 #include "layer.h"

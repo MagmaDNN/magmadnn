@@ -75,7 +75,7 @@ $(TARGET_DIRS):
 	@echo
 
 # collect all the object files from the source directories
-OBJ_FILES = $(wildcard $(TARGET_DIRS)/*.o)
+OBJ_FILES = $(wildcard $(TARGET_DIRS)/*.o $(TARGET_DIRS)/*/*.o)
 
 
 # MAKE THE LIB FILES

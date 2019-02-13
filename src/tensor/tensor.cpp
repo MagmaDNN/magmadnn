@@ -6,7 +6,7 @@
  * 
  * @copyright Copyright (c) 2019
  */
-#include "tensor.h"
+#include "tensor/tensor.h"
 
 namespace skepsi {
 

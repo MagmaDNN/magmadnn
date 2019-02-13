@@ -6,7 +6,7 @@
  * 
  * @copyright Copyright (c) 2019
  */
-#include "tensor_utilities.h"
+#include "tensor/tensor_utilities.h"
 
 namespace skepsi {
 

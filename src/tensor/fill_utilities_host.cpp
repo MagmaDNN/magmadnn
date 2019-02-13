@@ -7,7 +7,7 @@
  * @copyright Copyright (c) 2019
  */
 
-#include "fill_utilities_host.h"
+#include "tensor/fill_utilities_host.h"
 
 namespace skepsi {
 

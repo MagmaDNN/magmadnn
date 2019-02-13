@@ -6,7 +6,7 @@
  * 
  * @copyright Copyright (c) 2019
  */
-#include "memorymanager.h"
+#include "memory/memorymanager.h"
 
 namespace skepsi {
 

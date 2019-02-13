@@ -8,7 +8,7 @@
  */
 #pragma once
 
-#include "memorymanager.h"
+#include "memory/memorymanager.h"
 #include "fill_utilities_host.h"
 
 

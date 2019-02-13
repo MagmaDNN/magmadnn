@@ -10,7 +10,7 @@
 
 #include <vector>
 #include "types.h"
-#include "memorymanager.h"
+#include "memory/memorymanager.h"
 #include "tensor_utilities.h"
 
 namespace skepsi {

@@ -7,7 +7,7 @@
  * @copyright Copyright (c) 2019
  */
 
-#include "tensor/fill_utilities_host.h"
+#include "tensor/fill_utilities.h"
 
 namespace skepsi {
 
@@ -70,7 +70,7 @@ void fill_constant(memorymanager<T> &m, const std::vector<double>& params) {
 
     switch (m.get_memory_type()) {
         case HOST:
-            std::memset(m.get_host_ptr(), val, m.get_size()*sizeof(T));
+            for (int i = 0; i < (int) m.get_size(); i++) m.get_host_ptr()[i] = val;
             break;
             
         #ifdef _HAS_CUDA_

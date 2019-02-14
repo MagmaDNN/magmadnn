@@ -9,7 +9,7 @@
 #pragma once
 
 #include "memory/memorymanager.h"
-#include "fill_utilities_host.h"
+#include "fill_utilities.h"
 
 
 namespace skepsi {

@@ -7,7 +7,7 @@
  * @copyright Copyright (c) 2019
  */
 
-#include "tensor/fill_utilities_device.h"
+#include "tensor/fill_utilities.h"
 
 #ifdef _HAS_CUDA_
 

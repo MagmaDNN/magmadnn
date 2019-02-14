@@ -12,11 +12,15 @@
 #include <string.h>
 #include "memory/memorymanager.h"
 
-#ifdef _HAS_CUDA_
-#include "fill_utilities_device.h"
-#endif
-
 namespace skepsi {
+
+#ifdef _HAS_CUDA_
+template <typename T>
+__global__ void kernel_fill_glorot(T *arr, double *vals);
+
+template <typename T>
+__global__ void kernel_fill_uniform(T *arr, double *vals);
+#endif
 
 template <typename T>
 void fill_uniform(memorymanager<T> &m, const std::vector<double>& params);

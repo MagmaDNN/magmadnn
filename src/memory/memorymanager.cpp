@@ -12,7 +12,9 @@ namespace skepsi {
 
 template <typename T>
 memorymanager<T>::memorymanager(unsigned int size, memory_t mem_type, device_t device_id) : 
-    mem_type(mem_type), device_id(device_id), size(size) {
+    mem_type(mem_type), size(size) {
+
+		set_device(device_id);
 
         // initialize based on the chosen memory type
         switch (mem_type) {
@@ -242,6 +244,7 @@ T memorymanager<T>::get(unsigned int idx) {
             return host_ptr[idx];
         #ifdef _HAS_CUDA_
         case DEVICE:
+			cudaSetDevice(device_id);
             return get_device_array_element(device_ptr, idx);
         case MANAGED:
             return host_ptr[idx];
@@ -262,15 +265,30 @@ void memorymanager<T>::set(unsigned int idx, T val) {
             host_ptr[idx] = val; break;
         #ifdef _HAS_CUDA_
         case DEVICE:
+			cudaSetDevice(device_id);
             set_device_array_element(device_ptr, idx, val); break;
         case MANAGED:
             host_ptr[idx] = val;
+			cudaSetDevice(device_id);
             set_device_array_element(device_ptr, idx, val);
             break;
         case CUDA_MANAGED:
             cuda_managed_ptr[idx] = val; break;
         #endif
     }
+}
+
+template <typename T>
+skepsi_error_t memorymanager<T>::set_device(device_t device_id) {
+	int n_devices = 0;
+	cudaGetDeviceCount(&n_devices);
+	if ((int)device_id >= n_devices) {
+		fprintf(stderr, "invalid device id\n");
+		return (skepsi_error_t) 1;
+	}
+
+	this->device_id = device_id;
+	return (skepsi_error_t) 0;
 }
 
 template <typename T>

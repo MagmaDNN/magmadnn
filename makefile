@@ -24,6 +24,7 @@ LIBS =
 # use nvcc to determine if we should compile for gpu or not
 USE_CUDA = 0
 ifneq ($(shell which nvcc),)
+include make.device
 CUDA_MACRO = -D_HAS_CUDA_
 INC += -I$(CUDADIR)/include
 LIBDIRS += -L$(CUDADIR)/lib64
@@ -40,7 +41,7 @@ CXX_VERSION ?= -std=c++11
 
 # the entire flags for compilation
 CXXFLAGS := $(OPTIMIZATION_LEVEL) $(WARNINGS) $(CXX_VERSION) $(CUDA_MACRO) $(FPIC) -MMD
-NVCCFLAGS := $(CXX_VERSION) $(OPTIMIZATION_LEVEL) -Xcompiler "$(CXXFLAGS)"
+NVCCFLAGS := $(CXX_VERSION) $(OPTIMIZATION_LEVEL) -Xcompiler "$(CXXFLAGS)" $(NV_SM) $(NV_COMP)
 
 
 # make these available to child makefiles

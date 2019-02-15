@@ -28,7 +28,7 @@ CUDA_MACRO = -D_HAS_CUDA_
 INC += -I$(CUDADIR)/include
 LIBDIRS += -L$(CUDADIR)/lib64
 LIBS += -lcudart
-USE_CUDA = 1
+USE_CUDA=1
 endif
 
 
@@ -71,6 +71,11 @@ all: $(TARGET_DIRS)
 # step into source directories and use their makefiles
 $(TARGET_DIRS):
 	@echo "==== Building Sources ===="
+ifeq ($(USE_CUDA),1)
+	@echo "CUDA installation found. Building GPU/CPU."
+else
+	@echo "(X) CUDA installation not found. Building CPU-only."
+endif
 	$(MAKE) -C $@
 	@echo
 

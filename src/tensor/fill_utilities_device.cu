@@ -14,9 +14,23 @@
 namespace skepsi {
 
 template <typename T>
-__global__ void kernel_fill_glorot(T *arr, double *vals) {
+__global__ void kernel_fill_constant(T* arr, unsigned int size, T val) {
+	unsigned int idx = blockIdx.x * blockDim.x + threadIdx.x;
+	unsigned int stride = blockDim.x * gridDim.x;
 
+	for (unsigned int i = idx; i < size; i += stride) {
+		arr[i] = val;
+	}
 }
+
+template <typename T>
+void fill_constant_device(memorymanager<T> &m, T val) {
+	kernel_fill_constant <<<m.get_size(), 1>>> (m.get_device_ptr(), m.get_size(), val);
+}
+template void fill_constant_device(memorymanager<int> &m, int val);
+template void fill_constant_device(memorymanager<float> &m, float val);
+template void fill_constant_device(memorymanager<double> &m, double val);
+
 
 } // namespace skepsi
 #endif

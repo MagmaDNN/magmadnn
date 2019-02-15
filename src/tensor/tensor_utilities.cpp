@@ -20,9 +20,9 @@ void fill_memory(memorymanager<T> &m, tensor_filler_t filler) {
         case CONSTANT:
             fill_constant(m, filler.values); break;
         case ZERO:
-            fill_zero(m, filler.values); break;
+            fill_constant(m, {0.0}); break;
         case ONE:
-            fill_one(m, filler.values); break;
+            fill_constant(m, {1.0}); break;
         case NONE: break;
     }
 }

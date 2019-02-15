@@ -75,14 +75,15 @@ void fill_constant(memorymanager<T> &m, const std::vector<double>& params) {
             
         #ifdef _HAS_CUDA_
         case DEVICE:
-            cudaMemset(m.get_device_ptr(), val, m.get_size()*sizeof(T));
+			fill_constant_device(m, val);	// fill device pointer
             break;
         case MANAGED:
-            cudaMemset(m.get_device_ptr(), val, m.get_size()*sizeof(T));
-            std::memset(m.get_host_ptr(), val, m.get_size()*sizeof(T));
+			fill_constant_device(m, val);	// fill device
+			for (int i = 0; i < (int) m.get_size(); i++) m.get_host_ptr()[i] = val; // fill host
             break;
         case CUDA_MANAGED:
-            std::memset(m.get_cuda_managed_ptr(), val, m.get_size()*sizeof(T));
+			// fill host and sync
+			for (int i = 0; i < (int) m.get_size(); i++) m.get_cuda_managed_ptr()[i] = val;
             m.sync(false);
             break;
         #endif
@@ -92,24 +93,5 @@ template void fill_constant(memorymanager<int>&, const std::vector<double>&);
 template void fill_constant(memorymanager<float>&, const std::vector<double>&);
 template void fill_constant(memorymanager<double>&, const std::vector<double>&);
 
-
-template <typename T>
-void fill_zero(memorymanager<T> &m, const std::vector<double>& params) {
-    // use fill_constant
-    fill_constant(m, {0});
-}
-template void fill_zero(memorymanager<int>&, const std::vector<double>&);
-template void fill_zero(memorymanager<float>&, const std::vector<double>&);
-template void fill_zero(memorymanager<double>&, const std::vector<double>&);
-
-
-template <typename T>
-void fill_one(memorymanager<T> &m, const std::vector<double>& params) {
-    // use fill_constant
-    fill_constant(m, {1});
-}
-template void fill_one(memorymanager<int>&, const std::vector<double>&);
-template void fill_one(memorymanager<float>&, const std::vector<double>&);
-template void fill_one(memorymanager<double>&, const std::vector<double>&);
 
 } // namespace skepsi

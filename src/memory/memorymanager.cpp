@@ -280,12 +280,15 @@ void memorymanager<T>::set(unsigned int idx, T val) {
 
 template <typename T>
 skepsi_error_t memorymanager<T>::set_device(device_t device_id) {
+
+    #ifdef _HAS_CUDA_
 	int n_devices = 0;
 	cudaGetDeviceCount(&n_devices);
 	if ((int)device_id >= n_devices) {
 		fprintf(stderr, "invalid device id\n");
 		return (skepsi_error_t) 1;
 	}
+    #endif
 
 	this->device_id = device_id;
 	return (skepsi_error_t) 0;

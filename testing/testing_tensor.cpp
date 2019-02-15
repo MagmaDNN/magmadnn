@@ -27,20 +27,21 @@ int main(int argc, char **argv) {
 }
 
 void test_indexing(memory_t mem, bool verbose) {
+	unsigned int x_size = 10, y_size = 28, z_size = 28;
 
 	if (verbose) printf("Testing indexing on device %s...  ", get_memory_type_name(mem));
 	
-    tensor<float> *t = new tensor<float> ({4, 3, 2}, mem);
+    tensor<float> *t = new tensor<float> ({x_size, y_size, z_size}, mem);
 
     // test
-    for (int i = 0; i < 4; i++)
-        for (int j = 0; j < 3; j++)
-            for (int k = 0; k < 2; k++)
+    for (int i = 0; i < (int)x_size; i++)
+        for (int j = 0; j < (int)y_size; j++)
+            for (int k = 0; k < (int)z_size; k++)
                 t->set({i,j,k}, i*j*k);
 
-    for (int i = 0; i < 4; i++)
-        for (int j = 0; j < 3; j++)
-            for (int k = 0; k < 2; k++)
+    for (int i = 0; i < (int)x_size; i++)
+        for (int j = 0; j < (int)y_size; j++)
+            for (int k = 0; k < (int)z_size; k++)
 				assert( t->get({i,j,k}) == i*j*k );
     
     delete t;
@@ -53,6 +54,7 @@ void test_fill(tensor_filler_t filler, memory_t mem, bool verbose) {
 
 	if (verbose) printf("Testing fill_constant on %s...  ", get_memory_type_name(mem));
 	if (filler.values.size() == 0) { fprintf(stderr, "tester error.\n"); return; }
+
 	float val = filler.values[0];
 	tensor<float> *t = new tensor<float> ({x_size, y_size}, filler, mem);
 

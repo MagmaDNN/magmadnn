@@ -37,6 +37,9 @@ make.inc
 # vscode stuff
 .vscode/*
 
+# misc. scripts
+build_and_test.sh
+
 # executable files
 testing/bin/*
 

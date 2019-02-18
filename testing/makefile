@@ -5,7 +5,7 @@ OBJ_FILES := $(patsubst %.cpp, %.o, $(SRC_FILES))
 TARGETS := $(patsubst %.cpp, %.out, $(SRC_FILES))
 
 TESTING_FLAGS := $(OPTIMIZATION_LEVEL) $(WARNINGS) $(CXX_VERSION) $(CUDA_MACRO)
-LIB_PATH = ../lib
+LIB_PATH = $(prefix)/lib
 DEST = ./bin
 
 all: $(DEST) $(TARGETS)

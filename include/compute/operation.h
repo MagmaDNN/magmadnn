@@ -15,12 +15,13 @@ template <typename T>
 class operation {
 public: 
     operation() {}
-    operation(std::vector<operation<T>*>& children) : children(children) {}
+    operation(std::vector<operation<T>>& children) : children(children) {}
+	virtual ~operation() {}
 
     virtual tensor<T>* eval() = 0;
     
 protected:
-    std::vector<operation<T>*> children;
+    std::vector<operation<T>> children;
 };
 
 } // namespace skepsi

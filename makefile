@@ -23,6 +23,7 @@ LIBS =
 
 # use nvcc to determine if we should compile for gpu or not
 USE_CUDA = 0
+GPU_TARGET ?= Kepler
 ifneq ($(shell which nvcc),)
 include make.device
 CUDA_MACRO = -D_HAS_CUDA_

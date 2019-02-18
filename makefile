@@ -51,6 +51,7 @@ export NVCC
 export INC
 export LIBDIRS
 export LIBS
+export prefix
 export CUDADIR
 export MAGMADIR
 export OPTIMIZATION_LEVEL

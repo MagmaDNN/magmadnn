@@ -11,7 +11,7 @@ A neural network library in c++ aimed at providing a simple, modularized framewo
 -----------------------------
 
 ##### Dependencies
-Skepsi uses `make` as its build system, so it must be installed on your system before you can build the library. The build also requires a c++11 capable compiler. If compiling with GPU capabilities, then CUDA and likewise nvcc must be installed and in the proper PATHs.
+Skepsi uses `make` as its build system, so it must be installed on your system before you can build the library. The build also requires a c++11 capable compiler. If compiling with GPU capabilities, then CUDA and likewise nvcc must be installed and in the proper PATHs. Skepsi has only been tested on Ubuntu (>16) and MacOS with CUDA (>9.0), however it is likely to work on most *nix based systems with a proper CUDA install.
 
 ##### Download
 First get the repository on your computer with

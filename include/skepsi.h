@@ -15,4 +15,6 @@
 #include "memory/memorymanager.h"
 #include "tensor/tensor.h"
 
+#include "compute/variable.h"
+
 #include "layer.h"

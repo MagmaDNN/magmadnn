@@ -4,11 +4,14 @@
 # uncomment (remove #) to set a parameter
 
 # install location
-# prefix = /usr/local
+#prefix = /usr/local
 
 # define which compilers to use
 #CXX = g++
 #NVCC = nvcc
+
+# GPU targets
+#GPU_TARGET = Kepler Pascal
 
 # compiler options
 #OPTIMIZATION_LEVEL = -O3

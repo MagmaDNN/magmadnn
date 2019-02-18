@@ -44,6 +44,31 @@ cd testing
 sh ./run_tests.sh
 ```
 
+### Task List (what's coming next):
+-----------------------------------
+- [x] Implement a memory manager for handling host, device, and managed memory
+- [x] Build tests for memory manager
+- [x] Implement Tensor wrapper around memory manager for multi-axis data storage
+- [x] Build tests for tensor 
+- [x] Create Make file and Build/Install system
+- [x] Creates Docs and doxygen config
+- [ ] Implement compute graph and basic operations for tensors
+- [ ] Build tests for compute graph and tensor operations
+- [ ] Link with BLAS/LAPACK (OpenBLAS?) and MAGMA
+- [ ] Implement basic Layer classes (Dense, Activation, Flatten, CNN)
+- [ ] Implement Model with forward/backward propagation
+- [ ] Build tests for Model/Layer training
+- [ ] Add examples in Examples/ folder
+- [ ] Add I/O methods for Tensors
+- [ ] Build tests for I/O
+- [ ] Implement RNN
+- [ ] Build tests for RNN
+- [ ] Hyperparameter Optimization tools
+- [ ] Build tests for hyperparameter optimization tools
+- [ ] Package/Install configuration
+- [ ] Tune compilation and runtime parameters to hardware
+- [ ] Test on different hardwares (intel, amd, nvidia)
+- [ ] OpenCL support (possibly? perhaps with different BLAS)
 
 
 _author:_ Daniel Nichols

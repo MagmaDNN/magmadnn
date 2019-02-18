@@ -9,6 +9,11 @@ A neural network library in c++ aimed at providing a simple, modularized framewo
 
 ### Download and Installation
 -----------------------------
+
+##### Dependencies
+Skepsi uses `make` as its build system, so it must be installed on your system before you can build the library. The build also requires a c++11 capable compiler. If compiling with GPU capabilities, then CUDA and likewise nvcc must be installed and in the proper PATHs.
+
+##### Download
 First get the repository on your computer with
 
 ```sh
@@ -16,6 +21,7 @@ git glone https://github.com/Dando18/skepsi
 cd skepsi
 ```
 
+###### Install
 Next copy the make include settings into the head directory and edit them to your preferences.
 
 ```sh

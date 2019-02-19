@@ -19,17 +19,12 @@ int main(int argc, char **argv) {
 	variable<float> *v0 = new variable<float> ("t0", t0);
 	variable<float> *v1 = new variable<float> ("t1", t1);
 
-	
-	printf("t0.size = %d\n", v0->eval()->get_size());
-	printf("t1.size = %d\n", v1->eval()->get_size());
-
 	auto sum = add_nocopy<float> (v0, v1);
 
 	tensor<float> *fin = sum.eval();
 
 	for (int i = 0; i < 5; i++) {
 		for (int j = 0; j < 5; j++) {
-			printf("fin[%d][%d] = %.3f\n", i, j, fin->get({i,j}));
 			assert( fin->get({i,j}) == 9 );
 		}
 	}

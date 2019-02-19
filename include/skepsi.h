@@ -16,5 +16,6 @@
 #include "tensor/tensor.h"
 
 #include "compute/variable.h"
+#include "compute/tensor_operations.h"
 
 #include "layer.h"

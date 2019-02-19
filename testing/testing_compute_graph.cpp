@@ -12,8 +12,8 @@ using namespace skepsi;
 
 int main(int argc, char **argv) {
 
-    tensor<float> *t0 = new tensor<float> ({5, 5}, {CONSTANT, {0}}, HOST);
-    tensor<float> *t1 = new tensor<float> ({6, 4}, {CONSTANT, {0}}, HOST);
+    tensor<float> *t0 = new tensor<float> ({5, 5}, {CONSTANT, {4}}, HOST);
+    tensor<float> *t1 = new tensor<float> ({5, 5}, {CONSTANT, {5}}, HOST);
 
 
 	variable<float> *v0 = new variable<float> ("t0", t0);
@@ -24,6 +24,15 @@ int main(int argc, char **argv) {
 	printf("t1.size = %d\n", v1->eval()->get_size());
 
 	auto sum = add_nocopy<float> (v0, v1);
+
+	tensor<float> *fin = sum.eval();
+
+	for (int i = 0; i < 5; i++) {
+		for (int j = 0; j < 5; j++) {
+			printf("fin[%d][%d] = %.3f\n", i, j, fin->get({i,j}));
+			assert( fin->get({i,j}) == 9 );
+		}
+	}
 
 
 	delete t0;

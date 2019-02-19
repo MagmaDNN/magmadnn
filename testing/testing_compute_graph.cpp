@@ -23,6 +23,8 @@ int main(int argc, char **argv) {
 	printf("t0.size = %d\n", v0->eval()->get_size());
 	printf("t1.size = %d\n", v1->eval()->get_size());
 
+	auto sum = add_nocopy<float> (v0, v1);
+
 
 	delete t0;
 	delete t1;

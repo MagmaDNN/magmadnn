@@ -76,8 +76,18 @@ T tensor<T>::get(const std::vector<int>& idx) {
 }
 
 template <typename T>
+T tensor<T>::get(unsigned int flattened_idx) {
+    return mem_manager->get( flattened_idx );
+}
+
+template <typename T>
 void tensor<T>::set(const std::vector<int>& idx, T val) { 
     mem_manager->set( get_flattened_index(idx), val );
+}
+
+template <typename T>
+void tensor<T>::set(unsigned int flattened_idx, T val) {
+    mem_manager->set( flattened_idx, val );
 }
 
 template <typename T>

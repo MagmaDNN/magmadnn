@@ -79,11 +79,23 @@ public:
 	 */
 	T get(const std::vector<int>& idx);
 
+	/** gets the value at the given index.
+	 * @param idx indices to retreive value from
+	 * @return the value at idx
+	 */
+	T get(unsigned int flattened_idx);
+
 	/** sets the value at the given index.
 	 * @param idx indices to set value at
 	 * @param val value to write into idx
 	 */
-	void set(const std::vector<int>& idx, T val);	
+	void set(const std::vector<int>& idx, T val);
+
+	/** sets the value at the given index.
+	 * @param idx indices to set value at
+	 * @param val value to write into idx
+	 */
+	T set(unsigned int flattened_idx, T val);	
 	
 
 	/** Returns the memory manager used by this tensor

@@ -95,7 +95,7 @@ public:
 	 * @param idx indices to set value at
 	 * @param val value to write into idx
 	 */
-	T set(unsigned int flattened_idx, T val);	
+	void set(unsigned int flattened_idx, T val);	
 	
 
 	/** Returns the memory manager used by this tensor

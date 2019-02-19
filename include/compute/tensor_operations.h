@@ -25,13 +25,15 @@ public:
 		tensor<T>* a = this->children[0]->eval();
 		tensor<T>* b = this->children[1]->eval();
 
+		assert( a->get_shape().size() == 2 );
 		assert( a->get_size() == b->get_size() );
-		
-		printf("adding a and b\n");
-		
-		for (unsigned int i = 0; i < a.get_size(); i++) {
-			b->set()
+
+		for (int i = 0; i < (unsigned) b->get_shape()[0]; i++) {
+			for (int j = 0; j < (unsigned) b->get_shape()[1]; j++) {
+				b->set( {i,j}, a->get({i,j}) + b->get({i,j}) );
+			}
 		}
+		return b;
 	} 
 };
 

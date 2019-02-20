@@ -28,5 +28,8 @@ protected:
     tensor<T> *val;
 };
 
+template <typename T>
+variable<T>* var(std::string name, tensor<T>* val);
+
 } // namespace op
 } // namespace skepsi

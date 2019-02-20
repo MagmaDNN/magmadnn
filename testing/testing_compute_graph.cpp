@@ -37,9 +37,9 @@ void test_add(memory_t mem_type, unsigned int size) {
     tensor<float> *t1 = new tensor<float> ({size, size}, {CONSTANT, {val1}}, mem_type);
 	tensor<float> *t2 = new tensor<float> ({size, size}, {CONSTANT, {val2}}, mem_type);
 
-	op::variable<float> *v0 = new op::variable<float> ("t0", t0);
-	op::variable<float> *v1 = new op::variable<float> ("t1", t1);
-	op::variable<float> *v2 = new op::variable<float> ("t2", t2);
+	op::variable<float> *v0 = op::var("t0", t0);
+	op::variable<float> *v1 = op::var("t1", t1);
+	op::variable<float> *v2 = op::var("t2", t2);
 
 	// adds into v1
 	auto sum = op::add(v0, op::add(v1, v2));
@@ -54,6 +54,7 @@ void test_add(memory_t mem_type, unsigned int size) {
 
 	delete t0;
 	delete t1;
+	delete t2;
 
 	printf("Success!\n");
 }

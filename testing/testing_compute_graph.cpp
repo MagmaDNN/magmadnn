@@ -46,8 +46,8 @@ void test_add(memory_t mem_type, unsigned int size) {
 
 	tensor<float> *fin = sum->eval();
 
-	for (int i = 0; i < size; i++) {
-		for (int j = 0; j < size; j++) {
+	for (int i = 0; i < (int)size; i++) {
+		for (int j = 0; j < (int)size; j++) {
 			assert( fin->get({i,j}) == total );
 		}
 	}

@@ -32,7 +32,7 @@ tensor<T>* matmul_op<T>::eval() {
             c_tensor->set({i,j}, sum);
         }
     }
-	return b_tensor;
+	return c_tensor;
 } 
 template class matmul_op<int>;
 template class matmul_op<float>;

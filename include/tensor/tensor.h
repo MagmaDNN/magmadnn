@@ -113,6 +113,11 @@ public:
 	 */
 	unsigned int get_size() { return this->size; }
 
+	/** returns the memory type of this tensor
+	 * @return memory_t 
+	 */
+	memory_t get_memory_type() { return this->mem_type; }
+
 	/** The device id used by this tensor.
 	 * @return device_t 
 	 */

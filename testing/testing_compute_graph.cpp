@@ -26,21 +26,25 @@ int main(int argc, char **argv) {
 }
 
 void test_add(memory_t mem_type, unsigned int size) {
-	float left = 4;
-	float right = 6;
-	float total = left + right;
+	float val0 = 4;
+	float val1 = 6;
+	float val2 = 9;
+	float total = val0 + val1 + val2;
 
 	printf("testing %s add...  ", get_memory_type_name(mem_type));
 
-	tensor<float> *t0 = new tensor<float> ({size, size}, {CONSTANT, {left}}, mem_type);
-    tensor<float> *t1 = new tensor<float> ({size, size}, {CONSTANT, {right}}, mem_type);
+	tensor<float> *t0 = new tensor<float> ({size, size}, {CONSTANT, {val0}}, mem_type);
+    tensor<float> *t1 = new tensor<float> ({size, size}, {CONSTANT, {val1}}, mem_type);
+	tensor<float> *t2 = new tensor<float> ({size, size}, {CONSTANT, {val2}}, mem_type);
 
-	variable<float> *v0 = new variable<float> ("t0", t0);
-	variable<float> *v1 = new variable<float> ("t1", t1);
+	op::variable<float> *v0 = new op::variable<float> ("t0", t0);
+	op::variable<float> *v1 = new op::variable<float> ("t1", t1);
+	op::variable<float> *v2 = new op::variable<float> ("t2", t2);
 
-	auto sum = add_nocopy<float> (v0, v1);
+	// adds into v1
+	auto sum = op::add(v0, op::add(v1, v2));
 
-	tensor<float> *fin = sum.eval();
+	tensor<float> *fin = sum->eval();
 
 	for (int i = 0; i < size; i++) {
 		for (int j = 0; j < size; j++) {
@@ -50,8 +54,6 @@ void test_add(memory_t mem_type, unsigned int size) {
 
 	delete t0;
 	delete t1;
-	delete v0;
-	delete v1;
 
 	printf("Success!\n");
 }

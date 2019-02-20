@@ -10,6 +10,7 @@
 #include "tensor/tensor.h"
 
 namespace skepsi {
+namespace op {
 
 template <typename T>
 class operation {
@@ -24,4 +25,5 @@ protected:
     std::vector<operation<T>*> children;
 };
 
+} // namespace op
 } // namespace skepsi

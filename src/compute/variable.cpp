@@ -9,6 +9,7 @@
 #include "compute/variable.h"
 
 namespace skepsi {
+namespace op {
 
 template <typename T>
 tensor<T>* variable<T>::eval() {
@@ -20,4 +21,5 @@ template class variable<int>;
 template class variable<float>;
 template class variable<double>;
 
+} // namespace op
 } // namespace skepsi

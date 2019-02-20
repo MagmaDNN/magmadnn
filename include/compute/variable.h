@@ -12,6 +12,7 @@
 #include "operation.h"
 
 namespace skepsi {
+namespace op {
 
 template <typename T>
 class variable : public operation<T> {
@@ -25,4 +26,5 @@ protected:
     tensor<T> *val;
 };
 
+} // namespace op
 } // namespace skepsi

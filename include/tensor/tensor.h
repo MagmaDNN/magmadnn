@@ -79,11 +79,23 @@ public:
 	 */
 	T get(const std::vector<int>& idx);
 
+	/** gets the value at the given index.
+	 * @param idx indices to retreive value from
+	 * @return the value at idx
+	 */
+	T get(unsigned int flattened_idx);
+
 	/** sets the value at the given index.
 	 * @param idx indices to set value at
 	 * @param val value to write into idx
 	 */
-	void set(const std::vector<int>& idx, T val);	
+	void set(const std::vector<int>& idx, T val);
+
+	/** sets the value at the given index.
+	 * @param idx indices to set value at
+	 * @param val value to write into idx
+	 */
+	void set(unsigned int flattened_idx, T val);	
 	
 
 	/** Returns the memory manager used by this tensor
@@ -100,6 +112,11 @@ public:
 	 * @return unsigned int total number of elements in tensor
 	 */
 	unsigned int get_size() { return this->size; }
+
+	/** returns the memory type of this tensor
+	 * @return memory_t 
+	 */
+	memory_t get_memory_type() { return this->mem_type; }
 
 	/** The device id used by this tensor.
 	 * @return device_t 

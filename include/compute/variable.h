@@ -21,6 +21,8 @@ public:
 
     tensor<T>* eval();
 
+    std::string to_string() { return name; }
+
 protected:
     std::string name;
     tensor<T> *val;

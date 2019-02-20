@@ -11,6 +11,7 @@
 using namespace skepsi;
 
 void test_add(memory_t mem_type, unsigned int size);
+void test_matmul(memory_t mem_type, unsigned int size);
 const char* get_memory_type_name(memory_t mem);
 
 int main(int argc, char **argv) {
@@ -20,6 +21,13 @@ int main(int argc, char **argv) {
 	test_add(DEVICE, 50);
 	test_add(MANAGED, 50);
 	test_add(CUDA_MANAGED, 50);
+	#endif
+
+	test_matmul(HOST, 50);
+	#ifdef _HAS_CUDA_
+	test_matmul(DEVICE, 50);
+	test_matmul(MANAGED, 50);
+	test_matmul(CUDA_MANAGED, 50);
 	#endif
     
     return 0;
@@ -55,6 +63,41 @@ void test_add(memory_t mem_type, unsigned int size) {
 	delete t0;
 	delete t1;
 	delete t2;
+
+	printf("Success!\n");
+}
+
+void test_matmul(memory_t mem_type, unsigned int size) {
+	unsigned int m = size+1;
+	unsigned int n = size;
+	unsigned int p = size+5;
+	float val = 5;
+
+	printf("Testing %s matmul...  ", get_memory_type_name(mem_type));
+
+	tensor<float> *t0 = new tensor<float> ({m,n}, {ZERO, {}}, mem_type);
+	tensor<float> *t1 = new tensor<float> ({n,p}, {CONSTANT, {5}}, mem_type);
+
+	/* make t0 identity matrix */
+	for (int i = 0; i < (int) m; i++)
+		for (int j = 0; j < (int) n; j++)
+			if (i==j) t0->set({i,j}, 1);
+
+	op::variable<float> *v0 = op::var("t0", t0);
+	op::variable<float> *v1 = op::var("t1", t1);
+
+	auto prod = op::matmul(v0, v1);
+
+	tensor<float> *fin = prod->eval();
+
+	for (int i = 0; i < (int) m; i++) {
+		for (int j = 0; j < (int) p; j++) {
+			//assert( fin->get({i,j}) == val );
+		}
+	}
+
+	delete t0;
+	delete t1;
 
 	printf("Success!\n");
 }

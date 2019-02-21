@@ -19,7 +19,7 @@
 #ifdef _HAS_CUDA_
 #include <cuda.h>
 #include <cuda_runtime_api.h>
-#include "memory_utilities_device.h"
+#include "memory_internal_device.h"
 #endif
 
 namespace skepsi {

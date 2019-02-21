@@ -1,5 +1,5 @@
 /**
- * @file fill_utilities_host.cpp
+ * @file fill_internal_host.cpp
  * @author Daniel Nichols
  * @version 0.1
  * @date 2019-02-12
@@ -7,7 +7,7 @@
  * @copyright Copyright (c) 2019
  */
 
-#include "tensor/fill_utilities.h"
+#include "tensor/fill_internal.h"
 
 namespace skepsi {
 

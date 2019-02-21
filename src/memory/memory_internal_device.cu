@@ -1,12 +1,12 @@
 /**
- * @file memory_utilities_device.cu
+ * @file memory_internal_device.cu
  * @author Daniel Nichols
  * @version 0.1
  * @date 2019-02-11
  * 
  * @copyright Copyright (c) 2019
  */
-#include "memory/memory_utilities_device.h"
+#include "memory/memory_internal_device.h"
 
 
 namespace skepsi {

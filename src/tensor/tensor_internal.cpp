@@ -1,12 +1,12 @@
 /**
- * @file tensor_utilities.cpp
+ * @file tensor_internal.cpp
  * @author Daniel Nichols
  * @version 0.1
  * @date 2019-02-12
  * 
  * @copyright Copyright (c) 2019
  */
-#include "tensor/tensor_utilities.h"
+#include "tensor/tensor_internal.h"
 
 namespace skepsi {
 

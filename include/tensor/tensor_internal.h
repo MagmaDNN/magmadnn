@@ -1,5 +1,5 @@
 /**
- * @file tensor_utilities.h
+ * @file tensor_internal.h
  * @author Daniel Nichols
  * @version 0.1
  * @date 2019-02-12
@@ -9,7 +9,7 @@
 #pragma once
 
 #include "memory/memorymanager.h"
-#include "fill_utilities.h"
+#include "fill_internal.h"
 
 
 namespace skepsi {

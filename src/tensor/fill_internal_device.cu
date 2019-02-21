@@ -1,5 +1,5 @@
 /**
- * @file fill_utilities_device.cu
+ * @file fill_internal_device.cu
  * @author Daniel Nichols
  * @version 0.1
  * @date 2019-02-12
@@ -7,7 +7,7 @@
  * @copyright Copyright (c) 2019
  */
 
-#include "tensor/fill_utilities.h"
+#include "tensor/fill_internal.h"
 
 #ifdef _HAS_CUDA_
 

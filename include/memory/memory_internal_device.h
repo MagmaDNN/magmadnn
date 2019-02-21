@@ -1,5 +1,5 @@
 /**
- * @file memory_utilities_device.h
+ * @file memory_internal_device.h
  * @author Daniel Nichols
  * @version 0.1
  * @date 2019-02-12

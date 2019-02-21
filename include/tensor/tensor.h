@@ -11,7 +11,7 @@
 #include <vector>
 #include "types.h"
 #include "memory/memorymanager.h"
-#include "tensor_utilities.h"
+#include "tensor_internal.h"
 
 namespace skepsi {
 

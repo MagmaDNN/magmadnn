@@ -101,7 +101,7 @@ LIBSHARED_FLAG ?= -shared
 libstatic := lib/libskepsi.a
 libshared := lib/libskepsi$(LIBSHARED_EXT)
 
-lib: $(TARGET_DIRS) static shared
+lib: static shared
 static: $(libstatic)
 shared: $(libshared)
 

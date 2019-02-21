@@ -40,9 +40,9 @@ typedef enum tensor_fill_t {
  * fill_type: use UNIFORM, GLOROT, CONSTANT, ZERO, ONE, or NONE @see tensor_fill_t
  * values: the parameters for the fill_type
  */
-typedef struct tensor_filler_t {
+struct tensor_filler_t {
 	tensor_fill_t fill_type;
 	std::vector<double> values;
-} tensor_filler_t;
+};
 
 } // namespace skepsi

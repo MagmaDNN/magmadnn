@@ -12,32 +12,32 @@ namespace skepsi {
 
 template <typename T>
 tensor<T>::tensor(std::vector<unsigned int> shape) {
-    init(shape, TENSOR_DEFAULT_FILLER, TENSOR_DEFAULT_MEM_TYPE, TENSOR_DEFAULT_DEVICE_ID);
+    init(shape, {TENSOR_DEFAULT_FILL_TYPE, {}}, TENSOR_DEFAULT_MEM_TYPE, TENSOR_DEFAULT_DEVICE_ID);
  }
 
  template <typename T>
 tensor<T>::tensor(std::vector<unsigned int> shape, memory_t mem_type) {
-    init(shape, TENSOR_DEFAULT_FILLER, mem_type, TENSOR_DEFAULT_DEVICE_ID);
+    init(shape, {TENSOR_DEFAULT_FILL_TYPE, {}}, mem_type, TENSOR_DEFAULT_DEVICE_ID);
  }
 
 template <typename T>
 tensor<T>::tensor(std::vector<unsigned int> shape, memory_t mem_type, device_t device_id) { 
-    init(shape, TENSOR_DEFAULT_FILLER, mem_type, device_id);
+    init(shape, {TENSOR_DEFAULT_FILL_TYPE, {}}, mem_type, device_id);
 }
 
 template <typename T>
-tensor<T>::tensor(std::vector<unsigned int> shape, tensor_filler_t filler) { 
+tensor<T>::tensor(std::vector<unsigned int> shape, tensor_filler_t<T> filler) { 
     init(shape, filler, TENSOR_DEFAULT_MEM_TYPE, TENSOR_DEFAULT_DEVICE_ID);
 }
 
 template <typename T>
-tensor<T>::tensor(std::vector<unsigned int> shape, tensor_filler_t filler, memory_t mem_type) { 
+tensor<T>::tensor(std::vector<unsigned int> shape, tensor_filler_t<T> filler, memory_t mem_type) { 
     init(shape, filler, mem_type, TENSOR_DEFAULT_DEVICE_ID);
 }
 
 
 template <typename T>
-tensor<T>::tensor(std::vector<unsigned int> shape, tensor_filler_t filler, memory_t mem_type, device_t device_id) { 
+tensor<T>::tensor(std::vector<unsigned int> shape, tensor_filler_t<T> filler, memory_t mem_type, device_t device_id) { 
     init(shape, filler, mem_type, device_id);
 }
 
@@ -48,7 +48,7 @@ tensor<T>::~tensor() {
 
 
 template <typename T>
-void tensor<T>::init(std::vector<unsigned int>& shape, tensor_filler_t filler, memory_t mem_type, device_t device_id) {
+void tensor<T>::init(std::vector<unsigned int>& shape, tensor_filler_t<T> filler, memory_t mem_type, device_t device_id) {
     // tensor must have at least 1 axis
     assert( shape.size() != 0 );
 

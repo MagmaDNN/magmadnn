@@ -13,7 +13,7 @@ namespace skepsi {
 namespace internal {
 
 template <typename T>
-void fill_uniform(memorymanager<T> &m, const std::vector<double>& params) {
+void fill_uniform(memorymanager<T> &m, const std::vector<T>& params) {
     switch (m.get_memory_type()) {
         case HOST:
             // TODO
@@ -32,13 +32,13 @@ void fill_uniform(memorymanager<T> &m, const std::vector<double>& params) {
         #endif
     }
 }
-template void fill_uniform(memorymanager<int>&, const std::vector<double>&);
-template void fill_uniform(memorymanager<float>&, const std::vector<double>&);
+template void fill_uniform(memorymanager<int>&, const std::vector<int>&);
+template void fill_uniform(memorymanager<float>&, const std::vector<float>&);
 template void fill_uniform(memorymanager<double>&, const std::vector<double>&);
 
 
 template <typename T>
-void fill_glorot(memorymanager<T> &m, const std::vector<double>& params) {
+void fill_glorot(memorymanager<T> &m, const std::vector<T>& params) {
     switch (m.get_memory_type()) {
         case HOST:
             // TODO
@@ -57,13 +57,13 @@ void fill_glorot(memorymanager<T> &m, const std::vector<double>& params) {
         #endif
     }
 }
-template void fill_glorot(memorymanager<int>&, const std::vector<double>&);
-template void fill_glorot(memorymanager<float>&, const std::vector<double>&);
+template void fill_glorot(memorymanager<int>&, const std::vector<int>&);
+template void fill_glorot(memorymanager<float>&, const std::vector<float>&);
 template void fill_glorot(memorymanager<double>&, const std::vector<double>&);
 
 
 template <typename T>
-void fill_constant(memorymanager<T> &m, const std::vector<double>& params) {
+void fill_constant(memorymanager<T> &m, const std::vector<T>& params) {
     assert( params.size() >= 1 );
 
     // assume first param is constant value
@@ -90,8 +90,8 @@ void fill_constant(memorymanager<T> &m, const std::vector<double>& params) {
         #endif
     }
 }
-template void fill_constant(memorymanager<int>&, const std::vector<double>&);
-template void fill_constant(memorymanager<float>&, const std::vector<double>&);
+template void fill_constant(memorymanager<int>&, const std::vector<int>&);
+template void fill_constant(memorymanager<float>&, const std::vector<float>&);
 template void fill_constant(memorymanager<double>&, const std::vector<double>&);
 
 } // namespace internal

@@ -17,7 +17,7 @@ namespace internal {
 
 
 template <typename T>
-void fill_memory(memorymanager<T> &m, tensor_filler_t filler);
+void fill_memory(memorymanager<T> &m, tensor_filler_t<T> filler);
 
 }   // namespace internal
 }   // namespace skepsi

@@ -4,7 +4,7 @@ using namespace skepsi;
 
 const char* get_memory_type_name(memory_t mem);
 void test_indexing(memory_t mem, bool verbose);
-void test_fill(tensor_filler_t filler, memory_t mem, bool verbose);
+void test_fill(tensor_filler_t<float> filler, memory_t mem, bool verbose);
 
 int main(int argc, char **argv) {
     
@@ -49,7 +49,7 @@ void test_indexing(memory_t mem, bool verbose) {
 	if (verbose) printf("Success!\n");
 }
 
-void test_fill(tensor_filler_t filler, memory_t mem, bool verbose) {
+void test_fill(tensor_filler_t<float> filler, memory_t mem, bool verbose) {
 	unsigned int x_size = 50, y_size = 30;
 
 	if (verbose) printf("Testing fill_constant on %s...  ", get_memory_type_name(mem));

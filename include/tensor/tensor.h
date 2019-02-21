@@ -22,7 +22,7 @@ namespace skepsi {
 const memory_t TENSOR_DEFAULT_MEM_TYPE = HOST;
 const device_t TENSOR_DEFAULT_DEVICE_ID = (device_t) 0;
 const tensor_fill_t TENSOR_DEFAULT_FILL_TYPE = NONE;
-const tensor_filler_t TENSOR_DEFAULT_FILLER = { TENSOR_DEFAULT_FILL_TYPE, {} };
+const tensor_filler_t<float> TENSOR_DEFAULT_FILLER = { TENSOR_DEFAULT_FILL_TYPE, {} };
 
 
 template <typename T>
@@ -51,14 +51,14 @@ public:
 	 * @param shape a vector of axis sizes
 	 * @param fill value to set every element of tensor
 	 */
-	tensor(std::vector<unsigned int> shape, tensor_filler_t filler);
+	tensor(std::vector<unsigned int> shape, tensor_filler_t<T> filler);
 
 	/**
 	 * @param shape 
 	 * @param fill 
 	 * @param mem_type 
 	 */
-	tensor(std::vector<unsigned int> shape, tensor_filler_t filler, memory_t mem_type);
+	tensor(std::vector<unsigned int> shape, tensor_filler_t<T> filler, memory_t mem_type);
 	
 	/** Initializes tensor with the given shape, fill, device, and device id. Creates a new memory manager.
 	 * @param shape a vector of axis sizes
@@ -66,7 +66,7 @@ public:
 	 * @param device device type tensor will use
 	 * @param device_id id of device to use
 	 */
-	tensor(std::vector<unsigned int> shape, tensor_filler_t filler, memory_t mem_type, device_t device_id);
+	tensor(std::vector<unsigned int> shape, tensor_filler_t<T> filler, memory_t mem_type, device_t device_id);
 
 	/** Free tensor memory
 	 */
@@ -124,7 +124,7 @@ public:
 	device_t get_device_id() { return this->device_id; }
 
 private:
-	void init(std::vector<unsigned int>& shape, tensor_filler_t filler, memory_t mem_type, device_t device_id);
+	void init(std::vector<unsigned int>& shape, tensor_filler_t<T> filler, memory_t mem_type, device_t device_id);
 	unsigned int get_flattened_index(const std::vector<int>& idx);
 
 	memorymanager<T> *mem_manager;	/* allocated by init */

@@ -20,15 +20,15 @@ void fill_constant_device(memorymanager<T> &m, T val);
 #endif
 
 template <typename T>
-void fill_uniform(memorymanager<T> &m, const std::vector<double>& params);
+void fill_uniform(memorymanager<T> &m, const std::vector<T>& params);
 
 
 template <typename T>
-void fill_glorot(memorymanager<T> &m, const std::vector<double>& params);
+void fill_glorot(memorymanager<T> &m, const std::vector<T>& params);
 
 
 template <typename T>
-void fill_constant(memorymanager<T> &m, const std::vector<double>& params);
+void fill_constant(memorymanager<T> &m, const std::vector<T>& params);
 
 } // namespace internal
 } // namespace skepsi

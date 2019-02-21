@@ -68,7 +68,7 @@ void test_add(memory_t mem_type, unsigned int size) {
 }
 
 void test_matmul(memory_t mem_type, unsigned int size) {
-	unsigned int m = size+1;
+	unsigned int m = size;
 	unsigned int n = size;
 	unsigned int p = size+5;
 	float val = 5;
@@ -92,7 +92,7 @@ void test_matmul(memory_t mem_type, unsigned int size) {
 
 	for (int i = 0; i < (int) m; i++) {
 		for (int j = 0; j < (int) p; j++) {
-			//assert( fin->get({i,j}) == val );
+			assert( fin->get({i,j}) == val );
 		}
 	}
 

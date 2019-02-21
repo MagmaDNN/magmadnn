@@ -12,10 +12,12 @@ using namespace skepsi;
 
 void test_add(memory_t mem_type, unsigned int size);
 void test_matmul(memory_t mem_type, unsigned int size);
+void test_affine(memory_t mem_type, unsigned int size);
 const char* get_memory_type_name(memory_t mem);
 
 int main(int argc, char **argv) {
 
+	// test add
 	test_add(HOST, 50);
 	#ifdef _HAS_CUDA_
 	test_add(DEVICE, 50);
@@ -23,11 +25,20 @@ int main(int argc, char **argv) {
 	test_add(CUDA_MANAGED, 50);
 	#endif
 
+	// test matmul
 	test_matmul(HOST, 50);
 	#ifdef _HAS_CUDA_
 	test_matmul(DEVICE, 50);
 	test_matmul(MANAGED, 50);
 	test_matmul(CUDA_MANAGED, 50);
+	#endif
+
+	// test affine transformation
+	test_affine(HOST, 50);
+	#ifdef _HAS_CUDA_
+	test_affine(DEVICE, 50);
+	test_affine(MANAGED, 50);
+	test_affine(CUDA_MANAGED, 50);
 	#endif
     
     return 0;
@@ -98,6 +109,45 @@ void test_matmul(memory_t mem_type, unsigned int size) {
 
 	delete t0;
 	delete t1;
+
+	printf("Success!\n");
+}
+
+void test_affine(memory_t mem_type, unsigned int size) {
+	unsigned int m = size;
+	unsigned int n = size;
+	unsigned int p = size+5;
+	float val = 5;
+	float b = 12.5;
+
+	printf("Testing %s affine...  ", get_memory_type_name(mem_type));
+
+	tensor<float> *t0 = new tensor<float> ({m,n}, {ZERO, {}}, mem_type);
+	tensor<float> *t1 = new tensor<float> ({n,p}, {CONSTANT, {5}}, mem_type);
+	tensor<float> *t2 = new tensor<float> ({m,p}, {CONSTANT, {b}}, mem_type);
+
+	/* make t0 identity matrix */
+	for (int i = 0; i < (int) m; i++)
+		for (int j = 0; j < (int) n; j++)
+			if (i==j) t0->set({i,j}, 1);
+
+	op::variable<float> *v0 = op::var("t0", t0);
+	op::variable<float> *v1 = op::var("t1", t1);
+	op::variable<float> *v2 = op::var("t2", t2);
+
+	auto prod = op::add(op::matmul(v0, v1), v2);
+
+	tensor<float> *fin = prod->eval();
+
+	for (int i = 0; i < (int) m; i++) {
+		for (int j = 0; j < (int) p; j++) {
+			assert( fin->get({i,j}) == (val+b) );
+		}
+	}
+
+	delete t0;
+	delete t1;
+	delete t2;
 
 	printf("Success!\n");
 }

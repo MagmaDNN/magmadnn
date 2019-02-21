@@ -43,6 +43,7 @@ fix_libs.sh
 
 # executable files
 testing/bin/*
+examples/bin/*
 
 # doxygen folders
 docs/html/*

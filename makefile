@@ -127,6 +127,14 @@ testing:
 	$(MAKE) -C $(TESTING_DIR)
 	@echo
 
+# make the examples
+EXAMPLE_DIR ?= examples
+examples:
+	@echo "==== building examples ===="
+	# step into example directory and use its makefile
+	$(MAKE) -C $(EXAMPLE_DIR)
+	@echo
+
 
 # build the library first, then link the lib together.
 # install copies the newly made libs into prefix
@@ -145,6 +153,6 @@ clean:
 	rm $(wildcard $(TARGET_DIRS)/*.o $(TARGET_DIRS)/*/*.o)
 
 
-.PHONY: $(TARGET_DIRS) testing
+.PHONY: $(TARGET_DIRS) testing examples
 
 

@@ -13,10 +13,11 @@
 
 
 namespace skepsi {
+namespace internal {
 
 
 template <typename T>
 void fill_memory(memorymanager<T> &m, tensor_filler_t filler);
 
-
+}   // namespace internal
 }   // namespace skepsi

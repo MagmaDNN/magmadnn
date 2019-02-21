@@ -9,6 +9,7 @@
 #include "tensor/tensor_internal.h"
 
 namespace skepsi {
+namespace internal {
 
 template <typename T>
 void fill_memory(memorymanager<T> &m, tensor_filler_t filler) {
@@ -30,4 +31,5 @@ template void fill_memory(memorymanager<int>&, tensor_filler_t);
 template void fill_memory(memorymanager<float>&, tensor_filler_t);
 template void fill_memory(memorymanager<double>&, tensor_filler_t);
 
+} // namespace internal
 } // namespace skepsi

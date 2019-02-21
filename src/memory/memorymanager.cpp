@@ -245,7 +245,7 @@ T memorymanager<T>::get(unsigned int idx) {
         #ifdef _HAS_CUDA_
         case DEVICE:
 			cudaSetDevice(device_id);
-            return get_device_array_element(device_ptr, idx);
+            return internal::get_device_array_element(device_ptr, idx);
         case MANAGED:
             return host_ptr[idx];
         case CUDA_MANAGED:
@@ -266,11 +266,11 @@ void memorymanager<T>::set(unsigned int idx, T val) {
         #ifdef _HAS_CUDA_
         case DEVICE:
 			cudaSetDevice(device_id);
-            set_device_array_element(device_ptr, idx, val); break;
+            internal::set_device_array_element(device_ptr, idx, val); break;
         case MANAGED:
             host_ptr[idx] = val;
 			cudaSetDevice(device_id);
-            set_device_array_element(device_ptr, idx, val);
+            internal::set_device_array_element(device_ptr, idx, val);
             break;
         case CUDA_MANAGED:
             cuda_managed_ptr[idx] = val; break;

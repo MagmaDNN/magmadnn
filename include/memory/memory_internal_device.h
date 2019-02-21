@@ -11,6 +11,7 @@
 #ifdef _HAS_CUDA_
 
 namespace skepsi {
+namespace internal {
 
 /**	gets the device array element at idx. Note: This is slow. Favor copy_from for faster
     getting of large chunks of memory.
@@ -31,6 +32,7 @@ T get_device_array_element(T *arr, unsigned int idx);
 template <typename T>
 void set_device_array_element(T *arr, unsigned int idx, T val);
 
+} // namespace internal
 } // namespace skepsi
 
 #endif

@@ -12,6 +12,7 @@
 #include "memory/memorymanager.h"
 
 namespace skepsi {
+namespace internal {
 
 #ifdef _HAS_CUDA_
 template <typename T>
@@ -29,5 +30,5 @@ void fill_glorot(memorymanager<T> &m, const std::vector<double>& params);
 template <typename T>
 void fill_constant(memorymanager<T> &m, const std::vector<double>& params);
 
-
+} // namespace internal
 } // namespace skepsi

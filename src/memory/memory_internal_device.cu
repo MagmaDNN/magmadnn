@@ -10,6 +10,7 @@
 
 
 namespace skepsi {
+namespace internal {
 
 
 /** Sets result to the value of arr[idx]. 
@@ -57,5 +58,5 @@ template void set_device_array_element(int *arr, unsigned int idx, int val);
 template void set_device_array_element(float *arr, unsigned int idx, float val);
 template void set_device_array_element(double *arr, unsigned int idx, double val);
 
-
+} // namespace internal
 } // namespace skepsi

@@ -10,6 +10,7 @@
 #include "tensor/fill_internal.h"
 
 namespace skepsi {
+namespace internal {
 
 template <typename T>
 void fill_uniform(memorymanager<T> &m, const std::vector<double>& params) {
@@ -93,5 +94,5 @@ template void fill_constant(memorymanager<int>&, const std::vector<double>&);
 template void fill_constant(memorymanager<float>&, const std::vector<double>&);
 template void fill_constant(memorymanager<double>&, const std::vector<double>&);
 
-
+} // namespace internal
 } // namespace skepsi

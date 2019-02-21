@@ -66,7 +66,7 @@ void tensor<T>::init(std::vector<unsigned int>& shape, tensor_filler_t filler, m
     // create memory manager
     this->mem_manager = new memorymanager<T> (size, mem_type, device_id);
 
-    fill_memory(*mem_manager, filler);
+    internal::fill_memory(*mem_manager, filler);
 }
 
 

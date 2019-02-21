@@ -12,6 +12,7 @@
 #ifdef _HAS_CUDA_
 
 namespace skepsi {
+namespace internal {
 
 template <typename T>
 __global__ void kernel_fill_constant(T* arr, unsigned int size, T val) {
@@ -31,6 +32,6 @@ template void fill_constant_device(memorymanager<int> &m, int val);
 template void fill_constant_device(memorymanager<float> &m, float val);
 template void fill_constant_device(memorymanager<double> &m, double val);
 
-
+} // namespace internal
 } // namespace skepsi
 #endif

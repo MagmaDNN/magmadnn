@@ -17,7 +17,7 @@ namespace op {
 template <typename T>
 class add_op : public operation<T> {
 public:
-	add_op(operation<T>* a, operation<T>* b, bool copy=false) : a(a), b(b) {}
+	add_op(operation<T>* a, operation<T>* b, bool copy=false) : operation<T>::operation({a,b}), a(a), b(b) {}
 
 	tensor<T>* eval();
 	

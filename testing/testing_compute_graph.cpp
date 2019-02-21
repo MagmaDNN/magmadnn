@@ -74,6 +74,7 @@ void test_add(memory_t mem_type, unsigned int size) {
 	delete t0;
 	delete t1;
 	delete t2;
+	delete sum;
 
 	printf("Success!\n");
 }
@@ -109,6 +110,7 @@ void test_matmul(memory_t mem_type, unsigned int size) {
 
 	delete t0;
 	delete t1;
+	delete prod;
 
 	printf("Success!\n");
 }
@@ -135,9 +137,9 @@ void test_affine(memory_t mem_type, unsigned int size) {
 	op::variable<float> *v1 = op::var("t1", t1);
 	op::variable<float> *v2 = op::var("t2", t2);
 
-	auto prod = op::add(op::matmul(v0, v1), v2);
+	auto aff = op::add(op::matmul(v0, v1), v2);
 
-	tensor<float> *fin = prod->eval();
+	tensor<float> *fin = aff->eval();
 
 	for (int i = 0; i < (int) m; i++) {
 		for (int j = 0; j < (int) p; j++) {
@@ -148,6 +150,7 @@ void test_affine(memory_t mem_type, unsigned int size) {
 	delete t0;
 	delete t1;
 	delete t2;
+	delete aff;
 
 	printf("Success!\n");
 }

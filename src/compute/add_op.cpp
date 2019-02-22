@@ -13,13 +13,18 @@ namespace op {
 
 template <typename T>
 tensor<T>* add_op<T>::eval() {
-	tensor<T>* a_tensor = a->eval();
-	tensor<T>* b_tensor = b->eval();
+	tensor<T> *a_tensor = a->eval();
+	tensor<T> *b_tensor = b->eval();
 
-	for (unsigned int i = 0; i < a_tensor->get_size(); i++) {
-		b_tensor->set(i, a_tensor->get(i) + b_tensor->get(i));
-	}
-	return b_tensor;
+	tensor<T> *c_tensor;
+	if (copy) 
+		c_tensor = new tensor<T> (a_tensor->get_shape(), a_tensor->get_memory_type());
+	else
+		c_tensor = b_tensor;
+
+	internal::geadd_full((T)1, a_tensor, (T)1, b_tensor, c_tensor);
+	
+	return c_tensor;
 } 
 template class add_op<int>;
 template class add_op<float>;

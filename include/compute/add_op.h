@@ -9,6 +9,7 @@
 #pragma once
 #include <vector>
 #include "operation.h"
+#include "geadd_internal.h"
 #include "tensor/tensor.h"
 
 namespace skepsi {

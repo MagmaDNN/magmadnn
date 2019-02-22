@@ -13,26 +13,17 @@ namespace op {
 
 template <typename T>
 tensor<T>* matmul_op<T>::eval() {
-	tensor<T>* a_tensor = a->eval();    // NxM
-	tensor<T>* b_tensor = b->eval();    // MxP
+	tensor<T>* a_tensor = a->eval();    // MxK
+	tensor<T>* b_tensor = b->eval();    // KxN
 
-    unsigned int n = a_tensor->get_shape()[0];
-    unsigned int m = a_tensor->get_shape()[1];
-    unsigned int p = b_tensor->get_shape()[1];
-    assert( b_tensor->get_shape()[0] == m );
+    unsigned int M = a_tensor->get_shape()[0];
+    unsigned int N = b_tensor->get_shape()[1];
 
-    tensor<T>* c_tensor = new tensor<T> ({n,p}, a_tensor->get_memory_type());
+    tensor<T>* c_tensor = new tensor<T> ({M,N}, a_tensor->get_memory_type());
 
-	for (int i = 0; i < (int)n; i++) {
-        for (int j = 0; j < (int)p; j++) {
-            T sum = (T) 0;
-            for (int k = 0; k < (int)m; k++) {
-                sum = sum + (a_tensor->get({i,k}) * b_tensor->get({k,j}));
-            }
-            c_tensor->set({i,j}, sum);
-        }
-    }
-	return c_tensor;
+    internal::gemm_full((T) 1, a_tensor, b_tensor, (T) 0, c_tensor);
+
+    return c_tensor;
 } 
 template class matmul_op<int>;
 template class matmul_op<float>;

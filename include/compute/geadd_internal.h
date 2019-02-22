@@ -19,5 +19,10 @@ bool geadd_check(tensor<T> *A, tensor<T> *B, tensor<T> *C);
 template <typename T>
 void geadd_full(T alpha, tensor<T> *A, T beta, tensor<T> *B, tensor<T> *C);
 
+#if defined(_HAS_CUDA_)
+template <typename T>
+void geadd_full_device(unsigned int M, unsigned int N, T alpha, T *A, T beta, T *B, T *C);
+#endif
+
 }   // namespace internal
 }   // namespace skepsi

@@ -39,7 +39,7 @@ void geadd_full(T alpha, tensor<T> *A, T beta, tensor<T> *B, tensor<T> *C) {
     }
     #if defined(_HAS_CUDA_)
     else {
-        // geadd_full_device(alpha, A->get_memory_manager()->get_ptr(), beta, B->get_memory_manager()->get_ptr());
+        geadd_full_device(A->get_shape(0), A->get_shape(1), alpha, A->get_memory_manager()->get_ptr(), beta, B->get_memory_manager()->get_ptr(), C->get_memory_manager()->get_ptr());
     }
     #endif
 }

@@ -108,6 +108,12 @@ public:
 	 */
 	std::vector<unsigned int> get_shape() { return this->shape; }
 
+	/** returns the axis size at idx of shape (i.e. shape[idx])
+	 * @param idx 
+	 * @return unsigned int 
+	 */
+	unsigned int get_shape(unsigned int idx);
+
 	/** returns the number of elements in tensor
 	 * @return unsigned int total number of elements in tensor
 	 */

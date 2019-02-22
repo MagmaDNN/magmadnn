@@ -29,9 +29,9 @@ GPU_TARGET ?= Kepler
 ifneq ($(shell which nvcc),)
 include make.device
 CUDA_MACRO = -D_HAS_CUDA_
-INC += -I$(CUDADIR)/include
-LIBDIRS += -L$(CUDADIR)/lib64
-LIBS += -lcudart
+INC += -I$(CUDADIR)/include -I$(MAGMADIR)/include
+LIBDIRS += -L$(CUDADIR)/lib64 -L$(MAGMADIR)/lib
+LIBS += -lcudart -lmagma
 USE_CUDA=1
 endif
 

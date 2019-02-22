@@ -8,8 +8,11 @@
  */
 #pragma once
 #include "cblas.h"
-#include "magma.h"
 #include "tensor/tensor.h"
+
+#if defined(_HAS_CUDA_)
+#include "magma.h"
+#endif
 
 namespace skepsi {
 namespace internal {

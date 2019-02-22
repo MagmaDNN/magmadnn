@@ -16,7 +16,9 @@ void test_affine(memory_t mem_type, unsigned int size);
 const char* get_memory_type_name(memory_t mem);
 
 int main(int argc, char **argv) {
+	#if defined(_HAS_CUDA_)
 	magma_init();
+	#endif
 
 	// test add
 	test_add(HOST, 50);
@@ -42,7 +44,9 @@ int main(int argc, char **argv) {
 	test_affine(CUDA_MANAGED, 50);
 	#endif
     
+	#if defined(_HAS_CUDA_)
 	magma_finalize();
+	#endif
     return 0;
 }
 
@@ -67,8 +71,10 @@ void test_add(memory_t mem_type, unsigned int size) {
 
 	tensor<float> *fin = sum->eval();
 
+	#if defined(_HAS_CUDA_)
 	if (mem_type == DEVICE || mem_type == CUDA_MANAGED) fin->get_memory_manager()->sync();
 	if (mem_type == MANAGED) fin->get_memory_manager()->sync(true);
+	#endif
 
 	for (int i = 0; i < (int)size; i++) {
 		for (int j = 0; j < (int)size; j++) {
@@ -107,8 +113,10 @@ void test_matmul(memory_t mem_type, unsigned int size) {
 
 	tensor<float> *fin = prod->eval();
 
+	#if defined(_HAS_CUDA_)
 	if (mem_type == DEVICE || mem_type == CUDA_MANAGED) fin->get_memory_manager()->sync();
 	if (mem_type == MANAGED) fin->get_memory_manager()->sync(true);
+	#endif
 
 	for (int i = 0; i < (int) m; i++) {
 		for (int j = 0; j < (int) p; j++) {
@@ -149,8 +157,10 @@ void test_affine(memory_t mem_type, unsigned int size) {
 
 	tensor<float> *fin = aff->eval();
 
+	#if defined(_HAS_CUDA_)
 	if (mem_type == DEVICE || mem_type == CUDA_MANAGED) fin->get_memory_manager()->sync();
 	if (mem_type == MANAGED) fin->get_memory_manager()->sync(true);
+	#endif
 
 	for (int i = 0; i < (int) m; i++) {
 		for (int j = 0; j < (int) p; j++) {

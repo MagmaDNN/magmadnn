@@ -8,7 +8,7 @@
  */
 #pragma once
 
-#ifdef _HAS_CUDA_
+#if defined(_HAS_CUDA_)
 
 namespace skepsi {
 namespace internal {

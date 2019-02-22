@@ -22,7 +22,7 @@ int main(int argc, char **argv) {
 
 	// test add
 	test_add(HOST, 50);
-	#ifdef _HAS_CUDA_
+	#if defined(_HAS_CUDA_)
 	test_add(DEVICE, 50);
 	test_add(MANAGED, 50);
 	test_add(CUDA_MANAGED, 50);
@@ -30,7 +30,7 @@ int main(int argc, char **argv) {
 
 	// test matmul
 	test_matmul(HOST, 50);
-	#ifdef _HAS_CUDA_
+	#if defined(_HAS_CUDA_)
 	test_matmul(DEVICE, 50);
 	test_matmul(MANAGED, 50);
 	test_matmul(CUDA_MANAGED, 50);
@@ -38,7 +38,7 @@ int main(int argc, char **argv) {
 
 	// test affine transformation
 	test_affine(HOST, 50);
-	#ifdef _HAS_CUDA_
+	#if defined(_HAS_CUDA_)
 	test_affine(DEVICE, 50);
 	test_affine(MANAGED, 50);
 	test_affine(CUDA_MANAGED, 50);
@@ -179,7 +179,7 @@ void test_affine(memory_t mem_type, unsigned int size) {
 const char* get_memory_type_name(memory_t mem) {
 	switch (mem) {
 		case HOST: 			return "HOST";
-		#ifdef _HAS_CUDA_
+		#if defined(_HAS_CUDA_)
 		case DEVICE: 		return "DEVICE";
 		case MANAGED: 		return "MANAGED";
 		case CUDA_MANAGED: 	return "CUDA_MANAGED";

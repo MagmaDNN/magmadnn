@@ -11,7 +11,7 @@ using namespace skepsi;
 const char* get_memory_type_name(memory_t mem) {
 	switch (mem) {
 		case HOST: 			return "HOST";
-		#ifdef _HAS_CUDA_
+		#if defined(_HAS_CUDA_)
 		case DEVICE: 		return "DEVICE";
 		case MANAGED: 		return "MANAGED";
 		case CUDA_MANAGED: 	return "CUDA_MANAGED";
@@ -77,7 +77,7 @@ int main(int argc, char** argv) {
 
 	// get/set
 	test_get_set(HOST, test_size, true);
-	#ifdef _HAS_CUDA_
+	#if defined(_HAS_CUDA_)
 	test_get_set(DEVICE, test_size, true);
 	test_get_set(MANAGED, test_size, true);
 	test_get_set(CUDA_MANAGED, test_size, true);
@@ -87,7 +87,7 @@ int main(int argc, char** argv) {
 	// host to ...
 	test_copy(HOST, HOST, test_size, true);
 
-	#ifdef _HAS_CUDA_
+	#if defined(_HAS_CUDA_)
 	test_copy(HOST, DEVICE, test_size, true);
 	test_copy(HOST, MANAGED, test_size, true);
 	test_copy(HOST, CUDA_MANAGED, test_size, true);

@@ -20,7 +20,7 @@ memorymanager<T>::memorymanager(unsigned int size, memory_t mem_type, device_t d
         switch (mem_type) {
             case HOST:
                 init_host(); break;
-            #ifdef _HAS_CUDA_
+            #if defined(_HAS_CUDA_)
             case DEVICE:
                 init_device(); break;
             case MANAGED:
@@ -38,7 +38,7 @@ void memorymanager<T>::init_host() {
     host_ptr = (T *) std::malloc(size * sizeof(T));
 }
 
-#ifdef _HAS_CUDA_
+#if defined(_HAS_CUDA_)
 template <typename T>
 void memorymanager<T>::init_device() {
     cudaMalloc((void**) &device_ptr, size * sizeof(T));
@@ -61,7 +61,7 @@ memorymanager<T>::~memorymanager<T>() {
     switch (mem_type) {
         case HOST:
             std::free(host_ptr); break;
-        #ifdef _HAS_CUDA_
+        #if defined(_HAS_CUDA_)
         case DEVICE:
             cudaFree(device_ptr); break;
         case MANAGED:
@@ -82,7 +82,7 @@ skepsi_error_t memorymanager<T>::copy_from(const memorymanager<T>& src, unsigned
     if (src.mem_type == HOST) {
         return copy_from_host(src.host_ptr, begin_idx, copy_size);
     }
-    #ifdef _HAS_CUDA_
+    #if defined(_HAS_CUDA_)
     else if (src.mem_type == DEVICE) {
         return copy_from_device(src.device_ptr, begin_idx, copy_size);
     } else if (src.mem_type == MANAGED) {
@@ -113,7 +113,7 @@ skepsi_error_t memorymanager<T>::copy_from_host(T *src, unsigned int begin_idx, 
             // host --> host
 			std::copy(src + begin_idx, (src+begin_idx) + copy_size, host_ptr);
             return (skepsi_error_t) 0;
-        #ifdef _HAS_CUDA_
+        #if defined(_HAS_CUDA_)
         case DEVICE:
             // host --> device
             return (skepsi_error_t) cudaMemcpy(device_ptr, src+begin_idx, copy_size*sizeof(T), cudaMemcpyHostToDevice);
@@ -133,7 +133,7 @@ skepsi_error_t memorymanager<T>::copy_from_host(T *src, unsigned int begin_idx, 
     return (skepsi_error_t) 1;
 }
 
-#ifdef _HAS_CUDA_
+#if defined(_HAS_CUDA_)
 template <typename T>
 skepsi_error_t memorymanager<T>::copy_from_device(T *src, unsigned int begin_idx, unsigned int copy_size) {
 
@@ -214,7 +214,7 @@ skepsi_error_t memorymanager<T>::copy_from_cudamanaged(T *src, unsigned int begi
 
 template <typename T>
 skepsi_error_t memorymanager<T>::sync(bool gpu_was_modified) {
-    #ifdef _HAS_CUDA_
+    #if defined(_HAS_CUDA_)
         cudaError_t err = (cudaError_t) 0;
 
         if (mem_type == CUDA_MANAGED) {
@@ -242,7 +242,7 @@ T memorymanager<T>::get(unsigned int idx) {
     switch (mem_type) {
         case HOST:
             return host_ptr[idx];
-        #ifdef _HAS_CUDA_
+        #if defined(_HAS_CUDA_)
         case DEVICE:
 			cudaSetDevice(device_id);
             return internal::get_device_array_element(device_ptr, idx);
@@ -263,7 +263,7 @@ void memorymanager<T>::set(unsigned int idx, T val) {
     switch (mem_type) {
         case HOST:
             host_ptr[idx] = val; break;
-        #ifdef _HAS_CUDA_
+        #if defined(_HAS_CUDA_)
         case DEVICE:
 			cudaSetDevice(device_id);
             internal::set_device_array_element(device_ptr, idx, val); break;
@@ -281,7 +281,7 @@ void memorymanager<T>::set(unsigned int idx, T val) {
 template <typename T>
 skepsi_error_t memorymanager<T>::set_device(device_t device_id) {
 
-    #ifdef _HAS_CUDA_
+    #if defined(_HAS_CUDA_)
 	int n_devices = 0;
 	cudaGetDeviceCount(&n_devices);
 	if ((int)device_id >= n_devices) {
@@ -299,7 +299,7 @@ T* memorymanager<T>::get_host_ptr() {
     return host_ptr;
 }
 
-#ifdef _HAS_CUDA_
+#if defined(_HAS_CUDA_)
 template <typename T>
 T* memorymanager<T>::get_device_ptr() {
     return device_ptr;
@@ -316,7 +316,7 @@ T* memorymanager<T>::get_ptr() {
     switch (mem_type) {
         case HOST:
             return get_host_ptr();
-        #ifdef _HAS_CUDA_
+        #if defined(_HAS_CUDA_)
         case DEVICE:
             return get_device_ptr();
         case MANAGED:

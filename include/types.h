@@ -14,7 +14,7 @@ namespace skepsi {
 
 typedef enum memory_t {
 	HOST,
-	#ifdef _HAS_CUDA_
+	#if defined(_HAS_CUDA_)
 	DEVICE,
 	MANAGED,
 	CUDA_MANAGED

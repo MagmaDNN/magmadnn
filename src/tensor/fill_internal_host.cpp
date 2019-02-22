@@ -19,7 +19,7 @@ void fill_uniform(memorymanager<T> &m, const std::vector<T>& params) {
             // TODO
             break;
             
-        #ifdef _HAS_CUDA_
+        #if defined(_HAS_CUDA_)
         case DEVICE:
             // TODO
             break;
@@ -44,7 +44,7 @@ void fill_glorot(memorymanager<T> &m, const std::vector<T>& params) {
             // TODO
             break;
             
-        #ifdef _HAS_CUDA_
+        #if defined(_HAS_CUDA_)
         case DEVICE:
             // TODO
             break;
@@ -74,7 +74,7 @@ void fill_constant(memorymanager<T> &m, const std::vector<T>& params) {
             for (int i = 0; i < (int) m.get_size(); i++) m.get_host_ptr()[i] = val;
             break;
             
-        #ifdef _HAS_CUDA_
+        #if defined(_HAS_CUDA_)
         case DEVICE:
 			fill_constant_device(m, val);	// fill device pointer
             break;

@@ -119,6 +119,11 @@ public:
 	 */
 	unsigned int get_size() { return this->size; }
 
+	/** returns the pointer used by the memory manager.
+	 * @return T* 
+	 */
+	T* get_ptr() { return this->mem_manager->get_ptr(); }
+
 	/** returns the memory type of this tensor
 	 * @return memory_t 
 	 */

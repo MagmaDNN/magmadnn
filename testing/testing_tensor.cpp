@@ -10,14 +10,14 @@ int main(int argc, char **argv) {
     
 	// test indexing	
     test_indexing(HOST, true);
-	#ifdef _HAS_CUDA_
+	#if defined(_HAS_CUDA_)
 	test_indexing(DEVICE, true);
 	test_indexing(MANAGED, true);
 	test_indexing(CUDA_MANAGED, true);
 	#endif
 
 	test_fill({CONSTANT, {0.5}}, HOST, true);
-	#ifdef _HAS_CUDA_
+	#if defined(_HAS_CUDA_)
 	test_fill({CONSTANT, {0.5}}, DEVICE, true);
 	test_fill({CONSTANT, {0.5}}, MANAGED, true);
 	test_fill({CONSTANT, {0.5}}, CUDA_MANAGED, true);
@@ -70,7 +70,7 @@ void test_fill(tensor_filler_t<float> filler, memory_t mem, bool verbose) {
 const char* get_memory_type_name(memory_t mem) {
 	switch (mem) {
 		case HOST: 			return "HOST";
-		#ifdef _HAS_CUDA_
+		#if defined(_HAS_CUDA_)
 		case DEVICE: 		return "DEVICE";
 		case MANAGED: 		return "MANAGED";
 		case CUDA_MANAGED: 	return "CUDA_MANAGED";

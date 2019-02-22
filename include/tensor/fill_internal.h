@@ -14,7 +14,7 @@
 namespace skepsi {
 namespace internal {
 
-#ifdef _HAS_CUDA_
+#if defined(_HAS_CUDA_)
 template <typename T>
 void fill_constant_device(memorymanager<T> &m, T val);
 #endif

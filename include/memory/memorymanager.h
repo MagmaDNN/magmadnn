@@ -16,7 +16,7 @@
 #include "types.h"
 
 // include cuda files if on GPU
-#ifdef _HAS_CUDA_
+#if defined(_HAS_CUDA_)
 #include <cuda.h>
 #include <cuda_runtime_api.h>
 #include "memory_internal_device.h"
@@ -67,7 +67,7 @@ public:
     skepsi_error_t copy_from_host(T *src, unsigned int begin_idx, unsigned int size);
 
 
-    #ifdef _HAS_CUDA_
+    #if defined(_HAS_CUDA_)
     /** copies memory from a device ptr into this memorymanager. will throw an error if it
      *  reaches the end of src allocated mem before this is filled.
      *  @param src the array to copy into this.
@@ -122,7 +122,7 @@ public:
      */
     T* get_host_ptr();
 
-    #ifdef _HAS_CUDA_
+    #if defined(_HAS_CUDA_)
     /** returns a CUDA pointer
      *  @return a pointer to the memory on a cuda device.
      */
@@ -155,7 +155,7 @@ private:
     /** init with HOST parameters */
     void init_host();
 
-    #ifdef _HAS_CUDA_
+    #if defined(_HAS_CUDA_)
     /** init with DEVICE parameters */
     void init_device();
 
@@ -172,7 +172,7 @@ private:
     unsigned int size;
     T* host_ptr;
 
-    #ifdef _HAS_CUDA_
+    #if defined(_HAS_CUDA_)
     T* device_ptr;
     T* cuda_managed_ptr;
     #endif

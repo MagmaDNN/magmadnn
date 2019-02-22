@@ -9,7 +9,6 @@
 
 #include "tensor/fill_internal.h"
 
-#ifdef _HAS_CUDA_
 
 namespace skepsi {
 namespace internal {
@@ -34,4 +33,4 @@ template void fill_constant_device(memorymanager<double> &m, double val);
 
 } // namespace internal
 } // namespace skepsi
-#endif
+

@@ -8,7 +8,6 @@
  */
 #include "compute/geadd_internal.h"
 
-#if defined(_HAS_CUDA_)
 
 namespace skepsi {
 namespace internal {
@@ -37,5 +36,3 @@ template void geadd_full_device(unsigned int M, unsigned int N, double alpha, do
 
 }	// namespace internal
 }	// namespace skepsi
-
-#endif

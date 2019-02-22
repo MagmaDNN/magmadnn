@@ -18,7 +18,8 @@ namespace op {
 template <typename T>
 class add_op : public operation<T> {
 public:
-	add_op(operation<T>* a, operation<T>* b, bool copy=false) : operation<T>::operation({a,b}), a(a), b(b) {}
+	add_op(operation<T>* a, operation<T>* b, bool copy=true) : 
+		operation<T>::operation({a,b}), a(a), b(b), copy(copy) {}
 
 	tensor<T>* eval();
 	
@@ -26,10 +27,11 @@ public:
 protected:
 	operation<T>* a;
 	operation<T>* b;
+	bool copy;
 };
 
 template <typename T>
-add_op<T>* add(operation<T> *a, operation<T> *b, bool copy=false);
+add_op<T>* add(operation<T> *a, operation<T> *b, bool copy=true);
 
 } // namespace op
 } // namespace skepsi

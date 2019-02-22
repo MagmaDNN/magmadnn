@@ -61,11 +61,25 @@ void gemm_full(float alpha, tensor<float> *A, tensor<float> *B, float beta, tens
     // A: MxK  B: KxN  C: MxN
     // (MxR)(RxN) + (MxN) = (MxN) + (MxN) = (MxN)
 
-    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 
-        M, N, K,
-        alpha, A->get_memory_manager()->get_host_ptr(), K,
-        B->get_memory_manager()->get_host_ptr(), N, beta,
-        C->get_memory_manager()->get_host_ptr(), N);
+	if (A->get_memory_type() == HOST) {
+		cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 
+			M, N, K,
+			alpha, A->get_memory_manager()->get_host_ptr(), K,
+			B->get_memory_manager()->get_host_ptr(), N, beta,
+			C->get_memory_manager()->get_host_ptr(), N);
+	}
+	#if defined(_HAS_CUDA_)
+	else {
+		
+		// since magma is column-major we'll need the transpose of everything
+		// i.e. (AB)^T = (C)^T and the fact that (AB)^T = (B^T)(A^T)
+		magma_sgemm(MagmaNoTrans, MagmaNoTrans,
+			N, M, K,
+			alpha, B->get_memory_manager()->get_ptr(), N,
+			A->get_memory_manager()->get_ptr(), K,
+			beta, C->get_memory_manager()->get_ptr(), N);
+	}
+	#endif
 }
 
 /* DOUBLE */
@@ -74,11 +88,25 @@ void gemm_full(double alpha, tensor<double> *A, tensor<double> *B, double beta, 
     unsigned int M, N, K;
     if (!gemm_check(A, B, C, M, N, K)) return;
 
-    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 
-        M, N, K,
-        alpha, A->get_memory_manager()->get_host_ptr(), K,
-        B->get_memory_manager()->get_host_ptr(), N, beta,
-        C->get_memory_manager()->get_host_ptr(), N);
+	if (A->get_memory_type() == HOST) {
+		cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 
+			M, N, K,
+			alpha, A->get_memory_manager()->get_host_ptr(), K,
+			B->get_memory_manager()->get_host_ptr(), N, beta,
+			C->get_memory_manager()->get_host_ptr(), N);
+	}
+	#if defined(_HAS_CUDA_)
+	else {	
+
+		// since magma is column-major we'll need the transpose of everything
+		// i.e. (AB)^T = (C)^T and the fact that (AB)^T = (B^T)(A^T)
+		magma_dgemm(MagmaNoTrans, MagmaNoTrans,
+			N, M, K,
+			alpha, B->get_memory_manager()->get_ptr(), N,
+			A->get_memory_manager()->get_ptr(), K,
+			beta, C->get_memory_manager()->get_ptr(), N);
+	}
+	#endif	
 }
 
 }   // namespace internal

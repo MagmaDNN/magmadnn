@@ -8,6 +8,7 @@
  */
 #pragma once
 #include "cblas.h"
+#include "magma.h"
 #include "tensor/tensor.h"
 
 namespace skepsi {

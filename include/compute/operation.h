@@ -16,6 +16,9 @@ namespace op {
 template <typename T>
 class operation {
 public: 
+    /** The operation class serves as an abstract object, which all tensors operations descend
+     *  from. It is used to build a computation tree.
+     */
     operation() {}
     operation(std::vector<operation<T>*> children) : children(children) {}
 	virtual ~operation() {
@@ -23,8 +26,14 @@ public:
             delete children[i];
     }
 
+    /** Returns the operation's evaluated tensor.
+     * @return tensor<T>* 
+     */
     virtual tensor<T>* eval() = 0;
 
+    /** string form of the given operation. Expands on children.
+     * @return std::string 
+     */
     virtual std::string to_string() = 0;
     
 protected:

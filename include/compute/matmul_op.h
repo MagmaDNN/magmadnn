@@ -28,6 +28,13 @@ protected:
 	operation<T>* b;
 };
 
+/** Returns a new operation of type matmul. It computes the matrix product of A and B.
+ * @tparam T 
+ * @param a 
+ * @param b 
+ * @param copy 
+ * @return matmul_op<T>* 
+ */
 template <typename T>
 matmul_op<T>* matmul(operation<T> *a, operation<T> *b, bool copy=false);
 

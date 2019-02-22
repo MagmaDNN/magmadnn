@@ -15,6 +15,9 @@
 namespace skepsi {
 namespace op {
 
+/**	An addition operation on two tensors.
+ * @tparam T 
+ */
 template <typename T>
 class add_op : public operation<T> {
 public:
@@ -30,6 +33,13 @@ protected:
 	bool copy;
 };
 
+/** Returns a new add operation (@see add_op<T>).
+ * @tparam T 
+ * @param a 
+ * @param b 
+ * @param copy If copy is true then it returns a new tensor, if false then b=a+b.
+ * @return add_op<T>* 
+ */
 template <typename T>
 add_op<T>* add(operation<T> *a, operation<T> *b, bool copy=true);
 

@@ -134,8 +134,8 @@ public:
     T* get_cuda_managed_ptr();
     #endif
     
-    /** Returns a pointer to whatever memory type this is using. Is not
-     *  defined for MANAGED memory type (returns NULL).
+    /** Returns a pointer to whatever memory type this is using. For MANAGED
+     *  memory type it returns the device pointer.
      *  @return the data ptr
      */
     T* get_ptr();

@@ -320,8 +320,8 @@ T* memorymanager<T>::get_ptr() {
         case DEVICE:
             return get_device_ptr();
         case MANAGED:
-            fprintf(stderr, "memorymanager::get_ptr() is not defined for MANAGED type memory\n");
-            return (T*) NULL;
+            // returns device by default for managed
+            return get_device_ptr();
         case CUDA_MANAGED:
             return get_cuda_managed_ptr();
         #endif

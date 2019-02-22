@@ -10,16 +10,18 @@ NVCC ?= nvcc
 # locations of cuda and magma installations
 CUDADIR ?= /usr/local/cuda
 MAGMADIR ?= /usr/local/magma
+BLASDIR ?= /usr/local/openblas
+BLASLIB ?= openblas
 
 # where to install skepsi (make must have sudo access if prefix is root privileged)
 prefix ?= /usr/local/skepsi
 
 # headers needed for library compilation
-INC = -I./include 
+INC := -I./include -I$(BLASDIR)/include
 
 # libs to link with
-LIBDIRS =
-LIBS = 
+LIBDIRS := -L$(BLASDIR)/lib
+LIBS = -l$(BLASLIB)
 
 # use nvcc to determine if we should compile for gpu or not
 USE_CUDA = 0
@@ -43,14 +45,14 @@ CXX_VERSION ?= -std=c++11
 # the entire flags for compilation
 CXXFLAGS := $(OPTIMIZATION_LEVEL) $(WARNINGS) $(CXX_VERSION) $(CUDA_MACRO) $(FPIC) -MMD
 NVCCFLAGS := $(CXX_VERSION) $(OPTIMIZATION_LEVEL) -Xcompiler "$(CXXFLAGS)" $(NV_SM) $(NV_COMP)
+LD_FLAGS := $(LIBDIRS) $(LIBS)
 
 
 # make these available to child makefiles
 export CXX
 export NVCC
 export INC
-export LIBDIRS
-export LIBS
+export LD_FLAGS
 export prefix
 export CUDADIR
 export MAGMADIR
@@ -115,7 +117,7 @@ $(libstatic):
 $(libshared):
 	@echo "==== building shared lib ===="
 	mkdir -p lib
-	$(CXX) $(LIBSHARED_FLAG) $(FPIC) -o $@ $(OBJ_FILES) -L./lib 
+	$(CXX) $(LIBSHARED_FLAG) $(FPIC) -o $@ $(OBJ_FILES) -L./lib $(LD_FLAGS)
 	@echo 
 
 

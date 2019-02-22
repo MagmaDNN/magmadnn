@@ -60,7 +60,7 @@ sh ./run_tests.sh
 - [x] Creates Docs and doxygen config
 - [x] Implement compute graph and basic operations for tensors
 - [x] Build tests for compute graph and tensor operations
-- [ ] Link with BLAS/LAPACK (OpenBLAS?) and MAGMA
+- [x] Link with BLAS/LAPACK (OpenBLAS?) and MAGMA
 - [ ] Implement basic Layer classes (Dense, Activation, Flatten, CNN)
 - [ ] Implement Model with forward/backward propagation
 - [ ] Build tests for Model/Layer training

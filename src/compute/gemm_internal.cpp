@@ -41,6 +41,8 @@ void gemm_full(int alpha, tensor<int> *A, tensor<int> *B, int beta, tensor<int> 
     unsigned int M, N, K;
     if (!gemm_check(A, B, C, M, N, K)) return;
 
+	// standard O(MNK) gemm algorithm
+	// TODO: replace with strassen
 	for (int i = 0; i < (int)M; i++) {
         for (int j = 0; j < (int)N; j++) {
             int sum = 0;
@@ -62,6 +64,7 @@ void gemm_full(float alpha, tensor<float> *A, tensor<float> *B, float beta, tens
     // (MxR)(RxN) + (MxN) = (MxN) + (MxN) = (MxN)
 
 	if (A->get_memory_type() == HOST) {
+		// specify ROW MAJOR, since tensors are stored in row-major
 		cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 
 			M, N, K,
 			alpha, A->get_memory_manager()->get_host_ptr(), K,
@@ -70,7 +73,6 @@ void gemm_full(float alpha, tensor<float> *A, tensor<float> *B, float beta, tens
 	}
 	#if defined(_HAS_CUDA_)
 	else {
-		
 		// since magma is column-major we'll need the transpose of everything
 		// i.e. (AB)^T = (C)^T and the fact that (AB)^T = (B^T)(A^T)
 		magma_sgemm(MagmaNoTrans, MagmaNoTrans,
@@ -89,6 +91,7 @@ void gemm_full(double alpha, tensor<double> *A, tensor<double> *B, double beta, 
     if (!gemm_check(A, B, C, M, N, K)) return;
 
 	if (A->get_memory_type() == HOST) {
+		// specify ROW MAJOR, since tensors are stored in row-major
 		cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 
 			M, N, K,
 			alpha, A->get_memory_manager()->get_host_ptr(), K,
@@ -97,7 +100,6 @@ void gemm_full(double alpha, tensor<double> *A, tensor<double> *B, double beta, 
 	}
 	#if defined(_HAS_CUDA_)
 	else {	
-
 		// since magma is column-major we'll need the transpose of everything
 		// i.e. (AB)^T = (C)^T and the fact that (AB)^T = (B^T)(A^T)
 		magma_dgemm(MagmaNoTrans, MagmaNoTrans,

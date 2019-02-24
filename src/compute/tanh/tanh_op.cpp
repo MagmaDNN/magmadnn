@@ -6,7 +6,7 @@
  * 
  * @copyright Copyright (c) 2019
  */
-#include "compute/tanh_op.h"
+#include "compute/tanh/tanh_op.h"
 
 namespace skepsi {
 namespace op {

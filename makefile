@@ -84,8 +84,8 @@ endif
 	$(MAKE) -C $@
 	@echo
 
-# collect all the object files from the source directories
-OBJ_FILES = $(wildcard $(TARGET_DIRS)/*.o $(TARGET_DIRS)/*/*.o)
+# collect all the object files from the source directories (deepest: src/compute/*/*.cpp)
+OBJ_FILES = $(wildcard $(TARGET_DIRS)/*.o $(TARGET_DIRS)/*/*.o $(TARGET_DIRS)/*/*/*.o)
 
 
 # MAKE THE LIB FILES
@@ -152,7 +152,7 @@ install: $(TARGET_DIRS) lib
 
 # TODO: change to call clean on subdirectory makefiles
 clean:
-	rm $(wildcard $(TARGET_DIRS)/*.o $(TARGET_DIRS)/*/*.o)
+	rm $(OBJ_FILES)
 
 
 .PHONY: $(TARGET_DIRS) testing examples

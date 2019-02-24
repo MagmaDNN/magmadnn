@@ -6,7 +6,7 @@
  * 
  * @copyright Copyright (c) 2019
  */
-#include "compute/add_op.h"
+#include "compute/add/add_op.h"
 
 namespace skepsi {
 namespace op {

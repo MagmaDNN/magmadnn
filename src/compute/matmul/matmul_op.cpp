@@ -6,7 +6,7 @@
  * 
  * @copyright Copyright (c) 2019
  */
-#include "compute/matmul_op.h"
+#include "compute/matmul/matmul_op.h"
 
 namespace skepsi {
 namespace op {

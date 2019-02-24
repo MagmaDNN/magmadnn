@@ -6,7 +6,7 @@
  * 
  * @copyright Copyright (c) 2019
  */
- #include "compute/tanh_internal.h"
+ #include "compute/tanh/tanh_internal.h"
 
  namespace skepsi {
  namespace internal {

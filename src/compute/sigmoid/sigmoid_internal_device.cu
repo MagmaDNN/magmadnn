@@ -6,7 +6,7 @@
  * 
  * @copyright Copyright (c) 2019
  */
- #include "compute/sigmoid_internal.h"
+ #include "compute/sigmoid/sigmoid_internal.h"
 
  namespace skepsi {
  namespace internal {

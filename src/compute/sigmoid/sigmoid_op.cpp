@@ -6,7 +6,7 @@
  * 
  * @copyright Copyright (c) 2019
  */
-#include "compute/sigmoid_op.h"
+#include "compute/sigmoid/sigmoid_op.h"
 
 namespace skepsi {
 namespace op {

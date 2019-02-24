@@ -1,7 +1,7 @@
 #pragma once
 
-#include "add_op.h"
-#include "matmul_op.h"
+#include "add/add_op.h"
+#include "matmul/matmul_op.h"
 
-#include "sigmoid_op.h"
-#include "tanh_op.h"
+#include "sigmoid/sigmoid_op.h"
+#include "tanh/tanh_op.h"

@@ -6,7 +6,7 @@
  *
  * @copyright Copyright (c) 2019
  */
-#include "compute/geadd_internal.h"
+#include "compute/add/geadd_internal.h"
 
 
 namespace skepsi {

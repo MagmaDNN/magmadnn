@@ -8,4 +8,5 @@
  */
 #pragma once
 
-#include "gemm_internal.h"
+#include "add/geadd_internal.h"
+#include "matmul/gemm_internal.h"

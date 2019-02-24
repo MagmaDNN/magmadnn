@@ -8,7 +8,7 @@
  */
 #pragma once
 #include <string>
-#include "operation.h"
+#include "compute/operation.h"
 #include "tanh_internal.h"
 
 namespace skepsi {

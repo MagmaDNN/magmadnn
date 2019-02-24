@@ -6,7 +6,7 @@
  * 
  * @copyright Copyright (c) 2019
  */
-#include "compute/gemm_internal.h"
+#include "compute/matmul/gemm_internal.h"
 
 namespace skepsi {
 namespace internal {

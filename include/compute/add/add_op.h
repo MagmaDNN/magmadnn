@@ -8,9 +8,9 @@
  */
 #pragma once
 #include <vector>
-#include "operation.h"
-#include "geadd_internal.h"
+#include "compute/operation.h"
 #include "tensor/tensor.h"
+#include "geadd_internal.h"
 
 namespace skepsi {
 namespace op {

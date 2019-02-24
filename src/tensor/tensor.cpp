@@ -91,7 +91,7 @@ void tensor<T>::set(unsigned int flattened_idx, T val) {
 }
 
 template <typename T>
-unsigned int tensor<T>::get_shape(unsigned int idx) {
+unsigned int tensor<T>::get_shape(unsigned int idx) const {
     assert( idx < this->size );
     return this->shape[idx];
 }

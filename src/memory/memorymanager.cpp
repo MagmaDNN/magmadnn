@@ -236,7 +236,7 @@ skepsi_error_t memorymanager<T>::sync(bool gpu_was_modified) {
 }
 
 template <typename T>
-T memorymanager<T>::get(unsigned int idx) {
+T memorymanager<T>::get(unsigned int idx) const {
     assert( idx < size );
 
     switch (mem_type) {

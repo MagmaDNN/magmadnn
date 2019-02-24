@@ -109,7 +109,7 @@ public:
      *  @param idx index to retrieve
      *  @return the value at index idx.
      */
-    T get(unsigned int idx);
+    T get(unsigned int idx) const;
 
     /** Sets the value at idx to val. Error if idx is out of range.
      *  @param idx index to set
@@ -143,12 +143,12 @@ public:
     /** Returns the size of this memorymanager
      * @return unsigned int  the size of this memory manager
      */
-    unsigned int get_size() { return size; }
+    unsigned int get_size() const { return size; }
 
     /** Returns the memory type of this memory manager.
      * @return memory_t 
      */
-    memory_t get_memory_type() { return mem_type; }
+    memory_t get_memory_type() const { return mem_type; }
 
 private:
 

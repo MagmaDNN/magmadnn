@@ -101,23 +101,23 @@ public:
 	/** Returns the memory manager used by this tensor
 	 * @return memorymanager<T>* 
 	 */
-	memorymanager<T>* get_memory_manager() { return this->mem_manager; }
+	memorymanager<T>* get_memory_manager() const { return this->mem_manager; }
 
 	/** returns a <i>copy</i> of the shape of this tensor.
 	 * @return std::vector<int> 
 	 */
-	std::vector<unsigned int> get_shape() { return this->shape; }
+	std::vector<unsigned int> get_shape() const { return this->shape; }
 
 	/** returns the axis size at idx of shape (i.e. shape[idx])
 	 * @param idx 
 	 * @return unsigned int 
 	 */
-	unsigned int get_shape(unsigned int idx);
+	unsigned int get_shape(unsigned int idx) const;
 
 	/** returns the number of elements in tensor
 	 * @return unsigned int total number of elements in tensor
 	 */
-	unsigned int get_size() { return this->size; }
+	unsigned int get_size() const { return this->size; }
 
 	/** returns the pointer used by the memory manager.
 	 * @return T* 
@@ -127,12 +127,12 @@ public:
 	/** returns the memory type of this tensor
 	 * @return memory_t 
 	 */
-	memory_t get_memory_type() { return this->mem_type; }
+	memory_t get_memory_type() const { return this->mem_type; }
 
 	/** The device id used by this tensor.
 	 * @return device_t 
 	 */
-	device_t get_device_id() { return this->device_id; }
+	device_t get_device_id() const { return this->device_id; }
 
 private:
 	void init(std::vector<unsigned int>& shape, tensor_filler_t<T> filler, memory_t mem_type, device_t device_id);

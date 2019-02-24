@@ -76,15 +76,15 @@ void fill_constant(memorymanager<T> &m, const std::vector<T>& params) {
             
         #if defined(_HAS_CUDA_)
         case DEVICE:
-			fill_constant_device(m, val);	// fill device pointer
+	        fill_constant_device(m, val);	// fill device pointer
             break;
         case MANAGED:
-			fill_constant_device(m, val);	// fill device
-			for (int i = 0; i < (int) m.get_size(); i++) m.get_host_ptr()[i] = val; // fill host
+	        fill_constant_device(m, val);	// fill device
+	        for (int i = 0; i < (int) m.get_size(); i++) m.get_host_ptr()[i] = val; // fill host
             break;
         case CUDA_MANAGED:
 			// fill host and sync
-			for (int i = 0; i < (int) m.get_size(); i++) m.get_cuda_managed_ptr()[i] = val;
+	        for (int i = 0; i < (int) m.get_size(); i++) m.get_cuda_managed_ptr()[i] = val;
             m.sync(false);
             break;
         #endif

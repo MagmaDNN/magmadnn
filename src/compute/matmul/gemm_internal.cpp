@@ -13,26 +13,26 @@ namespace internal {
 
 template <typename T>
 bool gemm_check(tensor<T> *A, tensor<T> *B, tensor<T> *C, unsigned int &M, unsigned int &N, unsigned int &K) {
-    // must have same memory types
-    assert( A->get_memory_type() == B->get_memory_type() );
-    assert( B->get_memory_type() == C->get_memory_type() );
+	// must have same memory types
+	assert( A->get_memory_type() == B->get_memory_type() );
+	assert( B->get_memory_type() == C->get_memory_type() );
 
-    // tensors must be matrices
-    assert( A->get_shape().size() == 2 );
-    assert( B->get_shape().size() == 2 );
-    assert( C->get_shape().size() == 2 );
+	// tensors must be matrices
+	assert( A->get_shape().size() == 2 );
+	assert( B->get_shape().size() == 2 );
+	assert( C->get_shape().size() == 2 );
 
-    // A: MxK  B: KxN  C: MxN
-    M = A->get_shape()[0];
-    K = A->get_shape()[1];
-    N = B->get_shape()[1];
+	// A: MxK  B: KxN  C: MxN
+	M = A->get_shape()[0];
+	K = A->get_shape()[1];
+	N = B->get_shape()[1];
 
-    // valid shapes
-    assert( B->get_shape()[0] == K );
-    assert( C->get_shape()[0] == M );
-    assert( C->get_shape()[1] == N );
+	// valid shapes
+	assert( B->get_shape()[0] == K );
+	assert( C->get_shape()[0] == M );
+	assert( C->get_shape()[1] == N );
 
-    return true;
+	return true;
 }
 
 /* INT */
@@ -57,11 +57,11 @@ void gemm_full(int alpha, tensor<int> *A, tensor<int> *B, int beta, tensor<int> 
 /* FLOAT */
 template <>
 void gemm_full(float alpha, tensor<float> *A, tensor<float> *B, float beta, tensor<float> *C) {
-    unsigned int M, N, K;
-    if (!gemm_check(A, B, C, M, N, K)) return;
+	unsigned int M, N, K;
+	if (!gemm_check(A, B, C, M, N, K)) return;
 
-    // A: MxK  B: KxN  C: MxN
-    // (MxR)(RxN) + (MxN) = (MxN) + (MxN) = (MxN)
+	// A: MxK  B: KxN  C: MxN
+	// (MxR)(RxN) + (MxN) = (MxN) + (MxN) = (MxN)
 
 	if (A->get_memory_type() == HOST) {
 		// specify ROW MAJOR, since tensors are stored in row-major
@@ -87,8 +87,8 @@ void gemm_full(float alpha, tensor<float> *A, tensor<float> *B, float beta, tens
 /* DOUBLE */
 template <>
 void gemm_full(double alpha, tensor<double> *A, tensor<double> *B, double beta, tensor<double> *C) {
-    unsigned int M, N, K;
-    if (!gemm_check(A, B, C, M, N, K)) return;
+	unsigned int M, N, K;
+	if (!gemm_check(A, B, C, M, N, K)) return;
 
 	if (A->get_memory_type() == HOST) {
 		// specify ROW MAJOR, since tensors are stored in row-major

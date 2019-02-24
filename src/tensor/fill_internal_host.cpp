@@ -83,7 +83,7 @@ void fill_constant(memorymanager<T> &m, const std::vector<T>& params) {
 	        for (int i = 0; i < (int) m.get_size(); i++) m.get_host_ptr()[i] = val; // fill host
             break;
         case CUDA_MANAGED:
-			// fill host and sync
+	        // fill host and sync
 	        for (int i = 0; i < (int) m.get_size(); i++) m.get_cuda_managed_ptr()[i] = val;
             m.sync(false);
             break;

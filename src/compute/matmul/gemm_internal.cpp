@@ -38,20 +38,20 @@ bool gemm_check(tensor<T> *A, tensor<T> *B, tensor<T> *C, unsigned int &M, unsig
 /* INT */
 template <>
 void gemm_full(int alpha, tensor<int> *A, tensor<int> *B, int beta, tensor<int> *C) {
-    unsigned int M, N, K;
-    if (!gemm_check(A, B, C, M, N, K)) return;
+	unsigned int M, N, K;
+	if (!gemm_check(A, B, C, M, N, K)) return;
 
 	// standard O(MNK) gemm algorithm
 	// TODO: replace with strassen
 	for (int i = 0; i < (int)M; i++) {
-        for (int j = 0; j < (int)N; j++) {
-            int sum = 0;
-            for (int k = 0; k < (int)K; k++) {
-                sum = sum + alpha*(A->get({i,k}) * B->get({k,j}));
-            }
-            C->set({i,j}, sum + beta*C->get({i,j}));
-        }
-    } 
+		for (int j = 0; j < (int)N; j++) {
+			int sum = 0;
+			for (int k = 0; k < (int)K; k++) {
+				sum = sum + alpha*(A->get({i,k}) * B->get({k,j}));
+			}
+			C->set({i,j}, sum + beta*C->get({i,j}));
+		}
+	} 
 }
 
 /* FLOAT */

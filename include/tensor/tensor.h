@@ -73,6 +73,21 @@ public:
 	~tensor();
 
 
+	/** Copies data from src[begin_idx] to src[begin_idx+size] into this tensor.
+	 * @param src 
+	 * @param begin_idx 
+	 * @param size 
+	 * @return skepsi_error_t non-zero if error
+	 */
+	skepsi_error_t copy_from(const tensor<T>& src, unsigned int begin_idx, unsigned int size);
+
+	/** Copies the tensor src into this tensor.
+	 * @param src 
+	 * @return skepsi_error_t non-zero if error.
+	 */
+	skepsi_error_t copy_from(const tensor<T>& src);
+
+
 	/** gets the value at the given index.
 	 * @param idx indices to retreive value from
 	 * @return the value at idx

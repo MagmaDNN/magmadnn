@@ -71,6 +71,20 @@ void tensor<T>::init(std::vector<unsigned int>& shape, tensor_filler_t<T> filler
 
 
 template <typename T>
+skepsi_error_t tensor<T>::copy_from(const tensor<T>& src, unsigned int begin_idx, unsigned int size) {
+    assert( this->size == src.get_size() );
+    assert( begin_idx+size <= this->size );
+
+    return this->mem_manager->copy_from(*src.get_memory_manager(), begin_idx, size);
+}
+
+template <typename T>
+skepsi_error_t tensor<T>::copy_from(const tensor<T>& src) {
+    return copy_from(src, 0, src.get_size());
+}
+
+
+template <typename T>
 T tensor<T>::get(const std::vector<int>& idx) { 
     return mem_manager->get( get_flattened_index(idx) );
 }

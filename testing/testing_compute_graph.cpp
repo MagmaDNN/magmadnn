@@ -14,6 +14,7 @@ void test_add(memory_t mem_type, unsigned int size);
 void test_matmul(memory_t mem_type, unsigned int size);
 void test_affine(memory_t mem_type, unsigned int size);
 void test_sigmoid(memory_t mem_type, unsigned int size);
+void test_tanh(memory_t mem_type, unsigned int size);
 const char* get_memory_type_name(memory_t mem);
 
 int main(int argc, char **argv) {
@@ -44,7 +45,7 @@ int main(int argc, char **argv) {
 	test_affine(MANAGED, 50);
 	test_affine(CUDA_MANAGED, 50);
 	#endif
-    
+
 	// test sigmoid
 	test_sigmoid(HOST, 50);
 	#if defined(_HAS_CUDA_)
@@ -53,6 +54,14 @@ int main(int argc, char **argv) {
 	test_sigmoid(CUDA_MANAGED, 50);
 	#endif
 
+	// test tanh
+	test_tanh(HOST, 50);
+	#if defined(_HAS_CUDA_)
+	test_tanh(DEVICE, 50);
+	test_tanh(MANAGED, 50);
+	test_tanh(CUDA_MANAGED, 50);
+	#endif
+    
 	#if defined(_HAS_CUDA_)
 	magma_finalize();
 	#endif
@@ -206,6 +215,32 @@ void test_sigmoid(memory_t mem_type, unsigned int size) {
 
 	printf("Success!\n");
 }
+
+void test_tanh(memory_t mem_type, unsigned int size) {
+
+	float val = 5.0;
+
+	printf("Testing %s tanh...  ", get_memory_type_name(mem_type));
+
+	tensor<float> *t0 = new tensor<float> ({size, size}, {CONSTANT, {val}}, mem_type);
+
+	auto v0 = op::var("t0", t0);
+
+	auto fin_op = op::tanh(v0);
+
+	auto fin = fin_op->eval();
+
+	for (unsigned int i = 0; i < fin->get_size(); i++) {
+		assert( fabs(fin->get(i) - tanh(val)) < 1E-8 );
+	}
+
+	delete t0;
+	delete fin_op;
+	delete fin;
+
+	printf("Success!\n");
+}
+
 const char* get_memory_type_name(memory_t mem) {
 	switch (mem) {
 		case HOST: 			return "HOST";

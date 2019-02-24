@@ -4,3 +4,4 @@
 #include "matmul_op.h"
 
 #include "sigmoid_op.h"
+#include "tanh_op.h"

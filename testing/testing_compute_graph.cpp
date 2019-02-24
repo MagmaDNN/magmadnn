@@ -13,6 +13,7 @@ using namespace skepsi;
 void test_add(memory_t mem_type, unsigned int size);
 void test_matmul(memory_t mem_type, unsigned int size);
 void test_affine(memory_t mem_type, unsigned int size);
+void test_sigmoid(memory_t mem_type, unsigned int size);
 const char* get_memory_type_name(memory_t mem);
 
 int main(int argc, char **argv) {
@@ -44,6 +45,14 @@ int main(int argc, char **argv) {
 	test_affine(CUDA_MANAGED, 50);
 	#endif
     
+	// test sigmoid
+	test_sigmoid(HOST, 50);
+	#if defined(_HAS_CUDA_)
+	test_sigmoid(DEVICE, 50);
+	test_sigmoid(MANAGED, 50);
+	test_sigmoid(CUDA_MANAGED, 50);
+	#endif
+
 	#if defined(_HAS_CUDA_)
 	magma_finalize();
 	#endif
@@ -176,6 +185,27 @@ void test_affine(memory_t mem_type, unsigned int size) {
 	printf("Success!\n");
 }
 
+void test_sigmoid(memory_t mem_type, unsigned int size) {
+
+	printf("Testing %s sigmoid...  ", get_memory_type_name(mem_type));
+
+	tensor<float> *t0 = new tensor<float> ({size, size}, {CONSTANT, {-7}}, mem_type);
+
+	auto v0 = op::var("t0", t0);
+
+	auto sig = op::sigmoid(v0);
+
+	auto fin = sig->eval();
+
+	for (unsigned int i = 0; i < fin->get_size(); i++) {
+		assert( fabs(fin->get(i) - (-0.875)) < 1E-8 );
+	}
+
+	delete t0;
+	delete sig;
+
+	printf("Success!\n");
+}
 const char* get_memory_type_name(memory_t mem) {
 	switch (mem) {
 		case HOST: 			return "HOST";

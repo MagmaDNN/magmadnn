@@ -23,14 +23,14 @@ bool gemm_check(tensor<T> *A, tensor<T> *B, tensor<T> *C, unsigned int &M, unsig
 	assert( C->get_shape().size() == 2 );
 
 	// A: MxK  B: KxN  C: MxN
-	M = A->get_shape()[0];
-	K = A->get_shape()[1];
-	N = B->get_shape()[1];
+	M = A->get_shape(0);
+	K = A->get_shape(1);
+	N = B->get_shape(1);
 
 	// valid shapes
-	assert( B->get_shape()[0] == K );
-	assert( C->get_shape()[0] == M );
-	assert( C->get_shape()[1] == N );
+	assert( B->get_shape(0) == K );
+	assert( C->get_shape(0) == M );
+	assert( C->get_shape(1) == N );
 
 	return true;
 }
@@ -67,9 +67,9 @@ void gemm_full(float alpha, tensor<float> *A, tensor<float> *B, float beta, tens
 		// specify ROW MAJOR, since tensors are stored in row-major
 		cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 
 			M, N, K,
-			alpha, A->get_memory_manager()->get_host_ptr(), K,
-			B->get_memory_manager()->get_host_ptr(), N, beta,
-			C->get_memory_manager()->get_host_ptr(), N);
+			alpha, A->get_ptr(), K,
+			B->get_ptr(), N, beta,
+			C->get_ptr(), N);
 	}
 	#if defined(_HAS_CUDA_)
 	else {
@@ -77,9 +77,9 @@ void gemm_full(float alpha, tensor<float> *A, tensor<float> *B, float beta, tens
 		// i.e. (AB)^T = (C)^T and the fact that (AB)^T = (B^T)(A^T)
 		magma_sgemm(MagmaNoTrans, MagmaNoTrans,
 			N, M, K,
-			alpha, B->get_memory_manager()->get_ptr(), N,
-			A->get_memory_manager()->get_ptr(), K,
-			beta, C->get_memory_manager()->get_ptr(), N);
+			alpha, B->get_ptr(), N,
+			A->get_ptr(), K,
+			beta, C->get_ptr(), N);
 	}
 	#endif
 }
@@ -94,9 +94,9 @@ void gemm_full(double alpha, tensor<double> *A, tensor<double> *B, double beta, 
 		// specify ROW MAJOR, since tensors are stored in row-major
 		cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 
 			M, N, K,
-			alpha, A->get_memory_manager()->get_host_ptr(), K,
-			B->get_memory_manager()->get_host_ptr(), N, beta,
-			C->get_memory_manager()->get_host_ptr(), N);
+			alpha, A->get_ptr(), K,
+			B->get_ptr(), N, beta,
+			C->get_ptr(), N);
 	}
 	#if defined(_HAS_CUDA_)
 	else {	
@@ -104,9 +104,9 @@ void gemm_full(double alpha, tensor<double> *A, tensor<double> *B, double beta, 
 		// i.e. (AB)^T = (C)^T and the fact that (AB)^T = (B^T)(A^T)
 		magma_dgemm(MagmaNoTrans, MagmaNoTrans,
 			N, M, K,
-			alpha, B->get_memory_manager()->get_ptr(), N,
-			A->get_memory_manager()->get_ptr(), K,
-			beta, C->get_memory_manager()->get_ptr(), N);
+			alpha, B->get_ptr(), N,
+			A->get_ptr(), K,
+			beta, C->get_ptr(), N);
 	}
 	#endif	
 }

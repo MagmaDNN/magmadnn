@@ -30,16 +30,16 @@ void geadd_full(T alpha, tensor<T> *A, T beta, tensor<T> *B, tensor<T> *C) {
     if (!geadd_check(A, B, C)) return;
 
     if (A->get_memory_type() == HOST) {
-        T *a_ptr = A->get_memory_manager()->get_host_ptr();
-        T *b_ptr = B->get_memory_manager()->get_host_ptr();
-        T *c_ptr = C->get_memory_manager()->get_host_ptr();
+        T *a_ptr = A->get_ptr();
+        T *b_ptr = B->get_ptr();
+        T *c_ptr = C->get_ptr();
         for (unsigned int i = 0; i < A->get_size(); i++) {
             c_ptr[i] = (alpha * a_ptr[i]) + (beta * b_ptr[i]);
         }
     }
     #if defined(_HAS_CUDA_)
     else {
-        geadd_full_device(A->get_shape(0), A->get_shape(1), alpha, A->get_memory_manager()->get_ptr(), beta, B->get_memory_manager()->get_ptr(), C->get_memory_manager()->get_ptr());
+        geadd_full_device(A->get_shape(0), A->get_shape(1), alpha, A->get_ptr(), beta, B->get_ptr(), C->get_ptr());
     }
     #endif
 }

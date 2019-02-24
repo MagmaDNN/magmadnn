@@ -18,7 +18,7 @@ tensor<T>* sigmoid_op<T>::eval() {
     tensor<T> *ret;
     if (copy) {
         ret = new tensor<T> (x_tensor->get_shape(), x_tensor->get_memory_type());
-        ret->get_memory_manager()->copy_from(*(x_tensor->get_memory_manager()));
+        ret->copy_from(*x_tensor);
     } else {
         ret = x_tensor;
     }

@@ -155,6 +155,6 @@ clean:
 	rm $(OBJ_FILES)
 
 
-.PHONY: $(TARGET_DIRS) testing examples
+.PHONY: $(TARGET_DIRS) $(libstatic) $(libshared) testing examples
 
 

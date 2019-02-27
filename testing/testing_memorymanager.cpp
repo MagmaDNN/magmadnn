@@ -43,13 +43,13 @@ void test_get_set(memory_t mem, int size, bool verbose) {
 }
 
 
-void test_copy(memory_t src, memory_t dst, int size, bool verbose) {
+void test_copy(memory_t src_mem, memory_t dst_mem, int size, bool verbose) {
 
-	if (verbose) printf("Testing %s->%s copy...  ", get_memory_type_name(src), get_memory_type_name(dst));
+	if (verbose) printf("Testing %s->%s copy...  ", get_memory_type_name(src_mem), get_memory_type_name(dst_mem));
 
 	// create
-	memorymanager<float> *mm_src = new memorymanager<float> (size, src, (device_t) 0);
-	memorymanager<float> *mm_dst = new memorymanager<float> (size, dst, (device_t) 0);
+	memorymanager<float> *mm_src = new memorymanager<float> (size, src_mem, (device_t) 0);
+	memorymanager<float> *mm_dst = new memorymanager<float> (size, dst_mem, (device_t) 0);
 
 	// fill in mm_src
 	for (int i = 0; i < size; i++) mm_src->set(i, 2*i+1);

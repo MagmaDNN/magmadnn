@@ -33,9 +33,9 @@ cp make.inc-examples/make.inc-standard ./make.inc
 vim make.inc # if you want to edit the settings
 ```
 
-After this simply run `make install` to build and install skepsi. If your prefix (install location) has root priviledge acccess, then you'll need to run with `sudo`.
+After this simply run `make install` to build and install skepsi. If your prefix (install location) has root priviledge access, then you'll need to run with `sudo`.
 
-So the entire script looks like,
+So the entire script looks like:
 
 ```sh
 git clone https://github.com/Dando18/skepsi
@@ -46,12 +46,12 @@ sudo make install
 
 ### Testing 
 ------------
-Skepsi comes with some tester files to make sure everything is working properly. You can build them using the same makefile as for installation. Use the following command to build and run the testers:
+Skepsi comes with some tester files to make sure everything is working properly. You can build them using the same makefile as for installation. Use the following commands to build and run the testers:
 
 ```sh
 make testing
 cd testing
-sh ./run_tests.sh
+sh run_tests.sh
 ```
 
 ### Task List (what's coming next):

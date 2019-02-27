@@ -3,7 +3,7 @@
 A neural network library in c++ aimed at providing a simple, modularized framework for deep learning. 
 
 ===== VERSION 0.0.1 =====
-- Currently skepsi only works on single devices and only has a very limited memory manager and tensor class.
+- Currently skepsi provides a dynamic memory manager, tensor wrapper for the memory manager, and a set of math operations for the tensor.
 - More is coming...
 
 
@@ -11,7 +11,11 @@ A neural network library in c++ aimed at providing a simple, modularized framewo
 -----------------------------
 
 ##### Dependencies
-Skepsi uses `make` as its build system, so it must be installed on your system before you can build the library. The build also requires a c++11 capable compiler. If compiling with GPU capabilities, then CUDA and likewise nvcc must be installed and in the proper PATHs. Skepsi has only been tested on Ubuntu (>16) and MacOS with CUDA (>9.0), however it is likely to work on most *nix based systems with a proper CUDA install.
+Skepsi uses `make` as its build system, so it must be installed on your system and in your path before you can build the library. The build also requires a c++11 capable compiler.
+
+If compiling with GPU capabilities, then CUDA and likewise nvcc must be installed and in the proper PATHs. Skepsi has only been tested on Ubuntu (>16) and MacOS with CUDA (>9.0), however it is likely to work on most *nix based systems with a proper CUDA install. 
+
+Skepsi makes heavy use of BLAS libraries. For Host only code a CBLAS library must be installed (such as openblas, atlas, etc...). If using the Device, then [Magma](http://icl.cs.utk.edu/magma/) (>2.5.0) must be installed.
 
 ##### Download
 First get the repository on your computer with

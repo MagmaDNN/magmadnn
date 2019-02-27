@@ -54,12 +54,12 @@ cd testing
 sh run_tests.sh
 ```
 
-### Example
+### Examples
 -----------
 For examples of what skepsi code looks like see the [examples/ folder](https://github.com/Dando18/skepsi/tree/master/examples). If skepsi is downloaded and installed, then the examples can be made and run with `make examples`.
 
 
-### Task List (what's coming next):
+### Task List:
 -----------------------------------
 - [x] Memory manager for handling host, device, and managed memory
 - [x] Tests for memory manager

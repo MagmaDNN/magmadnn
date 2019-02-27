@@ -74,6 +74,8 @@ sh run_tests.sh
 - [ ] Tutorial / Presentation Slides
 - [ ] I/O methods for Tensors
 - [ ] Tests for tensor I/O
+- [ ] Preprocessing methods (PCA, LDA, encoding)
+- [ ] Tests for preprocessing methods
 - [ ] Implement RNN
 - [ ] Tests for RNN
 - [ ] Compute graph optimizers/minimizers

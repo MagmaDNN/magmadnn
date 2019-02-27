@@ -54,6 +54,11 @@ cd testing
 sh run_tests.sh
 ```
 
+### Example
+-----------
+For examples of what skepsi code looks like see the [examples/ folder](https://github.com/Dando18/skepsi/tree/master/examples). If skepsi is downloaded and installed, then the examples can be made and run with `make examples`.
+
+
 ### Task List (what's coming next):
 -----------------------------------
 - [x] Memory manager for handling host, device, and managed memory
@@ -72,6 +77,8 @@ sh run_tests.sh
 - [ ] Tests for parallel training
 - [x] Examples in Examples/ folder
 - [ ] Tutorial / Presentation Slides
+- [ ] Automatic or numerical gradient computations
+- [ ] Test gradient computations
 - [ ] I/O methods for Tensors
 - [ ] Tests for tensor I/O
 - [ ] Preprocessing methods (PCA, LDA, encoding)

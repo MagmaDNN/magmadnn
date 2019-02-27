@@ -13,9 +13,9 @@ A neural network library in c++ aimed at providing a simple, modularized framewo
 ##### Dependencies
 Skepsi uses `make` as its build system, so it must be installed on your system and in your path before you can build the library. The build also requires a c++11 capable compiler.
 
-If compiling with GPU capabilities, then CUDA and likewise nvcc must be installed and in the proper PATHs. Skepsi has only been tested on Ubuntu (>16) and MacOS with CUDA (>9.0), however it is likely to work on most *nix based systems with a proper CUDA install. 
+If compiling with GPU capabilities, then CUDA and likewise nvcc must be installed and in the proper PATHs. Skepsi has only been tested on Ubuntu (>16) and MacOS using CUDA (>9.0), however it is likely to work on most *nix based systems with a recent CUDA install. 
 
-Skepsi makes heavy use of BLAS libraries. For Host only code a CBLAS library must be installed (such as openblas, atlas, etc...). If using the Device, then [Magma](http://icl.cs.utk.edu/magma/) (>2.5.0) must be installed.
+Skepsi makes heavy use of BLAS libraries. For Host only code a CBLAS library must be installed (such as [openblas](https://www.openblas.net/), [atlas](http://math-atlas.sourceforge.net/), etc...). If using the Device, then [Magma](http://icl.cs.utk.edu/magma/) (>2.5.0) must be installed.
 
 ##### Download
 First get the repository on your computer with
@@ -25,7 +25,7 @@ git glone https://github.com/Dando18/skepsi
 cd skepsi
 ```
 
-###### Install
+##### Install
 Next copy the make include settings into the head directory and edit them to your preferences.
 
 ```sh
@@ -56,25 +56,29 @@ sh run_tests.sh
 
 ### Task List (what's coming next):
 -----------------------------------
-- [x] Implement a memory manager for handling host, device, and managed memory
-- [x] Build tests for memory manager
-- [x] Implement Tensor wrapper around memory manager for multi-axis data storage
-- [x] Build tests for tensor 
+- [x] Memory manager for handling host, device, and managed memory
+- [x] Tests for memory manager
+- [x] Tensor wrapper around memory manager for multi-axis data storage
+- [x] Tests for tensor 
 - [x] Create Make file and Build/Install system
 - [x] Creates Docs and doxygen config
-- [x] Implement compute graph and basic operations for tensors
-- [x] Build tests for compute graph and tensor operations
+- [x] Compute graph and basic operations for tensors
+- [x] Tests for compute graph and tensor operations
 - [x] Link with BLAS/LAPACK (OpenBLAS?) and MAGMA
-- [ ] Implement basic Layer classes (Dense, Activation, Flatten, CNN)
-- [ ] Implement Model with forward/backward propagation
-- [ ] Build tests for Model/Layer training
-- [ ] Add examples in Examples/ folder
-- [ ] Add I/O methods for Tensors
-- [ ] Build tests for I/O
+- [ ] Basic Layer classes (Dense, Activation, Flatten, CNN)
+- [ ] Model with forward/backward propagation
+- [ ] Tests for Model/Layer training
+- [ ] Parallel training (Multi-GPU)
+- [ ] Tests for parallel training
+- [x] Examples in Examples/ folder
+- [ ] Tutorial / Presentation Slides
+- [ ] I/O methods for Tensors
+- [ ] Tests for tensor I/O
 - [ ] Implement RNN
-- [ ] Build tests for RNN
+- [ ] Tests for RNN
+- [ ] Compute graph optimizers/minimizers
 - [ ] Hyperparameter Optimization tools
-- [ ] Build tests for hyperparameter optimization tools
+- [ ] Tests for hyperparameter optimization tools
 - [ ] Package/Install configuration
 - [ ] Tune compilation and runtime parameters to hardware
 - [ ] Test on different hardwares (intel, amd, nvidia)

@@ -150,11 +150,21 @@ install: $(TARGET_DIRS) lib
 	cp $(libshared) $(prefix)/lib
 	@echo
 
+
+# build the docs files and the refman.pdf
+docs:
+ifneq ($(shell which doxygen),)
+	doxygen doxygen.config
+	@echo "gucci"
+	$(MAKE) -C docs/latex
+endif
+
+
 # TODO: change to call clean on subdirectory makefiles
 clean:
 	rm $(OBJ_FILES)
 
 
-.PHONY: $(TARGET_DIRS) $(libstatic) $(libshared) testing examples
+.PHONY: $(TARGET_DIRS) $(libstatic) $(libshared) testing examples docs
 
 

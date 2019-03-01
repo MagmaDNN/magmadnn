@@ -23,7 +23,7 @@ void tanh_full(tensor<T> *x) {
     }
     #if defined(_HAS_CUDA_)
     else {
-        tanh_full_device(x, fast);
+        tanh_full_device(x);
     }
     #endif
 }

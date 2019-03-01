@@ -14,6 +14,9 @@
 namespace skepsi {
 namespace op {
 
+/** Tanh Operation. Computes the tanh function element-wise.
+ * @tparam T 
+ */
 template <typename T>
 class tanh_op : public operation<T> {
 public:
@@ -28,6 +31,12 @@ protected:
     bool copy;
 };
 
+/** Returns a new tanh operation, which is an element-wise tanh execution over x.
+ * @tparam T 
+ * @param x 
+ * @param copy if true, then a new tensor is returned else x is overwritten.
+ * @return tanh_op<T>* 
+ */
 template <typename T>
 tanh_op<T>* tanh(operation<T> *x, bool copy=true);
 

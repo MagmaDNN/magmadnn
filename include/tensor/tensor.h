@@ -116,7 +116,7 @@ public:
 	/** Returns the memory manager used by this tensor
 	 * @return memorymanager<T>* 
 	 */
-	memorymanager<T>* get_memory_manager() const { return this->mem_manager; }
+	memorymanager<T>* get_memory_manager() { return this->mem_manager; }
 
 	/** returns a <i>copy</i> of the shape of this tensor.
 	 * @return std::vector<int> 

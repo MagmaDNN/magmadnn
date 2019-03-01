@@ -15,7 +15,11 @@
 namespace skepsi {
 namespace internal {
 
-
+/** Uses the filler to fill memorymanager m. Works independent of memory type.
+ * @tparam T 
+ * @param m memorymanager to be filled
+ * @param filler how to fill m
+ */
 template <typename T>
 void fill_memory(memorymanager<T> &m, tensor_filler_t<T> filler);
 

@@ -14,10 +14,20 @@
 namespace skepsi {
 namespace internal {
 
+/** Computes the element-wise sigmoid on x. 
+ * @tparam T 
+ * @param x pointer to tensor to be sigmoided
+ * @param fast if true, then x=1/(1+|x|) is computed instead of normal sigmoid
+ */
 template <typename T>
 void sigmoid_full(tensor<T> *x, bool fast=true);
 
 #if defined(_HAS_CUDA_)
+/** Computes the element-wise sigmoid on a device.
+ * @tparam T 
+ * @param x tensor with device_ptr
+ * @param fast 
+ */
 template <typename T>
 void sigmoid_full_device(tensor<T> *x, bool fast=true);
 #endif

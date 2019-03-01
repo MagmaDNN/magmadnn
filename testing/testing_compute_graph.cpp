@@ -206,6 +206,11 @@ void test_sigmoid(memory_t mem_type, unsigned int size) {
 
 	auto fin = sig->eval();
 
+	#if defined(_HAS_CUDA_)
+	if (mem_type == DEVICE || mem_type == CUDA_MANAGED) fin->get_memory_manager()->sync();
+	else if (mem_type == MANAGED) fin->get_memory_manager()->sync(true);
+	#endif
+
 	for (unsigned int i = 0; i < fin->get_size(); i++) {
 		assert( fabs(fin->get(i) - (-0.875)) < 1E-8 );
 	}
@@ -230,8 +235,13 @@ void test_tanh(memory_t mem_type, unsigned int size) {
 
 	auto fin = fin_op->eval();
 
+	#if defined(_HAS_CUDA_)
+	if (mem_type == DEVICE || mem_type == CUDA_MANAGED) fin->get_memory_manager()->sync();
+	else if (mem_type == MANAGED) fin->get_memory_manager()->sync(true);
+	#endif
+
 	for (unsigned int i = 0; i < fin->get_size(); i++) {
-		assert( fabs(fin->get(i) - tanh(val)) < 1E-8 );
+		assert( fabs(fin->get(i) - tanh(val)) < 1E-6 );
 	}
 
 	delete t0;

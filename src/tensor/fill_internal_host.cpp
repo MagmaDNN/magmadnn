@@ -14,9 +14,21 @@ namespace internal {
 
 template <typename T>
 void fill_uniform(memorymanager<T> &m, const std::vector<T>& params) {
+
+    assert( params.size() >= 2 );
+
+    T start_val, end_val;
+    start_val = params[0];
+    end_val = params[1];
+
     switch (m.get_memory_type()) {
         case HOST:
-            // TODO
+            std::default_random_engine random_generator;
+            std::uniform_real_distribution<T> uniform_distribution(start_val, end_val);
+
+            for (unsigned int i = 0; i < m.get_size(); i++)
+                m.get_host_ptr()[i] = uniform_distribution(random_generator);
+
             break;
             
         #if defined(_HAS_CUDA_)
@@ -41,7 +53,9 @@ template <typename T>
 void fill_glorot(memorymanager<T> &m, const std::vector<T>& params) {
     switch (m.get_memory_type()) {
         case HOST:
-            // TODO
+            
+
+
             break;
             
         #if defined(_HAS_CUDA_)

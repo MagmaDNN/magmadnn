@@ -9,7 +9,12 @@
 #pragma once
 
 #include <vector>
+#include <random>
 #include "memory/memorymanager.h"
+
+#if defined(_HAS_CUDA_)
+#include <cuda.h>
+#endif
 
 namespace skepsi {
 namespace internal {

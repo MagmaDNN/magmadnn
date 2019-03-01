@@ -21,25 +21,30 @@ void fill_uniform(memorymanager<T> &m, const std::vector<T>& params) {
     start_val = params[0];
     end_val = params[1];
 
+    std::default_random_engine random_generator;
+    std::uniform_real_distribution<T> uniform_distribution(start_val, end_val);
+
     switch (m.get_memory_type()) {
         case HOST:
-            std::default_random_engine random_generator;
-            std::uniform_real_distribution<T> uniform_distribution(start_val, end_val);
-
             for (unsigned int i = 0; i < m.get_size(); i++)
                 m.get_host_ptr()[i] = uniform_distribution(random_generator);
-
             break;
-            
+
         #if defined(_HAS_CUDA_)
         case DEVICE:
-            // TODO
+            // TODO replace with kernel call
+            for (unsigned int i = 0; i < m.get_size(); i++)
+                m.set(i, uniform_distribution(random_generator));
             break;
         case MANAGED:
-            // TODO
+            for (unsigned int i = 0; i < m.get_size(); i++)
+                m.get_host_ptr()[i] = uniform_distribution(random_generator);
+            m.sync(false);
             break;
         case CUDA_MANAGED:
-            // TODO
+            for (unsigned int i = 0; i < m.get_size(); i++)
+                m.get_host_ptr()[i] = uniform_distribution(random_generator);
+            m.sync(false);
             break;
         #endif
     }
@@ -51,22 +56,37 @@ template void fill_uniform(memorymanager<double>&, const std::vector<double>&);
 
 template <typename T>
 void fill_glorot(memorymanager<T> &m, const std::vector<T>& params) {
+
+    assert( params.size() >= 2 );
+
+    T mean, std_dev;
+    mean = params[0];
+    std_dev = params[1];
+
+    std::default_random_engine random_generator;
+    std::normal_distribution<T> normal_dist(mean, std_dev);
+
     switch (m.get_memory_type()) {
         case HOST:
-            
-
-
+            for (unsigned int i = 0; i < m.get_size(); i++)
+                m.get_host_ptr()[i] = normal_dist(random_generator);
             break;
             
         #if defined(_HAS_CUDA_)
         case DEVICE:
-            // TODO
+            // TODO replace with kernel call
+            for (unsigned int i = 0; i < m.get_size(); i++)
+                m.set(i, normal_dist(random_generator));
             break;
         case MANAGED:
-            // TODO
+            for (unsigned int i = 0; i < m.get_size(); i++)
+                m.get_host_ptr()[i] = normal_dist(random_generator);
+            m.sync(false);
             break;
         case CUDA_MANAGED:
-            // TODO
+            for (unsigned int i = 0; i < m.get_size(); i++)
+                m.get_host_ptr()[i] = normal_dist(random_generator);
+            m.sync(false);
             break;
         #endif
     }

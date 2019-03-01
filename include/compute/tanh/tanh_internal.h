@@ -14,10 +14,18 @@
 namespace skepsi {
 namespace internal {
 
+/** Computes the element-wise tanh function.
+ * @tparam T 
+ * @param x 
+ */
 template <typename T>
 void tanh_full(tensor<T> *x);
 
 #if defined(_HAS_CUDA_)
+/** Computes the tanh function element-wise on the tensor x
+ * @tparam T 
+ * @param x 
+ */
 template <typename T>
 void tanh_full_device(tensor<T> *x); 
 #endif

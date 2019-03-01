@@ -14,6 +14,9 @@
 namespace skepsi {
 namespace op {
 
+/** Sigmoid Operation. Computes the element-wise sigmoid operation on a Tensor.
+ * @tparam T 
+ */
 template <typename T>
 class sigmoid_op : public operation<T> {
 public:
@@ -29,6 +32,13 @@ protected:
     bool fast;
 };
 
+/** Compute element-wise sigmoid on tensor x.
+ * @tparam T 
+ * @param x tensor to be computed with.
+ * @param copy if true, a new tensor is allocated and returned. If false, x is overwritten.
+ * @param fast if true, the x=1/(1+|x|) is computed instead of the normal sigmoid function.
+ * @return sigmoid_op<T>* 
+ */
 template <typename T>
 sigmoid_op<T>* sigmoid(operation<T> *x, bool copy=true, bool fast=true);
 

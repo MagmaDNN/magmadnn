@@ -48,10 +48,5 @@ template<> void tanh_full_device(tensor<int> *x) {
 template void tanh_full_device(tensor<float> *x);
 template void tanh_full_device(tensor<double> *x);
 
-<<<<<<< HEAD
- }   // namespace internal
- }   // namespace skepsi
-=======
 }   // namespace internal
 }   // namespace skepsi
->>>>>>> master

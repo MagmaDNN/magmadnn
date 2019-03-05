@@ -62,10 +62,5 @@ template<> void sigmoid_full_device(tensor<int> *x, bool fast) {
 template void sigmoid_full_device(tensor<float> *x, bool fast);
 template void sigmoid_full_device(tensor<double> *x, bool fast);
 
-<<<<<<< HEAD
- }   // namespace internal
- }   // namespace skepsi
-=======
 }   // namespace internal
 }   // namespace skepsi
->>>>>>> master

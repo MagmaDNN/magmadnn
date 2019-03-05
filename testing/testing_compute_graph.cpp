@@ -253,12 +253,12 @@ void test_tanh(memory_t mem_type, unsigned int size) {
 
 const char* get_memory_type_name(memory_t mem) {
 	switch (mem) {
-		case HOST: 			return "HOST";
+		case HOST:			return "HOST";
 		#if defined(_HAS_CUDA_)
 		case DEVICE: 		return "DEVICE";
 		case MANAGED: 		return "MANAGED";
 		case CUDA_MANAGED: 	return "CUDA_MANAGED";
 		#endif
-		default: 			return "UNDEFINED_MEMORY_TYPE";
+		default:			return "UNDEFINED_MEMORY_TYPE";
 	}
 }

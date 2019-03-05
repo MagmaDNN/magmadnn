@@ -31,6 +31,20 @@ __global__ void kernel_sigmoid_full_device(unsigned int size, T *x) {
 	}
 }
 
+
+/* exp(INT_TYPE) is not defined in CUDA, so just use 1/(1+|x|) for int.
+   Everything will be zero anyways. TODO: decide what to do with int sigmoid. */
+template <>
+__global__ void kernel_sigmoid_full_device(unsigned int size, int *x) {
+    unsigned int idx = blockIdx.x * blockDim.x + threadIdx.x;
+	unsigned int stride = blockDim.x * gridDim.x;
+
+	for (unsigned int i = idx; i < size; i += stride) {
+        x[i] = 1 / (1 + abs(x[i]));
+	}
+}
+
+
 template <typename T>
 void sigmoid_full_device(tensor<T> *x, bool fast) {
     if (fast)

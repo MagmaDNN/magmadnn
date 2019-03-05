@@ -22,6 +22,19 @@ __global__ void kernel_tanh_full_device(unsigned int size, T *x) {
 	}
 }
 
+/* tanh(INT_TYPE) is not defined in CUDA. TODO: determine what to do for 
+   int types with tanh */
+template <>
+__global__ void kernel_tanh_full_device(unsigned int size, int *x) {
+    unsigned int idx = blockIdx.x * blockDim.x + threadIdx.x;
+	unsigned int stride = blockDim.x * gridDim.x;
+
+	/* tanh : R -> (-1,1)  which is 0 in the integers */
+	for (unsigned int i = idx; i < size; i += stride) {
+        x[i] = 0;
+	}
+}
+
 template <typename T>
 void tanh_full_device(tensor<T> *x) {
     kernel_tanh_full_device <<<x->get_size(), 1>>> (x->get_size(), x->get_ptr());

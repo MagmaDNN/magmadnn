@@ -24,6 +24,10 @@ void fill_memory(memorymanager<T> &m, tensor_filler_t<T> filler) {
             fill_constant(m, {(T)0}); break;
         case ONE:
             fill_constant(m, {(T)1}); break;
+        case DIAGONAL:
+            fill_diagonal(m, filler.values); break;
+        case IDENTITY:
+            fill_diagonal(m, {(T)1}); break;
         case NONE: break;
     }
 }

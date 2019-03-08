@@ -86,6 +86,8 @@ endif
 
 # collect all the object files from the source directories (deepest: src/compute/*/*.cpp)
 OBJ_FILES = $(wildcard $(TARGET_DIRS)/*.o $(TARGET_DIRS)/*/*.o $(TARGET_DIRS)/*/*/*.o)
+# collect dependency files (.d)
+DEP_FILES = $(wildcard $(TARGET_DIRS)/*.d $(TARGET_DIRS)/*/*.d $(TARGET_DIRS)/*/*/*.d)
 
 
 # MAKE THE LIB FILES
@@ -162,7 +164,7 @@ endif
 
 # TODO: change to call clean on subdirectory makefiles
 clean:
-	rm $(OBJ_FILES)
+	rm $(OBJ_FILES) $(DEP_FILES)
 
 
 .PHONY: $(TARGET_DIRS) $(libstatic) $(libshared) testing examples docs

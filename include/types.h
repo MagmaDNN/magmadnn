@@ -27,14 +27,16 @@ typedef unsigned int skepsi_error_t;
 
 /**	 Different ways to initialize the tensor on creation.
  */
-typedef enum tensor_fill_t {
+enum tensor_fill_t {
 	UNIFORM,
 	GLOROT,
 	CONSTANT,
 	ZERO,
 	ONE,
+	DIAGONAL,
+	IDENTITY,
 	NONE
-} tensor_fill_t;	
+};	
 
 /** Defines how to fill a tensor and with what parameters.
  * fill_type: use UNIFORM, GLOROT, CONSTANT, ZERO, ONE, or NONE @see tensor_fill_t

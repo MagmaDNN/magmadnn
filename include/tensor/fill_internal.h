@@ -45,6 +45,16 @@ void fill_uniform(memorymanager<T> &m, const std::vector<T>& params);
 template <typename T>
 void fill_glorot(memorymanager<T> &m, const std::vector<T>& params);
 
+/** Fills the memorymanager's diagonal elements. Assumes the memory manager is square.
+ * If one value is given for params, then it is applied to all diagonals. Otherwise the list
+ * is applied to fill the diagonals.
+ * @tparam T 
+ * @param m 
+ * @param params 
+ */
+template <typename T>
+void fill_diagonal(memorymanager<T> &m, const std::vector<T>& params);
+
 /** Fills the memorymanager with the same constant value.
  * @tparam T 
  * @param m memorymanager to be filled.

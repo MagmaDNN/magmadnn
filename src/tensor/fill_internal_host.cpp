@@ -167,6 +167,46 @@ template void fill_glorot(memorymanager<double>&, const std::vector<double>&);
 
 
 template <typename T>
+void fill_diagonal(memorymanager<T> &m, const std::vector<T>& params) {
+    bool use_constant_value;
+    int root;
+    unsigned int m_size, params_size;
+    T val;
+
+    // must have some params
+    params_size = params.size();
+    assert( params_size > 0 );
+
+    m_size = m.get_size();
+    root = round( sqrt((double)m_size) );
+    // make sure it's square memory
+    assert( m_size == root * root );
+
+    assert( params_size >= root || params_size == 1 );
+    if (params_size == 1)
+        use_constant_value = true;
+    else
+        use_constant_value = false;
+    
+
+    for (unsigned int i = 0; i < m_size; i++) {
+        /* if we're on a diagonal element */
+        if ( i % (root+1) == 0 ) {
+            if (use_constant_value)
+                val = params[0];
+            else
+                val = params[i / (root+1)];
+            
+            m.set(i, val);
+        }
+    }
+}
+template void fill_diagonal(memorymanager<int> &m, const std::vector<int>& params);
+template void fill_diagonal(memorymanager<float> &m, const std::vector<float>& params);
+template void fill_diagonal(memorymanager<double> &m, const std::vector<double>& params);
+
+
+template <typename T>
 void fill_constant(memorymanager<T> &m, const std::vector<T>& params) {
     assert( params.size() >= 1 );
 

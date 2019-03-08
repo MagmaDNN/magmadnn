@@ -33,6 +33,8 @@ typedef enum tensor_fill_t {
 	CONSTANT,
 	ZERO,
 	ONE,
+	DIAGONAL,
+	IDENTITY,
 	NONE
 } tensor_fill_t;	
 

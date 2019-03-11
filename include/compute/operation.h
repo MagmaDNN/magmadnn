@@ -26,6 +26,34 @@ public:
             delete children[i];
     }
 
+    /** Returns the expected output shape of this operation.
+     * @return std::vector<unsigned int> 
+     */
+    virtual std::vector<unsigned int> get_output_shape() const { return this->output_shape; }
+
+    /**
+     * @param idx 
+     * @return std::vector<unsigned int> 
+     */
+    virtual unsigned int get_output_shape(unsigned int idx) const {
+        assert( idx < this->output_shape.size() );
+        return this->output_shape[idx];
+    }
+
+    /** The total number of elements outputted by operation.
+     * @return unsigned int 
+     */
+    virtual unsigned int get_output_size() const {
+        unsigned int size = 1;
+        for (unsigned int i = 0; i < this->output_shape.size(); i++) size *= this->output_shape[i];
+        return size;
+    }
+
+    /** The memory type used to compute this operation.
+     * @return memory_t 
+     */
+    virtual memory_t get_memory_type() const { return this->mem_type; }
+
     /** Returns the operation's evaluated tensor.
      * @return tensor<T>* 
      */
@@ -38,6 +66,8 @@ public:
     
 protected:
     std::vector<operation<T>*> children;
+    std::vector<unsigned int> output_shape;
+    memory_t mem_type;
 };
 
 } // namespace op

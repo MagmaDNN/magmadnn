@@ -20,7 +20,7 @@ namespace op {
 template <typename T>
 class sigmoid_op : public operation<T> {
 public:
-    sigmoid_op(operation<T> *x, bool copy=true, bool fast=true) : operation<T>::operation({x}), x(x), copy(copy), fast(fast) {};
+    sigmoid_op(operation<T> *x, bool copy=true, bool fast=true);
 
     tensor<T>* eval();
 
@@ -28,6 +28,8 @@ public:
 
 protected:
     operation<T> *x;
+    tensor<T> *ret;
+    
     bool copy;
     bool fast;
 };

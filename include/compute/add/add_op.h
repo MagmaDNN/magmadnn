@@ -21,8 +21,7 @@ namespace op {
 template <typename T>
 class add_op : public operation<T> {
 public:
-	add_op(operation<T>* a, operation<T>* b, bool copy=true) : 
-		operation<T>::operation({a,b}), a(a), b(b), copy(copy) {}
+	add_op(operation<T>* a, operation<T>* b, bool bopy=true);
 
 	tensor<T>* eval();
 	
@@ -30,6 +29,11 @@ public:
 protected:
 	operation<T>* a;
 	operation<T>* b;
+
+	tensor<T> *a_tensor;
+	tensor<T> *b_tensor;
+	tensor<T> *ret;
+
 	bool copy;
 };
 

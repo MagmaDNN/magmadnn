@@ -182,7 +182,7 @@ void fill_diagonal(memorymanager<T> &m, const std::vector<T>& params) {
     // make sure it's square memory
     assert( m_size == root * root );
 
-    assert( params_size >= root || params_size == 1 );
+    assert( params_size >= (unsigned int) root || params_size == 1 );
     if (params_size == 1)
         use_constant_value = true;
     else

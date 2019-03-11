@@ -20,7 +20,7 @@ namespace op {
 template <typename T>
 class tanh_op : public operation<T> {
 public:
-    tanh_op(operation<T> *x, bool copy=true) : operation<T>::operation({x}), x(x), copy(copy) {};
+    tanh_op(operation<T> *x, bool copy=true);
 
     tensor<T>* eval();
 
@@ -28,6 +28,8 @@ public:
 
 protected:
     operation<T> *x;
+    tensor<T> *x_tensor;
+    tensor<T> *ret;
     bool copy;
 };
 

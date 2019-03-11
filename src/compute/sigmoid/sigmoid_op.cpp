@@ -12,12 +12,25 @@ namespace skepsi {
 namespace op {
 
 template <typename T>
+sigmoid_op<T>::sigmoid_op(operation<T> *x, bool copy, bool fast) : 
+    operation<T>::operation({x}), x(x), copy(copy), fast(fast) {
+
+    this->output_shape = x->get_output_shape();
+    this->mem_type = x->get_memory_type();
+    
+    /* create copy when tree is created, not at evaluation time. This avoids allocating memory when
+       evaluating a compute tree. */
+    if (copy) {
+        ret = new tensor<T> (x->get_output_shape(), x->get_memory_type());
+    }
+}
+
+template <typename T>
 tensor<T>* sigmoid_op<T>::eval() {
     tensor<T> *x_tensor = x->eval();
 
-    tensor<T> *ret;
+    /* ret was created in constructor, now just copy evaluated x_tensor into it */
     if (copy) {
-        ret = new tensor<T> (x_tensor->get_shape(), x_tensor->get_memory_type());
         ret->copy_from(*x_tensor);
     } else {
         ret = x_tensor;

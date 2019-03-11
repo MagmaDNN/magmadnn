@@ -20,7 +20,10 @@ namespace op {
 template <typename T>
 class variable : public operation<T> {
 public:
-    variable (std::string name, tensor<T> *val) : operation<T>::operation(), name(name), val(val) {}
+    variable (std::string name, tensor<T> *val) : operation<T>::operation(), name(name), val(val) {
+        this->output_shape = val->get_shape();
+        this->mem_type = val->get_memory_type();
+    }
 
     tensor<T>* eval();
 

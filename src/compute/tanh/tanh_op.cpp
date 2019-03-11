@@ -12,13 +12,23 @@ namespace skepsi {
 namespace op {
 
 template <typename T>
-tensor<T>* tanh_op<T>::eval() {
-    tensor<T> *x_tensor = x->eval();
+tanh_op<T>::tanh_op(operation<T> *x, bool copy) : operation<T>::operation({x}), x(x), copy(copy) {
+    
+    this->output_shape = x->get_output_shape();
+    this->mem_type = x->get_memory_type();
 
-    tensor<T> *ret;
+    /* create tensor here to avoid memory allocation at tree execution */
     if (copy) {
-        ret = new tensor<T> (x_tensor->get_shape(), x_tensor->get_memory_type());
-        ret->get_memory_manager()->copy_from(*(x_tensor->get_memory_manager()));
+        ret = new tensor<T> (this->output_shape, this->mem_type);
+    }
+}
+
+template <typename T>
+tensor<T>* tanh_op<T>::eval() {
+    x_tensor = x->eval();
+
+    if (copy) {
+        ret->copy_from(*x_tensor);
     } else {
         ret = x_tensor;
     }

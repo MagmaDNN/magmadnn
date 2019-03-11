@@ -12,25 +12,46 @@ namespace skepsi {
 namespace op {
 
 template <typename T>
-tensor<T>* matmul_op<T>::eval() {
-	tensor<T>* a_tensor = a->eval();    // MxK
-	tensor<T>* b_tensor = b->eval();    // KxN
-    tensor<T>* c_tensor;                // MxN
+matmul_op<T>::matmul_op(T alpha, operation<T>* a, operation<T>* b, T beta, operation<T> *c, bool copy) : 
+		operation<T>::operation({a,b,c}), a(a), b(b), c(c), alpha(alpha), beta(beta), copy(copy) {
 
-    // if a valid c operation was passed in, then use it.
-    if (c != nullptr) {
-        c_tensor = c->eval();
-    } else {
-        // TODO: fix this. don't instantiate a tensor in a gemm call. this is a performance 
-        // critical function. perhaps propogate shape through operations and allocate tensor
-        // before creating matmul_op.
-        c_tensor = new tensor<T> ({a_tensor->get_shape(0), b_tensor->get_shape(1)}, a_tensor->get_memory_type());
-        copy = false;
-    }
+    unsigned int M, N, K;
 
-    tensor<T>* ret;
+    // must have same memory types
+	assert( a->get_memory_type() == b->get_memory_type() );
+	assert( b->get_memory_type() == c->get_memory_type() );
+
+	// tensors must be matrices
+	assert( a->get_output_shape().size() == 2 );
+	assert( b->get_output_shape().size() == 2 );
+	assert( c->get_output_shape().size() == 2 );
+
+	// A: MxK  B: KxN  C: MxN
+	M = a->get_output_shape(0);
+	K = a->get_output_shape(1);
+	N = b->get_output_shape(1);
+
+	// valid shapes
+	assert( b->get_output_shape(0) == K );
+	assert( c->get_output_shape(0) == M );
+	assert( c->get_output_shape(1) == N );
+
+    this->output_shape = {M,N};
+    this->mem_type = a->get_memory_type();
+
+    /* avoid allocating memory in eval */
     if (copy) {
-        ret = new tensor<T> ({a_tensor->get_shape(0), b_tensor->get_shape(1)}, a_tensor->get_memory_type());
+        ret = new tensor<T> (this->output_shape, this->mem_type);
+    }
+}
+
+template <typename T>
+tensor<T>* matmul_op<T>::eval() {
+	a_tensor = a->eval();    // MxK
+	b_tensor = b->eval();    // KxN
+    c_tensor = c->eval();
+
+    if (copy) {
         ret->copy_from(*c_tensor);
     } else {
         ret = c_tensor;
@@ -47,7 +68,9 @@ template class matmul_op<double>;
 
 template <typename T>
 matmul_op<T>* matmul(operation<T> *a, operation<T> *b) {
-    return new matmul_op<T> ((T)1, a, b, (T)0, nullptr, false);
+    tensor<T> *c_tensor = new tensor<T> ({a->get_output_shape(0), b->get_output_shape(1)}, a->get_memory_type());
+    operation<T> *c = var("__matmul_internal_c", c_tensor);
+    return new matmul_op<T> ((T)1, a, b, (T)0, c, false);
 }
 template matmul_op<int>* matmul(operation<int> *a, operation<int> *b);
 template matmul_op<float>* matmul(operation<float> *a, operation<float> *b);

@@ -9,6 +9,7 @@
 #pragma once
 #include <vector>
 #include "compute/operation.h"
+#include "compute/variable.h"
 #include "tensor/tensor.h"
 #include "gemm_internal.h"
 
@@ -18,8 +19,7 @@ namespace op {
 template <typename T>
 class matmul_op : public operation<T> {
 public:
-	matmul_op(T alpha, operation<T>* a, operation<T>* b, T beta, operation<T> *c, bool copy=true) : 
-		operation<T>::operation({a,b,c}), a(a), b(b), c(c), alpha(alpha), beta(beta), copy(copy) {}
+	matmul_op(T alpha, operation<T>* a, operation<T>* b, T beta, operation<T> *c, bool copy=true);
 
 	tensor<T>* eval();
 	
@@ -28,6 +28,11 @@ protected:
 	operation<T> *a;
 	operation<T> *b;
 	operation<T> *c;
+
+	tensor<T> *a_tensor;
+	tensor<T> *b_tensor;
+	tensor<T> *c_tensor;
+	tensor<T> *ret;
 
 	T alpha;
 	T beta;

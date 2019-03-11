@@ -41,12 +41,22 @@ OPTIMIZATION_LEVEL ?= -O3
 WARNINGS ?= -Wall
 FPIC ?= -fPIC
 CXX_VERSION ?= -std=c++11
+DEBUG ?= 0
+
+# set optimization to Og for debugging
+ifeq ($(DEBUG),1)
+OPTIMIZATION_LEVEL = -Og
+endif
 
 # the entire flags for compilation
 CXXFLAGS := $(OPTIMIZATION_LEVEL) $(WARNINGS) $(CXX_VERSION) $(CUDA_MACRO) $(FPIC) -MMD
 NVCCFLAGS := $(CXX_VERSION) $(OPTIMIZATION_LEVEL) -Xcompiler "$(CXXFLAGS)" $(NV_SM) $(NV_COMP)
 LD_FLAGS := $(LIBDIRS) $(LIBS)
 
+# include -g for debugging
+ifeq ($(DEBUG),1)
+CXXFLAGS += -g
+endif
 
 # make these available to child makefiles
 export CXX

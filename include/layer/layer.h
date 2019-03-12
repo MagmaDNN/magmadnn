@@ -8,7 +8,8 @@
  */
 #pragma once
 #include <vector>
-#include "tensor/tensor.h"
+#include <string>
+#include "compute/operation.h"
 
 namespace skepsi {
 namespace layer {
@@ -17,17 +18,18 @@ template <typename T>
 class layer {
 public:
 	
-	virtual void forward() = 0;
-	virtual void backward() = 0;
+	virtual op::operation<T>* out() {
+		return output;
+	}
 
 	/** Get the pointer to the input tensor for this layer
 	 * @return tensor<T>* 
 	 */
-	tensor<T> *get_input_tensor() { return input_tensor; }
+	op::operation<T> *get_input() { return input; }
 	/** Get the pointer to the output tensor for this layer
 	 * @return tensor<T>* 
 	 */
-	tensor<T> *get_output_tensor() { return output_tensor; }
+	op::operation<T> *get_output() { return output; }
 
 	/** Returns a copy of the input shape as a vector
 	 * @return std::vector<unsigned int> 
@@ -57,14 +59,16 @@ public:
 	}
 
 protected:
-	layer(std::vector<unsigned int> input_shape, tensor<T> *input_tensor) : 
-		input_shape(input_shape), input_tensor(input_tensor) {}
+	layer(std::vector<unsigned int> input_shape, op::operation<T> *input) : 
+		input_shape(input_shape), input(input) {}
 
 	std::vector<unsigned int> input_shape;
 	std::vector<unsigned int> output_shape;
 
-	tensor<T> *input_tensor;
-	tensor<T> *output_tensor;
+	op::operation<T> *input;
+	op::operation<T> *output;
+
+	std::string name;
 
 };
 

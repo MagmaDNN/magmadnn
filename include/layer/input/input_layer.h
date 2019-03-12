@@ -7,26 +7,25 @@
  * @copyright Copyright (c) 2019
  */
 #include <vector>
-#include "layer.h"
+#include "layer/layer.h"
 #include "tensor/tensor.h"
+#include "compute/operation.h"
 
 namespace skepsi {
 namespace layer {
 
 template <typename T>
-class input : public layer<T> {
+class input_layer : public layer<T> {
 public:
-    input(std::vector<unsigned int> input_shape);
-    input(tensor<T> *input_tensor);
-
-    void forward();
-    void backward();
-
+    input_layer(op::operation<T> *input);
 
 protected:
     void init();
 
 };
+
+template <typename T>
+input_layer<T>* input(op::operation<T> *input);
 
 }   // layer
 }   // skepsi

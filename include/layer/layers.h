@@ -10,4 +10,6 @@
 
 /* Load in all the layer headers */
 
-#include "input_layer.h"
+#include "input/input_layer.h"
+#include "fullyconnected/fullyconnected_layer.h"
+#include "output/output_layer.h"

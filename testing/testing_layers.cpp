@@ -14,6 +14,7 @@ using namespace skepsi;
 
 void test_input(memory_t mem, unsigned int size);
 void test_fullyconnected(memory_t mem, unsigned int size);
+void test_activation(memory_t mem, unsigned int size);
 void test_layers(memory_t mem, unsigned int size);
 
 int main(int argc, char **argv) {
@@ -30,6 +31,13 @@ int main(int argc, char **argv) {
     test_fullyconnected(DEVICE, 15);
     test_fullyconnected(MANAGED, 15);
     test_fullyconnected(CUDA_MANAGED, 15);
+    #endif
+
+    test_activation(HOST, 15);
+    #if defined(_HAS_CUDA_)
+    test_activation(DEVICE, 15);
+    test_activation(MANAGED, 15);
+    test_activation(CUDA_MANAGED, 15);
     #endif
 
     test_layers(HOST, 15);
@@ -84,6 +92,26 @@ void test_fullyconnected(memory_t mem, unsigned int size) {
     assert( output_tensor->get_shape(1) == hidden_units );
 
     delete data_tensor;
+    show_success();
+}
+
+void test_activation(memory_t mem, unsigned int size) {
+    float val = 2.3f;
+
+    printf("testing %s activation...  ", get_memory_type_name(mem));
+
+    tensor<float> *data_tensor = new tensor<float> ({size, size}, {CONSTANT, {val}}, mem);
+    op::variable<float> *data = op::var("data", data_tensor);
+
+    layer::activation_layer<float> *act = layer::activation(data, layer::TANH);
+
+    op::operation<float> *output = act->out();
+    tensor<float> *output_tensor = output->eval();
+
+    for (unsigned int i = 0; i < output_tensor->get_size(); i++) {
+        assert( abs(output_tensor->get(i) - tanh(val)) <= 1E-8 );
+    }
+
     show_success();
 }
 

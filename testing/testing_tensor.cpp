@@ -1,8 +1,8 @@
 #include "skepsi.h"
+#include "utilities.h"
 
 using namespace skepsi;
 
-const char* get_memory_type_name(memory_t mem);
 void test_indexing(memory_t mem, bool verbose);
 void test_fill(tensor_filler_t<float> filler, memory_t mem, bool verbose);
 
@@ -46,7 +46,7 @@ void test_indexing(memory_t mem, bool verbose) {
     
     delete t;
 
-	if (verbose) printf("Success!\n");
+	if (verbose) show_success();
 }
 
 void test_fill(tensor_filler_t<float> filler, memory_t mem, bool verbose) {
@@ -63,19 +63,7 @@ void test_fill(tensor_filler_t<float> filler, memory_t mem, bool verbose) {
 			assert( t->get({i,j}) == val );
 		}
 	}
-	if (verbose) printf("Success!\n");
+	if (verbose) show_success();
 }
 
-
-const char* get_memory_type_name(memory_t mem) {
-	switch (mem) {
-		case HOST: 			return "HOST";
-		#if defined(_HAS_CUDA_)
-		case DEVICE: 		return "DEVICE";
-		case MANAGED: 		return "MANAGED";
-		case CUDA_MANAGED: 	return "CUDA_MANAGED";
-		#endif
-		default: 			return "UNDEFINED_MEMORY_TYPE";
-	}
-}
 

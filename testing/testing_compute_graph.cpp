@@ -7,6 +7,7 @@
  * @copyright Copyright (c) 2019
  */
 #include "skepsi.h"
+#include "utilities.h"
 
 using namespace skepsi;
 
@@ -15,7 +16,6 @@ void test_matmul(memory_t mem_type, unsigned int size);
 void test_affine(memory_t mem_type, unsigned int size);
 void test_sigmoid(memory_t mem_type, unsigned int size);
 void test_tanh(memory_t mem_type, unsigned int size);
-const char* get_memory_type_name(memory_t mem);
 
 int main(int argc, char **argv) {
 	#if defined(_HAS_CUDA_)
@@ -105,7 +105,7 @@ void test_add(memory_t mem_type, unsigned int size) {
 	delete t2;
 	delete sum;
 
-	printf("Success!\n");
+	show_success();
 }
 
 void test_matmul(memory_t mem_type, unsigned int size) {
@@ -146,7 +146,7 @@ void test_matmul(memory_t mem_type, unsigned int size) {
 	delete t1;
 	delete prod;
 
-	printf("Success!\n");
+	show_success();
 }
 
 void test_affine(memory_t mem_type, unsigned int size) {
@@ -191,7 +191,7 @@ void test_affine(memory_t mem_type, unsigned int size) {
 	delete t2;
 	delete aff;
 
-	printf("Success!\n");
+	show_success();
 }
 
 void test_sigmoid(memory_t mem_type, unsigned int size) {
@@ -218,7 +218,7 @@ void test_sigmoid(memory_t mem_type, unsigned int size) {
 	delete t0;
 	delete sig;
 
-	printf("Success!\n");
+	show_success();
 }
 
 void test_tanh(memory_t mem_type, unsigned int size) {
@@ -248,17 +248,6 @@ void test_tanh(memory_t mem_type, unsigned int size) {
 	delete fin_op;
 	delete fin;
 
-	printf("Success!\n");
+	show_success();
 }
 
-const char* get_memory_type_name(memory_t mem) {
-	switch (mem) {
-		case HOST:			return "HOST";
-		#if defined(_HAS_CUDA_)
-		case DEVICE:		return "DEVICE";
-		case MANAGED:		return "MANAGED";
-		case CUDA_MANAGED:	return "CUDA_MANAGED";
-		#endif
-		default:			return "UNDEFINED_MEMORY_TYPE";
-	}
-}

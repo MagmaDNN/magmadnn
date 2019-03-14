@@ -5,20 +5,10 @@
 #include <stdio.h>
 #include <assert.h>
 #include "skepsi.h"
+#include "utilities.h"
 
 using namespace skepsi;
 
-const char* get_memory_type_name(memory_t mem) {
-	switch (mem) {
-		case HOST: 			return "HOST";
-		#if defined(_HAS_CUDA_)
-		case DEVICE: 		return "DEVICE";
-		case MANAGED: 		return "MANAGED";
-		case CUDA_MANAGED: 	return "CUDA_MANAGED";
-		#endif
-		default: 			return "UNDEFINED_MEMORY_TYPE";
-	}
-}
 
 void test_get_set(memory_t mem, int size, bool verbose) {
 	float val = 1.125f;
@@ -39,7 +29,7 @@ void test_get_set(memory_t mem, int size, bool verbose) {
 
 	delete mm;	
 
-	if (verbose) printf("Success!\n");
+	if (verbose) show_success();
 }
 
 
@@ -65,7 +55,7 @@ void test_copy(memory_t src_mem, memory_t dst_mem, int size, bool verbose) {
 	delete mm_src;
 	delete mm_dst;
 
-	if (verbose) printf("Success!\n");
+	if (verbose) show_success();
 }
 
 

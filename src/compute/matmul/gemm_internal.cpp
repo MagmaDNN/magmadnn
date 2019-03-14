@@ -12,7 +12,7 @@ namespace skepsi {
 namespace internal {
 
 template <typename T>
-bool gemm_check(tensor<T> *A, tensor<T> *B, tensor<T> *C, unsigned int &M, unsigned int &N, unsigned int &K) {
+bool gemm_check(Tensor<T> *A, Tensor<T> *B, Tensor<T> *C, unsigned int &M, unsigned int &N, unsigned int &K) {
 	// must have same memory types
 	assert( A->get_memory_type() == B->get_memory_type() );
 	assert( B->get_memory_type() == C->get_memory_type() );
@@ -37,7 +37,7 @@ bool gemm_check(tensor<T> *A, tensor<T> *B, tensor<T> *C, unsigned int &M, unsig
 
 /* INT */
 template <>
-void gemm_full(int alpha, tensor<int> *A, tensor<int> *B, int beta, tensor<int> *C) {
+void gemm_full(int alpha, Tensor<int> *A, Tensor<int> *B, int beta, Tensor<int> *C) {
 	unsigned int M, N, K;
 	if (!gemm_check(A, B, C, M, N, K)) return;
 
@@ -56,7 +56,7 @@ void gemm_full(int alpha, tensor<int> *A, tensor<int> *B, int beta, tensor<int> 
 
 /* FLOAT */
 template <>
-void gemm_full(float alpha, tensor<float> *A, tensor<float> *B, float beta, tensor<float> *C) {
+void gemm_full(float alpha, Tensor<float> *A, Tensor<float> *B, float beta, Tensor<float> *C) {
 	unsigned int M, N, K;
 	if (!gemm_check(A, B, C, M, N, K)) return;
 
@@ -86,7 +86,7 @@ void gemm_full(float alpha, tensor<float> *A, tensor<float> *B, float beta, tens
 
 /* DOUBLE */
 template <>
-void gemm_full(double alpha, tensor<double> *A, tensor<double> *B, double beta, tensor<double> *C) {
+void gemm_full(double alpha, Tensor<double> *A, Tensor<double> *B, double beta, Tensor<double> *C) {
 	unsigned int M, N, K;
 	if (!gemm_check(A, B, C, M, N, K)) return;
 

@@ -14,7 +14,7 @@ See [include/compute/add/](https://github.com/Dando18/skepsi/tree/master/include
 Operators _should_ implement copy and no-copy options, determining whether to return a newly allocated tensor or write over one of the parameters.
 
 ### constructor
-The constructor must call the parent constructor of `operation<T>` that takes a vector of operations. This sets the children of the operation and is used for memory releasing. `output_shape` and `mem_type` should also be set within the constructor. This allows shape checking and pre-allocation of tensors when the tree is created.
+The constructor must call the parent constructor of `Operation<T>` that takes a vector of operations. This sets the children of the operation and is used for memory releasing. `output_shape` and `mem_type` should also be set within the constructor. This allows shape checking and pre-allocation of tensors when the tree is created.
 
 The constructor should also do any preprocessing that is possible, to remove computational burden from the performance critical `eval` function. 
 
@@ -23,7 +23,7 @@ An example of a constructor might look like,
 ```c++
 /* x is the only child here, so pass that to the parent class constructor. */
 template <typename T>
-tanh_op<T>::tanh_op(operation<T> *x, bool copy) : operation<T>::operation({x}), x(x), copy(copy) {
+TanhOp<T>::tanh_op(Operation<T> *x, bool copy) : Operation<T>::operation({x}), x(x), copy(copy) {
     
     /* set the output shape and memory type */
     this->output_shape = x->get_output_shape();
@@ -31,7 +31,7 @@ tanh_op<T>::tanh_op(operation<T> *x, bool copy) : operation<T>::operation({x}), 
 
     /* create return tensor here to avoid memory allocation at tree execution */
     if (copy) {
-        ret = new tensor<T> (this->output_shape, this->mem_type);
+        ret = new Tensor<T> (this->output_shape, this->mem_type);
     }
 }
 ```
@@ -41,7 +41,7 @@ The eval method is simply responsible for the evaluation of the operation. It sh
 
 ```c++
 template <typename T>
-tensor<T>* matmul_op<T>::eval() {
+Tensor<T>* MatmulOp<T>::eval() {
     /* evaluate the child nodes */
     a_tensor = a->eval();    // MxK
     b_tensor = b->eval();    // KxN
@@ -67,7 +67,7 @@ The `to_string` method is fairly simple to implement. It defines a form to print
 
 ```c++
 template <typename T>
-std::string add_op<T>::to_string() {
+std::string AddOp<T>::to_string() {
     return "(" + a->to_string() + " + " + b->to_string() + ")";
     /* OR something like this */
     return "ADD(" + a->to_string() + ", " + b->to_string() + ")";
@@ -79,7 +79,7 @@ Every operation should be paired with a function that returns a new pointer to t
 
 ```c++
 template <typename T>
-tanh_op<T>* tanh(operation<T> *x, bool copy) {
-    return new tanh_op<T> (x, copy);
+TanhOp<T>* tanh(Operation<T> *x, bool copy) {
+    return new TanhOp<T> (x, copy);
 }
 ```

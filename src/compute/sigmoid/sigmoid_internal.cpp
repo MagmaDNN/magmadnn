@@ -12,7 +12,7 @@ namespace skepsi {
 namespace internal {
 
 template <typename T>
-void sigmoid_full(tensor<T> *x, bool fast) {
+void sigmoid_full(Tensor<T> *x, bool fast) {
 
     if (x->get_memory_type() == HOST) {
         T *x_ptr = x->get_ptr();
@@ -33,9 +33,9 @@ void sigmoid_full(tensor<T> *x, bool fast) {
     }
     #endif
 }
-template void sigmoid_full(tensor<int> *x, bool fast);
-template void sigmoid_full(tensor<float> *x, bool fast);
-template void sigmoid_full(tensor<double> *x, bool fast);
+template void sigmoid_full(Tensor<int> *x, bool fast);
+template void sigmoid_full(Tensor<float> *x, bool fast);
+template void sigmoid_full(Tensor<double> *x, bool fast);
 
 }   // namespace internal
 }   // namespace skepsi

@@ -12,7 +12,7 @@ namespace skepsi {
 namespace internal {
 
 template <typename T>
-bool geadd_check(tensor<T> *A, tensor<T> *B, tensor<T> *C) {
+bool geadd_check(Tensor<T> *A, Tensor<T> *B, Tensor<T> *C) {
     assert( A->get_shape().size() == 2 );
     assert( B->get_shape().size() == 2 );
     assert( C->get_shape().size() == 2 );
@@ -25,7 +25,7 @@ bool geadd_check(tensor<T> *A, tensor<T> *B, tensor<T> *C) {
 }
 
 template <typename T>
-void geadd_full(T alpha, tensor<T> *A, T beta, tensor<T> *B, tensor<T> *C) {
+void geadd_full(T alpha, Tensor<T> *A, T beta, Tensor<T> *B, Tensor<T> *C) {
 
     if (!geadd_check(A, B, C)) return;
 
@@ -44,9 +44,9 @@ void geadd_full(T alpha, tensor<T> *A, T beta, tensor<T> *B, tensor<T> *C) {
     #endif
 }
 
-template void geadd_full(int alpha, tensor<int> *A, int beta, tensor<int> *B, tensor<int> *C);
-template void geadd_full(float alpha, tensor<float> *A, float beta, tensor<float> *B, tensor<float> *C);
-template void geadd_full(double alpha, tensor<double> *A, double beta, tensor<double> *B, tensor<double> *C);
+template void geadd_full(int alpha, Tensor<int> *A, int beta, Tensor<int> *B, Tensor<int> *C);
+template void geadd_full(float alpha, Tensor<float> *A, float beta, Tensor<float> *B, Tensor<float> *C);
+template void geadd_full(double alpha, Tensor<double> *A, double beta, Tensor<double> *B, Tensor<double> *C);
 
 }   // namespace internal
 }   // namespace skepsi

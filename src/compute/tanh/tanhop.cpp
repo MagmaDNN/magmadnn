@@ -1,30 +1,30 @@
 /**
- * @file tanh_op.cpp
+ * @file tanhop.cpp
  * @author Daniel Nichols
  * @version 0.0.1
  * @date 2019-02-23
  * 
  * @copyright Copyright (c) 2019
  */
-#include "compute/tanh/tanh_op.h"
+#include "compute/tanh/tanhop.h"
 
 namespace skepsi {
 namespace op {
 
 template <typename T>
-tanh_op<T>::tanh_op(operation<T> *x, bool copy) : operation<T>::operation({x}), x(x), copy(copy) {
+TanhOp<T>::TanhOp(Operation<T> *x, bool copy) : Operation<T>::Operation({x}), x(x), copy(copy) {
     
     this->output_shape = x->get_output_shape();
     this->mem_type = x->get_memory_type();
 
     /* create tensor here to avoid memory allocation at tree execution */
     if (copy) {
-        ret = new tensor<T> (this->output_shape, this->mem_type);
+        ret = new Tensor<T> (this->output_shape, this->mem_type);
     }
 }
 
 template <typename T>
-tensor<T>* tanh_op<T>::eval() {
+Tensor<T>* TanhOp<T>::eval() {
     x_tensor = x->eval();
 
     if (copy) {
@@ -37,17 +37,17 @@ tensor<T>* tanh_op<T>::eval() {
     
     return ret;
 }
-template class tanh_op<int>;
-template class tanh_op<float>;
-template class tanh_op<double>;
+template class TanhOp<int>;
+template class TanhOp<float>;
+template class TanhOp<double>;
 
 template <typename T>
-tanh_op<T>* tanh(operation<T> *x, bool copy) {
-    return new tanh_op<T> (x, copy);
+TanhOp<T>* tanh(Operation<T> *x, bool copy) {
+    return new TanhOp<T> (x, copy);
 }
-template tanh_op<int>* tanh(operation<int> *x, bool copy);
-template tanh_op<float>* tanh(operation<float> *x, bool copy);
-template tanh_op<double>* tanh(operation<double> *x, bool copy);
+template TanhOp<int>* tanh(Operation<int> *x, bool copy);
+template TanhOp<float>* tanh(Operation<float> *x, bool copy);
+template TanhOp<double>* tanh(Operation<double> *x, bool copy);
 
 }   // namespace op
 }   // namespace skepsi

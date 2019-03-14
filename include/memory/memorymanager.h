@@ -25,39 +25,39 @@
 namespace skepsi {
 
 template <typename T>
-class memorymanager {
+class MemoryManager {
 public:
     /** MemoryManager class to keep track of a memory address across devices.
      *  @param size the size of the memory to allocate/manage
      *  @param mem_type what memory type will this data belong to
      *  @param device_id what device will the data reside on (preferred if mem_type is CUDA_MANAGED) 
      */
-    memorymanager(unsigned int size, memory_t mem_type, device_t device_id);
+    MemoryManager(unsigned int size, memory_t mem_type, device_t device_id);
 
     /** Destroys the memory manager object and releases all its data.
      */
-    ~memorymanager();
+    ~MemoryManager();
 
     /** Copies the data from src memory manager into the pointer here. Asserts that
      *  src and this have the same size.
      *  @param src the memorymanager to copy data from
      *  @return the error code (0 - no error, 1 - src ptr not allocated)
      */
-    skepsi_error_t copy_from(const memorymanager<T>& src, unsigned int begin_idx, unsigned int size);
+    skepsi_error_t copy_from(const MemoryManager<T>& src, unsigned int begin_idx, unsigned int size);
 
     /** Copies the data from src memory manager into the pointer here. Asserts that
      *  src and this have the same size.
      *  @param src the memorymanager to copy data from
      *  @return the error code (0 - no error, 1 - src ptr not allocated)
      */
-    skepsi_error_t copy_from(const memorymanager<T>& src, unsigned int size);
+    skepsi_error_t copy_from(const MemoryManager<T>& src, unsigned int size);
 
     /** Copies the data from src memory manager into the pointer here. Asserts that
      *  src and this have the same size.
      *  @param src the memorymanager to copy data from
      *  @return the error code (0 - no error, 1 - src ptr not allocated)
      */
-    skepsi_error_t copy_from(const memorymanager<T>& src);
+    skepsi_error_t copy_from(const MemoryManager<T>& src);
 
     /** copies memory from a host ptr into this memorymanager. will throw an error if it
      *  reaches the end of src allocated mem before this is filled.

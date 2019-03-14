@@ -14,14 +14,14 @@ namespace skepsi {
 namespace op {
 
 template <typename T>
-class operation {
+class Operation {
 public: 
     /** The operation class serves as an abstract object, which all tensors operations descend
      *  from. It is used to build a computation tree.
      */
-    operation() {}
-    operation(std::vector<operation<T>*> children) : children(children) {}
-	virtual ~operation() {
+    Operation() {}
+    Operation(std::vector<Operation<T>*> children) : children(children) {}
+	virtual ~Operation() {
         for (unsigned int i = 0; i < children.size(); i++)
             delete children[i];
     }
@@ -55,9 +55,9 @@ public:
     virtual memory_t get_memory_type() const { return this->mem_type; }
 
     /** Returns the operation's evaluated tensor.
-     * @return tensor<T>* 
+     * @return Tensor<T>* 
      */
-    virtual tensor<T>* eval() = 0;
+    virtual Tensor<T>* eval() = 0;
 
     /** string form of the given operation. Expands on children.
      * @return std::string 
@@ -65,7 +65,7 @@ public:
     virtual std::string to_string() = 0;
     
 protected:
-    std::vector<operation<T>*> children;
+    std::vector<Operation<T>*> children;
     std::vector<unsigned int> output_shape;
     memory_t mem_type;
 };

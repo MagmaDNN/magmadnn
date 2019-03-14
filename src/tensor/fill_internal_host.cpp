@@ -13,7 +13,7 @@ namespace skepsi {
 namespace internal {
 
 template <typename T>
-void fill_uniform(memorymanager<T> &m, const std::vector<T>& params) {
+void fill_uniform(MemoryManager<T> &m, const std::vector<T>& params) {
 
     assert( params.size() >= 2 );
 
@@ -49,7 +49,7 @@ void fill_uniform(memorymanager<T> &m, const std::vector<T>& params) {
         #endif
     }
 }
-template <> void fill_uniform(memorymanager<int>& m, const std::vector<int>& params) {
+template <> void fill_uniform(MemoryManager<int>& m, const std::vector<int>& params) {
     /* define special for `int` because uniform_real_distribution is only for REAL_TYPE */
     assert( params.size() >= 2 );
 
@@ -85,12 +85,12 @@ template <> void fill_uniform(memorymanager<int>& m, const std::vector<int>& par
         #endif
     }
 }
-template void fill_uniform(memorymanager<float>&, const std::vector<float>&);
-template void fill_uniform(memorymanager<double>&, const std::vector<double>&);
+template void fill_uniform(MemoryManager<float>&, const std::vector<float>&);
+template void fill_uniform(MemoryManager<double>&, const std::vector<double>&);
 
 
 template <typename T>
-void fill_glorot(memorymanager<T> &m, const std::vector<T>& params) {
+void fill_glorot(MemoryManager<T> &m, const std::vector<T>& params) {
 
     assert( params.size() >= 2 );
 
@@ -126,7 +126,7 @@ void fill_glorot(memorymanager<T> &m, const std::vector<T>& params) {
         #endif
     }
 }
-template <> void fill_glorot(memorymanager<int>& m, const std::vector<int>& params) {
+template <> void fill_glorot(MemoryManager<int>& m, const std::vector<int>& params) {
     /* use binomial for integers */
     assert( params.size() >= 2 );
 
@@ -162,12 +162,12 @@ template <> void fill_glorot(memorymanager<int>& m, const std::vector<int>& para
         #endif
     }
 }
-template void fill_glorot(memorymanager<float>&, const std::vector<float>&);
-template void fill_glorot(memorymanager<double>&, const std::vector<double>&);
+template void fill_glorot(MemoryManager<float>&, const std::vector<float>&);
+template void fill_glorot(MemoryManager<double>&, const std::vector<double>&);
 
 
 template <typename T>
-void fill_diagonal(memorymanager<T> &m, const std::vector<T>& params) {
+void fill_diagonal(MemoryManager<T> &m, const std::vector<T>& params) {
     bool use_constant_value;
     int root;
     unsigned int m_size, params_size;
@@ -201,13 +201,13 @@ void fill_diagonal(memorymanager<T> &m, const std::vector<T>& params) {
         }
     }
 }
-template void fill_diagonal(memorymanager<int> &m, const std::vector<int>& params);
-template void fill_diagonal(memorymanager<float> &m, const std::vector<float>& params);
-template void fill_diagonal(memorymanager<double> &m, const std::vector<double>& params);
+template void fill_diagonal(MemoryManager<int> &m, const std::vector<int>& params);
+template void fill_diagonal(MemoryManager<float> &m, const std::vector<float>& params);
+template void fill_diagonal(MemoryManager<double> &m, const std::vector<double>& params);
 
 
 template <typename T>
-void fill_constant(memorymanager<T> &m, const std::vector<T>& params) {
+void fill_constant(MemoryManager<T> &m, const std::vector<T>& params) {
     assert( params.size() >= 1 );
 
     // assume first param is constant value
@@ -234,9 +234,9 @@ void fill_constant(memorymanager<T> &m, const std::vector<T>& params) {
         #endif
     }
 }
-template void fill_constant(memorymanager<int>&, const std::vector<int>&);
-template void fill_constant(memorymanager<float>&, const std::vector<float>&);
-template void fill_constant(memorymanager<double>&, const std::vector<double>&);
+template void fill_constant(MemoryManager<int>&, const std::vector<int>&);
+template void fill_constant(MemoryManager<float>&, const std::vector<float>&);
+template void fill_constant(MemoryManager<double>&, const std::vector<double>&);
 
 } // namespace internal
 } // namespace skepsi

@@ -31,7 +31,7 @@ void test_indexing(memory_t mem, bool verbose) {
 
 	if (verbose) printf("Testing indexing on device %s...  ", get_memory_type_name(mem));
 	
-    tensor<float> *t = new tensor<float> ({x_size, y_size, z_size}, mem);
+    Tensor<float> *t = new Tensor<float> ({x_size, y_size, z_size}, mem);
 
     // test
     for (int i = 0; i < (int)x_size; i++)
@@ -56,7 +56,7 @@ void test_fill(tensor_filler_t<float> filler, memory_t mem, bool verbose) {
 	if (filler.values.size() == 0) { fprintf(stderr, "tester error.\n"); return; }
 
 	float val = filler.values[0];
-	tensor<float> *t = new tensor<float> ({x_size, y_size}, filler, mem);
+	Tensor<float> *t = new Tensor<float> ({x_size, y_size}, filler, mem);
 
 	for (int i = 0; i < (int) x_size; i++) {
 		for (int j = 0; j < (int) y_size; j++) {

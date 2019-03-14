@@ -18,30 +18,30 @@ namespace op {
  * @tparam T 
  */
 template <typename T>
-class variable : public operation<T> {
+class Variable : public Operation<T> {
 public:
-    variable (std::string name, tensor<T> *val) : operation<T>::operation(), name(name), val(val) {
+    Variable (std::string name, Tensor<T> *val) : Operation<T>::Operation(), name(name), val(val) {
         this->output_shape = val->get_shape();
         this->mem_type = val->get_memory_type();
     }
 
-    tensor<T>* eval();
+    Tensor<T>* eval();
 
     std::string to_string() { return name; }
 
 protected:
     std::string name;
-    tensor<T> *val;
+    Tensor<T> *val;
 };
 
 /** Returns a new variable operation. The variable wraps around val with name name.
  * @tparam T 
  * @param name the name of the variable. This does not effect computation. It will allow to_string() methods to work, however.
  * @param val tensor to wrap around
- * @return variable<T>* 
+ * @return Variable<T>* 
  */
 template <typename T>
-variable<T>* var(std::string name, tensor<T>* val);
+Variable<T>* var(std::string name, Tensor<T>* val);
 
 } // namespace op
 } // namespace skepsi

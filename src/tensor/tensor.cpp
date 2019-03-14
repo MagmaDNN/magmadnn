@@ -11,44 +11,44 @@
 namespace skepsi {
 
 template <typename T>
-tensor<T>::tensor(std::vector<unsigned int> shape) {
+Tensor<T>::Tensor(std::vector<unsigned int> shape) {
     init(shape, {TENSOR_DEFAULT_FILL_TYPE, {}}, TENSOR_DEFAULT_MEM_TYPE, TENSOR_DEFAULT_DEVICE_ID);
  }
 
  template <typename T>
-tensor<T>::tensor(std::vector<unsigned int> shape, memory_t mem_type) {
+Tensor<T>::Tensor(std::vector<unsigned int> shape, memory_t mem_type) {
     init(shape, {TENSOR_DEFAULT_FILL_TYPE, {}}, mem_type, TENSOR_DEFAULT_DEVICE_ID);
  }
 
 template <typename T>
-tensor<T>::tensor(std::vector<unsigned int> shape, memory_t mem_type, device_t device_id) { 
+Tensor<T>::Tensor(std::vector<unsigned int> shape, memory_t mem_type, device_t device_id) { 
     init(shape, {TENSOR_DEFAULT_FILL_TYPE, {}}, mem_type, device_id);
 }
 
 template <typename T>
-tensor<T>::tensor(std::vector<unsigned int> shape, tensor_filler_t<T> filler) { 
+Tensor<T>::Tensor(std::vector<unsigned int> shape, tensor_filler_t<T> filler) { 
     init(shape, filler, TENSOR_DEFAULT_MEM_TYPE, TENSOR_DEFAULT_DEVICE_ID);
 }
 
 template <typename T>
-tensor<T>::tensor(std::vector<unsigned int> shape, tensor_filler_t<T> filler, memory_t mem_type) { 
+Tensor<T>::Tensor(std::vector<unsigned int> shape, tensor_filler_t<T> filler, memory_t mem_type) { 
     init(shape, filler, mem_type, TENSOR_DEFAULT_DEVICE_ID);
 }
 
 
 template <typename T>
-tensor<T>::tensor(std::vector<unsigned int> shape, tensor_filler_t<T> filler, memory_t mem_type, device_t device_id) { 
+Tensor<T>::Tensor(std::vector<unsigned int> shape, tensor_filler_t<T> filler, memory_t mem_type, device_t device_id) { 
     init(shape, filler, mem_type, device_id);
 }
 
 template <typename T>
-tensor<T>::~tensor() { 
+Tensor<T>::~Tensor() { 
     delete mem_manager;
 }
 
 
 template <typename T>
-void tensor<T>::init(std::vector<unsigned int>& shape, tensor_filler_t<T> filler, memory_t mem_type, device_t device_id) {
+void Tensor<T>::init(std::vector<unsigned int>& shape, tensor_filler_t<T> filler, memory_t mem_type, device_t device_id) {
     // tensor must have at least 1 axis
     assert( shape.size() != 0 );
 
@@ -64,14 +64,14 @@ void tensor<T>::init(std::vector<unsigned int>& shape, tensor_filler_t<T> filler
     }
 
     // create memory manager
-    this->mem_manager = new memorymanager<T> (size, mem_type, device_id);
+    this->mem_manager = new MemoryManager<T> (size, mem_type, device_id);
 
     internal::fill_memory(*mem_manager, filler);
 }
 
 
 template <typename T>
-skepsi_error_t tensor<T>::copy_from(const tensor<T>& src, unsigned int begin_idx, unsigned int size) {
+skepsi_error_t Tensor<T>::copy_from(const Tensor<T>& src, unsigned int begin_idx, unsigned int size) {
     assert( this->size == src.get_size() );
     assert( begin_idx+size <= this->size );
 
@@ -79,39 +79,39 @@ skepsi_error_t tensor<T>::copy_from(const tensor<T>& src, unsigned int begin_idx
 }
 
 template <typename T>
-skepsi_error_t tensor<T>::copy_from(const tensor<T>& src) {
+skepsi_error_t Tensor<T>::copy_from(const Tensor<T>& src) {
     return copy_from(src, 0, src.get_size());
 }
 
 
 template <typename T>
-T tensor<T>::get(const std::vector<int>& idx) { 
+T Tensor<T>::get(const std::vector<int>& idx) { 
     return mem_manager->get( get_flattened_index(idx) );
 }
 
 template <typename T>
-T tensor<T>::get(unsigned int flattened_idx) {
+T Tensor<T>::get(unsigned int flattened_idx) {
     return mem_manager->get( flattened_idx );
 }
 
 template <typename T>
-void tensor<T>::set(const std::vector<int>& idx, T val) { 
+void Tensor<T>::set(const std::vector<int>& idx, T val) { 
     mem_manager->set( get_flattened_index(idx), val );
 }
 
 template <typename T>
-void tensor<T>::set(unsigned int flattened_idx, T val) {
+void Tensor<T>::set(unsigned int flattened_idx, T val) {
     mem_manager->set( flattened_idx, val );
 }
 
 template <typename T>
-unsigned int tensor<T>::get_shape(unsigned int idx) const {
+unsigned int Tensor<T>::get_shape(unsigned int idx) const {
     assert( idx < this->size );
     return this->shape[idx];
 }
 
 template <typename T>
-unsigned int tensor<T>::get_flattened_index(const std::vector<int>& idx) {
+unsigned int Tensor<T>::get_flattened_index(const std::vector<int>& idx) {
     unsigned int jump_size = 1; // the total amout to jump to get to next axis
     unsigned int flattened_idx = 0;
 
@@ -125,8 +125,8 @@ unsigned int tensor<T>::get_flattened_index(const std::vector<int>& idx) {
 
 
 /* COMPILE FOR INT, FLOAT, AND DOUBLE */
-template class tensor<int>;
-template class tensor<float>;
-template class tensor<double>;
+template class Tensor<int>;
+template class Tensor<float>;
+template class Tensor<double>;
 
 } // namespace skepsi

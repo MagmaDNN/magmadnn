@@ -76,18 +76,18 @@ void test_add(memory_t mem_type, unsigned int size) {
 
 	printf("testing %s add...  ", get_memory_type_name(mem_type));
 
-	tensor<float> *t0 = new tensor<float> ({size, size}, {CONSTANT, {val0}}, mem_type);
-    tensor<float> *t1 = new tensor<float> ({size, size}, {CONSTANT, {val1}}, mem_type);
-	tensor<float> *t2 = new tensor<float> ({size, size}, {CONSTANT, {val2}}, mem_type);
+	Tensor<float> *t0 = new Tensor<float> ({size, size}, {CONSTANT, {val0}}, mem_type);
+    Tensor<float> *t1 = new Tensor<float> ({size, size}, {CONSTANT, {val1}}, mem_type);
+	Tensor<float> *t2 = new Tensor<float> ({size, size}, {CONSTANT, {val2}}, mem_type);
 
-	op::variable<float> *v0 = op::var("t0", t0);
-	op::variable<float> *v1 = op::var("t1", t1);
-	op::variable<float> *v2 = op::var("t2", t2);
+	op::Variable<float> *v0 = op::var("t0", t0);
+	op::Variable<float> *v1 = op::var("t1", t1);
+	op::Variable<float> *v2 = op::var("t2", t2);
 
 	// adds into v1
 	auto sum = op::add(v0, op::add(v1, v2));
 
-	tensor<float> *fin = sum->eval();
+	Tensor<float> *fin = sum->eval();
 
 	#if defined(_HAS_CUDA_)
 	if (mem_type == DEVICE || mem_type == CUDA_MANAGED) fin->get_memory_manager()->sync();
@@ -116,20 +116,20 @@ void test_matmul(memory_t mem_type, unsigned int size) {
 
 	printf("Testing %s matmul...  ", get_memory_type_name(mem_type));
 
-	tensor<float> *t0 = new tensor<float> ({m,n}, {ZERO, {}}, mem_type);
-	tensor<float> *t1 = new tensor<float> ({n,p}, {CONSTANT, {5}}, mem_type);
+	Tensor<float> *t0 = new Tensor<float> ({m,n}, {ZERO, {}}, mem_type);
+	Tensor<float> *t1 = new Tensor<float> ({n,p}, {CONSTANT, {5}}, mem_type);
 
 	/* make t0 identity matrix */
 	for (int i = 0; i < (int) m; i++)
 		for (int j = 0; j < (int) n; j++)
 			if (i==j) t0->set({i,j}, 1);
 
-	op::variable<float> *v0 = op::var("t0", t0);
-	op::variable<float> *v1 = op::var("t1", t1);
+	op::Variable<float> *v0 = op::var("t0", t0);
+	op::Variable<float> *v1 = op::var("t1", t1);
 
 	auto prod = op::matmul(v0, v1);
 
-	tensor<float> *fin = prod->eval();
+	Tensor<float> *fin = prod->eval();
 
 	#if defined(_HAS_CUDA_)
 	if (mem_type == DEVICE || mem_type == CUDA_MANAGED) fin->get_memory_manager()->sync();
@@ -158,22 +158,22 @@ void test_affine(memory_t mem_type, unsigned int size) {
 
 	printf("Testing %s affine...  ", get_memory_type_name(mem_type));
 
-	tensor<float> *t0 = new tensor<float> ({m,n}, {ZERO, {}}, mem_type);
-	tensor<float> *t1 = new tensor<float> ({n,p}, {CONSTANT, {5}}, mem_type);
-	tensor<float> *t2 = new tensor<float> ({m,p}, {CONSTANT, {b}}, mem_type);
+	Tensor<float> *t0 = new Tensor<float> ({m,n}, {ZERO, {}}, mem_type);
+	Tensor<float> *t1 = new Tensor<float> ({n,p}, {CONSTANT, {5}}, mem_type);
+	Tensor<float> *t2 = new Tensor<float> ({m,p}, {CONSTANT, {b}}, mem_type);
 
 	/* make t0 identity matrix */
 	for (int i = 0; i < (int) m; i++)
 		for (int j = 0; j < (int) n; j++)
 			if (i==j) t0->set({i,j}, 1);
 
-	op::variable<float> *v0 = op::var("t0", t0);
-	op::variable<float> *v1 = op::var("t1", t1);
-	op::variable<float> *v2 = op::var("t2", t2);
+	op::Variable<float> *v0 = op::var("t0", t0);
+	op::Variable<float> *v1 = op::var("t1", t1);
+	op::Variable<float> *v2 = op::var("t2", t2);
 
 	auto aff = op::add(op::matmul(v0, v1), v2);
 
-	tensor<float> *fin = aff->eval();
+	Tensor<float> *fin = aff->eval();
 
 	#if defined(_HAS_CUDA_)
 	if (mem_type == DEVICE || mem_type == CUDA_MANAGED) fin->get_memory_manager()->sync();
@@ -198,7 +198,7 @@ void test_sigmoid(memory_t mem_type, unsigned int size) {
 
 	printf("Testing %s sigmoid...  ", get_memory_type_name(mem_type));
 
-	tensor<float> *t0 = new tensor<float> ({size, size}, {CONSTANT, {-7}}, mem_type);
+	Tensor<float> *t0 = new Tensor<float> ({size, size}, {CONSTANT, {-7}}, mem_type);
 
 	auto v0 = op::var("t0", t0);
 
@@ -227,7 +227,7 @@ void test_tanh(memory_t mem_type, unsigned int size) {
 
 	printf("Testing %s tanh...  ", get_memory_type_name(mem_type));
 
-	tensor<float> *t0 = new tensor<float> ({size, size}, {CONSTANT, {val}}, mem_type);
+	Tensor<float> *t0 = new Tensor<float> ({size, size}, {CONSTANT, {val}}, mem_type);
 
 	auto v0 = op::var("t0", t0);
 

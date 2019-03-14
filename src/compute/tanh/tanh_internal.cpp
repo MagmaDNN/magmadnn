@@ -12,7 +12,7 @@ namespace skepsi {
 namespace internal {
 
 template <typename T>
-void tanh_full(tensor<T> *x) {
+void tanh_full(Tensor<T> *x) {
 
     if (x->get_memory_type() == HOST) {
         T *x_ptr = x->get_ptr();
@@ -27,9 +27,9 @@ void tanh_full(tensor<T> *x) {
     }
     #endif
 }
-template void tanh_full(tensor<int> *x);
-template void tanh_full(tensor<float> *x);
-template void tanh_full(tensor<double> *x);
+template void tanh_full(Tensor<int> *x);
+template void tanh_full(Tensor<float> *x);
+template void tanh_full(Tensor<double> *x);
 
 }   // namespace internal
 }   // namespace skepsi

@@ -40,7 +40,7 @@ Any internal utility functions should be in the `skepsi::internal` namespace and
 If a file contains a class, then the filename should be the same as the classname. For example, the class `foo` should reside in files `foo.h` and `foo.cpp`.
 
 ### Operations
-Operations must be defined in `include/compute` and implemented in `src/compute`. Each operation should reside in its own folder. The operation class and filenames should be postfixed by `_op` (i.e. `matmul_op.cpp`). All operations should lie in the `skepsi::op` namespace. For more information on creating operations [see here](https://github.com/Dando18/skepsi/blob/master/include/compute/README.md).
+Operations must be defined in `include/compute` and implemented in `src/compute`. Each operation should reside in its own folder. The operation class and filenames should be postfixed by `Op` (i.e. `matmulop.cpp`). All operations should lie in the `skepsi::op` namespace. For more information on creating operations [see here](https://github.com/Dando18/skepsi/blob/master/include/compute/README.md).
 
 ## Pull Requests
 ----------------

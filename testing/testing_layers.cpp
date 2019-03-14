@@ -8,13 +8,13 @@
  */
 #include <stdio.h>
 #include "skepsi.h"
+#include "utilities.h"
 
 using namespace skepsi;
 
 void test_input(memory_t mem, unsigned int size);
 void test_fullyconnected(memory_t mem, unsigned int size);
 void test_layers(memory_t mem, unsigned int size);
-const char* get_memory_type_name(memory_t mem);
 
 int main(int argc, char **argv) {
     
@@ -63,7 +63,7 @@ void test_input(memory_t mem, unsigned int size) {
 
     delete data_tensor;
     delete output;
-    printf("Success!\n");
+    show_success();
 }
 
 void test_fullyconnected(memory_t mem, unsigned int size) {
@@ -84,7 +84,7 @@ void test_fullyconnected(memory_t mem, unsigned int size) {
     assert( output_tensor->get_shape(1) == hidden_units );
 
     delete data_tensor;
-    printf("Success!\n");
+    show_success();
 }
 
 void test_layers(memory_t mem, unsigned int size) {
@@ -107,17 +107,5 @@ void test_layers(memory_t mem, unsigned int size) {
     assert( out_tensor->get_shape(0) == size );
     assert( out_tensor->get_shape(1) == output_classes );
 
-    printf("Success!\n");
-}
-
-const char* get_memory_type_name(memory_t mem) {
-	switch (mem) {
-		case HOST: 			return "HOST";
-		#if defined(_HAS_CUDA_)
-		case DEVICE: 		return "DEVICE";
-		case MANAGED: 		return "MANAGED";
-		case CUDA_MANAGED: 	return "CUDA_MANAGED";
-		#endif
-		default: 			return "UNDEFINED_MEMORY_TYPE";
-	}
+    show_success();
 }

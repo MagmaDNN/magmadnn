@@ -88,9 +88,24 @@ void test_fullyconnected(memory_t mem, unsigned int size) {
 }
 
 void test_layers(memory_t mem, unsigned int size) {
+    unsigned int hidden_units = 728;
+    unsigned int output_classes = 10;
+
     printf("testing %s layers...  ", get_memory_type_name(mem));
 
+    tensor<float> *data_tensor = new tensor<float> ({size, size}, {UNIFORM, {-1.0, 1.0}}, mem);
+    op::variable<float> *data = op::var("data", data_tensor);
 
+    layer::input_layer<float> *input = layer::input(data);
+    layer::fullyconnected_layer<float> *fc1 = layer::fullyconnected(input->out(), hidden_units);
+    layer::fullyconnected_layer<float> *fc2 = layer::fullyconnected(fc1->out(), output_classes);
+    layer::output_layer<float> *output = layer::output(fc2->out());
+
+    op::operation<float> *out = output->out();
+    tensor<float> *out_tensor = out->eval();
+
+    assert( out_tensor->get_shape(0) == size );
+    assert( out_tensor->get_shape(1) == output_classes );
 
     printf("Success!\n");
 }

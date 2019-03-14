@@ -26,7 +26,7 @@ namespace internal {
  * @param val 
  */
 template <typename T>
-void fill_constant_device(memorymanager<T> &m, T val);
+void fill_constant_device(MemoryManager<T> &m, T val);
 #endif
 
 /** Fills the memory manager with a uniform distribution.
@@ -35,7 +35,7 @@ void fill_constant_device(memorymanager<T> &m, T val);
  * @param params 
  */
 template <typename T>
-void fill_uniform(memorymanager<T> &m, const std::vector<T>& params);
+void fill_uniform(MemoryManager<T> &m, const std::vector<T>& params);
 
 /** Fills the memorymanager with a modified normal distribution (per Glorot et. al.).
  * @tparam T 
@@ -43,7 +43,7 @@ void fill_uniform(memorymanager<T> &m, const std::vector<T>& params);
  * @param params 
  */
 template <typename T>
-void fill_glorot(memorymanager<T> &m, const std::vector<T>& params);
+void fill_glorot(MemoryManager<T> &m, const std::vector<T>& params);
 
 /** Fills the memorymanager's diagonal elements. Assumes the memory manager is square.
  * If one value is given for params, then it is applied to all diagonals. Otherwise the list
@@ -53,7 +53,7 @@ void fill_glorot(memorymanager<T> &m, const std::vector<T>& params);
  * @param params 
  */
 template <typename T>
-void fill_diagonal(memorymanager<T> &m, const std::vector<T>& params);
+void fill_diagonal(MemoryManager<T> &m, const std::vector<T>& params);
 
 /** Fills the memorymanager with the same constant value.
  * @tparam T 
@@ -61,7 +61,7 @@ void fill_diagonal(memorymanager<T> &m, const std::vector<T>& params);
  * @param params 
  */
 template <typename T>
-void fill_constant(memorymanager<T> &m, const std::vector<T>& params);
+void fill_constant(MemoryManager<T> &m, const std::vector<T>& params);
 
 } // namespace internal
 } // namespace skepsi

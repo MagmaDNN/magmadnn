@@ -12,7 +12,7 @@ namespace skepsi {
 namespace internal {
 
 template <typename T>
-void fill_memory(memorymanager<T> &m, tensor_filler_t<T> filler) {
+void fill_memory(MemoryManager<T> &m, tensor_filler_t<T> filler) {
     switch (filler.fill_type) {
         case UNIFORM:
             fill_uniform(m, filler.values); break;
@@ -31,9 +31,9 @@ void fill_memory(memorymanager<T> &m, tensor_filler_t<T> filler) {
         case NONE: break;
     }
 }
-template void fill_memory(memorymanager<int>&, tensor_filler_t<int>);
-template void fill_memory(memorymanager<float>&, tensor_filler_t<float>);
-template void fill_memory(memorymanager<double>&, tensor_filler_t<double>);
+template void fill_memory(MemoryManager<int>&, tensor_filler_t<int>);
+template void fill_memory(MemoryManager<float>&, tensor_filler_t<float>);
+template void fill_memory(MemoryManager<double>&, tensor_filler_t<double>);
 
 } // namespace internal
 } // namespace skepsi

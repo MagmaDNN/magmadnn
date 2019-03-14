@@ -12,22 +12,22 @@ namespace skepsi {
 namespace op {
 
 template <typename T>
-tensor<T>* variable<T>::eval() {
+Tensor<T>* Variable<T>::eval() {
     return val;
 }
 
 // compile for int, float, double
-template class variable<int>;
-template class variable<float>;
-template class variable<double>;
+template class Variable<int>;
+template class Variable<float>;
+template class Variable<double>;
 
 template <typename T>
-variable<T>* var(std::string name, tensor<T>* val) {
-    return new variable<T> (name, val);
+Variable<T>* var(std::string name, Tensor<T>* val) {
+    return new Variable<T> (name, val);
 }
-template variable<int>* var(std::string name, tensor<int>* val);
-template variable<float>* var(std::string name, tensor<float>* val);
-template variable<double>* var(std::string name, tensor<double>* val);
+template Variable<int>* var(std::string name, Tensor<int>* val);
+template Variable<float>* var(std::string name, Tensor<float>* val);
+template Variable<double>* var(std::string name, Tensor<double>* val);
 
 } // namespace op
 } // namespace skepsi

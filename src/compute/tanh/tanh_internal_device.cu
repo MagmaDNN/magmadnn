@@ -36,17 +36,17 @@ __global__ void kernel_tanh_full_device(unsigned int size, int *x) {
 }
 
 template <typename T>
-void tanh_full_device(tensor<T> *x) {
+void tanh_full_device(Tensor<T> *x) {
     kernel_tanh_full_device <<<x->get_size(), 1>>> (x->get_size(), x->get_ptr());
 }
 
-template<> void tanh_full_device(tensor<int> *x) {
+template<> void tanh_full_device(Tensor<int> *x) {
 	for (unsigned int i = 0; i < x->get_size(); i++)
 		x->set(i, (int)tanh(x->get(i)));
 }
 
-template void tanh_full_device(tensor<float> *x);
-template void tanh_full_device(tensor<double> *x);
+template void tanh_full_device(Tensor<float> *x);
+template void tanh_full_device(Tensor<double> *x);
 
 }   // namespace internal
 }   // namespace skepsi

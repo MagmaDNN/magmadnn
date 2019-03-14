@@ -30,7 +30,7 @@ namespace internal {
  * @return false 
  */
 template <typename T>
-bool gemm_check(tensor<T> *A, tensor<T> *B, tensor<T> *C, unsigned int &M, unsigned int &N, unsigned int &K);
+bool gemm_check(Tensor<T> *A, Tensor<T> *B, Tensor<T> *C, unsigned int &M, unsigned int &N, unsigned int &K);
 
 /** Computes the matrix product C = alpha*(AB) + beta*C
  * @tparam T 
@@ -41,7 +41,7 @@ bool gemm_check(tensor<T> *A, tensor<T> *B, tensor<T> *C, unsigned int &M, unsig
  * @param C 
  */
 template <typename T>
-void gemm_full(T alpha, tensor<T>* A, tensor<T>* B, T beta, tensor<T>* C);
+void gemm_full(T alpha, Tensor<T>* A, Tensor<T>* B, T beta, Tensor<T>* C);
 
 
 }   // namespace internal

@@ -26,39 +26,39 @@ const tensor_filler_t<float> TENSOR_DEFAULT_FILLER = { TENSOR_DEFAULT_FILL_TYPE,
 
 
 template <typename T>
-class tensor {
+class Tensor {
 public:
 
 	/** Initializes tensor with the given shape. Creates a new memory manager for this tensor. Defaults to the cpu.
 	 *	@param shape a vector of axis sizes
 	 */
-	tensor(std::vector<unsigned int> shape);
+	Tensor(std::vector<unsigned int> shape);
 
 	/** Initializes tensor with the given shape. Creates a new memory manager for this tensor.
 	 * @param shape
 	 * @param mem_type
 	 */
-	tensor(std::vector<unsigned int> shape, memory_t mem_type);
+	Tensor(std::vector<unsigned int> shape, memory_t mem_type);
 
 	/** Initializes tensor with the given shape. Creates a new memory manager for this tensor. Uses the given device type and device id.
 	 * @param shape a vector of axis sizes
 	 * @param device the type of device
 	 * @param device_id the id of the device to be used
 	 */
-	tensor(std::vector<unsigned int> shape, memory_t mem_type, device_t device_id);
+	Tensor(std::vector<unsigned int> shape, memory_t mem_type, device_t device_id);
 
 	/** Initializes tensor with the given shape. Creates a new memory manager for this tensor. Sets every value of tensor to _fill_.
 	 * @param shape a vector of axis sizes
 	 * @param fill value to set every element of tensor
 	 */
-	tensor(std::vector<unsigned int> shape, tensor_filler_t<T> filler);
+	Tensor(std::vector<unsigned int> shape, tensor_filler_t<T> filler);
 
 	/**
 	 * @param shape 
 	 * @param fill 
 	 * @param mem_type 
 	 */
-	tensor(std::vector<unsigned int> shape, tensor_filler_t<T> filler, memory_t mem_type);
+	Tensor(std::vector<unsigned int> shape, tensor_filler_t<T> filler, memory_t mem_type);
 	
 	/** Initializes tensor with the given shape, fill, device, and device id. Creates a new memory manager.
 	 * @param shape a vector of axis sizes
@@ -66,11 +66,11 @@ public:
 	 * @param device device type tensor will use
 	 * @param device_id id of device to use
 	 */
-	tensor(std::vector<unsigned int> shape, tensor_filler_t<T> filler, memory_t mem_type, device_t device_id);
+	Tensor(std::vector<unsigned int> shape, tensor_filler_t<T> filler, memory_t mem_type, device_t device_id);
 
 	/** Free tensor memory
 	 */
-	~tensor();
+	~Tensor();
 
 
 	/** Copies data from src[begin_idx] to src[begin_idx+size] into this tensor.
@@ -79,13 +79,13 @@ public:
 	 * @param size 
 	 * @return skepsi_error_t non-zero if error
 	 */
-	skepsi_error_t copy_from(const tensor<T>& src, unsigned int begin_idx, unsigned int size);
+	skepsi_error_t copy_from(const Tensor<T>& src, unsigned int begin_idx, unsigned int size);
 
 	/** Copies the tensor src into this tensor.
 	 * @param src 
 	 * @return skepsi_error_t non-zero if error.
 	 */
-	skepsi_error_t copy_from(const tensor<T>& src);
+	skepsi_error_t copy_from(const Tensor<T>& src);
 
 
 	/** gets the value at the given index.
@@ -114,9 +114,9 @@ public:
 	
 
 	/** Returns the memory manager used by this tensor
-	 * @return memorymanager<T>* 
+	 * @return MemoryManager<T>* 
 	 */
-	memorymanager<T>* get_memory_manager() const { return this->mem_manager; }
+	MemoryManager<T>* get_memory_manager() const { return this->mem_manager; }
 
 	/** returns a <i>copy</i> of the shape of this tensor.
 	 * @return std::vector<int> 
@@ -153,7 +153,7 @@ private:
 	void init(std::vector<unsigned int>& shape, tensor_filler_t<T> filler, memory_t mem_type, device_t device_id);
 	unsigned int get_flattened_index(const std::vector<int>& idx);
 
-	memorymanager<T> *mem_manager;	/* allocated by init */
+	MemoryManager<T> *mem_manager;	/* allocated by init */
 	
 	std::vector<unsigned int> shape;	/* tensor axes (shape) */
 	unsigned int size;		/* total number of elements in tensor */

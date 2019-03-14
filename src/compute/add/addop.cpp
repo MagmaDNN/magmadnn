@@ -6,14 +6,14 @@
  * 
  * @copyright Copyright (c) 2019
  */
-#include "compute/add/add_op.h"
+#include "compute/add/addop.h"
 
 namespace skepsi {
 namespace op {
 
 template <typename T>
-add_op<T>::add_op(operation<T>* a, operation<T>* b, bool copy) : 
-	operation<T>::operation({a,b}), a(a), b(b), copy(copy) {
+AddOp<T>::AddOp(Operation<T>* a, Operation<T>* b, bool copy) : 
+	Operation<T>::Operation({a,b}), a(a), b(b), copy(copy) {
 	
 	assert( a->get_memory_type() == b->get_memory_type() );
 	assert( a->get_output_size() == b->get_output_size() );
@@ -23,11 +23,11 @@ add_op<T>::add_op(operation<T>* a, operation<T>* b, bool copy) :
 
 	/* Go ahead and create copy tensor if we can */
 	if (copy)
-		ret = new tensor<T> (this->output_shape, this->mem_type);
+		ret = new Tensor<T> (this->output_shape, this->mem_type);
 }
 
 template <typename T>
-tensor<T>* add_op<T>::eval() {
+Tensor<T>* AddOp<T>::eval() {
 	a_tensor = a->eval();
 	b_tensor = b->eval();
 
@@ -37,18 +37,18 @@ tensor<T>* add_op<T>::eval() {
 	
 	return ret;
 } 
-template class add_op<int>;
-template class add_op<float>;
-template class add_op<double>;
+template class AddOp<int>;
+template class AddOp<float>;
+template class AddOp<double>;
 
 
 template <typename T>
-add_op<T>* add(operation<T> *a, operation<T> *b, bool copy) {
-    return new add_op<T> (a, b, copy);
+AddOp<T>* add(Operation<T> *a, Operation<T> *b, bool copy) {
+    return new AddOp<T> (a, b, copy);
 }
-template add_op<int>* add(operation<int> *a, operation<int> *b, bool copy);
-template add_op<float>* add(operation<float> *a, operation<float> *b, bool copy);
-template add_op<double>* add(operation<double> *a, operation<double> *b, bool copy);
+template AddOp<int>* add(Operation<int> *a, Operation<int> *b, bool copy);
+template AddOp<float>* add(Operation<float> *a, Operation<float> *b, bool copy);
+template AddOp<double>* add(Operation<double> *a, Operation<double> *b, bool copy);
 
 } // namespace op
 } // namespace skepsi

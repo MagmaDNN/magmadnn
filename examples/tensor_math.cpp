@@ -25,26 +25,26 @@ int main(int argc, char **argv) {
         shape: a vector of axis sizes
         filler: a struct dictating how to fill the tensor (this is optional)
         memory type: HOST means these tensors will be stored in RAM for the CPU */
-    tensor<float> *A_tensor = new tensor<float> ({M, N}, {CONSTANT, {3}}, HOST);
-    tensor<float> *x_tensor = new tensor<float> ({N, 1}, {CONSTANT, {2}}, HOST);
-    tensor<float> *b_tensor = new tensor<float> ({M, 1}, {ONE, {}}, HOST);
+    Tensor<float> *A_tensor = new Tensor<float> ({M, N}, {CONSTANT, {3}}, HOST);
+    Tensor<float> *x_tensor = new Tensor<float> ({N, 1}, {CONSTANT, {2}}, HOST);
+    Tensor<float> *b_tensor = new Tensor<float> ({M, 1}, {ONE, {}}, HOST);
 
     /* now we wrap the tensors in variables so that we can use them in the
         compute graph. All compute graph methods are in skepsi::op.
         op::var takes two arguments:
             name: a string name for the variable (functionality is not dependent on this)
             tensor: the tensor value that the variable points to
-        op::var returns an allocated pointer (op::variable<float> *) */
+        op::var returns an allocated pointer (op::Variable<float> *) */
     auto A = op::var("A", A_tensor);
     auto x = op::var("x", x_tensor);
     auto b = op::var("b", b_tensor);
 
     /* create the compute tree. nothing is evaluated. 
-        returns an operation pointer (op::operation<float> *) */
+        returns an operation pointer (op::Operation<float> *) */
     auto aff = op::add( op::matmul(A, x), b);
 
     /* get the final tensor result by evaluating the compute tree */
-    tensor<float> *final_val = aff->eval();
+    Tensor<float> *final_val = aff->eval();
 
     /* print out the results */
     printf("Ax+b = {");

@@ -22,7 +22,7 @@ namespace internal {
  * @return false 
  */
 template <typename T>
-bool geadd_check(tensor<T> *A, tensor<T> *B, tensor<T> *C);
+bool geadd_check(Tensor<T> *A, Tensor<T> *B, Tensor<T> *C);
 
 /** Computes C = alpha*A + beta*B All tensors <i>must</i> have the same memory type and shape/size.
  * @tparam T int, float, or double
@@ -33,7 +33,7 @@ bool geadd_check(tensor<T> *A, tensor<T> *B, tensor<T> *C);
  * @param C 
  */
 template <typename T>
-void geadd_full(T alpha, tensor<T> *A, T beta, tensor<T> *B, tensor<T> *C);
+void geadd_full(T alpha, Tensor<T> *A, T beta, Tensor<T> *B, Tensor<T> *C);
 
 #if defined(_HAS_CUDA_)
 /** Computes C = alpha*A + beta*B on gpu.

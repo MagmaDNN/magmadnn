@@ -1,5 +1,5 @@
 /**
- * @file matmul_op.h
+ * @file matmulop.h
  * @author Daniel Nichols
  * @version 0.0.1
  * @date 2019-02-20
@@ -17,22 +17,22 @@ namespace skepsi {
 namespace op {
 
 template <typename T>
-class matmul_op : public operation<T> {
+class MatmulOp : public Operation<T> {
 public:
-	matmul_op(T alpha, operation<T>* a, operation<T>* b, T beta, operation<T> *c, bool copy=true);
+	MatmulOp(T alpha, Operation<T>* a, Operation<T>* b, T beta, Operation<T> *c, bool copy=true);
 
-	tensor<T>* eval();
+	Tensor<T>* eval();
 	
 	std::string to_string() { return "(" + a->to_string() + " * " + b->to_string() + ")"; }
 protected:
-	operation<T> *a;
-	operation<T> *b;
-	operation<T> *c;
+	Operation<T> *a;
+	Operation<T> *b;
+	Operation<T> *c;
 
-	tensor<T> *a_tensor;
-	tensor<T> *b_tensor;
-	tensor<T> *c_tensor;
-	tensor<T> *ret;
+	Tensor<T> *a_tensor;
+	Tensor<T> *b_tensor;
+	Tensor<T> *c_tensor;
+	Tensor<T> *ret;
 
 	T alpha;
 	T beta;
@@ -44,10 +44,10 @@ protected:
  * @param a 
  * @param b 
  * @param copy 
- * @return matmul_op<T>* 
+ * @return MatmulOp<T>* 
  */
 template <typename T>
-matmul_op<T>* matmul(operation<T> *a, operation<T> *b);
+MatmulOp<T>* matmul(Operation<T> *a, Operation<T> *b);
 
 /** Computes the full gemm C = alpha*(AB) + beta*(C). Overwrites C and returns it if copy is false. If true,
  * 	then it returns a copy of C.
@@ -58,10 +58,10 @@ matmul_op<T>* matmul(operation<T> *a, operation<T> *b);
  * @param beta 
  * @param c 
  * @param copy 
- * @return matmul_op<T>* 
+ * @return MatmulOp<T>* 
  */
 template <typename T>
-matmul_op<T>* matmul(T alpha, operation<T> *a, operation<T> *b, T beta, tensor<T> *c, bool copy);
+MatmulOp<T>* matmul(T alpha, Operation<T> *a, Operation<T> *b, T beta, Tensor<T> *c, bool copy);
 
 } // namespace op
 } // namespace skepsi

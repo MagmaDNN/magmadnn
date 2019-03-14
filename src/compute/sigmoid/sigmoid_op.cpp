@@ -1,19 +1,19 @@
 /**
- * @file sigmoid_op.cpp
+ * @file sigmoidop.cpp
  * @author Daniel Nichols
  * @version 0.1
  * @date 2019-02-23
  * 
  * @copyright Copyright (c) 2019
  */
-#include "compute/sigmoid/sigmoid_op.h"
+#include "compute/sigmoid/sigmoidop.h"
 
 namespace skepsi {
 namespace op {
 
 template <typename T>
-sigmoid_op<T>::sigmoid_op(operation<T> *x, bool copy, bool fast) : 
-    operation<T>::operation({x}), x(x), copy(copy), fast(fast) {
+SigmoidOp<T>::SigmoidOp(Operation<T> *x, bool copy, bool fast) : 
+    Operation<T>::Operation({x}), x(x), copy(copy), fast(fast) {
 
     this->output_shape = x->get_output_shape();
     this->mem_type = x->get_memory_type();
@@ -21,13 +21,13 @@ sigmoid_op<T>::sigmoid_op(operation<T> *x, bool copy, bool fast) :
     /* create copy when tree is created, not at evaluation time. This avoids allocating memory when
        evaluating a compute tree. */
     if (copy) {
-        ret = new tensor<T> (x->get_output_shape(), x->get_memory_type());
+        ret = new Tensor<T> (x->get_output_shape(), x->get_memory_type());
     }
 }
 
 template <typename T>
-tensor<T>* sigmoid_op<T>::eval() {
-    tensor<T> *x_tensor = x->eval();
+Tensor<T>* SigmoidOp<T>::eval() {
+    Tensor<T> *x_tensor = x->eval();
 
     /* ret was created in constructor, now just copy evaluated x_tensor into it */
     if (copy) {
@@ -40,17 +40,17 @@ tensor<T>* sigmoid_op<T>::eval() {
     
     return ret;
 }
-template class sigmoid_op<int>;
-template class sigmoid_op<float>;
-template class sigmoid_op<double>;
+template class SigmoidOp<int>;
+template class SigmoidOp<float>;
+template class SigmoidOp<double>;
 
 template <typename T>
-sigmoid_op<T>* sigmoid(operation<T> *x, bool copy, bool fast) {
-    return new sigmoid_op<T> (x, fast, copy);
+SigmoidOp<T>* sigmoid(Operation<T> *x, bool copy, bool fast) {
+    return new SigmoidOp<T> (x, fast, copy);
 }
-template sigmoid_op<int>* sigmoid(operation<int> *x, bool copy, bool fast);
-template sigmoid_op<float>* sigmoid(operation<float> *x, bool copy, bool fast);
-template sigmoid_op<double>* sigmoid(operation<double> *x, bool copy, bool fast);
+template SigmoidOp<int>* sigmoid(Operation<int> *x, bool copy, bool fast);
+template SigmoidOp<float>* sigmoid(Operation<float> *x, bool copy, bool fast);
+template SigmoidOp<double>* sigmoid(Operation<double> *x, bool copy, bool fast);
 
 }   // namespace op
 }   // namespace skepsi

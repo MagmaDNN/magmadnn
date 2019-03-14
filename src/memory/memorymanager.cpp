@@ -11,7 +11,7 @@
 namespace skepsi {
 
 template <typename T>
-memorymanager<T>::memorymanager(unsigned int size, memory_t mem_type, device_t device_id) : 
+MemoryManager<T>::MemoryManager(unsigned int size, memory_t mem_type, device_t device_id) : 
     mem_type(mem_type), size(size) {
 
 		set_device(device_id);
@@ -34,30 +34,30 @@ memorymanager<T>::memorymanager(unsigned int size, memory_t mem_type, device_t d
 }
 
 template <typename T>
-void memorymanager<T>::init_host() {
+void MemoryManager<T>::init_host() {
     host_ptr = (T *) std::malloc(size * sizeof(T));
 }
 
 #if defined(_HAS_CUDA_)
 template <typename T>
-void memorymanager<T>::init_device() {
+void MemoryManager<T>::init_device() {
     cudaMalloc((void**) &device_ptr, size * sizeof(T));
 }
 
 template <typename T>
-void memorymanager<T>::init_managed() {
+void MemoryManager<T>::init_managed() {
     host_ptr = (T *) std::malloc(size * sizeof(T));
     cudaMalloc((void**) &device_ptr, size * sizeof(T));
 }
 
 template <typename T>
-void memorymanager<T>::init_cuda_managed() {
+void MemoryManager<T>::init_cuda_managed() {
     cudaMallocManaged((void**) &cuda_managed_ptr, size * sizeof(T));
 }
 #endif
 
 template <typename T>
-memorymanager<T>::~memorymanager<T>() {
+MemoryManager<T>::~MemoryManager<T>() {
     switch (mem_type) {
         case HOST:
             std::free(host_ptr); break;
@@ -74,7 +74,7 @@ memorymanager<T>::~memorymanager<T>() {
 }
 
 template <typename T>
-skepsi_error_t memorymanager<T>::copy_from(const memorymanager<T>& src, unsigned int begin_idx, unsigned int copy_size) {
+skepsi_error_t MemoryManager<T>::copy_from(const MemoryManager<T>& src, unsigned int begin_idx, unsigned int copy_size) {
     assert( this->size == src.size );
     
     if (copy_size == 0) return (skepsi_error_t) 0;
@@ -96,17 +96,17 @@ skepsi_error_t memorymanager<T>::copy_from(const memorymanager<T>& src, unsigned
 }
 
 template <typename T>
-skepsi_error_t memorymanager<T>::copy_from(const memorymanager<T>& src) {
+skepsi_error_t MemoryManager<T>::copy_from(const MemoryManager<T>& src) {
     return copy_from(src, 0, size);
 }
 
 template <typename T>
-skepsi_error_t memorymanager<T>::copy_from(const memorymanager<T>& src, unsigned int copy_size) {
+skepsi_error_t MemoryManager<T>::copy_from(const MemoryManager<T>& src, unsigned int copy_size) {
     return copy_from(src, 0, copy_size);
 }
 
 template <typename T>
-skepsi_error_t memorymanager<T>::copy_from_host(T *src, unsigned int begin_idx, unsigned int copy_size) {
+skepsi_error_t MemoryManager<T>::copy_from_host(T *src, unsigned int begin_idx, unsigned int copy_size) {
 
     switch (mem_type) {
         case HOST:
@@ -135,7 +135,7 @@ skepsi_error_t memorymanager<T>::copy_from_host(T *src, unsigned int begin_idx, 
 
 #if defined(_HAS_CUDA_)
 template <typename T>
-skepsi_error_t memorymanager<T>::copy_from_device(T *src, unsigned int begin_idx, unsigned int copy_size) {
+skepsi_error_t MemoryManager<T>::copy_from_device(T *src, unsigned int begin_idx, unsigned int copy_size) {
 
 	skepsi_error_t err = (skepsi_error_t) 0;
 
@@ -162,7 +162,7 @@ skepsi_error_t memorymanager<T>::copy_from_device(T *src, unsigned int begin_idx
 }
 
 template <typename T>
-skepsi_error_t memorymanager<T>::copy_from_managed(T *host_src, T *device_src, unsigned int begin_idx, unsigned int copy_size) {
+skepsi_error_t MemoryManager<T>::copy_from_managed(T *host_src, T *device_src, unsigned int begin_idx, unsigned int copy_size) {
 
     switch (mem_type) {
         case HOST:
@@ -187,7 +187,7 @@ skepsi_error_t memorymanager<T>::copy_from_managed(T *host_src, T *device_src, u
 }
 
 template <typename T>
-skepsi_error_t memorymanager<T>::copy_from_cudamanaged(T *src, unsigned int begin_idx, unsigned int copy_size) {
+skepsi_error_t MemoryManager<T>::copy_from_cudamanaged(T *src, unsigned int begin_idx, unsigned int copy_size) {
 
     switch (mem_type) {
         case HOST:
@@ -213,7 +213,7 @@ skepsi_error_t memorymanager<T>::copy_from_cudamanaged(T *src, unsigned int begi
 #endif
 
 template <typename T>
-skepsi_error_t memorymanager<T>::sync(bool gpu_was_modified) {
+skepsi_error_t MemoryManager<T>::sync(bool gpu_was_modified) {
     #if defined(_HAS_CUDA_)
         cudaError_t err = (cudaError_t) 0;
 
@@ -236,7 +236,7 @@ skepsi_error_t memorymanager<T>::sync(bool gpu_was_modified) {
 }
 
 template <typename T>
-T memorymanager<T>::get(unsigned int idx) const {
+T MemoryManager<T>::get(unsigned int idx) const {
     assert( idx < size );
 
     switch (mem_type) {
@@ -256,7 +256,7 @@ T memorymanager<T>::get(unsigned int idx) const {
 }
 
 template <typename T>
-void memorymanager<T>::set(unsigned int idx, T val) {
+void MemoryManager<T>::set(unsigned int idx, T val) {
     assert( idx < size );
 
     // note: don't sync on managed type memories
@@ -279,7 +279,7 @@ void memorymanager<T>::set(unsigned int idx, T val) {
 }
 
 template <typename T>
-skepsi_error_t memorymanager<T>::set_device(device_t device_id) {
+skepsi_error_t MemoryManager<T>::set_device(device_t device_id) {
 
     #if defined(_HAS_CUDA_)
 	int n_devices = 0;
@@ -295,24 +295,24 @@ skepsi_error_t memorymanager<T>::set_device(device_t device_id) {
 }
 
 template <typename T>
-T* memorymanager<T>::get_host_ptr() {
+T* MemoryManager<T>::get_host_ptr() {
     return host_ptr;
 }
 
 #if defined(_HAS_CUDA_)
 template <typename T>
-T* memorymanager<T>::get_device_ptr() {
+T* MemoryManager<T>::get_device_ptr() {
     return device_ptr;
 }
 
 template <typename T>
-T* memorymanager<T>::get_cuda_managed_ptr() {
+T* MemoryManager<T>::get_cuda_managed_ptr() {
     return cuda_managed_ptr;
 }
 #endif
 
 template <typename T>
-T* memorymanager<T>::get_ptr() {
+T* MemoryManager<T>::get_ptr() {
     switch (mem_type) {
         case HOST:
             return get_host_ptr();
@@ -334,8 +334,8 @@ T* memorymanager<T>::get_ptr() {
 
 
 /* COMPILE FOR INT, FLOAT, AND DOUBLE */
-template class memorymanager<int>;
-template class memorymanager<float>;
-template class memorymanager<double>;
+template class MemoryManager<int>;
+template class MemoryManager<float>;
+template class MemoryManager<double>;
 
 } // namespace skepsi

@@ -10,7 +10,7 @@
 
 /* Load in all the layer headers */
 
-#include "input/input_layer.h"
-#include "fullyconnected/fullyconnected_layer.h"
-#include "output/output_layer.h"
-#include "activation/activation_layer.h"
+#include "input/inputlayer.h"
+#include "fullyconnected/fullyconnectedlayer.h"
+#include "output/outputlayer.h"
+#include "activation/activationlayer.h"

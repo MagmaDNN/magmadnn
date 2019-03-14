@@ -1,5 +1,5 @@
 /**
- * @file fullyconnected_layer.h
+ * @file fullyconnectedlayer.h
  * @author Daniel Nichols
  * @version 0.0.1
  * @date 2019-02-26
@@ -16,10 +16,10 @@ namespace skepsi {
 namespace layer {
 
 template <typename T>
-class fullyconnected_layer : public layer<T> {
+class FullyConnectedLayer : public Layer<T> {
 public:
-    fullyconnected_layer(op::operation<T> *input, unsigned int hidden_units, bool use_bias=true);
-    ~fullyconnected_layer();
+    FullyConnectedLayer(op::Operation<T> *input, unsigned int hidden_units, bool use_bias=true);
+    ~FullyConnectedLayer();
 
 protected:
     void init();
@@ -27,16 +27,16 @@ protected:
     unsigned int hidden_units;
     bool use_bias;
 
-    tensor<T> *weights_tensor;
-    tensor<T> *bias_tensor;
+    Tensor<T> *weights_tensor;
+    Tensor<T> *bias_tensor;
 
-    op::operation<T> *weights;
-    op::operation<T> *bias;
+    op::Operation<T> *weights;
+    op::Operation<T> *bias;
 
 };
 
 template <typename T>
-fullyconnected_layer<T>* fullyconnected(op::operation<T> *input, unsigned int hidden_units, bool use_bias=true);
+FullyConnectedLayer<T>* fullyconnected(op::Operation<T> *input, unsigned int hidden_units, bool use_bias=true);
 
 }   // layer
 }   // skepsi

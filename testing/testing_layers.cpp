@@ -52,13 +52,13 @@ int main(int argc, char **argv) {
 void test_input(memory_t mem, unsigned int size) {
     printf("testing %s input...  ", get_memory_type_name(mem));
 
-    tensor<float> *data_tensor = new tensor<float> ({size, size}, {IDENTITY, {}}, mem);
-    op::variable<float> *data = op::var("data", data_tensor);
+    Tensor<float> *data_tensor = new Tensor<float> ({size, size}, {IDENTITY, {}}, mem);
+    op::Variable<float> *data = op::var("data", data_tensor);
 
-    layer::input_layer<float> *input_layer = new layer::input_layer<float>(data);
+    layer::InputLayer<float> *input_layer = new layer::InputLayer<float>(data);
 
-    op::operation<float> *output = input_layer->out();
-    tensor<float> *output_tensor = output->eval();
+    op::Operation<float> *output = input_layer->out();
+    Tensor<float> *output_tensor = output->eval();
 
     for (unsigned int i = 0; i < size; i++) {
         for (unsigned int j = 0; j < size; j++) {
@@ -79,13 +79,13 @@ void test_fullyconnected(memory_t mem, unsigned int size) {
 
     printf("testing %s fullyconnected...  ", get_memory_type_name(mem));
 
-    tensor<float> *data_tensor = new tensor<float> ({size, size}, {IDENTITY, {}}, mem);
-    op::variable<float> *data = op::var("data", data_tensor);
+    Tensor<float> *data_tensor = new Tensor<float> ({size, size}, {IDENTITY, {}}, mem);
+    op::Variable<float> *data = op::var("data", data_tensor);
 
-    layer::fullyconnected_layer<float> *fc = layer::fullyconnected(data, hidden_units, false);
+    layer::FullyConnectedLayer<float> *fc = layer::fullyconnected(data, hidden_units, false);
 
-    op::operation<float> *output = fc->out();
-    tensor<float> *output_tensor = output->eval();
+    op::Operation<float> *output = fc->out();
+    Tensor<float> *output_tensor = output->eval();
 
     assert( output_tensor->get_shape().size() == 2 );
     assert( output_tensor->get_shape(0) == size );
@@ -100,13 +100,13 @@ void test_activation(memory_t mem, unsigned int size) {
 
     printf("testing %s activation...  ", get_memory_type_name(mem));
 
-    tensor<float> *data_tensor = new tensor<float> ({size, size}, {CONSTANT, {val}}, mem);
-    op::variable<float> *data = op::var("data", data_tensor);
+    Tensor<float> *data_tensor = new Tensor<float> ({size, size}, {CONSTANT, {val}}, mem);
+    op::Variable<float> *data = op::var("data", data_tensor);
 
-    layer::activation_layer<float> *act = layer::activation(data, layer::TANH);
+    layer::ActivationLayer<float> *act = layer::activation(data, layer::TANH);
 
-    op::operation<float> *output = act->out();
-    tensor<float> *output_tensor = output->eval();
+    op::Operation<float> *output = act->out();
+    Tensor<float> *output_tensor = output->eval();
 
     for (unsigned int i = 0; i < output_tensor->get_size(); i++) {
         assert( abs(output_tensor->get(i) - tanh(val)) <= 1E-8 );
@@ -121,16 +121,16 @@ void test_layers(memory_t mem, unsigned int size) {
 
     printf("testing %s layers...  ", get_memory_type_name(mem));
 
-    tensor<float> *data_tensor = new tensor<float> ({size, size}, {UNIFORM, {-1.0, 1.0}}, mem);
-    op::variable<float> *data = op::var("data", data_tensor);
+    Tensor<float> *data_tensor = new Tensor<float> ({size, size}, {UNIFORM, {-1.0, 1.0}}, mem);
+    op::Variable<float> *data = op::var("data", data_tensor);
 
-    layer::input_layer<float> *input = layer::input(data);
-    layer::fullyconnected_layer<float> *fc1 = layer::fullyconnected(input->out(), hidden_units);
-    layer::fullyconnected_layer<float> *fc2 = layer::fullyconnected(fc1->out(), output_classes);
-    layer::output_layer<float> *output = layer::output(fc2->out());
+    layer::InputLayer<float> *input = layer::input(data);
+    layer::FullyConnectedLayer<float> *fc1 = layer::fullyconnected(input->out(), hidden_units);
+    layer::FullyConnectedLayer<float> *fc2 = layer::fullyconnected(fc1->out(), output_classes);
+    layer::OutputLayer<float> *output = layer::output(fc2->out());
 
-    op::operation<float> *out = output->out();
-    tensor<float> *out_tensor = out->eval();
+    op::Operation<float> *out = output->out();
+    Tensor<float> *out_tensor = out->eval();
 
     assert( out_tensor->get_shape(0) == size );
     assert( out_tensor->get_shape(1) == output_classes );

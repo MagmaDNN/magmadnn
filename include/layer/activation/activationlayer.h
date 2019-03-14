@@ -1,5 +1,5 @@
 /**
- * @file activation_layer.h
+ * @file activationlayer.h
  * @author Daniel Nichols
  * @version 0.0.1
  * @date 2019-02-26
@@ -22,10 +22,10 @@ enum activation_t {
 };
 
 template <typename T>
-class activation_layer : public layer<T> {
+class ActivationLayer : public Layer<T> {
 public:
-    activation_layer(op::operation<T> *input, activation_t activation_func);
-    ~activation_layer();
+    ActivationLayer(op::Operation<T> *input, activation_t activation_func);
+    ~ActivationLayer();
 
 protected:
     void init();
@@ -36,7 +36,7 @@ protected:
 };
 
 template <typename T>
-activation_layer<T>* activation(op::operation<T> *input, activation_t activation_func);
+ActivationLayer<T>* activation(op::Operation<T> *input, activation_t activation_func);
 
 }   // layer
 }   // skepsi

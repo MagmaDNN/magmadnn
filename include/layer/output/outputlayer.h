@@ -1,5 +1,5 @@
 /**
- * @file output_layer.h
+ * @file outputlayer.h
  * @author Daniel Nichols
  * @version 0.0.1
  * @date 2019-02-26
@@ -16,10 +16,10 @@ namespace skepsi {
 namespace layer {
 
 template <typename T>
-class output_layer : public layer<T> {
+class OutputLayer : public Layer<T> {
 public:
-    output_layer(op::operation<T> *input);
-    ~output_layer();
+    OutputLayer(op::Operation<T> *input);
+    ~OutputLayer();
 
 protected:
     void init();
@@ -27,7 +27,7 @@ protected:
 };
 
 template <typename T>
-output_layer<T>* output(op::operation<T> *input);
+OutputLayer<T>* output(op::Operation<T> *input);
 
 }   // layer
 }   // skepsi

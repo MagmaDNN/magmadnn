@@ -1,5 +1,5 @@
 /**
- * @file input_layer.h
+ * @file inputlayer.h
  * @author Daniel Nichols
  * @version 0.0.1
  * @date 2019-02-26
@@ -15,9 +15,9 @@ namespace skepsi {
 namespace layer {
 
 template <typename T>
-class input_layer : public layer<T> {
+class InputLayer : public Layer<T> {
 public:
-    input_layer(op::operation<T> *input);
+    InputLayer(op::Operation<T> *input);
 
 protected:
     void init();
@@ -25,7 +25,7 @@ protected:
 };
 
 template <typename T>
-input_layer<T>* input(op::operation<T> *input);
+InputLayer<T>* input(op::Operation<T> *input);
 
 }   // layer
 }   // skepsi

@@ -15,21 +15,21 @@ namespace skepsi {
 namespace layer {
 
 template <typename T>
-class layer {
+class Layer {
 public:
 	
-	virtual op::operation<T>* out() {
+	virtual op::Operation<T>* out() {
 		return output;
 	}
 
 	/** Get the pointer to the input tensor for this layer
 	 * @return tensor<T>* 
 	 */
-	op::operation<T> *get_input() { return input; }
+	op::Operation<T> *get_input() { return input; }
 	/** Get the pointer to the output tensor for this layer
 	 * @return tensor<T>* 
 	 */
-	op::operation<T> *get_output() { return output; }
+	op::Operation<T> *get_output() { return output; }
 
 	/** Returns a copy of the input shape as a vector
 	 * @return std::vector<unsigned int> 
@@ -59,14 +59,14 @@ public:
 	}
 
 protected:
-	layer(std::vector<unsigned int> input_shape, op::operation<T> *input) : 
+	Layer(std::vector<unsigned int> input_shape, op::Operation<T> *input) : 
 		input_shape(input_shape), input(input) {}
 
 	std::vector<unsigned int> input_shape;
 	std::vector<unsigned int> output_shape;
 
-	op::operation<T> *input;
-	op::operation<T> *output;
+	op::Operation<T> *input;
+	op::Operation<T> *output;
 
 	std::string name;
 

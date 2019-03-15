@@ -9,6 +9,10 @@ RPATH_FLAGS := -Wl,-rpath,$(prefix)/lib
 LIB_PATH := $(prefix)/lib
 DEST = ./bin
 
+ifeq ($(DEBUG),1)
+TESTING_FLAGS += -g
+endif
+
 all: $(DEST) $(TARGETS)
 
 $(DEST):

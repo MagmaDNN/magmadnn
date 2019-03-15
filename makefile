@@ -56,6 +56,7 @@ LD_FLAGS := $(LIBDIRS) $(LIBS)
 # include -g for debugging
 ifeq ($(DEBUG),1)
 CXXFLAGS += -g
+NVCCFLAGS += -g
 endif
 
 # make these available to child makefiles

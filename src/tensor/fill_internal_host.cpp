@@ -120,7 +120,7 @@ void fill_glorot(MemoryManager<T> &m, const std::vector<T>& params) {
             break;
         case CUDA_MANAGED:
             for (unsigned int i = 0; i < m.get_size(); i++)
-                m.get_host_ptr()[i] = normal_dist(random_generator);
+                m.get_cuda_managed_ptr()[i] = normal_dist(random_generator);
             m.sync(false);
             break;
         #endif
@@ -156,7 +156,7 @@ template <> void fill_glorot(MemoryManager<int>& m, const std::vector<int>& para
             break;
         case CUDA_MANAGED:
             for (unsigned int i = 0; i < m.get_size(); i++)
-                m.get_host_ptr()[i] = normal_dist(random_generator);
+                m.get_cuda_managed_ptr()[i] = normal_dist(random_generator);
             m.sync(false);
             break;
         #endif

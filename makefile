@@ -45,7 +45,7 @@ DEBUG ?= 0
 
 # set optimization to Og for debugging
 ifeq ($(DEBUG),1)
-OPTIMIZATION_LEVEL = -Og
+OPTIMIZATION_LEVEL = -O0
 endif
 
 # the entire flags for compilation

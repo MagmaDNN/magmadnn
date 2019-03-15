@@ -169,7 +169,7 @@ template void fill_glorot(MemoryManager<double>&, const std::vector<double>&);
 template <typename T>
 void fill_diagonal(MemoryManager<T> &m, const std::vector<T>& params) {
     bool use_constant_value;
-    int root;
+    unsigned int root;
     unsigned int m_size, params_size;
     T val;
 

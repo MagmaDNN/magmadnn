@@ -60,6 +60,7 @@ void test_copy(memory_t src_mem, memory_t dst_mem, int size, bool verbose) {
 
 
 int main(int argc, char** argv) {
+	skepsi_init();
 
 	unsigned int test_size = 100;
 
@@ -101,5 +102,6 @@ int main(int argc, char** argv) {
 	test_copy(CUDA_MANAGED, CUDA_MANAGED, test_size, true);
 	#endif
 
+	skepsi_finalize();
     return 0;
 }

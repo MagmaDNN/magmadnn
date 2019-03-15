@@ -7,6 +7,7 @@ void test_indexing(memory_t mem, bool verbose);
 void test_fill(tensor_filler_t<float> filler, memory_t mem, bool verbose);
 
 int main(int argc, char **argv) {
+	skepsi_init();
     
 	// test indexing	
     test_indexing(HOST, true);
@@ -23,6 +24,7 @@ int main(int argc, char **argv) {
 	test_fill({CONSTANT, {0.5}}, CUDA_MANAGED, true);
 	#endif
 
+	skepsi_finalize();
     return 0;
 }
 

@@ -11,6 +11,7 @@
 /* include all skepsi header files */
 
 #include "types.h"
+#include "init_finalize.h"
 
 #include "memory/memorymanager.h"
 #include "tensor/tensor.h"

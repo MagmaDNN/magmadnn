@@ -18,9 +18,7 @@ void test_sigmoid(memory_t mem_type, unsigned int size);
 void test_tanh(memory_t mem_type, unsigned int size);
 
 int main(int argc, char **argv) {
-	#if defined(_HAS_CUDA_)
-	magma_init();
-	#endif
+	skepsi_init();
 
 	// test add
 	test_add(HOST, 50);
@@ -62,9 +60,7 @@ int main(int argc, char **argv) {
 	test_tanh(CUDA_MANAGED, 50);
 	#endif
     
-	#if defined(_HAS_CUDA_)
-	magma_finalize();
-	#endif
+	skepsi_finalize();
     return 0;
 }
 

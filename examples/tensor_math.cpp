@@ -12,6 +12,7 @@
 using namespace skepsi;
 
 int main(int argc, char **argv) {
+    skepsi_init();
 
     /* AFFINE TRANSFORMATION 
         This example shows you how to create tensors A,x, and b. Then
@@ -61,5 +62,6 @@ int main(int argc, char **argv) {
     delete b_tensor;
     delete aff;
 
+    skepsi_finalize();
     return 0;
 }

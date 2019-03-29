@@ -43,7 +43,7 @@ void fill_uniform(MemoryManager<T> &m, const std::vector<T>& params) {
             break;
         case CUDA_MANAGED:
             for (unsigned int i = 0; i < m.get_size(); i++)
-                m.get_host_ptr()[i] = uniform_distribution(random_generator);
+                m.get_cuda_managed_ptr()[i] = uniform_distribution(random_generator);
             m.sync(false);
             break;
         #endif

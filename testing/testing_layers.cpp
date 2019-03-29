@@ -106,13 +106,20 @@ void test_activation(memory_t mem, unsigned int size) {
     Tensor<float> *data_tensor = new Tensor<float> ({size, size}, {CONSTANT, {val}}, mem);
     op::Variable<float> *data = op::var("data", data_tensor);
 
+    /* create the layer */
     layer::ActivationLayer<float> *act = layer::activation(data, layer::TANH);
 
+    /* the output of the layer */
     op::Operation<float> *output = act->out();
     Tensor<float> *output_tensor = output->eval();
 
+    /* synchronize the memory if managed was being used */
+    #if defined(_HAS_CUDA_)
+    if (mem == MANAGED || mem == CUDA_MANAGED) output_tensor->sync(true);
+    #endif
+
     for (unsigned int i = 0; i < output_tensor->get_size(); i++) {
-        assert( abs(output_tensor->get(i) - tanh(val)) <= 1E-8 );
+        assert( fabs(output_tensor->get(i) - tanh(val)) <= 1E-8 );
     }
 
     show_success();

@@ -115,7 +115,7 @@ void test_activation(memory_t mem, unsigned int size) {
 
     /* synchronize the memory if managed was being used */
     #if defined(_HAS_CUDA_)
-    if (mem == MANAGED || mem == CUDA_MANAGED) output_tensor->sync(true);
+    if (mem == MANAGED || mem == CUDA_MANAGED) output_tensor->get_memory_manager()->sync(true);
     #endif
 
     for (unsigned int i = 0; i < output_tensor->get_size(); i++) {

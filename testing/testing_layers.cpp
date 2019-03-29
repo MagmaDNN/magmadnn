@@ -142,6 +142,10 @@ void test_layers(memory_t mem, unsigned int size) {
     op::Operation<float> *out = output->out();
     Tensor<float> *out_tensor = out->eval();
 
+    #if defined(_HAS_CUDA_)
+    if (mem == MANAGED || mem == CUDA_MANAGED) out_tensor->get_memory_manager()->sync(true);
+    #endif
+
     assert( out_tensor->get_shape(0) == size );
     assert( out_tensor->get_shape(1) == output_classes );
 

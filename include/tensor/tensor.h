@@ -92,13 +92,13 @@ public:
 	 * @param idx indices to retreive value from
 	 * @return the value at idx
 	 */
-	T get(const std::vector<int>& idx);
+	T get(const std::vector<int>& idx) const;
 
 	/** gets the value at the given index.
 	 * @param idx indices to retreive value from
 	 * @return the value at idx
 	 */
-	T get(unsigned int flattened_idx);
+	T get(unsigned int flattened_idx) const;
 
 	/** sets the value at the given index.
 	 * @param idx indices to set value at
@@ -151,7 +151,7 @@ public:
 
 private:
 	void init(std::vector<unsigned int>& shape, tensor_filler_t<T> filler, memory_t mem_type, device_t device_id);
-	unsigned int get_flattened_index(const std::vector<int>& idx);
+	unsigned int get_flattened_index(const std::vector<int>& idx) const;
 
 	MemoryManager<T> *mem_manager;	/* allocated by init */
 	

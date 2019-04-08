@@ -73,13 +73,15 @@ For examples of what skepsi code looks like see the [examples/ folder](https://g
 - [ ] Basic Layer classes (Dense, Activation, Flatten, CNN)
 - [ ] Model with forward/backward propagation
 - [ ] Tests for Model/Layer training
+- [ ] Optimizers
+- [ ] Tests for Optimizers
 - [ ] Parallel training (Multi-GPU)
 - [ ] Tests for parallel training
 - [x] Examples in Examples/ folder
 - [ ] Tutorial / Presentation Slides
 - [ ] Automatic or numerical gradient computations
 - [ ] Test gradient computations
-- [ ] I/O methods for Tensors
+- [x] I/O methods for Tensors
 - [ ] Tests for tensor I/O
 - [ ] Preprocessing methods (PCA, LDA, encoding)
 - [ ] Tests for preprocessing methods

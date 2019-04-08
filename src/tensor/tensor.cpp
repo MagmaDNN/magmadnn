@@ -85,12 +85,12 @@ skepsi_error_t Tensor<T>::copy_from(const Tensor<T>& src) {
 
 
 template <typename T>
-T Tensor<T>::get(const std::vector<int>& idx) { 
+T Tensor<T>::get(const std::vector<int>& idx) const { 
     return mem_manager->get( get_flattened_index(idx) );
 }
 
 template <typename T>
-T Tensor<T>::get(unsigned int flattened_idx) {
+T Tensor<T>::get(unsigned int flattened_idx) const {
     return mem_manager->get( flattened_idx );
 }
 
@@ -111,7 +111,7 @@ unsigned int Tensor<T>::get_shape(unsigned int idx) const {
 }
 
 template <typename T>
-unsigned int Tensor<T>::get_flattened_index(const std::vector<int>& idx) {
+unsigned int Tensor<T>::get_flattened_index(const std::vector<int>& idx) const {
     unsigned int jump_size = 1; // the total amout to jump to get to next axis
     unsigned int flattened_idx = 0;
 

@@ -6,17 +6,24 @@
  * 
  * @copyright Copyright (c) 2019
  */
+
+/* AFFINE TRANSFORMATION 
+ * This example shows you how to create tensors A,x, and b. Then
+ * calculate the affine transformation Ax+b and print it out. */
+
+
 #include <stdio.h>
+
+/* Include skepsi.h to use the skepsi libraries */
 #include "skepsi.h"
 
+
+/* all skepsi functions/classes are located in the skepsi namespace */
 using namespace skepsi;
 
 int main(int argc, char **argv) {
+    /* must be called at the beginning of every program */
     skepsi_init();
-
-    /* AFFINE TRANSFORMATION 
-        This example shows you how to create tensors A,x, and b. Then
-        calculate the affine transformation Ax+b and print it out. */
 
     /* A: MxN, x: Nx1, and b: Mx1   (Ax+b) : Mx1 */
     const unsigned int M = 5; 
@@ -62,6 +69,7 @@ int main(int argc, char **argv) {
     delete b_tensor;
     delete aff;
 
+    /* must be called at the end of every skepsi program */
     skepsi_finalize();
     return 0;
 }

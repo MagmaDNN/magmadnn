@@ -70,7 +70,7 @@ For examples of what skepsi code looks like see the [examples/ folder](https://g
 - [x] Compute graph and basic operations for tensors
 - [x] Tests for compute graph and tensor operations
 - [x] Link with BLAS/LAPACK (OpenBLAS?) and MAGMA
-- [ ] Basic Layer classes (Dense, Activation, Flatten, CNN)
+- [x] Basic Layer classes (Dense, Activation, Flatten, CNN)
 - [ ] Model with forward/backward propagation
 - [ ] Tests for Model/Layer training
 - [ ] Optimizers

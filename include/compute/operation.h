@@ -59,6 +59,11 @@ public:
      */
     virtual Tensor<T>* eval() = 0;
 
+    /** Returns the gradient of this tensor with respect to its output.
+     * @return Tensor<T>* 
+     */
+    virtual Tensor<T>* grad() = 0;
+
     /** string form of the given operation. Expands on children.
      * @return std::string 
      */
@@ -68,6 +73,8 @@ protected:
     std::vector<Operation<T>*> children;
     std::vector<unsigned int> output_shape;
     memory_t mem_type;
+
+    bool needs_grad;
 };
 
 } // namespace op

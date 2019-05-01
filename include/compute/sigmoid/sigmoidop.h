@@ -23,6 +23,7 @@ public:
     SigmoidOp(Operation<T> *x, bool copy=true, bool fast=true);
 
     Tensor<T>* eval();
+    Tensor<T>* grad();
 
     std::string to_string() { return "SIGMOID( " + x->to_string() + " )"; }
 

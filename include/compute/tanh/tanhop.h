@@ -23,6 +23,7 @@ public:
     TanhOp(Operation<T> *x, bool copy=true);
 
     Tensor<T>* eval();
+    Tensor<T>* grad();
 
     std::string to_string() { return "TANH( " + x->to_string() + " )"; }
 

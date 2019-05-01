@@ -25,6 +25,7 @@ public:
     ~Variable();
 
     Tensor<T>* eval();
+    Tensor<T>* grad();
 
     std::string to_string() { return name; }
 

@@ -22,6 +22,7 @@ public:
 	MatmulOp(T alpha, Operation<T>* a, Operation<T>* b, T beta, Operation<T> *c, bool copy=true);
 
 	Tensor<T>* eval();
+	Tensor<T>* grad();
 	
 	std::string to_string() { return "(" + a->to_string() + " * " + b->to_string() + ")"; }
 protected:

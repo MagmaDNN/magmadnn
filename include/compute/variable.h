@@ -20,10 +20,9 @@ namespace op {
 template <typename T>
 class Variable : public Operation<T> {
 public:
-    Variable (std::string name, Tensor<T> *val) : Operation<T>::Operation(), name(name), val(val) {
-        this->output_shape = val->get_shape();
-        this->mem_type = val->get_memory_type();
-    }
+    Variable (std::string name, std::vector<unsigned int> shape, tensor_filler_t<T> filler, memory_t mem_type);
+    Variable (std::string name, Tensor<T> *val);
+    ~Variable();
 
     Tensor<T>* eval();
 
@@ -32,6 +31,8 @@ public:
 protected:
     std::string name;
     Tensor<T> *val;
+    bool delete_tensor;
+
 };
 
 /** Returns a new variable operation. The variable wraps around val with name name.
@@ -42,6 +43,17 @@ protected:
  */
 template <typename T>
 Variable<T>* var(std::string name, Tensor<T>* val);
+
+/** Returns a new variable operation. This version constructs a new tensor to store in the variable.
+ * @tparam T 
+ * @param name 
+ * @param shape 
+ * @param filler 
+ * @param mem_type 
+ * @return Variable<T>* 
+ */
+template <typename T>
+Variable<T>* var(std::string name, std::vector<unsigned int> shape, tensor_filler_t<T> filler, memory_t mem_type);
 
 } // namespace op
 } // namespace skepsi

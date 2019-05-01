@@ -33,9 +33,9 @@ int main(int argc, char **argv) {
         shape: a vector of axis sizes
         filler: a struct dictating how to fill the tensor (this is optional)
         memory type: HOST means these tensors will be stored in RAM for the CPU */
-    Tensor<float> *A_tensor = new Tensor<float> ({M, N}, {CONSTANT, {3}}, HOST);
-    Tensor<float> *x_tensor = new Tensor<float> ({N, 1}, {CONSTANT, {2}}, HOST);
-    Tensor<float> *b_tensor = new Tensor<float> ({M, 1}, {ONE, {}}, HOST);
+    //Tensor<float> *A_tensor = new Tensor<float> ({M, N}, {CONSTANT, {3}}, HOST);
+    //Tensor<float> *x_tensor = new Tensor<float> ({N, 1}, {CONSTANT, {2}}, HOST);
+    //Tensor<float> *b_tensor = new Tensor<float> ({M, 1}, {ONE, {}}, HOST);
 
     /* now we wrap the tensors in variables so that we can use them in the
         compute graph. All compute graph methods are in skepsi::op.
@@ -43,9 +43,16 @@ int main(int argc, char **argv) {
             name: a string name for the variable (functionality is not dependent on this)
             tensor: the tensor value that the variable points to
         op::var returns an allocated pointer (op::Variable<float> *) */
-    auto A = op::var("A", A_tensor);
-    auto x = op::var("x", x_tensor);
-    auto b = op::var("b", b_tensor);
+    //auto A = op::var("A", A_tensor);
+    //auto x = op::var("x", x_tensor);
+    //auto b = op::var("b", b_tensor);
+
+    /* below is a cleaner way of doing the above. The variables automatically create 
+     the tensors and handle them for us. */
+    auto A = op::var<float> ("A", {M, N}, {CONSTANT, {3}}, HOST);
+    auto x = op::var<float> ("x", {N, 1}, {CONSTANT, {2}}, HOST);
+    auto b = op::var<float> ("b", {M, 1}, {ONE, {}}, HOST);
+
 
     /* create the compute tree. nothing is evaluated. 
         returns an operation pointer (op::Operation<float> *) */
@@ -64,9 +71,9 @@ int main(int argc, char **argv) {
 
     /* free up allocated memory. free the head of the tree, will free 
         all of the nodes in the tree. */
-    delete A_tensor;
-    delete x_tensor;
-    delete b_tensor;
+    //delete A_tensor;
+    //delete x_tensor;
+    //delete b_tensor;
     delete aff;
 
     /* must be called at the end of every skepsi program */

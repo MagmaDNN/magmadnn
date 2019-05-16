@@ -11,7 +11,7 @@
 #include "compute/operation.h"
 #include "sigmoid_internal.h"
 
-namespace skepsi {
+namespace magmadnn {
 namespace op {
 
 /** Sigmoid Operation. Computes the element-wise sigmoid operation on a Tensor.
@@ -45,4 +45,4 @@ template <typename T>
 SigmoidOp<T>* sigmoid(Operation<T> *x, bool copy=true, bool fast=true);
 
 }   // namespace op
-}   // namespace skepsi
+}   // namespace magmadnn

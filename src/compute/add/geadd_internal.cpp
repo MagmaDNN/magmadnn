@@ -8,7 +8,7 @@
  */
 #include "compute/add/geadd_internal.h"
 
-namespace skepsi {
+namespace magmadnn {
 namespace internal {
 
 template <typename T>
@@ -49,4 +49,4 @@ template void geadd_full(float alpha, Tensor<float> *A, float beta, Tensor<float
 template void geadd_full(double alpha, Tensor<double> *A, double beta, Tensor<double> *B, Tensor<double> *C);
 
 }   // namespace internal
-}   // namespace skepsi
+}   // namespace magmadnn

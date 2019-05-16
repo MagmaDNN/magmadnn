@@ -8,7 +8,7 @@
  */
 #include "compute/variable.h"
 
-namespace skepsi {
+namespace magmadnn {
 namespace op {
 
 template <typename T>
@@ -61,4 +61,4 @@ template Variable<double>* var(std::string, std::vector<unsigned int>, tensor_fi
 
 
 } // namespace op
-} // namespace skepsi
+} // namespace magmadnn

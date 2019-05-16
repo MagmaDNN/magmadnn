@@ -8,7 +8,7 @@
  */
 #include "compute/tanh/tanh_internal.h"
 
-namespace skepsi {
+namespace magmadnn {
 namespace internal {
 
 template <typename T>
@@ -32,4 +32,4 @@ template void tanh_full(Tensor<float> *x);
 template void tanh_full(Tensor<double> *x);
 
 }   // namespace internal
-}   // namespace skepsi
+}   // namespace magmadnn

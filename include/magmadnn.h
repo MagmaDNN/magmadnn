@@ -1,5 +1,5 @@
 /**
- * @file skepsi.h
+ * @file magmadnn.h
  * @author Daniel Nichols
  * @version 0.1
  * @date 2019-02-07
@@ -8,7 +8,7 @@
  */
 #pragma once
 
-/* include all skepsi header files */
+/* include all magmadnn header files */
 
 #include "types.h"
 #include "init_finalize.h"

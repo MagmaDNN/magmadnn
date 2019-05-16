@@ -1,15 +1,15 @@
 #### Adding New Operations 
 ---------------------------
-The skeleton of the operation superclass can be found at [include/compute/operation.h](https://github.com/Dando18/skepsi/blob/master/include/compute/operation.h). There are several things that must be implemented in order to have a working operation. Below the process is layed out for the example operation `sub`.
+The skeleton of the operation superclass can be found at [include/compute/operation.h](https://github.com/Dando18/magmadnn/blob/master/include/compute/operation.h). There are several things that must be implemented in order to have a working operation. Below the process is layed out for the example operation `sub`.
 
 1. Create a new folder in `include/compute` and `src/compute` named `sub`.
 2. Inside the `include/compute/sub` folder create `subop.h` and in `src/compute/sub` create `subop.cpp`. 
-3. Define the `SubOp` class, which extends `Operation`, in the header file. Note that the class must be in the namespace `skepsi::op`. The method `foo` should also be defined here, which returns a new operation class `SubOp`.
-4. Implement `SubOp` in `subop.cpp`. The new operation must implement the constructor, eval, and to_string methods. `eval` should return the evaluated tensor up to this point in the tree. (Note, you are allowed to create helper files within the folder `sub/`, but their methods must live within the namespace `skepsi::internal`). Implement the function `sub` in `subop.cpp`. `sub` must work with and be compiled for `int`, `float`, and `double`. `sub` is also expected to work for all memory types. See [constructor](#constructor), [eval](#eval), [to_string](#to_string), and [func](#func) for more information on how to implement these.
+3. Define the `SubOp` class, which extends `Operation`, in the header file. Note that the class must be in the namespace `magmadnn::op`. The method `foo` should also be defined here, which returns a new operation class `SubOp`.
+4. Implement `SubOp` in `subop.cpp`. The new operation must implement the constructor, eval, and to_string methods. `eval` should return the evaluated tensor up to this point in the tree. (Note, you are allowed to create helper files within the folder `sub/`, but their methods must live within the namespace `magmadnn::internal`). Implement the function `sub` in `subop.cpp`. `sub` must work with and be compiled for `int`, `float`, and `double`. `sub` is also expected to work for all memory types. See [constructor](#constructor), [eval](#eval), [to_string](#to_string), and [func](#func) for more information on how to implement these.
 5. Add `#include "sub/subop.h"` to `include/compute/tensor_operations.h`. This allows the rest of the library to see the new operation.
 6. _Optional:_ Add a tester file to the `testing/` folder.
 
-See [include/compute/add/](https://github.com/Dando18/skepsi/tree/master/include/compute/add) and [src/compute/add/](https://github.com/Dando18/skepsi/tree/master/src/compute/add) for an actual example.
+See [include/compute/add/](https://github.com/Dando18/magmadnn/tree/master/include/compute/add) and [src/compute/add/](https://github.com/Dando18/magmadnn/tree/master/src/compute/add) for an actual example.
 
 Operators _should_ implement copy and no-copy options, determining whether to return a newly allocated tensor or write over one of the parameters. However, this is not required.
 

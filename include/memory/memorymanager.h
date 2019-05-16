@@ -22,7 +22,7 @@
 #include "memory_internal_device.h"
 #endif
 
-namespace skepsi {
+namespace magmadnn {
 
 template <typename T>
 class MemoryManager {
@@ -43,28 +43,28 @@ public:
      *  @param src the memorymanager to copy data from
      *  @return the error code (0 - no error, 1 - src ptr not allocated)
      */
-    skepsi_error_t copy_from(const MemoryManager<T>& src, unsigned int begin_idx, unsigned int size);
+    magmadnn_error_t copy_from(const MemoryManager<T>& src, unsigned int begin_idx, unsigned int size);
 
     /** Copies the data from src memory manager into the pointer here. Asserts that
      *  src and this have the same size.
      *  @param src the memorymanager to copy data from
      *  @return the error code (0 - no error, 1 - src ptr not allocated)
      */
-    skepsi_error_t copy_from(const MemoryManager<T>& src, unsigned int size);
+    magmadnn_error_t copy_from(const MemoryManager<T>& src, unsigned int size);
 
     /** Copies the data from src memory manager into the pointer here. Asserts that
      *  src and this have the same size.
      *  @param src the memorymanager to copy data from
      *  @return the error code (0 - no error, 1 - src ptr not allocated)
      */
-    skepsi_error_t copy_from(const MemoryManager<T>& src);
+    magmadnn_error_t copy_from(const MemoryManager<T>& src);
 
     /** copies memory from a host ptr into this memorymanager. will throw an error if it
      *  reaches the end of src allocated mem before this is filled.
      *  @param src the array to copy into this.
      *  @return the error code (0 - good, 1 - not enough memory)
      */
-    skepsi_error_t copy_from_host(T *src, unsigned int begin_idx, unsigned int size);
+    magmadnn_error_t copy_from_host(T *src, unsigned int begin_idx, unsigned int size);
 
 
     #if defined(_HAS_CUDA_)
@@ -73,21 +73,21 @@ public:
      *  @param src the array to copy into this.
      *  @return the error code (0 - good, 1 - not enough memory)
      */
-    skepsi_error_t copy_from_device(T *src, unsigned int begin_idx, unsigned int size);
+    magmadnn_error_t copy_from_device(T *src, unsigned int begin_idx, unsigned int size);
 
     /** copies memory from a managed ptr into this memorymanager. will throw an error if it
      *  reaches the end of src allocated mem before this is filled.
      *  @param src the array to copy into this.
      *  @return the error code (0 - good, 1 - not enough memory)
      */
-    skepsi_error_t copy_from_managed(T *host_src, T *device_src, unsigned int begin_idx, unsigned int size);
+    magmadnn_error_t copy_from_managed(T *host_src, T *device_src, unsigned int begin_idx, unsigned int size);
 
     /** copies memory from a cuda managed ptr into this memorymanager. will throw an error if it
      *  reaches the end of src allocated mem before this is filled.
      *  @param src the array to copy into this.
      *  @return the error code (0 - good, 1 - not enough memory)
      */
-    skepsi_error_t copy_from_cudamanaged(T *src, unsigned int begin_idx, unsigned int size);
+    magmadnn_error_t copy_from_cudamanaged(T *src, unsigned int begin_idx, unsigned int size);
     #endif
 
     /** If MANAGED or CUDA_MANAGED this ensures that data is the same on all devices. It 
@@ -97,13 +97,13 @@ public:
      * By default true.
      * @return an error code
      */
-    skepsi_error_t sync(bool gpu_was_modified=true);
+    magmadnn_error_t sync(bool gpu_was_modified=true);
 
     /** Changes the device this memory manager points to. Note that the memory type
      *  is still the same, but the device_id will be different.
      *  @return an error code (0 - ok)
      */
-    skepsi_error_t set_device(device_t device_id);
+    magmadnn_error_t set_device(device_t device_id);
 
     /** Returns the value at idx. Error if idx is out of range.
      *  @param idx index to retrieve

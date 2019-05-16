@@ -8,7 +8,7 @@
  */
 #include "compute/matmul/gemm_internal.h"
 
-namespace skepsi {
+namespace magmadnn {
 namespace internal {
 
 template <typename T>
@@ -112,4 +112,4 @@ void gemm_full(double alpha, Tensor<double> *A, Tensor<double> *B, double beta, 
 }
 
 }   // namespace internal
-}   // namespace skepsi
+}   // namespace magmadnn

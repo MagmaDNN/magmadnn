@@ -10,7 +10,7 @@
 #include "cblas.h"
 #include "tensor/tensor.h"
 
-namespace skepsi {
+namespace magmadnn {
 namespace internal {
 
 /** Returns true if A, B, C are valid parameters to geadd_full.
@@ -51,4 +51,4 @@ void geadd_full_device(unsigned int M, unsigned int N, T alpha, T *A, T beta, T 
 #endif
 
 }   // namespace internal
-}   // namespace skepsi
+}   // namespace magmadnn

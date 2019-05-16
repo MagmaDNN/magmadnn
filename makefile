@@ -1,4 +1,4 @@
-# This makefile can build and install the skepsi library
+# This makefile can build and install the magmadnn library
 
 # incluse any user-defined compile options (pre-sets)
 include make.inc
@@ -13,8 +13,8 @@ MAGMADIR ?= /usr/local/magma
 BLASDIR ?= /usr/local/openblas
 BLASLIB ?= openblas
 
-# where to install skepsi (make must have sudo access if prefix is root privileged)
-prefix ?= /usr/local/skepsi
+# where to install magmadnn (make must have sudo access if prefix is root privileged)
+prefix ?= /usr/local/magmadnn
 
 # headers needed for library compilation
 INC := -I./include -I$(BLASDIR)/include
@@ -113,8 +113,8 @@ RANLIB_FLAGS ?=
 LIBSHARED_EXT ?= .so
 LIBSHARED_FLAG ?= -shared
 
-libstatic := lib/libskepsi.a
-libshared := lib/libskepsi$(LIBSHARED_EXT)
+libstatic := lib/libmagmadnn.a
+libshared := lib/libmagmadnn$(LIBSHARED_EXT)
 
 lib: static shared
 static: $(libstatic)

@@ -6,10 +6,10 @@
  * 
  * @copyright Copyright (c) 2019
  */
-#include "skepsi.h"
+#include "magmadnn.h"
 #include "utilities.h"
 
-using namespace skepsi;
+using namespace magmadnn;
 
 void test_add(memory_t mem_type, unsigned int size);
 void test_matmul(memory_t mem_type, unsigned int size);
@@ -18,7 +18,7 @@ void test_sigmoid(memory_t mem_type, unsigned int size);
 void test_tanh(memory_t mem_type, unsigned int size);
 
 int main(int argc, char **argv) {
-	skepsi_init();
+	magmadnn_init();
 
 	// test add
 	test_add(HOST, 50);
@@ -60,7 +60,7 @@ int main(int argc, char **argv) {
 	test_tanh(CUDA_MANAGED, 50);
 	#endif
     
-	skepsi_finalize();
+	magmadnn_finalize();
     return 0;
 }
 

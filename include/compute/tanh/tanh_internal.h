@@ -11,7 +11,7 @@
 #include "tensor/tensor.h"
 
 
-namespace skepsi {
+namespace magmadnn {
 namespace internal {
 
 /** Computes the element-wise tanh function.
@@ -31,4 +31,4 @@ void tanh_full_device(Tensor<T> *x);
 #endif
 
 }   // namespace internal
-}   // namespace skepsi
+}   // namespace magmadnn

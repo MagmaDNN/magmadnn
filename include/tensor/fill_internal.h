@@ -16,7 +16,7 @@
 #include <cuda.h>
 #endif
 
-namespace skepsi {
+namespace magmadnn {
 namespace internal {
 
 #if defined(_HAS_CUDA_)
@@ -64,4 +64,4 @@ template <typename T>
 void fill_constant(MemoryManager<T> &m, const std::vector<T>& params);
 
 } // namespace internal
-} // namespace skepsi
+} // namespace magmadnn

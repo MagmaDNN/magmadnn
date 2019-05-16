@@ -13,7 +13,7 @@
 #include "memory/memorymanager.h"
 #include "tensor_internal.h"
 
-namespace skepsi {
+namespace magmadnn {
 
 /* Default values for tensors.
    Initialize to CPU 0 if not indicated otherwise.
@@ -77,15 +77,15 @@ public:
 	 * @param src 
 	 * @param begin_idx 
 	 * @param size 
-	 * @return skepsi_error_t non-zero if error
+	 * @return magmadnn_error_t non-zero if error
 	 */
-	skepsi_error_t copy_from(const Tensor<T>& src, unsigned int begin_idx, unsigned int size);
+	magmadnn_error_t copy_from(const Tensor<T>& src, unsigned int begin_idx, unsigned int size);
 
 	/** Copies the tensor src into this tensor.
 	 * @param src 
-	 * @return skepsi_error_t non-zero if error.
+	 * @return magmadnn_error_t non-zero if error.
 	 */
-	skepsi_error_t copy_from(const Tensor<T>& src);
+	magmadnn_error_t copy_from(const Tensor<T>& src);
 
 
 	/** gets the value at the given index.
@@ -162,4 +162,4 @@ private:
 
 };
 
-} // namespace skepsi
+} // namespace magmadnn

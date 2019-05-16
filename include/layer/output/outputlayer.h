@@ -12,7 +12,7 @@
 #include "compute/operation.h"
 #include "compute/tensor_operations.h"
 
-namespace skepsi {
+namespace magmadnn {
 namespace layer {
 
 template <typename T>
@@ -30,4 +30,4 @@ template <typename T>
 OutputLayer<T>* output(op::Operation<T> *input);
 
 }   // layer
-}   // skepsi
+}   // magmadnn

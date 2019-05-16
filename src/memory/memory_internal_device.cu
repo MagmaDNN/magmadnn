@@ -9,7 +9,7 @@
 #include "memory/memory_internal_device.h"
 
 
-namespace skepsi {
+namespace magmadnn {
 namespace internal {
 
 
@@ -59,4 +59,4 @@ template void set_device_array_element(float *arr, unsigned int idx, float val);
 template void set_device_array_element(double *arr, unsigned int idx, double val);
 
 } // namespace internal
-} // namespace skepsi
+} // namespace magmadnn

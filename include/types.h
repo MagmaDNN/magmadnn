@@ -10,7 +10,7 @@
 
 #include <vector> // for tensor_filler_t
 
-namespace skepsi {
+namespace magmadnn {
 
 typedef enum memory_t {
 	HOST,
@@ -22,7 +22,7 @@ typedef enum memory_t {
 } memory_t;
 
 typedef unsigned int device_t;
-typedef unsigned int skepsi_error_t;
+typedef unsigned int magmadnn_error_t;
 
 
 /**	 Different ways to initialize the tensor on creation.
@@ -48,4 +48,4 @@ struct tensor_filler_t {
 	std::vector<T> values;
 };
 
-} // namespace skepsi
+} // namespace magmadnn

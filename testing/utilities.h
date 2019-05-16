@@ -8,7 +8,7 @@
  */
 
 #pragma once
-#include "skepsi.h"
+#include "magmadnn.h"
 
 #define ANSI_COLOR_RED     "\x1b[31m"
 #define ANSI_COLOR_GREEN   "\x1b[32m"
@@ -22,13 +22,13 @@ void show_success() {
     printf(ANSI_COLOR_GREEN "Success!" ANSI_COLOR_RESET "\n");
 }
 
-const char* get_memory_type_name(skepsi::memory_t mem) {
+const char* get_memory_type_name(magmadnn::memory_t mem) {
 	switch (mem) {
-		case skepsi::HOST: 			return "HOST";
+		case magmadnn::HOST: 			return "HOST";
 		#if defined(_HAS_CUDA_)
-		case skepsi::DEVICE: 		return "DEVICE";
-		case skepsi::MANAGED: 		return "MANAGED";
-		case skepsi::CUDA_MANAGED: 	return "CUDA_MANAGED";
+		case magmadnn::DEVICE: 		return "DEVICE";
+		case magmadnn::MANAGED: 		return "MANAGED";
+		case magmadnn::CUDA_MANAGED: 	return "CUDA_MANAGED";
 		#endif
 		default: 			return "UNDEFINED_MEMORY_TYPE";
 	}

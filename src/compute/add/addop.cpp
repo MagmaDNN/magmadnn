@@ -8,7 +8,7 @@
  */
 #include "compute/add/addop.h"
 
-namespace skepsi {
+namespace magmadnn {
 namespace op {
 
 template <typename T>
@@ -51,4 +51,4 @@ template AddOp<float>* add(Operation<float> *a, Operation<float> *b, bool copy);
 template AddOp<double>* add(Operation<double> *a, Operation<double> *b, bool copy);
 
 } // namespace op
-} // namespace skepsi
+} // namespace magmadnn

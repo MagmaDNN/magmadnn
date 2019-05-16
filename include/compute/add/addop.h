@@ -12,7 +12,7 @@
 #include "tensor/tensor.h"
 #include "geadd_internal.h"
 
-namespace skepsi {
+namespace magmadnn {
 namespace op {
 
 /**	An addition operation on two tensors.
@@ -48,4 +48,4 @@ template <typename T>
 AddOp<T>* add(Operation<T> *a, Operation<T> *b, bool copy=true);
 
 } // namespace op
-} // namespace skepsi
+} // namespace magmadnn

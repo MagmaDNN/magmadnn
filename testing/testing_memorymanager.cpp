@@ -1,13 +1,13 @@
 /*
-    This is a test for the memorymanager class in skepsi
+    This is a test for the memorymanager class in magmadnn
 */
 
 #include <stdio.h>
 #include <assert.h>
-#include "skepsi.h"
+#include "magmadnn.h"
 #include "utilities.h"
 
-using namespace skepsi;
+using namespace magmadnn;
 
 
 void test_get_set(memory_t mem, int size, bool verbose) {
@@ -60,7 +60,7 @@ void test_copy(memory_t src_mem, memory_t dst_mem, int size, bool verbose) {
 
 
 int main(int argc, char** argv) {
-	skepsi_init();
+	magmadnn_init();
 
 	unsigned int test_size = 100;
 
@@ -102,6 +102,6 @@ int main(int argc, char** argv) {
 	test_copy(CUDA_MANAGED, CUDA_MANAGED, test_size, true);
 	#endif
 
-	skepsi_finalize();
+	magmadnn_finalize();
     return 0;
 }

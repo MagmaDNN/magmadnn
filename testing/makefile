@@ -19,7 +19,7 @@ $(DEST):
 	mkdir -p $@
 
 %.out: %.o
-	$(CXX) $(TESTING_FLAGS) $(RPATH_FLAGS) -o $(DEST)/$(@:.out=) $< -L$(LIB_PATH) -lskepsi $(LD_FLAGS)
+	$(CXX) $(TESTING_FLAGS) $(RPATH_FLAGS) -o $(DEST)/$(@:.out=) $< -L$(LIB_PATH) -lmagmadnn $(LD_FLAGS)
 
 %.o: %.cpp
 	$(CXX) $(TESTING_FLAGS) -o $@ -c $< $(INC) -I../include

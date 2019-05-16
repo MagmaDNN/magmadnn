@@ -11,7 +11,7 @@
 #include "tensor/tensor.h"
 #include "compute/operation.h"
 
-namespace skepsi {
+namespace magmadnn {
 namespace layer {
 
 template <typename T>
@@ -28,4 +28,4 @@ template <typename T>
 InputLayer<T>* input(op::Operation<T> *input);
 
 }   // layer
-}   // skepsi
+}   // magmadnn

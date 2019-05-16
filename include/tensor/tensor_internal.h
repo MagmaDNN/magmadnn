@@ -12,7 +12,7 @@
 #include "fill_internal.h"
 
 
-namespace skepsi {
+namespace magmadnn {
 namespace internal {
 
 /** Uses the filler to fill memorymanager m. Works independent of memory type.
@@ -24,4 +24,4 @@ template <typename T>
 void fill_memory(MemoryManager<T> &m, tensor_filler_t<T> filler);
 
 }   // namespace internal
-}   // namespace skepsi
+}   // namespace magmadnn

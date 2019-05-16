@@ -1,6 +1,6 @@
-# magmadnn
+# Magmadnn
 
-A neural network library in c++ aimed at providing a simple, modularized framework for deep learning. 
+A neural network library in c++ aimed at providing a simple, modularized framework for deep learning. This is a Work-In-Progress replacement for [MagmaDNN](https://bitbucket.org/icl/magmadnn).
 
 ===== VERSION 0.0.1 =====
 - Currently magmadnn provides a dynamic memory manager, tensor wrapper for the memory manager, and a set of math operations for the tensor.

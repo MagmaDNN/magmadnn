@@ -37,6 +37,10 @@ Tensor<T>* Variable<T>::eval() {
     return val;
 }
 
+template <typename T>
+Tensor<T>* Variable<T>::grad() {
+    return NULL;
+}
 // compile for int, float, double
 template class Variable<int>;
 template class Variable<float>;

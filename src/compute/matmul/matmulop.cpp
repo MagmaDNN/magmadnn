@@ -61,6 +61,11 @@ Tensor<T>* MatmulOp<T>::eval() {
 
     return ret;
 } 
+
+template <typename T>
+Tensor<T>* MatmulOp<T>::grad() {
+    return NULL;
+}
 template class MatmulOp<int>;
 template class MatmulOp<float>;
 template class MatmulOp<double>;

@@ -40,6 +40,11 @@ Tensor<T>* SigmoidOp<T>::eval() {
     
     return ret;
 }
+
+template <typename T>
+Tensor<T>* SigmoidOp<T>::grad() {
+    return NULL;
+}
 template class SigmoidOp<int>;
 template class SigmoidOp<float>;
 template class SigmoidOp<double>;

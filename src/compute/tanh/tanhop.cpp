@@ -37,6 +37,11 @@ Tensor<T>* TanhOp<T>::eval() {
     
     return ret;
 }
+
+template <typename T>
+Tensor<T>* TanhOp<T>::grad() {
+    return NULL;
+}
 template class TanhOp<int>;
 template class TanhOp<float>;
 template class TanhOp<double>;

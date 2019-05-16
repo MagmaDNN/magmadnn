@@ -37,6 +37,11 @@ Tensor<T>* AddOp<T>::eval() {
 	
 	return ret;
 } 
+
+template <typename T>
+Tensor<T>* AddOp<T>::grad() {
+	return NULL;
+}
 template class AddOp<int>;
 template class AddOp<float>;
 template class AddOp<double>;

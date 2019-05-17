@@ -10,7 +10,7 @@
 #include <string>
 #include "tensor/tensor.h"
 
-namespace skepsi {
+namespace magmadnn {
 namespace op {
 
 template <typename T>
@@ -78,4 +78,4 @@ protected:
 };
 
 } // namespace op
-} // namespace skepsi
+} // namespace magmadnn

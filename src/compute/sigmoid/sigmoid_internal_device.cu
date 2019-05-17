@@ -8,7 +8,7 @@
  */
  #include "compute/sigmoid/sigmoid_internal.h"
 
-namespace skepsi {
+namespace magmadnn {
 namespace internal {
 
 template <typename T>
@@ -63,4 +63,4 @@ template void sigmoid_full_device(Tensor<float> *x, bool fast);
 template void sigmoid_full_device(Tensor<double> *x, bool fast);
 
 }   // namespace internal
-}   // namespace skepsi
+}   // namespace magmadnn

@@ -10,7 +10,7 @@
 #include "tensor/fill_internal.h"
 
 
-namespace skepsi {
+namespace magmadnn {
 namespace internal {
 
 template <typename T>
@@ -32,5 +32,5 @@ template void fill_constant_device(MemoryManager<float> &m, float val);
 template void fill_constant_device(MemoryManager<double> &m, double val);
 
 } // namespace internal
-} // namespace skepsi
+} // namespace magmadnn
 

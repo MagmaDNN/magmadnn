@@ -12,7 +12,7 @@
 #include "compute/operation.h"
 #include "compute/tensor_operations.h"
 
-namespace skepsi {
+namespace magmadnn {
 namespace layer {
 
 template <typename T>
@@ -39,4 +39,4 @@ template <typename T>
 FullyConnectedLayer<T>* fullyconnected(op::Operation<T> *input, unsigned int hidden_units, bool use_bias=true);
 
 }   // layer
-}   // skepsi
+}   // magmadnn

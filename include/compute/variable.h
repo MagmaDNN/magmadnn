@@ -11,7 +11,7 @@
 #include <tensor/tensor.h>
 #include "operation.h"
 
-namespace skepsi {
+namespace magmadnn {
 namespace op {
 
 /** Variable Operation. The most basic operation; it simply wraps around a tensor.
@@ -57,4 +57,4 @@ template <typename T>
 Variable<T>* var(std::string name, std::vector<unsigned int> shape, tensor_filler_t<T> filler, memory_t mem_type);
 
 } // namespace op
-} // namespace skepsi
+} // namespace magmadnn

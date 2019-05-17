@@ -14,7 +14,7 @@
 #include "magma.h"
 #endif
 
-namespace skepsi {
+namespace magmadnn {
 namespace internal {
 
 /** Returns true if A, B, C are valid parameters for gemm_full. It also sets M, N, K to
@@ -45,4 +45,4 @@ void gemm_full(T alpha, Tensor<T>* A, Tensor<T>* B, T beta, Tensor<T>* C);
 
 
 }   // namespace internal
-}   // namespace skepsi
+}   // namespace magmadnn

@@ -8,7 +8,7 @@
  */
 #include "memory/memorymanager.h"
 
-namespace skepsi {
+namespace magmadnn {
 
 template <typename T>
 MemoryManager<T>::MemoryManager(unsigned int size, memory_t mem_type, device_t device_id) : 
@@ -74,10 +74,10 @@ MemoryManager<T>::~MemoryManager<T>() {
 }
 
 template <typename T>
-skepsi_error_t MemoryManager<T>::copy_from(const MemoryManager<T>& src, unsigned int begin_idx, unsigned int copy_size) {
+magmadnn_error_t MemoryManager<T>::copy_from(const MemoryManager<T>& src, unsigned int begin_idx, unsigned int copy_size) {
     assert( this->size == src.size );
     
-    if (copy_size == 0) return (skepsi_error_t) 0;
+    if (copy_size == 0) return (magmadnn_error_t) 0;
 
     if (src.mem_type == HOST) {
         return copy_from_host(src.host_ptr, begin_idx, copy_size);
@@ -92,52 +92,52 @@ skepsi_error_t MemoryManager<T>::copy_from(const MemoryManager<T>& src, unsigned
     }
     #endif
     
-    return (skepsi_error_t) 1;
+    return (magmadnn_error_t) 1;
 }
 
 template <typename T>
-skepsi_error_t MemoryManager<T>::copy_from(const MemoryManager<T>& src) {
+magmadnn_error_t MemoryManager<T>::copy_from(const MemoryManager<T>& src) {
     return copy_from(src, 0, size);
 }
 
 template <typename T>
-skepsi_error_t MemoryManager<T>::copy_from(const MemoryManager<T>& src, unsigned int copy_size) {
+magmadnn_error_t MemoryManager<T>::copy_from(const MemoryManager<T>& src, unsigned int copy_size) {
     return copy_from(src, 0, copy_size);
 }
 
 template <typename T>
-skepsi_error_t MemoryManager<T>::copy_from_host(T *src, unsigned int begin_idx, unsigned int copy_size) {
+magmadnn_error_t MemoryManager<T>::copy_from_host(T *src, unsigned int begin_idx, unsigned int copy_size) {
 
     switch (mem_type) {
         case HOST:
             // host --> host
 			std::copy(src + begin_idx, (src+begin_idx) + copy_size, host_ptr);
-            return (skepsi_error_t) 0;
+            return (magmadnn_error_t) 0;
         #if defined(_HAS_CUDA_)
         case DEVICE:
             // host --> device
-            return (skepsi_error_t) cudaMemcpy(device_ptr, src+begin_idx, copy_size*sizeof(T), cudaMemcpyHostToDevice);
+            return (magmadnn_error_t) cudaMemcpy(device_ptr, src+begin_idx, copy_size*sizeof(T), cudaMemcpyHostToDevice);
         case MANAGED:
             // host --> managed
 			std::copy(src+begin_idx, (src+begin_idx) + copy_size, host_ptr);
             sync(false);
-            return (skepsi_error_t) 0;
+            return (magmadnn_error_t) 0;
         case CUDA_MANAGED:
             // host --> cmanaged
             std::copy(src+begin_idx, (src+begin_idx) + copy_size, cuda_managed_ptr);
             sync(false);
-            return (skepsi_error_t) 0;
+            return (magmadnn_error_t) 0;
         #endif
     }
 
-    return (skepsi_error_t) 1;
+    return (magmadnn_error_t) 1;
 }
 
 #if defined(_HAS_CUDA_)
 template <typename T>
-skepsi_error_t MemoryManager<T>::copy_from_device(T *src, unsigned int begin_idx, unsigned int copy_size) {
+magmadnn_error_t MemoryManager<T>::copy_from_device(T *src, unsigned int begin_idx, unsigned int copy_size) {
 
-	skepsi_error_t err = (skepsi_error_t) 0;
+	magmadnn_error_t err = (magmadnn_error_t) 0;
 
     switch (mem_type) {
         case HOST:
@@ -162,7 +162,7 @@ skepsi_error_t MemoryManager<T>::copy_from_device(T *src, unsigned int begin_idx
 }
 
 template <typename T>
-skepsi_error_t MemoryManager<T>::copy_from_managed(T *host_src, T *device_src, unsigned int begin_idx, unsigned int copy_size) {
+magmadnn_error_t MemoryManager<T>::copy_from_managed(T *host_src, T *device_src, unsigned int begin_idx, unsigned int copy_size) {
 
     switch (mem_type) {
         case HOST:
@@ -175,25 +175,25 @@ skepsi_error_t MemoryManager<T>::copy_from_managed(T *host_src, T *device_src, u
             // managed --> managed
             std::copy(host_src+begin_idx, (host_src+begin_idx) + copy_size, host_ptr);
             sync(false);
-            return (skepsi_error_t) 0;
+            return (magmadnn_error_t) 0;
         case CUDA_MANAGED:
             // managed --> cmanaged
             std::copy(host_src+begin_idx, (host_src+begin_idx) + copy_size, cuda_managed_ptr);
             sync(false);
-            return (skepsi_error_t) 0;
+            return (magmadnn_error_t) 0;
     }
 
-    return (skepsi_error_t) 1;
+    return (magmadnn_error_t) 1;
 }
 
 template <typename T>
-skepsi_error_t MemoryManager<T>::copy_from_cudamanaged(T *src, unsigned int begin_idx, unsigned int copy_size) {
+magmadnn_error_t MemoryManager<T>::copy_from_cudamanaged(T *src, unsigned int begin_idx, unsigned int copy_size) {
 
     switch (mem_type) {
         case HOST:
             // cmanaged --> host
 			std::copy(src+begin_idx, (src+begin_idx) + copy_size, host_ptr);
-            return (skepsi_error_t) 0;
+            return (magmadnn_error_t) 0;
         case DEVICE:
             // cmanaged --> device
             return cudaMemcpy(device_ptr, src+begin_idx, copy_size*sizeof(T), cudaMemcpyDeviceToDevice);
@@ -201,19 +201,19 @@ skepsi_error_t MemoryManager<T>::copy_from_cudamanaged(T *src, unsigned int begi
             // cmanaged --> managed
             std::copy(src+begin_idx, (src+begin_idx) + copy_size, host_ptr);
             sync(false);
-            return (skepsi_error_t) 0;
+            return (magmadnn_error_t) 0;
         case CUDA_MANAGED:
             std::copy(src+begin_idx, (src+begin_idx) + copy_size, cuda_managed_ptr);
             sync(false);
-            return (skepsi_error_t) 0;
+            return (magmadnn_error_t) 0;
     }
 
-    return (skepsi_error_t) 1;
+    return (magmadnn_error_t) 1;
 }
 #endif
 
 template <typename T>
-skepsi_error_t MemoryManager<T>::sync(bool gpu_was_modified) {
+magmadnn_error_t MemoryManager<T>::sync(bool gpu_was_modified) {
     #if defined(_HAS_CUDA_)
         cudaError_t err = (cudaError_t) 0;
 
@@ -226,11 +226,11 @@ skepsi_error_t MemoryManager<T>::sync(bool gpu_was_modified) {
                 err = cudaMemcpy(device_ptr, host_ptr, size*sizeof(T), cudaMemcpyHostToDevice);
             }
         }
-        return (skepsi_error_t) err;
+        return (magmadnn_error_t) err;
     #else
 
         // nothing to sync, no error
-        return (skepsi_error_t) 0;
+        return (magmadnn_error_t) 0;
 
     #endif
 }
@@ -279,19 +279,19 @@ void MemoryManager<T>::set(unsigned int idx, T val) {
 }
 
 template <typename T>
-skepsi_error_t MemoryManager<T>::set_device(device_t device_id) {
+magmadnn_error_t MemoryManager<T>::set_device(device_t device_id) {
 
     #if defined(_HAS_CUDA_)
 	int n_devices = 0;
 	cudaGetDeviceCount(&n_devices);
 	if ((int)device_id >= n_devices) {
 		fprintf(stderr, "invalid device id\n");
-		return (skepsi_error_t) 1;
+		return (magmadnn_error_t) 1;
 	}
     #endif
 
 	this->device_id = device_id;
-	return (skepsi_error_t) 0;
+	return (magmadnn_error_t) 0;
 }
 
 template <typename T>
@@ -338,4 +338,4 @@ template class MemoryManager<int>;
 template class MemoryManager<float>;
 template class MemoryManager<double>;
 
-} // namespace skepsi
+} // namespace magmadnn

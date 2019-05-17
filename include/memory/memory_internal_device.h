@@ -10,7 +10,7 @@
 
 #if defined(_HAS_CUDA_)
 
-namespace skepsi {
+namespace magmadnn {
 namespace internal {
 
 /**	gets the device array element at idx. Note: This is slow. Favor copy_from for faster
@@ -33,6 +33,6 @@ template <typename T>
 void set_device_array_element(T *arr, unsigned int idx, T val);
 
 } // namespace internal
-} // namespace skepsi
+} // namespace magmadnn
 
 #endif

@@ -13,7 +13,7 @@
 #include "tensor/tensor.h"
 #include "gemm_internal.h"
 
-namespace skepsi {
+namespace magmadnn {
 namespace op {
 
 template <typename T>
@@ -65,4 +65,4 @@ template <typename T>
 MatmulOp<T>* matmul(T alpha, Operation<T> *a, Operation<T> *b, T beta, Tensor<T> *c, bool copy);
 
 } // namespace op
-} // namespace skepsi
+} // namespace magmadnn

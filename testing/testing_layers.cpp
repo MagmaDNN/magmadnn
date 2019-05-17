@@ -7,10 +7,10 @@
  * @copyright Copyright (c) 2019
  */
 #include <stdio.h>
-#include "skepsi.h"
+#include "magmadnn.h"
 #include "utilities.h"
 
-using namespace skepsi;
+using namespace magmadnn;
 
 void test_input(memory_t mem, unsigned int size);
 void test_fullyconnected(memory_t mem, unsigned int size);
@@ -18,7 +18,7 @@ void test_activation(memory_t mem, unsigned int size);
 void test_layers(memory_t mem, unsigned int size);
 
 int main(int argc, char **argv) {
-    skepsi_init();
+    magmadnn_init();
     
     test_input(HOST, 50);
     #if defined(_HAS_CUDA_)
@@ -48,7 +48,7 @@ int main(int argc, char **argv) {
     test_layers(CUDA_MANAGED, 15);
     #endif
 
-    skepsi_finalize();
+    magmadnn_finalize();
     return 0;
 }
 

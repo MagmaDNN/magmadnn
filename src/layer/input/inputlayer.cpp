@@ -8,7 +8,7 @@
  */
 #include "layer/input/inputlayer.h"
 
-namespace skepsi {
+namespace magmadnn {
 namespace layer {
 
 template <typename T>
@@ -37,4 +37,4 @@ template InputLayer<double>* input(op::Operation<double> *input);
 
 
 }   // layer
-}   // skepsi
+}   // magmadnn

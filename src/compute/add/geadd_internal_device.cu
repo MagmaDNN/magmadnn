@@ -9,7 +9,7 @@
 #include "compute/add/geadd_internal.h"
 
 
-namespace skepsi {
+namespace magmadnn {
 namespace internal {
 
 
@@ -35,4 +35,4 @@ template void geadd_full_device(unsigned int M, unsigned int N, double alpha, do
 
 
 }	// namespace internal
-}	// namespace skepsi
+}	// namespace magmadnn

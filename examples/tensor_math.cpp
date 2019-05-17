@@ -14,16 +14,16 @@
 
 #include <stdio.h>
 
-/* Include skepsi.h to use the skepsi libraries */
-#include "skepsi.h"
+/* Include magmadnn.h to use the magmadnn libraries */
+#include "magmadnn.h"
 
 
-/* all skepsi functions/classes are located in the skepsi namespace */
-using namespace skepsi;
+/* all magmadnn functions/classes are located in the magmadnn namespace */
+using namespace magmadnn;
 
 int main(int argc, char **argv) {
     /* must be called at the beginning of every program */
-    skepsi_init();
+    magmadnn_init();
 
     /* A: MxN, x: Nx1, and b: Mx1   (Ax+b) : Mx1 */
     const unsigned int M = 5; 
@@ -38,7 +38,7 @@ int main(int argc, char **argv) {
     //Tensor<float> *b_tensor = new Tensor<float> ({M, 1}, {ONE, {}}, HOST);
 
     /* now we wrap the tensors in variables so that we can use them in the
-        compute graph. All compute graph methods are in skepsi::op.
+        compute graph. All compute graph methods are in magmadnn::op.
         op::var takes two arguments:
             name: a string name for the variable (functionality is not dependent on this)
             tensor: the tensor value that the variable points to
@@ -76,7 +76,7 @@ int main(int argc, char **argv) {
     //delete b_tensor;
     delete aff;
 
-    /* must be called at the end of every skepsi program */
-    skepsi_finalize();
+    /* must be called at the end of every magmadnn program */
+    magmadnn_finalize();
     return 0;
 }

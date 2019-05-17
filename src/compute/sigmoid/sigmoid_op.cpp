@@ -8,7 +8,7 @@
  */
 #include "compute/sigmoid/sigmoidop.h"
 
-namespace skepsi {
+namespace magmadnn {
 namespace op {
 
 template <typename T>
@@ -58,4 +58,4 @@ template SigmoidOp<float>* sigmoid(Operation<float> *x, bool copy, bool fast);
 template SigmoidOp<double>* sigmoid(Operation<double> *x, bool copy, bool fast);
 
 }   // namespace op
-}   // namespace skepsi
+}   // namespace magmadnn

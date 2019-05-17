@@ -8,7 +8,7 @@
  */
 #include "compute/matmul/matmulop.h"
 
-namespace skepsi {
+namespace magmadnn {
 namespace op {
 
 template <typename T>
@@ -90,4 +90,4 @@ template MatmulOp<float>* matmul(float alpha, Operation<float> *a, Operation<flo
 template MatmulOp<double>* matmul(double alpha, Operation<double> *a, Operation<double> *b, double beta, Operation<double> *c, bool copy);
 
 } // namespace op
-} // namespace skepsi
+} // namespace magmadnn

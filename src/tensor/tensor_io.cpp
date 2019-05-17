@@ -8,19 +8,19 @@
  */
 #include "tensor/tensor_io.h"
 
-namespace skepsi {
+namespace magmadnn {
 namespace io {
 
 
     template <typename T>
-    skepsi_error_t read_csv_to_tensor(Tensor<T>& t, const std::string& file_name, char delim) {
-        skepsi_error_t err = (skepsi_error_t) 0;
+    magmadnn_error_t read_csv_to_tensor(Tensor<T>& t, const std::string& file_name, char delim) {
+        magmadnn_error_t err = (magmadnn_error_t) 0;
 
         std::ifstream file_stream (file_name);
 
         if (!file_stream.is_open()) {
             /* error on opening file */
-            return (skepsi_error_t) 1;
+            return (magmadnn_error_t) 1;
         }
 
         std::stringstream ss;
@@ -41,7 +41,7 @@ namespace io {
                 /* use iss's stream operator to correctly read value into val */
                 if (!(std::istringstream (token) >> val)) {
                     /* could not read into val */
-                    return (skepsi_error_t) 2;
+                    return (magmadnn_error_t) 2;
                 }
 
                 /* use tensor's built in flattened index set method */
@@ -56,18 +56,18 @@ namespace io {
 
         return err;
     }
-    template skepsi_error_t read_csv_to_tensor(Tensor<int>&, const std::string&, char);
-    template skepsi_error_t read_csv_to_tensor(Tensor<float>&, const std::string&, char);
-    template skepsi_error_t read_csv_to_tensor(Tensor<double>&, const std::string&, char);
+    template magmadnn_error_t read_csv_to_tensor(Tensor<int>&, const std::string&, char);
+    template magmadnn_error_t read_csv_to_tensor(Tensor<float>&, const std::string&, char);
+    template magmadnn_error_t read_csv_to_tensor(Tensor<double>&, const std::string&, char);
 
     template <typename T>
-    skepsi_error_t write_tensor_to_csv(const Tensor<T>& t, const std::string& file_name, char delim, bool create) {
-        skepsi_error_t err = (skepsi_error_t) 0;
+    magmadnn_error_t write_tensor_to_csv(const Tensor<T>& t, const std::string& file_name, char delim, bool create) {
+        magmadnn_error_t err = (magmadnn_error_t) 0;
 
         std::ofstream file_stream (file_name);
         if (!file_stream.is_open()) {
             /* failed to open file */
-            return (skepsi_error_t) 1;
+            return (magmadnn_error_t) 1;
         }
 
         T val;
@@ -77,7 +77,7 @@ namespace io {
             val = t.get(i);
             if (!(file_stream << val << delim)) {
                 /* for some reason errored while writing value */
-                return (skepsi_error_t) 2;
+                return (magmadnn_error_t) 2;
             }
         }
 
@@ -86,9 +86,9 @@ namespace io {
 
         return err;
     }
-    template skepsi_error_t write_tensor_to_csv(const Tensor<int>&, const std::string&, char, bool);
-    template skepsi_error_t write_tensor_to_csv(const Tensor<float>&, const std::string&, char, bool);
-    template skepsi_error_t write_tensor_to_csv(const Tensor<double>&, const std::string&, char, bool);
+    template magmadnn_error_t write_tensor_to_csv(const Tensor<int>&, const std::string&, char, bool);
+    template magmadnn_error_t write_tensor_to_csv(const Tensor<float>&, const std::string&, char, bool);
+    template magmadnn_error_t write_tensor_to_csv(const Tensor<double>&, const std::string&, char, bool);
 
 
 }   // namespace io

@@ -8,26 +8,26 @@
  */
 #include "init_finalize.h"
 
-namespace skepsi {
+namespace magmadnn {
 
-skepsi_error_t skepsi_init() {
-    skepsi_error_t err = 0;
+magmadnn_error_t magmadnn_init() {
+    magmadnn_error_t err = 0;
 
     #if defined(_HAS_CUDA_)
-    err = (skepsi_error_t) magma_init();
+    err = (magmadnn_error_t) magma_init();
     #endif
 
     return err;
 }
 
-skepsi_error_t skepsi_finalize() {
-    skepsi_error_t err = 0;
+magmadnn_error_t magmadnn_finalize() {
+    magmadnn_error_t err = 0;
 
     #if defined(_HAS_CUDA_)
-    err = (skepsi_error_t) magma_finalize();
+    err = (magmadnn_error_t) magma_finalize();
     #endif
 
     return err;
 }
 
-}   // namespace skepsi
+}   // namespace magmadnn

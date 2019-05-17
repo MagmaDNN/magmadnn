@@ -8,7 +8,7 @@
  */
 #include "compute/tanh/tanhop.h"
 
-namespace skepsi {
+namespace magmadnn {
 namespace op {
 
 template <typename T>
@@ -55,4 +55,4 @@ template TanhOp<float>* tanh(Operation<float> *x, bool copy);
 template TanhOp<double>* tanh(Operation<double> *x, bool copy);
 
 }   // namespace op
-}   // namespace skepsi
+}   // namespace magmadnn

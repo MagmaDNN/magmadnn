@@ -8,7 +8,7 @@
  */
 #include "tensor/tensor_internal.h"
 
-namespace skepsi {
+namespace magmadnn {
 namespace internal {
 
 template <typename T>
@@ -36,4 +36,4 @@ template void fill_memory(MemoryManager<float>&, tensor_filler_t<float>);
 template void fill_memory(MemoryManager<double>&, tensor_filler_t<double>);
 
 } // namespace internal
-} // namespace skepsi
+} // namespace magmadnn

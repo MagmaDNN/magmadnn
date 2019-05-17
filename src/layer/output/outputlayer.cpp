@@ -8,7 +8,7 @@
  */
 #include "layer/output/outputlayer.h"
 
-namespace skepsi {
+namespace magmadnn {
 namespace layer {
 
 template <typename T>
@@ -44,4 +44,4 @@ template OutputLayer<double>* output(op::Operation<double> *);
 
 
 }   // layer
-}   // skepsi
+}   // magmadnn

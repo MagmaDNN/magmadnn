@@ -12,7 +12,7 @@
 #include "compute/operation.h"
 #include "compute/tensor_operations.h"
 
-namespace skepsi {
+namespace magmadnn {
 namespace layer {
 
 enum activation_t {
@@ -39,4 +39,4 @@ template <typename T>
 ActivationLayer<T>* activation(op::Operation<T> *input, activation_t activation_func);
 
 }   // layer
-}   // skepsi
+}   // magmadnn

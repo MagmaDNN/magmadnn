@@ -9,7 +9,7 @@
 
 #include "tensor/fill_internal.h"
 
-namespace skepsi {
+namespace magmadnn {
 namespace internal {
 
 template <typename T>
@@ -239,4 +239,4 @@ template void fill_constant(MemoryManager<float>&, const std::vector<float>&);
 template void fill_constant(MemoryManager<double>&, const std::vector<double>&);
 
 } // namespace internal
-} // namespace skepsi
+} // namespace magmadnn

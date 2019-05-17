@@ -11,7 +11,7 @@
 #include "compute/operation.h"
 #include "tanh_internal.h"
 
-namespace skepsi {
+namespace magmadnn {
 namespace op {
 
 /** Tanh Operation. Computes the tanh function element-wise.
@@ -44,4 +44,4 @@ template <typename T>
 TanhOp<T>* tanh(Operation<T> *x, bool copy=true);
 
 }   // namespace op
-}   // namespace skepsi
+}   // namespace magmadnn

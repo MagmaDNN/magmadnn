@@ -35,12 +35,12 @@ First and foremost, device and host distinction. Code that is device kernels onl
 
 Host code files do not require a special ending and should be in `*.cpp` files. 
 
-Any internal utility functions should be in the `skepsi::internal` namespace and should reside in files with a name such as `*_internal*.*`. For instance, a file that contains tensor addition utilities might be called `tensor_add_internal.cpp`. If that same utility contained device code, then it could be `tensor_add_internal_device.cu`. 
+Any internal utility functions should be in the `magmadnn::internal` namespace and should reside in files with a name such as `*_internal*.*`. For instance, a file that contains tensor addition utilities might be called `tensor_add_internal.cpp`. If that same utility contained device code, then it could be `tensor_add_internal_device.cu`. 
 
 If a file contains a class, then the filename should be the same as the classname. For example, the class `foo` should reside in files `foo.h` and `foo.cpp`.
 
 ### Operations
-Operations must be defined in `include/compute` and implemented in `src/compute`. Each operation should reside in its own folder. The operation class and filenames should be postfixed by `Op` (i.e. `matmulop.cpp`). All operations should lie in the `skepsi::op` namespace. For more information on creating operations [see here](https://github.com/Dando18/skepsi/blob/master/include/compute/README.md).
+Operations must be defined in `include/compute` and implemented in `src/compute`. Each operation should reside in its own folder. The operation class and filenames should be postfixed by `Op` (i.e. `matmulop.cpp`). All operations should lie in the `magmadnn::op` namespace. For more information on creating operations [see here](https://github.com/Dando18/magmadnn/blob/master/include/compute/README.md).
 
 ## Pull Requests
 ----------------

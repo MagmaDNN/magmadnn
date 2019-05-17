@@ -1,9 +1,9 @@
-# skepsi
+# magmadnn
 
 A neural network library in c++ aimed at providing a simple, modularized framework for deep learning. 
 
 ===== VERSION 0.0.1 =====
-- Currently skepsi only works on host machines and only has a very limited memory manager and tensor class.
+- Currently magmadnn only works on host machines and only has a very limited memory manager and tensor class.
 - More is coming...
 
 
@@ -12,8 +12,8 @@ A neural network library in c++ aimed at providing a simple, modularized framewo
 First get the repository on your computer with
 
 ```sh
-git glone https://github.com/Dando18/skepsi
-cd skepsi
+git glone https://github.com/Dando18/magmadnn
+cd magmadnn
 ```
 
 Next copy the make include settings into the head directory and edit them to your preferences.
@@ -23,13 +23,13 @@ cp make.inc-examples/make.inc-standard ./make.inc
 vim make.inc # if you want to edit the settings
 ```
 
-After this simply run `make install` to build and install skepsi. If your prefix (install location) has root priviledge acccess, then you'll need to run with `sudo`.
+After this simply run `make install` to build and install magmadnn. If your prefix (install location) has root priviledge acccess, then you'll need to run with `sudo`.
 
 So the entire script looks like,
 
 ```sh
-git clone https://github.com/Dando18/skepsi
-cd skepsi
+git clone https://github.com/Dando18/magmadnn
+cd magmadnn
 cp make.inc-examples/make.inc-standard ./make.inc
 sudo make install
 ```

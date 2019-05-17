@@ -8,7 +8,7 @@
  */
 #include "layer/fullyconnected/fullyconnectedlayer.h"
 
-namespace skepsi {
+namespace magmadnn {
 namespace layer {
 
 template <typename T>
@@ -55,4 +55,4 @@ template FullyConnectedLayer<float>* fullyconnected(op::Operation<float>*, unsig
 template FullyConnectedLayer<double>* fullyconnected(op::Operation<double>*, unsigned int, bool);
 
 }   // layer
-}   // skepsi
+}   // magmadnn

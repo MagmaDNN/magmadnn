@@ -11,7 +11,7 @@
 #include "tensor/tensor.h"
 
 
-namespace skepsi {
+namespace magmadnn {
 namespace internal {
 
 /** Computes the element-wise sigmoid on x. 
@@ -33,4 +33,4 @@ void sigmoid_full_device(Tensor<T> *x, bool fast=true);
 #endif
 
 }   // namespace internal
-}   // namespace skepsi
+}   // namespace magmadnn

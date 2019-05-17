@@ -8,7 +8,7 @@
  */
 #include "tensor/tensor.h"
 
-namespace skepsi {
+namespace magmadnn {
 
 template <typename T>
 Tensor<T>::Tensor(std::vector<unsigned int> shape) {
@@ -71,7 +71,7 @@ void Tensor<T>::init(std::vector<unsigned int>& shape, tensor_filler_t<T> filler
 
 
 template <typename T>
-skepsi_error_t Tensor<T>::copy_from(const Tensor<T>& src, unsigned int begin_idx, unsigned int size) {
+magmadnn_error_t Tensor<T>::copy_from(const Tensor<T>& src, unsigned int begin_idx, unsigned int size) {
     assert( this->size == src.get_size() );
     assert( begin_idx+size <= this->size );
 
@@ -79,7 +79,7 @@ skepsi_error_t Tensor<T>::copy_from(const Tensor<T>& src, unsigned int begin_idx
 }
 
 template <typename T>
-skepsi_error_t Tensor<T>::copy_from(const Tensor<T>& src) {
+magmadnn_error_t Tensor<T>::copy_from(const Tensor<T>& src) {
     return copy_from(src, 0, src.get_size());
 }
 
@@ -129,4 +129,4 @@ template class Tensor<int>;
 template class Tensor<float>;
 template class Tensor<double>;
 
-} // namespace skepsi
+} // namespace magmadnn

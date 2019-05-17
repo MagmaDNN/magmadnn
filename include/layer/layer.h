@@ -11,7 +11,7 @@
 #include <string>
 #include "compute/operation.h"
 
-namespace skepsi {
+namespace magmadnn {
 namespace layer {
 
 template <typename T>
@@ -73,4 +73,4 @@ protected:
 };
 
 }	// namespace layer
-}	// namespace skepsi
+}	// namespace magmadnn

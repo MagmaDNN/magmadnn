@@ -1,9 +1,9 @@
-# skepsi
+# Magmadnn
 
-A neural network library in c++ aimed at providing a simple, modularized framework for deep learning. 
+A neural network library in c++ aimed at providing a simple, modularized framework for deep learning. This is a Work-In-Progress replacement for [MagmaDNN](https://bitbucket.org/icl/magmadnn).
 
 ===== VERSION 0.0.1 =====
-- Currently skepsi provides a dynamic memory manager, tensor wrapper for the memory manager, and a set of math operations for the tensor.
+- Currently magmadnn provides a dynamic memory manager, tensor wrapper for the memory manager, and a set of math operations for the tensor.
 - More is coming...
 
 
@@ -21,8 +21,8 @@ Skepsi makes heavy use of BLAS libraries. For Host only code a CBLAS library mus
 First get the repository on your computer with
 
 ```sh
-git glone https://github.com/Dando18/skepsi
-cd skepsi
+git glone https://github.com/Dando18/magmadnn
+cd magmadnn
 ```
 
 ##### Install
@@ -33,13 +33,13 @@ cp make.inc-examples/make.inc-standard ./make.inc
 vim make.inc # if you want to edit the settings
 ```
 
-After this simply run `make install` to build and install skepsi. If your prefix (install location) has root priviledge access, then you'll need to run with `sudo`.
+After this simply run `make install` to build and install magmadnn. If your prefix (install location) has root priviledge access, then you'll need to run with `sudo`.
 
 So the entire script looks like:
 
 ```sh
-git clone https://github.com/Dando18/skepsi
-cd skepsi
+git clone https://github.com/Dando18/magmadnn
+cd magmadnn
 cp make.inc-examples/make.inc-standard ./make.inc
 sudo make install
 ```
@@ -56,7 +56,7 @@ sh run_tests.sh
 
 ### Examples
 -----------
-For examples of what skepsi code looks like see the [examples/ folder](https://github.com/Dando18/skepsi/tree/master/examples). If skepsi is downloaded and installed, then the examples can be made and run with `make examples`.
+For examples of what magmadnn code looks like see the [examples/ folder](https://github.com/Dando18/magmadnn/tree/master/examples). If magmadnn is downloaded and installed, then the examples can be made and run with `make examples`.
 
 
 ### Task List:

@@ -8,7 +8,7 @@
  */
 #include "layer/activation/activationlayer.h"
 
-namespace skepsi {
+namespace magmadnn {
 namespace layer {
 
 template <typename T>
@@ -54,4 +54,4 @@ template ActivationLayer<float>* activation(op::Operation<float>*, activation_t)
 template ActivationLayer<double>* activation(op::Operation<double>*, activation_t);
 
 }   // layer
-}   // skepsi
+}   // magmadnn

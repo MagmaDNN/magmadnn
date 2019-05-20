@@ -50,8 +50,10 @@ void sum_full_device(std::vector<Tensor<T> *> &vals, Tensor<T> &out) {
     cudaMalloc((void **) &arrs_device, vals.size() * sizeof(T *));
     cudaMemcpy(arrs_device, arrs_host, vals.size() * sizeof(float *), cudaMemcpyHostToDevice);
 
+    /* add up each tensor */
     kernel_sum_full_device <<< n_arrs, arr_size >>> (arrs_device, n_arrs, arr_size, out.get_ptr());
     
+    /* no longer need memory */
     delete arrs_host;
     cudaFree(arrs_device);
 }
@@ -59,5 +61,5 @@ template void sum_full_device(std::vector<Tensor<int> *> &vals, Tensor<int> &out
 template void sum_full_device(std::vector<Tensor<float> *> &vals, Tensor<float> &out);
 template void sum_full_device(std::vector<Tensor<double> *> &vals, Tensor<double> &out);
 
-}
-}
+}   // namespace internal
+}   // namespace magmadnn

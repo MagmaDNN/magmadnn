@@ -28,36 +28,16 @@ int main(int argc, char **argv) {
 	test_for_all_mem_types(test_sum, 6);
 
 	// test matmul
-	test_matmul(HOST, 50);
-	#if defined(_HAS_CUDA_)
-	test_matmul(DEVICE, 50);
-	test_matmul(MANAGED, 50);
-	test_matmul(CUDA_MANAGED, 50);
-	#endif
+	test_for_all_mem_types(test_matmul, 50);
 
 	// test affine transformation
-	test_affine(HOST, 50);
-	#if defined(_HAS_CUDA_)
-	test_affine(DEVICE, 50);
-	test_affine(MANAGED, 50);
-	test_affine(CUDA_MANAGED, 50);
-	#endif
+	test_for_all_mem_types(test_affine, 50);
 
 	// test sigmoid
-	test_sigmoid(HOST, 50);
-	#if defined(_HAS_CUDA_)
-	test_sigmoid(DEVICE, 50);
-	test_sigmoid(MANAGED, 50);
-	test_sigmoid(CUDA_MANAGED, 50);
-	#endif
+	test_for_all_mem_types(test_sigmoid, 50);
 
 	// test tanh
-	test_tanh(HOST, 50);
-	#if defined(_HAS_CUDA_)
-	test_tanh(DEVICE, 50);
-	test_tanh(MANAGED, 50);
-	test_tanh(CUDA_MANAGED, 50);
-	#endif
+	test_for_all_mem_types(test_tanh, 50);
     
 	magmadnn_finalize();
     return 0;

@@ -20,33 +20,13 @@ void test_layers(memory_t mem, unsigned int size);
 int main(int argc, char **argv) {
     magmadnn_init();
     
-    test_input(HOST, 50);
-    #if defined(_HAS_CUDA_)
-    test_input(DEVICE, 50);
-    test_input(MANAGED, 50);
-    test_input(CUDA_MANAGED, 50);
-    #endif
+    test_for_all_mem_types(test_input, 50);
 
-    test_fullyconnected(HOST, 15);
-    #if defined(_HAS_CUDA_)
-    test_fullyconnected(DEVICE, 15);
-    test_fullyconnected(MANAGED, 15);
-    test_fullyconnected(CUDA_MANAGED, 15);
-    #endif
+    test_for_all_mem_types(test_fullyconnected, 15);
 
-    test_activation(HOST, 15);
-    #if defined(_HAS_CUDA_)
-    test_activation(DEVICE, 15);
-    test_activation(MANAGED, 15);
-    test_activation(CUDA_MANAGED, 15);
-    #endif
+    test_for_all_mem_types(test_activation, 15);
 
-    test_layers(HOST, 15);
-    #if defined(_HAS_CUDA_)
-    test_layers(DEVICE, 15);
-    test_layers(MANAGED, 15);
-    test_layers(CUDA_MANAGED, 15);
-    #endif
+    test_for_all_mem_types(test_layers, 15);
 
     magmadnn_finalize();
     return 0;

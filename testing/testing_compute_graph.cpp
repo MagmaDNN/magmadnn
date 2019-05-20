@@ -122,9 +122,9 @@ void test_sum(memory_t mem_type, unsigned int size) {
 	if (mem_type == MANAGED) fin->get_memory_manager()->sync(true);
 	#endif
 
-	for (int x = 0; x < size; x++) {
-		for (int y = 0; y < size; y++) {
-			for (int z = 0; z < size; z++) {
+	for (int x = 0; x < (int)size; x++) {
+		for (int y = 0; y < (int)size; y++) {
+			for (int z = 0; z < (int)size; z++) {
 				assert( fequal(fin->get({x,y,z}), total) );
 			}
 		}

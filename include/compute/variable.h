@@ -28,6 +28,7 @@ public:
     Tensor<T>* grad();
 
     std::string to_string() { return name; }
+    std::string get_name() { return name; }
 
 protected:
     std::string name;

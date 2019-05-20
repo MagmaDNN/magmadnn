@@ -50,7 +50,7 @@ void sum_full_device(std::vector<Tensor<T> *> &vals, Tensor<T> &out) {
     cudaMalloc((void **) &arrs_device, vals.size() * sizeof(T *));
     cudaMemcpy(arrs_device, arrs_host, vals.size() * sizeof(float *), cudaMemcpyHostToDevice);
 
-    kernel_sum_full_device <<<  n_arrs, arr_size >>> (arrs_device, n_arrs, arr_size, out.get_ptr());
+    kernel_sum_full_device <<< n_arrs, arr_size >>> (arrs_device, n_arrs, arr_size, out.get_ptr());
     
     delete arrs_host;
     cudaFree(arrs_device);

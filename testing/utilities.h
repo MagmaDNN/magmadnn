@@ -8,6 +8,7 @@
  */
 
 #pragma once
+
 #include "magmadnn.h"
 
 #define ANSI_COLOR_RED     "\x1b[31m"
@@ -20,6 +21,19 @@
 
 void show_success() {
     printf(ANSI_COLOR_GREEN "Success!" ANSI_COLOR_RESET "\n");
+}
+
+bool fequal(float a, float b) {
+	return (fabs(a - b) <= 1E-8);
+}
+
+void test_for_all_mem_types(void (*tester)(magmadnn::memory_t, unsigned int), unsigned int param) {
+	tester(magmadnn::HOST, param);
+	#if defined(_HAS_CUDA_)
+	tester(magmadnn::DEVICE, param);
+	tester(magmadnn::MANAGED, param);
+	tester(magmadnn::CUDA_MANAGED, param);
+	#endif
 }
 
 const char* get_memory_type_name(magmadnn::memory_t mem) {

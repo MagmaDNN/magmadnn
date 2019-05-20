@@ -21,7 +21,7 @@ Skepsi makes heavy use of BLAS libraries. For Host only code a CBLAS library mus
 First get the repository on your computer with
 
 ```sh
-git glone https://github.com/Dando18/magmadnn
+git clone https://github.com/Dando18/magmadnn
 cd magmadnn
 ```
 

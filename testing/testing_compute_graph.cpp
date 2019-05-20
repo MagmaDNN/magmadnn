@@ -12,6 +12,7 @@
 using namespace magmadnn;
 
 void test_add(memory_t mem_type, unsigned int size);
+void test_sum(memory_t mem_type, unsigned int size);
 void test_matmul(memory_t mem_type, unsigned int size);
 void test_affine(memory_t mem_type, unsigned int size);
 void test_sigmoid(memory_t mem_type, unsigned int size);
@@ -21,12 +22,10 @@ int main(int argc, char **argv) {
 	magmadnn_init();
 
 	// test add
-	test_add(HOST, 50);
-	#if defined(_HAS_CUDA_)
-	test_add(DEVICE, 50);
-	test_add(MANAGED, 50);
-	test_add(CUDA_MANAGED, 50);
-	#endif
+	test_for_all_mem_types(test_add, 50);
+
+	// test sum
+	test_for_all_mem_types(test_sum, 6);
 
 	// test matmul
 	test_matmul(HOST, 50);
@@ -99,6 +98,38 @@ void test_add(memory_t mem_type, unsigned int size) {
 	delete t0;
 	delete t1;
 	delete t2;
+	delete sum;
+
+	show_success();
+}
+
+void test_sum(memory_t mem_type, unsigned int size) {
+	float val0 = 1.5, val1 = 2.0, val2 = -1.2, val3 = 3.275;
+	float total = val0 + val1 + val2 + val3;
+
+	printf("Testing %s sum...  ", get_memory_type_name(mem_type));
+
+	op::Variable<float> *v0 = op::var<float>("v0", {size, size, size}, {CONSTANT, {val0}}, mem_type);
+	op::Variable<float> *v1 = op::var<float>("v1", {size, size, size}, {CONSTANT, {val1}}, mem_type);
+	op::Variable<float> *v2 = op::var<float>("v2", {size, size, size}, {CONSTANT, {val2}}, mem_type);
+	op::Variable<float> *v3 = op::var<float>("v3", {size, size, size}, {CONSTANT, {val3}}, mem_type);
+
+	op::Operation<float> *sum = op::sum<float>({v0, v1, v2, v3});
+	Tensor<float> *fin = sum->eval();
+
+	#if defined(_HAS_CUDA_)
+	if (mem_type == DEVICE || mem_type == CUDA_MANAGED) fin->get_memory_manager()->sync();
+	if (mem_type == MANAGED) fin->get_memory_manager()->sync(true);
+	#endif
+
+	for (int x = 0; x < size; x++) {
+		for (int y = 0; y < size; y++) {
+			for (int z = 0; z < size; z++) {
+				assert( fequal(fin->get({x,y,z}), total) );
+			}
+		}
+	}
+
 	delete sum;
 
 	show_success();

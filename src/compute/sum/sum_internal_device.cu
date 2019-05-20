@@ -53,6 +53,7 @@ void sum_full_device(std::vector<Tensor<T> *> &vals, Tensor<T> &out) {
     kernel_sum_full_device <<<  >>> (arrs_device, n_arrs, arr_size, out.get_ptr());
     
     delete arrs_host;
+    cudaFree(arrs_device);
 }
 template void sum_full_device(std::vector<Tensor<int> *> &vals, Tensor<int> &out);
 template void sum_full_device(std::vector<Tensor<float> *> &vals, Tensor<float> &out);

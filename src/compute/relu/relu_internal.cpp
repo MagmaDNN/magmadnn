@@ -8,11 +8,11 @@
  */
 #include "compute/relu/relu_internal.h"
 
-namespace skepsi {
+namespace magmadnn {
 namespace internal {
 
 template <typename T>
-void relu_full(Tensor<T> *x) {
+magmadnn_error_t relu_full(Tensor<T> *x) {
     if (x->get_memory_type() == HOST) {
         T val;
         for (unsigned int i = 0; i < x->get_size(); i++) {
@@ -25,11 +25,12 @@ void relu_full(Tensor<T> *x) {
         internal::relu_full_device(x);
     }
     #endif
+    return (magmadnn_error_t) 0;
 }
-template void relu_full(Tensor<int> *x);
-template void relu_full(Tensor<float> *x);
-template void relu_full(Tensor<double> *x);
+template magmadnn_error_t relu_full(Tensor<int> *x);
+template magmadnn_error_t relu_full(Tensor<float> *x);
+template magmadnn_error_t relu_full(Tensor<double> *x);
 
 
 }   // namespace internal
-}   // namespace skepsi
+}   // namespace magmadnn

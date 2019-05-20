@@ -8,7 +8,7 @@
  */
 #include "compute/relu/reluop.h"
 
-namespace skepsi {
+namespace magmadnn {
 namespace op {
 
 template <typename T>
@@ -35,4 +35,4 @@ template class ReluOp<float>;
 template class ReluOp<double>;
 
 }   // namespace op
-}   // namespace skepsi
+}   // namespace magmadnn

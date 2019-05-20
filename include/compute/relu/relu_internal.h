@@ -10,7 +10,7 @@
 
 #include "tensor/tensor.h"
 
-namespace skepsi {
+namespace magmadnn {
 namespace internal {
 
 /** computes the RELU function element-wise over x
@@ -18,7 +18,7 @@ namespace internal {
  * @param x input tensor
  */
 template <typename T>
-void relu_full(Tensor<T> *x);
+magmadnn_error_t relu_full(Tensor<T> *x);
 
 
 #if defined(_HAS_CUDA_)
@@ -28,4 +28,4 @@ void relu_full_device(Tensor<T> *x);
 
 
 }   // namespace internal
-}   // namespace skepsi
+}   // namespace magmadnn

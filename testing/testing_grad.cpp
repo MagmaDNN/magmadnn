@@ -7,10 +7,10 @@
  * @copyright Copyright (c) 2019
  */
 
-#include "skepsi.h"
+#include "magmadnn.h"
 #include "utilities.h"
 
-using namespace skepsi;
+using namespace magmadnn;
 
 void test_simple_grad(memory_t mem, unsigned int size);
 void test_full_grad(memory_t mem, unsigned int size);

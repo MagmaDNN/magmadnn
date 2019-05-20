@@ -8,7 +8,7 @@
  */
  #include "compute/relu_internal.h"
 
-namespace skepsi {
+namespace magmadnn {
 namespace internal {
 
 template <typename T>
@@ -29,5 +29,5 @@ template void relu_full_device(Tensor<int> *x);
 template void relu_full_device(Tensor<float> *x);
 template void relu_full_device(Tensor<double> *x);
 
-}
-}
+}   // internal
+}   // magmadnn

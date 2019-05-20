@@ -20,10 +20,10 @@ public:
      *  from. It is used to build a computation tree.
      */
     Operation() {}
-    Operation(std::vector<Operation<T>*> children) : children(children) {}
+    Operation(std::vector<Operation<T>*> inputs) : inputs(inputs) {}
 	virtual ~Operation() {
-        for (unsigned int i = 0; i < children.size(); i++)
-            delete children[i];
+        for (unsigned int i = 0; i < inputs.size(); i++)
+            delete inputs[i];
     }
 
     /** Returns the expected output shape of this operation.
@@ -64,13 +64,14 @@ public:
      */
     virtual Tensor<T>* grad() = 0;
 
-    /** string form of the given operation. Expands on children.
+    /** string form of the given operation. Expands on input.
      * @return std::string 
      */
     virtual std::string to_string() = 0;
     
 protected:
-    std::vector<Operation<T>*> children;
+    std::vector<Operation<T>*> inputs;
+    std::vector<Operation<T>*> consumers;
     std::vector<unsigned int> output_shape;
     memory_t mem_type;
 

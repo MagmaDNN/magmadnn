@@ -43,12 +43,12 @@ void test_simple_grad(memory_t mem, unsigned int size) {
     assert( err == 0 );
 
     op::Operation<float> *affine_wrt_x = table.get(x);
-    std::printf("affine_wrt_x = %s .\n", affine_wrt_x->to_string().c_str());
+    internal::debugf("affine_wrt_x = %s .\n", affine_wrt_x->to_string().c_str());
     Tensor<float> *res_x = affine_wrt_x->eval();
 
 
     op::Operation<float> *affine_wrt_b = table.get(b);
-    std::printf("affine_wrt_b = %s .\n", affine_wrt_b->to_string().c_str());
+    internal::debugf("affine_wrt_b = %s .\n", affine_wrt_b->to_string().c_str());
     Tensor<float> *res_b = affine_wrt_b->eval();
 
 

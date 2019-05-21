@@ -29,7 +29,7 @@ magmadnn_error_t get_grad_table(const std::vector<Operation<T> *>& vars, Operati
     /* compute the gradients for each variable */
     for (typename std::vector<Operation<T> *>::const_iterator vit = vars.begin(); vit != vars.end(); vit++) {
         if (*vit != NULL) {
-            std::printf("calling build_grad on %s.\n", (*vit)->to_string().c_str());
+            internal::debugf("calling build_grad on %s.\n", (*vit)->to_string().c_str());
             err = internal::build_grad(*vit, graph, table, &tmp);
         } else {
             return (magmadnn_error_t) 1;
@@ -64,12 +64,12 @@ magmadnn_error_t build_grad(op::Operation<T> *var, op::Operation<T> *graph, op::
 
     /* if not null then we have already calculated this gradient */
     if (tmp_grad != NULL) {
-        std::printf("grad for %s already present [%s].\n", var->to_string().c_str(), tmp_grad->to_string().c_str());
+        internal::debugf("grad for %s already present [%s].\n", var->to_string().c_str(), tmp_grad->to_string().c_str());
         *grad = tmp_grad;
         return (magmadnn_error_t) 0;
     }
 
-    std::printf("%s needs grad (%lu consumer(s))\n", var->to_string().c_str(), var->get_consumers().size());
+    internal::debugf("%s needs grad (%lu consumer(s))\n", var->to_string().c_str(), var->get_consumers().size());
 
     /* build gradients for each consumer to this operation in order to properly calculate ours */
     consumers = var->get_consumers();
@@ -80,7 +80,7 @@ magmadnn_error_t build_grad(op::Operation<T> *var, op::Operation<T> *graph, op::
         if (consumer == NULL) continue;
 
         /* build the gradient for consumer and keep track of it in bprops */
-        std::printf("calling build_grad on %s.\n", consumer->to_string().c_str());
+        internal::debugf("calling build_grad on %s.\n", consumer->to_string().c_str());
         err = build_grad(consumer, graph, table, &tmp_grad);
         if (err != 0) return err;
         bprop = consumer->grad(consumer, var, tmp_grad);

@@ -12,6 +12,7 @@
 
 #include "types.h"
 #include "init_finalize.h"
+#include "utilities_internal.h"
 
 #include "memory/memorymanager.h"
 #include "tensor/tensor.h"

@@ -15,6 +15,7 @@
 #include "compute/gradtable.h"
 #include "compute/variable.h"
 #include "compute/sum/sumop.h"
+#include "utilities_internal.h"
 
 namespace magmadnn {
 namespace op {

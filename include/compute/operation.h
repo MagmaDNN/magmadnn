@@ -20,10 +20,12 @@ public:
      *  from. It is used to build a computation tree.
      */
     Operation() {}
-    Operation(std::vector<Operation<T> *> inputs) : inputs(inputs) {
+    Operation(std::vector<Operation<T> *> inputs, bool needs_grad=true) : inputs(inputs), needs_grad(needs_grad) {
+        if (needs_grad) {
         for (typename std::vector<Operation<T> *>::iterator vit = inputs.begin(); vit != inputs.end(); vit++) {
             (*vit)->add_consumer(this);
         }
+    }
     }
 	virtual ~Operation() {
         for (unsigned int i = 0; i < inputs.size(); i++)

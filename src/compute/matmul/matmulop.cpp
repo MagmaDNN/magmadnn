@@ -64,7 +64,11 @@ Tensor<T>* MatmulOp<T>::eval() {
 
 template <typename T>
 Operation<T> *MatmulOp<T>::grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad) {
-    return NULL;
+    if (var == a) {
+        return op::matmul(grad, b, false);
+    } else {
+        return op::matmul(a, grad, false);
+    }
 }
 template class MatmulOp<int>;
 template class MatmulOp<float>;

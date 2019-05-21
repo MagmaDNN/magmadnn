@@ -39,7 +39,7 @@ Tensor<T>* AddOp<T>::eval() {
 } 
 
 template <typename T>
-Tensor<T>* AddOp<T>::grad() {
+Operation<T> *AddOp<T>::grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad) {
 	return NULL;
 }
 template class AddOp<int>;

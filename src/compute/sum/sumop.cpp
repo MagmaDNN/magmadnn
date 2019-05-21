@@ -37,6 +37,11 @@ Tensor<T> *SumOp<T>::eval() {
 }
 
 template <typename T>
+Operation<T> *SumOp<T>::grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad) {
+    return NULL;
+}
+
+template <typename T>
 std::string SumOp<T>::to_string() {
     std::string ret = "(";
     for (typename std::vector<Operation<T> *>::iterator vit = this->ops.begin(); vit != this->ops.end(); vit++) {

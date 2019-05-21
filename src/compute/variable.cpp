@@ -38,7 +38,7 @@ Tensor<T>* Variable<T>::eval() {
 }
 
 template <typename T>
-Tensor<T>* Variable<T>::grad() {
+Operation<T> *Variable<T>::grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad) {
     return NULL;
 }
 // compile for int, float, double

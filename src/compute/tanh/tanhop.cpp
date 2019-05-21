@@ -39,7 +39,7 @@ Tensor<T>* TanhOp<T>::eval() {
 }
 
 template <typename T>
-Tensor<T>* TanhOp<T>::grad() {
+Operation<T> *TanhOp<T>::grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad) {
     return NULL;
 }
 template class TanhOp<int>;

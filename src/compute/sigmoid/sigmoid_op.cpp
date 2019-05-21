@@ -42,7 +42,7 @@ Tensor<T>* SigmoidOp<T>::eval() {
 }
 
 template <typename T>
-Tensor<T>* SigmoidOp<T>::grad() {
+Operation<T> *SigmoidOp<T>::grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad) {
     return NULL;
 }
 template class SigmoidOp<int>;

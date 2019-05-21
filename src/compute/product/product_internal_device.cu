@@ -16,7 +16,7 @@ __global__ void kernel_product_full_device(T alpha, T *a, T *b, T *out, unsigned
     unsigned int idx = blockIdx.x * blockDim.x + threadIdx.x;
     unsigned int stride = blockDim.x * gridDim.x;
 
-    for (unsigned int i = idx; i < arr_size; i++) {
+    for (unsigned int i = idx; i < arr_size; i += stride) {
         out[i] = a[i] * b[i];
     }
 }

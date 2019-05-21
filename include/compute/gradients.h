@@ -29,6 +29,7 @@ namespace op {
 template <typename T>
 magmadnn_error_t get_grad_table(const std::vector<Operation<T> *>& vars, Operation<T> *graph, GradTable<T> &table);
 
+} // namespace op
 
 // build_grad should only be used internally
 namespace internal {
@@ -41,9 +42,7 @@ namespace internal {
  * @return magmadnn_error_t non-zero on error
  */
 template <typename T>
-magmadnn_error_t build_grad(Operation<T>* var, Operation<T> *graph, GradTable<T> &table, Operation<T> **grad);
+magmadnn_error_t build_grad(op::Operation<T>* var, op::Operation<T> *graph, op::GradTable<T> &table, op::Operation<T> **grad);
 
 }   // namespace internal
-
-}   // namespace op
 }   // namespace magmadnn

@@ -36,17 +36,17 @@ magmadnn_error_t get_grad_table(const std::vector<Operation<T> *>& vars, Operati
     delete tmp;
     return (magmadnn_error_t) 0;
 }
-template magmadnn_error_t get_grad_table(std::vector<Operation<int> *>& vars, Operation<int> *graph, GradTable<int> &table);
-template magmadnn_error_t get_grad_table(std::vector<Operation<float> *>& vars, Operation<float> *graph, GradTable<float> &table);
-template magmadnn_error_t get_grad_table(std::vector<Operation<double> *>& vars, Operation<double> *graph, GradTable<double> &table);
+template magmadnn_error_t get_grad_table(const std::vector<Operation<int> *>& vars, Operation<int> *graph, GradTable<int> &table);
+template magmadnn_error_t get_grad_table(const std::vector<Operation<float> *>& vars, Operation<float> *graph, GradTable<float> &table);
+template magmadnn_error_t get_grad_table(const std::vector<Operation<double> *>& vars, Operation<double> *graph, GradTable<double> &table);
+
+}   // namespace op
 
 // build_grad should only be used internally
 namespace internal {
 
 template <typename T>
-magmadnn_error_t build_grad(Operation<T> *var, Operation<T> *graph, GradTable<T> &table, Operation<T> **grad) {
-    Operation<T> *tmp_grad, *result;
-    std::vector<Operation<T> *> bprops;
+magmadnn_error_t build_grad(op::Operation<T> *var, op::Operation<T> *graph, op::GradTable<T> &table, op::Operation<T> **grad) {
     magmadnn_error_t err;
 
     /* get this entry in the grad table */
@@ -73,12 +73,10 @@ magmadnn_error_t build_grad(Operation<T> *var, Operation<T> *graph, GradTable<T>
 
     return (magmadnn_error_t) 0;
 }
-template magmadnn_error_t build_grad(Operation<int>* var, Operation<int> *graph, GradTable<int> &table, Operation<int> **grad);
-template magmadnn_error_t build_grad(Operation<float>* var, Operation<float> *graph, GradTable<float> &table, Operation<float> **grad);
-template magmadnn_error_t build_grad(Operation<double>* var, Operation<double> *graph, GradTable<double> &table, Operation<double> **grad);
+template magmadnn_error_t build_grad(op::Operation<int>* var, op::Operation<int> *graph, op::GradTable<int> &table, op::Operation<int> **grad);
+template magmadnn_error_t build_grad(op::Operation<float>* var, op::Operation<float> *graph, op::GradTable<float> &table, op::Operation<float> **grad);
+template magmadnn_error_t build_grad(op::Operation<double>* var, op::Operation<double> *graph, op::GradTable<double> &table, op::Operation<double> **grad);
 
 
 }   // namespace internal
-
-}   // namespace op
 }   // namespace magmadnn

@@ -18,5 +18,6 @@
 
 #include "compute/variable.h"
 #include "compute/tensor_operations.h"
+#include "compute/gradients.h"
 
 #include "layer/layers.h"

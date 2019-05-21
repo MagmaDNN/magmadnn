@@ -59,12 +59,27 @@ public:
      */
     virtual Tensor<T>* eval() = 0;
 
-    /** Computes
+    /** Computes the gradient with respect to the outputs and var.
      * @param consumer the operation that consumes this that needs the gradient
      * @param grad the gradient of the loss w.r.t. the consumers output
      * @return Tensor<T>* 
      */
-    virtual Operation<T>* grad(Operation<T> *consumer, Operation<T> *grad) = 0;
+    virtual Operation<T>* grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad) = 0;
+
+    /**
+     * @param consumer 
+     */
+    virtual void add_consumer(Operation<T> *consumer) { this->consumers.push_back(consumer); }
+
+    /** Returns a vector of operations that need this operation as input.
+     * @return std::vector<Operation<T> *> vector of consumer operations
+     */
+    virtual std::vector<Operation<T> *> get_consumers() { return this->consumers; }
+
+    /** Returns a vector the input operations to this one.
+     * @return std::vector<Operation<T> *> vector of input operations
+     */
+    virtual std::vector<Operation<T> *> get_inputs() { return this->inputs; }
 
     /** string form of the given operation. Expands on input.
      * @return std::string 

@@ -15,21 +15,25 @@ namespace op {
 template <typename T>
 magmadnn_error_t get_grad_table(std::vector<Variable<T> *>& vars, Operation<T> *graph, GradTable<T> &table) {
     magmadnn_error_t err;
+    Operation<T> *tmp;
 
     /* prune compute graph:
         construct a new graph G' that only contains nodes that are ancestors of z and 
         descendents of nodes in vars. */
     /* TODO */
 
-    /* init z in grad table */
+    /* init z in grad table to one */
 
+
+    tmp = new Operation<T> ({});
     /* compute the gradients for each variable */
     for (typename std::vector<Variable<T> *>::iterator vit = vars.begin(); vit != vars.end(); vit++) {
-        err = internal::build_grad(*vit, graph, table, NULL);
+        err = internal::build_grad(*vit, graph, table, &tmp);
 
-        if (err != 0) { return err; }
+        if (err != 0) { delete tmp; return err; }
     }
 
+    delete tmp;
     return (magmadnn_error_t) 0;
 }
 template magmadnn_error_t get_grad_table(std::vector<Variable<int> *>& vars, Operation<int> *graph, GradTable<int> &table);
@@ -63,7 +67,7 @@ magmadnn_error_t build_grad(Variable<T> *var, Operation<T> *graph, GradTable<T> 
         bprops.push_back(vit->grad());
     }
 
-    /* result = sum(bprops) */
+    result = op::sum(bprops);
     table.set(var, result);
     *grad = result;
 

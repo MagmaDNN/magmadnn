@@ -17,12 +17,13 @@ void test_full_grad(memory_t mem, unsigned int size);
 void test_optimize(memory_t mem, unsigned int size);
 
 int main(int argc, char **argv) {
-
+    magmadnn_init();
     
     test_for_all_mem_types(test_simple_grad, 20);
     test_for_all_mem_types(test_full_grad, 20);
     test_for_all_mem_types(test_optimize, 20);
 
+    magmadnn_finalize();
     return 0;
 }
 

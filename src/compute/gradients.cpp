@@ -13,7 +13,7 @@ namespace op {
 
 
 template <typename T>
-magmadnn_error_t get_grad_table(std::vector<Operation<T> *>& vars, Operation<T> *graph, GradTable<T> &table) {
+magmadnn_error_t get_grad_table(const std::vector<Operation<T> *>& vars, Operation<T> *graph, GradTable<T> &table) {
     magmadnn_error_t err;
     Operation<T> *tmp;
 

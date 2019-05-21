@@ -59,10 +59,12 @@ public:
      */
     virtual Tensor<T>* eval() = 0;
 
-    /** Returns the gradient of this tensor with respect to its output.
+    /** Computes
+     * @param consumer the operation that consumes this that needs the gradient
+     * @param grad the gradient of the loss w.r.t. the consumers output
      * @return Tensor<T>* 
      */
-    virtual Tensor<T>* grad() = 0;
+    virtual Operation<T>* grad(Operation<T> *consumer, Operation<T> *grad) = 0;
 
     /** string form of the given operation. Expands on input.
      * @return std::string 

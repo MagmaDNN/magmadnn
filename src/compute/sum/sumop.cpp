@@ -15,6 +15,9 @@ template <typename T>
 SumOp<T>::SumOp(std::vector<Operation<T> *> ops, bool copy) : Operation<T>::Operation(ops), ops(ops), copy(copy) {
     if (ops.empty()) return;
 
+    this->output_shape = ops.at(0)->get_output_shape();
+    this->mem_type = ops.at(0)->get_memory_type();
+
     if (copy) {
         this->ret = new Tensor<T> (ops.at(0)->get_output_shape(), {ZERO, {}}, ops.at(0)->get_memory_type());
     } else {

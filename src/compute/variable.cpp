@@ -39,6 +39,7 @@ Tensor<T>* Variable<T>::eval() {
 
 template <typename T>
 Operation<T> *Variable<T>::grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad) {
+    /* TODO : if (var == this) return 1; */
     return NULL;
 }
 // compile for int, float, double

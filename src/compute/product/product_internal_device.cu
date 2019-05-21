@@ -25,6 +25,9 @@ template <typename T>
 void product_full_device(T alpha, Tensor<T> *a, Tensor<T> *b, Tensor<T> *out) {
     kernel_product_full_device <<< 1, a->get_size() >>> (alpha, a->get_ptr(), b->get_ptr(), out->get_ptr(), a->get_size());
 }
+template void product_full_device(int alpha, Tensor<int> *a, Tensor<int> *b, Tensor<int> *out);
+template void product_full_device(float alpha, Tensor<float> *a, Tensor<float> *b, Tensor<float> *out);
+template void product_full_device(double alpha, Tensor<double> *a, Tensor<double> *b, Tensor<double> *out);
 
 }   // namespace op
 }   // namespace magmadnn

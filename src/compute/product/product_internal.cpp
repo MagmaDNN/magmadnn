@@ -26,6 +26,9 @@ void product_full(T alpha, Tensor<T> *a, Tensor<T> *b, Tensor<T> *out) {
     #endif
 
 }
+template void product_full(int alpha, Tensor<int> *a, Tensor<int> *b, Tensor<int> *out);
+template void product_full(float alpha, Tensor<float> *a, Tensor<float> *b, Tensor<float> *out);
+template void product_full(double alpha, Tensor<double> *a, Tensor<double> *b, Tensor<double> *out);
 
 }   // namespace op
 }   // namespace magmadnn

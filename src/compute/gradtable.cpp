@@ -42,7 +42,6 @@ void GradTable<T>::set(Operation<T> *var, Operation<T> *grad) {
     
 }
 
-
 template class GradTable<int>;
 template class GradTable<float>;
 template class GradTable<double>;

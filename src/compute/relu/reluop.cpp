@@ -17,7 +17,7 @@ ReluOp<T>::ReluOp(Operation<T> *x, bool copy) : Operation<T>::Operation({x}), x(
     this->mem_type = x->get_memory_type();
 
     if (copy) {
-        ret = new Tensor<T> (this->output_shape, this->mem_type);
+        this->ret = new Tensor<T> (this->output_shape, this->mem_type);
     }
 }
 
@@ -25,11 +25,11 @@ template <typename T>
 Tensor<T>* ReluOp<T>::eval() {
     x_tensor = x->eval();
     
-    if (!copy) ret = x_tensor;
+    if (!copy) this->ret = x_tensor;
 
-    internal::relu_full(x_tensor, ret);
+    internal::relu_full(x_tensor, this->ret);
 
-    return ret;
+    return this->ret;
 }
 
 template <typename T>

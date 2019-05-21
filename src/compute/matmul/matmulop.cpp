@@ -41,7 +41,7 @@ MatmulOp<T>::MatmulOp(T alpha, Operation<T>* a, Operation<T>* b, T beta, Operati
 
     /* avoid allocating memory in eval */
     if (copy) {
-        ret = new Tensor<T> (this->output_shape, this->mem_type);
+        this->ret = new Tensor<T> (this->output_shape, this->mem_type);
     }
 }
 
@@ -52,14 +52,14 @@ Tensor<T>* MatmulOp<T>::eval() {
     c_tensor = c->eval();
 
     if (copy) {
-        ret->copy_from(*c_tensor);
+        this->ret->copy_from(*c_tensor);
     } else {
-        ret = c_tensor;
+        this->ret = c_tensor;
     }
 
-    internal::gemm_full(alpha, a_tensor, b_tensor, beta, ret);
+    internal::gemm_full(alpha, a_tensor, b_tensor, beta, this->ret);
 
-    return ret;
+    return this->ret;
 } 
 
 template <typename T>

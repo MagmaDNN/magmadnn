@@ -33,7 +33,6 @@ protected:
 	Tensor<T> *a_tensor;
 	Tensor<T> *b_tensor;
 	Tensor<T> *c_tensor;
-	Tensor<T> *ret;
 
 	T alpha;
 	T beta;

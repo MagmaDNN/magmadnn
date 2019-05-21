@@ -85,6 +85,8 @@ public:
      */
     virtual std::vector<Operation<T> *> get_inputs() { return this->inputs; }
 
+    virtual Tensor<T> *get_return_ptr() { return ret; }
+
     /** string form of the given operation. Expands on input.
      * @return std::string 
      */
@@ -95,6 +97,8 @@ protected:
     std::vector<Operation<T>*> consumers;
     std::vector<unsigned int> output_shape;
     memory_t mem_type;
+
+    Tensor<T> *ret; /* the return tensor */
 
     bool needs_grad;
 };

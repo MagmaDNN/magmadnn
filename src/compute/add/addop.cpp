@@ -23,7 +23,7 @@ AddOp<T>::AddOp(Operation<T>* a, Operation<T>* b, bool copy) :
 
 	/* Go ahead and create copy tensor if we can */
 	if (copy)
-		ret = new Tensor<T> (this->output_shape, this->mem_type);
+		this->ret = new Tensor<T> (this->output_shape, this->mem_type);
 }
 
 template <typename T>
@@ -31,16 +31,16 @@ Tensor<T>* AddOp<T>::eval() {
 	a_tensor = a->eval();
 	b_tensor = b->eval();
 
-	if (!copy) ret = b_tensor;
+	if (!copy) this->ret = b_tensor;
 
-	internal::geadd_full((T)1, a_tensor, (T)1, b_tensor, ret);
+	internal::geadd_full((T)1, a_tensor, (T)1, b_tensor, this->ret);
 	
-	return ret;
+	return this->ret;
 } 
 
 template <typename T>
 Operation<T> *AddOp<T>::grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad) {
-	return NULL;
+	return grad;
 }
 template class AddOp<int>;
 template class AddOp<float>;

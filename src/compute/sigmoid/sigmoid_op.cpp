@@ -21,7 +21,7 @@ SigmoidOp<T>::SigmoidOp(Operation<T> *x, bool copy, bool fast) :
     /* create copy when tree is created, not at evaluation time. This avoids allocating memory when
        evaluating a compute tree. */
     if (copy) {
-        ret = new Tensor<T> (x->get_output_shape(), x->get_memory_type());
+        this->ret = new Tensor<T> (x->get_output_shape(), x->get_memory_type());
     }
 }
 
@@ -31,14 +31,14 @@ Tensor<T>* SigmoidOp<T>::eval() {
 
     /* ret was created in constructor, now just copy evaluated x_tensor into it */
     if (copy) {
-        ret->copy_from(*x_tensor);
+        this->ret->copy_from(*x_tensor);
     } else {
-        ret = x_tensor;
+        this->ret = x_tensor;
     }
 
-    internal::sigmoid_full(ret, fast);
+    internal::sigmoid_full(this->ret, fast);
     
-    return ret;
+    return this->ret;
 }
 
 template <typename T>

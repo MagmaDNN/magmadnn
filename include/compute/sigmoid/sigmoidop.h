@@ -29,7 +29,6 @@ public:
 
 protected:
     Operation<T> *x;
-    Tensor<T> *ret;
     
     bool copy;
     bool fast;

@@ -27,7 +27,7 @@ public:
 protected:
     Operation<T> *x;
     Tensor<T> *x_tensor;
-    Tensor<T> *ret;
+
     bool copy;
 };
 

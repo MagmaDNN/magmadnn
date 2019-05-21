@@ -28,7 +28,6 @@ public:
     std::string to_string();
 
 protected:
-    Tensor<T> *ret;
     std::vector<Operation<T> *> ops;
     bool copy;
 };

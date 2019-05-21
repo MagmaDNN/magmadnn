@@ -15,7 +15,7 @@ template <typename T>
 ProductOp<T>::ProductOp(T alpha, Operation<T> *a, Operation<T> *b, bool copy) {
     
     if (copy) {
-        ret = new Tensor<T> (a->get_output_shape(), {ONE, {}}, a->get_memory_type());
+        this->ret = new Tensor<T> (a->get_output_shape(), {ONE, {}}, a->get_memory_type());
     }
 }
 
@@ -25,12 +25,12 @@ Tensor<T> *ProductOp<T>::eval() {
     b_tensor = b->eval();
     
     if (!copy) {
-        ret = b_tensor;
+        this->ret = b_tensor;
     }
 
-    internal::product_full(alpha, a_tensor, b_tensor, ret);
+    internal::product_full(alpha, a_tensor, b_tensor, this->ret);
 
-    return ret;
+    return this->ret;
 }
 
 template <typename T>

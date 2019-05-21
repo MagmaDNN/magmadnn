@@ -33,7 +33,6 @@ protected:
 
 	Tensor<T> *a_tensor;
 	Tensor<T> *b_tensor;
-	Tensor<T> *ret;
 
 	bool copy;
 };

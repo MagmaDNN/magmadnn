@@ -116,7 +116,7 @@ LIBSHARED_FLAG ?= -shared
 libstatic := lib/libmagmadnn.a
 libshared := lib/libmagmadnn$(LIBSHARED_EXT)
 
-lib: static shared
+lib: $(TARGET_DIRS) static shared
 static: $(libstatic)
 shared: $(libshared)
 
@@ -153,7 +153,7 @@ examples:
 
 # build the library first, then link the lib together.
 # install copies the newly made libs into prefix
-install: $(TARGET_DIRS) lib
+install: lib
 	@echo "==== installing libs ===="
 	mkdir -p $(prefix)
 	mkdir -p $(prefix)/include

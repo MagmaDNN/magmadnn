@@ -24,7 +24,7 @@ public:
 	Tensor<T>* eval();
 	Operation<T> *grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad);
 	
-	std::string to_string() { return "(" + a->to_string() + " * " + b->to_string() + ")"; }
+	std::string to_string() { return "(" + a->to_string() + " x " + b->to_string() + ")"; }
 protected:
 	Operation<T> *a;
 	Operation<T> *b;

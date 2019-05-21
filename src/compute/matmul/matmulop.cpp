@@ -12,8 +12,8 @@ namespace magmadnn {
 namespace op {
 
 template <typename T>
-MatmulOp<T>::MatmulOp(T alpha, Operation<T>* a, Operation<T>* b, T beta, Operation<T> *c, bool copy) : 
-		Operation<T>::Operation({a,b,c}), a(a), b(b), c(c), alpha(alpha), beta(beta), copy(copy) {
+MatmulOp<T>::MatmulOp(T alpha, Operation<T>* a, Operation<T>* b, T beta, Operation<T> *c, bool copy, bool needs_grad) : 
+		Operation<T>::Operation({a,b,c}, needs_grad), a(a), b(b), c(c), alpha(alpha), beta(beta), copy(copy) {
 
     unsigned int M, N, K;
 

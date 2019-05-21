@@ -13,6 +13,8 @@
 #include "compute/operation.h"
 #include "compute/variable.h"
 #include "compute/gradtable.h"
+#include "compute/variable.h"
+#include "compute/sum/sumop.h"
 
 namespace magmadnn {
 namespace op {
@@ -25,7 +27,7 @@ namespace op {
  * @return magmadnn_error_t non-zero on error
  */
 template <typename T>
-magmadnn_error_t get_grad_table(std::vector<Variable<T> *> vars, Operation<T> *graph, GradTable<T> &table);
+magmadnn_error_t get_grad_table(std::vector<Operation<T> *> vars, Operation<T> *graph, GradTable<T> &table);
 
 
 // build_grad should only be used internally
@@ -39,7 +41,7 @@ namespace internal {
  * @return magmadnn_error_t non-zero on error
  */
 template <typename T>
-magmadnn_error_t build_grad(Variable<T>* var, Operation<T> *graph, GradTable<T> &table);
+magmadnn_error_t build_grad(Operation<T>* var, Operation<T> *graph, GradTable<T> &table, Operation<T> **grad);
 
 }   // namespace internal
 

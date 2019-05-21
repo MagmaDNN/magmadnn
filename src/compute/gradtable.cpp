@@ -23,8 +23,8 @@ unsigned int GradTable<T>::get_size() {
 }
 
 template <typename T>
-Operation<T>* GradTable<T>::get(Variable<T> *var) {
-    tmp_map_iterator = _table.find(var->get_name());
+Operation<T>* GradTable<T>::get(Operation<T> *var) {
+    tmp_map_iterator = _table.find((uintptr_t) var);
 
     // return NULL if not found
     if (tmp_map_iterator == _table.end()) {
@@ -35,10 +35,10 @@ Operation<T>* GradTable<T>::get(Variable<T> *var) {
 }
 
 template <typename T>
-void GradTable<T>::set(Variable<T> *var, Operation<T> *grad) {
+void GradTable<T>::set(Operation<T> *var, Operation<T> *grad) {
     if (var == NULL) return;
 
-    _table[var->get_name()] = grad;
+    _table[(uintptr_t) var] = grad;
     
 }
 

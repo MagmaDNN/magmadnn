@@ -10,6 +10,7 @@
 
 #include <map>
 #include <string>
+#include <cstdint>
 #include "compute/operation.h"
 #include "compute/variable.h"
 
@@ -35,17 +36,17 @@ public:
      * @param var 
      * @return Operation<T>* 
      */
-    Operation<T>* get(Variable<T>* var);
+    Operation<T>* get(Operation<T>* var);
 
     /** Sets var's gradient to grad.
      * @param var 
      * @param grad 
      */
-    void set(Variable<T>* var, Operation<T>* grad);
+    void set(Operation<T>* var, Operation<T>* grad);
 
 protected:
-    std::map<std::string, Operation<T>* > _table;   // the underlying table to store data
-    typename std::map<std::string, Operation<T>* >::iterator tmp_map_iterator;
+    std::map<uintptr_t, Operation<T>* > _table;   // the underlying table to store data
+    typename std::map<uintptr_t, Operation<T>* >::iterator tmp_map_iterator;
 
 };
 

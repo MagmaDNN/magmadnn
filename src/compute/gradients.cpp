@@ -13,7 +13,7 @@ namespace op {
 
 
 template <typename T>
-magmadnn_error_t get_grad_table(std::vector<Variable<T> *>& vars, Operation<T> *graph, GradTable<T> &table) {
+magmadnn_error_t get_grad_table(std::vector<Operation<T> *>& vars, Operation<T> *graph, GradTable<T> &table) {
     magmadnn_error_t err;
     Operation<T> *tmp;
 
@@ -22,12 +22,12 @@ magmadnn_error_t get_grad_table(std::vector<Variable<T> *>& vars, Operation<T> *
         descendents of nodes in vars. */
     /* TODO */
 
-    /* init z in grad table to one */
+    /* init Loss in grad table to one */
+    Operation<T> *ones = op::var<T>("__grad_loss", {1}, {ONE, {}}, graph->get_memory_type());
+    table.set(graph, ones);
 
-
-    tmp = new Operation<T> ({});
     /* compute the gradients for each variable */
-    for (typename std::vector<Variable<T> *>::iterator vit = vars.begin(); vit != vars.end(); vit++) {
+    for (typename std::vector<Operation<T> *>::iterator vit = vars.begin(); vit != vars.end(); vit++) {
         err = internal::build_grad(*vit, graph, table, &tmp);
 
         if (err != 0) { delete tmp; return err; }
@@ -36,15 +36,15 @@ magmadnn_error_t get_grad_table(std::vector<Variable<T> *>& vars, Operation<T> *
     delete tmp;
     return (magmadnn_error_t) 0;
 }
-template magmadnn_error_t get_grad_table(std::vector<Variable<int> *>& vars, Operation<int> *graph, GradTable<int> &table);
-template magmadnn_error_t get_grad_table(std::vector<Variable<float> *>& vars, Operation<float> *graph, GradTable<float> &table);
-template magmadnn_error_t get_grad_table(std::vector<Variable<double> *>& vars, Operation<double> *graph, GradTable<double> &table);
+template magmadnn_error_t get_grad_table(std::vector<Operation<int> *>& vars, Operation<int> *graph, GradTable<int> &table);
+template magmadnn_error_t get_grad_table(std::vector<Operation<float> *>& vars, Operation<float> *graph, GradTable<float> &table);
+template magmadnn_error_t get_grad_table(std::vector<Operation<double> *>& vars, Operation<double> *graph, GradTable<double> &table);
 
 // build_grad should only be used internally
 namespace internal {
 
 template <typename T>
-magmadnn_error_t build_grad(Variable<T> *var, Operation<T> *graph, GradTable<T> &table, Operation<T> **grad) {
+magmadnn_error_t build_grad(Operation<T> *var, Operation<T> *graph, GradTable<T> &table, Operation<T> **grad) {
     Operation<T> *tmp_grad, *result;
     std::vector<Operation<T> *> bprops;
     magmadnn_error_t err;
@@ -58,13 +58,13 @@ magmadnn_error_t build_grad(Variable<T> *var, Operation<T> *graph, GradTable<T> 
         return (magmadnn_error_t) 0;
     }
 
-    for (std::vector<Operation<T> *>::iterator vit = var->get_consumers().begin(); 
+    for (typename std::vector<Operation<T> *>::iterator vit = var->get_consumers().begin(); 
         vit != var->get_consumers().end(); vit++) {
 
         err = build_grad(*vit, graph, table, &tmp_grad);
         if (err != 0) return err;
 
-        bprops.push_back(vit->grad());
+        bprops.push_back((*vit)->grad(*vit, var, tmp_grad));
     }
 
     result = op::sum(bprops);
@@ -73,9 +73,9 @@ magmadnn_error_t build_grad(Variable<T> *var, Operation<T> *graph, GradTable<T> 
 
     return (magmadnn_error_t) 0;
 }
-template magmadnn_error_t build_grad(Variable<int>* var, Operation<int> *graph, GradTable<int> &table);
-template magmadnn_error_t build_grad(Variable<float>* var, Operation<float> *graph, GradTable<float> &table);
-template magmadnn_error_t build_grad(Variable<double>* var, Operation<double> *graph, GradTable<double> &table);
+template magmadnn_error_t build_grad(Operation<int>* var, Operation<int> *graph, GradTable<int> &table, Operation<int> **grad);
+template magmadnn_error_t build_grad(Operation<float>* var, Operation<float> *graph, GradTable<float> &table, Operation<float> **grad);
+template magmadnn_error_t build_grad(Operation<double>* var, Operation<double> *graph, GradTable<double> &table, Operation<double> **grad);
 
 
 }   // namespace internal

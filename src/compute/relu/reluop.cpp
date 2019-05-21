@@ -23,12 +23,18 @@ ReluOp<T>::ReluOp(Operation<T> *x, bool copy) : Operation<T>::Operation({x}), x(
 
 template <typename T>
 Tensor<T>* ReluOp<T>::eval() {
+    x_tensor = x->eval();
+    
+    if (!copy) ret = x_tensor;
+
+    internal::relu_full(x_tensor, ret);
+
     return ret;
 }
 
 template <typename T>
-Tensor<T>* ReluOp<T>::grad() {
-    return ret;
+Operation<T> *ReluOp<T>::grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad) {
+    return NULL;
 }
 template class ReluOp<int>;
 template class ReluOp<float>;

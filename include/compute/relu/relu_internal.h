@@ -18,12 +18,12 @@ namespace internal {
  * @param x input tensor
  */
 template <typename T>
-magmadnn_error_t relu_full(Tensor<T> *x);
+magmadnn_error_t relu_full(Tensor<T> *x, Tensor<T> *out);
 
 
 #if defined(_HAS_CUDA_)
 template <typename T>
-void relu_full_device(Tensor<T> *x);
+void relu_full_device(Tensor<T> *x, Tensor<T> *out);
 #endif
 
 

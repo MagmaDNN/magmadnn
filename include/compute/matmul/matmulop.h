@@ -19,11 +19,12 @@ namespace op {
 template <typename T>
 class MatmulOp : public Operation<T> {
 public:
-	MatmulOp(T alpha, Operation<T>* a, Operation<T>* b, T beta, Operation<T> *c, bool copy=true);
+	MatmulOp(T alpha, Operation<T>* a, Operation<T>* b, T beta, Operation<T> *c, bool copy=true, bool needs_grad=true);
 
 	Tensor<T>* eval();
+	Operation<T> *grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad);
 	
-	std::string to_string() { return "(" + a->to_string() + " * " + b->to_string() + ")"; }
+	std::string to_string() { return "(" + a->to_string() + " x " + b->to_string() + ")"; }
 protected:
 	Operation<T> *a;
 	Operation<T> *b;
@@ -32,7 +33,6 @@ protected:
 	Tensor<T> *a_tensor;
 	Tensor<T> *b_tensor;
 	Tensor<T> *c_tensor;
-	Tensor<T> *ret;
 
 	T alpha;
 	T beta;
@@ -47,7 +47,7 @@ protected:
  * @return MatmulOp<T>* 
  */
 template <typename T>
-MatmulOp<T>* matmul(Operation<T> *a, Operation<T> *b);
+MatmulOp<T>* matmul(Operation<T> *a, Operation<T> *b, bool needs_grad=true);
 
 /** Computes the full gemm C = alpha*(AB) + beta*(C). Overwrites C and returns it if copy is false. If true,
  * 	then it returns a copy of C.
@@ -61,7 +61,7 @@ MatmulOp<T>* matmul(Operation<T> *a, Operation<T> *b);
  * @return MatmulOp<T>* 
  */
 template <typename T>
-MatmulOp<T>* matmul(T alpha, Operation<T> *a, Operation<T> *b, T beta, Tensor<T> *c, bool copy);
+MatmulOp<T>* matmul(T alpha, Operation<T> *a, Operation<T> *b, T beta, Tensor<T> *c, bool copy=true, bool needs_grad=true);
 
 } // namespace op
 } // namespace magmadnn

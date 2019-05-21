@@ -12,8 +12,8 @@ namespace magmadnn {
 namespace op {
 
 template <typename T>
-MatmulOp<T>::MatmulOp(T alpha, Operation<T>* a, Operation<T>* b, T beta, Operation<T> *c, bool copy) : 
-		Operation<T>::Operation({a,b,c}), a(a), b(b), c(c), alpha(alpha), beta(beta), copy(copy) {
+MatmulOp<T>::MatmulOp(T alpha, Operation<T>* a, Operation<T>* b, T beta, Operation<T> *c, bool copy, bool needs_grad) : 
+		Operation<T>::Operation({a,b,c}, needs_grad), a(a), b(b), c(c), alpha(alpha), beta(beta), copy(copy) {
 
     unsigned int M, N, K;
 
@@ -41,7 +41,7 @@ MatmulOp<T>::MatmulOp(T alpha, Operation<T>* a, Operation<T>* b, T beta, Operati
 
     /* avoid allocating memory in eval */
     if (copy) {
-        ret = new Tensor<T> (this->output_shape, this->mem_type);
+        this->ret = new Tensor<T> (this->output_shape, this->mem_type);
     }
 }
 
@@ -52,37 +52,50 @@ Tensor<T>* MatmulOp<T>::eval() {
     c_tensor = c->eval();
 
     if (copy) {
-        ret->copy_from(*c_tensor);
+        this->ret->copy_from(*c_tensor);
     } else {
-        ret = c_tensor;
+        this->ret = c_tensor;
     }
 
-    internal::gemm_full(alpha, a_tensor, b_tensor, beta, ret);
+    internal::gemm_full(alpha, a_tensor, b_tensor, beta, this->ret);
 
-    return ret;
+    return this->ret;
 } 
+
+template <typename T>
+Operation<T> *MatmulOp<T>::grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad) {
+    if (var == a) {
+        return op::matmul(grad, b, false);
+    } else {
+        return op::matmul(a, grad, false);
+    }
+}
 template class MatmulOp<int>;
 template class MatmulOp<float>;
 template class MatmulOp<double>;
 
 
 template <typename T>
-MatmulOp<T>* matmul(Operation<T> *a, Operation<T> *b) {
+MatmulOp<T>* matmul(Operation<T> *a, Operation<T> *b, bool needs_grad) {
+    
+    assert( a->get_output_shape().size() == 2 );
+    assert( b->get_output_shape().size() == 2 );
+
     Tensor<T> *c_tensor = new Tensor<T> ({a->get_output_shape(0), b->get_output_shape(1)}, a->get_memory_type());
     Operation<T> *c = var("__matmul_internal_c", c_tensor);
-    return new MatmulOp<T> ((T)1, a, b, (T)0, c, false);
+    return new MatmulOp<T> ((T)1, a, b, (T)0, c, false, needs_grad);
 }
-template MatmulOp<int>* matmul(Operation<int> *a, Operation<int> *b);
-template MatmulOp<float>* matmul(Operation<float> *a, Operation<float> *b);
-template MatmulOp<double>* matmul(Operation<double> *a, Operation<double> *b);
+template MatmulOp<int>* matmul(Operation<int> *a, Operation<int> *b, bool needs_grad);
+template MatmulOp<float>* matmul(Operation<float> *a, Operation<float> *b, bool needs_grad);
+template MatmulOp<double>* matmul(Operation<double> *a, Operation<double> *b, bool needs_grad);
 
 template <typename T>
-MatmulOp<T>* matmul(T alpha, Operation<T> *a, Operation<T> *b, T beta, Operation<T> *c, bool copy) {
+MatmulOp<T>* matmul(T alpha, Operation<T> *a, Operation<T> *b, T beta, Operation<T> *c, bool copy, bool needs_grad) {
     return new MatmulOp<T> (alpha, a, b, beta, c, copy);
 }
-template MatmulOp<int>* matmul(int alpha, Operation<int> *a, Operation<int> *b, int beta, Operation<int> *c, bool copy);
-template MatmulOp<float>* matmul(float alpha, Operation<float> *a, Operation<float> *b, float beta, Operation<float> *c, bool copy);
-template MatmulOp<double>* matmul(double alpha, Operation<double> *a, Operation<double> *b, double beta, Operation<double> *c, bool copy);
+template MatmulOp<int>* matmul(int alpha, Operation<int> *a, Operation<int> *b, int beta, Operation<int> *c, bool copy, bool needs_grad);
+template MatmulOp<float>* matmul(float alpha, Operation<float> *a, Operation<float> *b, float beta, Operation<float> *c, bool copy, bool needs_grad);
+template MatmulOp<double>* matmul(double alpha, Operation<double> *a, Operation<double> *b, double beta, Operation<double> *c, bool copy, bool needs_grad);
 
 } // namespace op
 } // namespace magmadnn

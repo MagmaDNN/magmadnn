@@ -23,7 +23,8 @@ class AddOp : public Operation<T> {
 public:
 	AddOp(Operation<T>* a, Operation<T>* b, bool copy=true);
 
-	Tensor<T>* eval();
+	Tensor<T> *eval();
+	Operation<T> *grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad);
 	
 	std::string to_string() { return "(" + a->to_string() + " + " + b->to_string() + ")"; }
 protected:
@@ -32,7 +33,6 @@ protected:
 
 	Tensor<T> *a_tensor;
 	Tensor<T> *b_tensor;
-	Tensor<T> *ret;
 
 	bool copy;
 };

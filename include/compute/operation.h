@@ -20,10 +20,16 @@ public:
      *  from. It is used to build a computation tree.
      */
     Operation() {}
-    Operation(std::vector<Operation<T>*> children) : children(children) {}
+    Operation(std::vector<Operation<T> *> inputs, bool needs_grad=true) : inputs(inputs), needs_grad(needs_grad) {
+        if (needs_grad) {
+            for (typename std::vector<Operation<T> *>::iterator vit = inputs.begin(); vit != inputs.end(); vit++) {
+                (*vit)->add_consumer(this);
+            }
+        }
+    }
 	virtual ~Operation() {
-        for (unsigned int i = 0; i < children.size(); i++)
-            delete children[i];
+        for (unsigned int i = 0; i < inputs.size(); i++)
+            delete inputs[i];
     }
 
     /** Returns the expected output shape of this operation.
@@ -59,15 +65,44 @@ public:
      */
     virtual Tensor<T>* eval() = 0;
 
-    /** string form of the given operation. Expands on children.
+    /** Computes the gradient with respect to the outputs and var.
+     * @param consumer the operation that consumes this that needs the gradient
+     * @param grad the gradient of the loss w.r.t. the consumers output
+     * @return Tensor<T>* 
+     */
+    virtual Operation<T>* grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad) = 0;
+
+    /**
+     * @param consumer 
+     */
+    virtual void add_consumer(Operation<T> *consumer) { this->consumers.push_back(consumer); }
+
+    /** Returns a vector of operations that need this operation as input.
+     * @return std::vector<Operation<T> *> vector of consumer operations
+     */
+    virtual std::vector<Operation<T> *> get_consumers() { return this->consumers; }
+
+    /** Returns a vector the input operations to this one.
+     * @return std::vector<Operation<T> *> vector of input operations
+     */
+    virtual std::vector<Operation<T> *> get_inputs() { return this->inputs; }
+
+    virtual Tensor<T> *get_return_ptr() { return ret; }
+
+    /** string form of the given operation. Expands on input.
      * @return std::string 
      */
     virtual std::string to_string() = 0;
     
 protected:
-    std::vector<Operation<T>*> children;
+    std::vector<Operation<T>*> inputs;
+    std::vector<Operation<T>*> consumers;
     std::vector<unsigned int> output_shape;
     memory_t mem_type;
+
+    Tensor<T> *ret; /* the return tensor */
+
+    bool needs_grad;
 };
 
 } // namespace op

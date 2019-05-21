@@ -15,8 +15,11 @@ template <typename T>
 SumOp<T>::SumOp(std::vector<Operation<T> *> ops, bool copy) : Operation<T>::Operation(ops), ops(ops), copy(copy) {
     if (ops.empty()) return;
 
+    this->output_shape = ops.at(0)->get_output_shape();
+    this->mem_type = ops.at(0)->get_memory_type();
+
     if (copy) {
-        ret = new Tensor<T> (ops.at(0)->get_output_shape(), {ZERO, {}}, ops.at(0)->get_memory_type());
+        this->ret = new Tensor<T> (ops.at(0)->get_output_shape(), {ZERO, {}}, ops.at(0)->get_memory_type());
     } else {
         std::fprintf(stderr, "no_copy sum not supported yet.\n");
     }
@@ -30,10 +33,16 @@ Tensor<T> *SumOp<T>::eval() {
         vals[i] = ops[i]->eval();
     }
 
-    assert( ret != NULL );
-    internal::sum_full(vals, *ret);
+    /* TODO sum into first OR last element for non-copy */
+    assert( this->ret != NULL );
+    internal::sum_full(vals, *this->ret);
     
-    return ret;
+    return this->ret;
+}
+
+template <typename T>
+Operation<T> *SumOp<T>::grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad) {
+    return NULL;
 }
 
 template <typename T>

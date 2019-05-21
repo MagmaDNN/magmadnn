@@ -25,8 +25,10 @@ public:
     ~Variable();
 
     Tensor<T>* eval();
+    Operation<T> *grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad);
 
     std::string to_string() { return name; }
+    std::string get_name() { return name; }
 
 protected:
     std::string name;

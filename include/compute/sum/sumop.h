@@ -23,11 +23,11 @@ public:
     SumOp(std::vector<Operation<T> *> ops, bool copy=true);
 
     Tensor<T> *eval();
+    Operation<T> *grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad);
 
     std::string to_string();
 
 protected:
-    Tensor<T> *ret;
     std::vector<Operation<T> *> ops;
     bool copy;
 };

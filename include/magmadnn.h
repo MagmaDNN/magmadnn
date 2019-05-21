@@ -12,11 +12,13 @@
 
 #include "types.h"
 #include "init_finalize.h"
+#include "utilities_internal.h"
 
 #include "memory/memorymanager.h"
 #include "tensor/tensor.h"
 
 #include "compute/variable.h"
 #include "compute/tensor_operations.h"
+#include "compute/gradients.h"
 
 #include "layer/layers.h"

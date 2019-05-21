@@ -18,26 +18,10 @@ void test_optimize(memory_t mem, unsigned int size);
 
 int main(int argc, char **argv) {
 
-    test_simple_grad(HOST, 20);
-    #if defined(_HAS_CUDA_)
-    test_simple_grad(CUDA, 20);
-    test_simple_grad(MANAGED, 20);
-    test_simple_grad(CUDA_MANAGED, 20);
-    #endif
-
-    test_full_grad(HOST, 20);
-    #if defined(_HAS_CUDA_)
-    test_full_grad(CUDA, 20);
-    test_full_grad(MANAGED, 20);
-    test_full_grad(CUDA_MANAGED, 20);
-    #endif
-
-    test_optimize(HOST, 20);
-    #if defined(_HAS_CUDA_)
-    test_optimize(CUDA, 20);
-    test_optimize(MANAGED, 20);
-    test_optimize(CUDA_MANAGED, 20);
-    #endif
+    
+    test_for_all_mem_types(test_simple_grad, 20);
+    test_for_all_mem_types(test_full_grad, 20);
+    test_for_all_mem_types(test_optimize, 20);
 
     return 0;
 }
@@ -45,7 +29,27 @@ int main(int argc, char **argv) {
 void test_simple_grad(memory_t mem, unsigned int size) {
     printf("Testing simple grad on %s...  ", get_memory_type_name(mem));
 
-    op::Variable<float>* x = op::var<float>("x", {size, size}, {GLOROT, {0.0,1.0}}, mem);
+    /* try to differentiate AX + B wrt to X and B */
+
+    op::Variable<float> *x = op::var<float> ("X", {size, size}, {IDENTITY, {}}, mem);
+    op::Variable<float> *a = op::var<float> ("A", {size, size}, {CONSTANT, {5.0}}, mem);
+    op::Variable<float> *b = op::var<float> ("B", {size, size}, {CONSTANT, {-1.0}}, mem);
+
+    op::Operation<float> *affine = op::add(op::matmul(a, x), b);
+
+    op::GradTable<float> table;
+    magmadnn_error_t err = op::get_grad_table({x,b}, affine, table);
+    
+    assert( err == 0 );
+
+    op::Operation<float> *affine_wrt_x = table.get(x);
+    std::printf("affine_wrt_x = %s .\n", affine_wrt_x->to_string().c_str());
+    Tensor<float> *res_x = affine_wrt_x->eval();
+
+
+    op::Operation<float> *affine_wrt_b = table.get(b);
+    std::printf("affine_wrt_b = %s .\n", affine_wrt_b->to_string().c_str());
+    Tensor<float> *res_b = affine_wrt_b->eval();
 
 
     show_success();

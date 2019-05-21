@@ -77,6 +77,9 @@ template class MatmulOp<double>;
 
 template <typename T>
 MatmulOp<T>* matmul(Operation<T> *a, Operation<T> *b, bool needs_grad) {
+    std::printf("b[%s].shape.size = %lu\n", b->to_string().c_str(), b->get_output_shape().size());
+    assert( a->get_output_shape().size() == 2 );
+    assert( b->get_output_shape().size() == 2 );
     Tensor<T> *c_tensor = new Tensor<T> ({a->get_output_shape(0), b->get_output_shape(1)}, a->get_memory_type());
     Operation<T> *c = var("__matmul_internal_c", c_tensor);
     return new MatmulOp<T> ((T)1, a, b, (T)0, c, false, needs_grad);

@@ -6,7 +6,7 @@
  * 
  * @copyright Copyright (c) 2019
  */
- #include "compute/relu_internal.h"
+ #include "compute/relu/relu_internal.h"
 
 namespace magmadnn {
 namespace internal {

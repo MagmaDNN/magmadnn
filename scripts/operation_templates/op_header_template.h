@@ -24,8 +24,5 @@ protected:
 template <typename T>
 <#OPERATION_NAME#>Op<T>* <#OPERATION_NAME_LOWER#>();
 
-template <typename T>
-<#OPERATION_NAME#>Op<T>* <#OPERATION_NAME_LOWER#>();
-
 } // namespace op
 } // namespace magmadnn

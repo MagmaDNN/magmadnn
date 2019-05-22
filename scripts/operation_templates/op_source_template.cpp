@@ -5,13 +5,23 @@ namespace magmadnn {
 namespace op {
 
 template <typename T>
-<#OPERATION_NAME#>Op<T>::<#OPERATION_NAME#>Op() {}
+<#OPERATION_NAME#>Op<T>::<#OPERATION_NAME#>Op() : Operation<T>::Operation() {
+    /* setup code in here */
+    this->output_shape = /* ... */
+    this->mem_type = /* ... */
+}
 
 template <typename T>
-Tensor<T> *<#OPERATION_NAME#>Op<T>::eval() {}
+Tensor<T> *<#OPERATION_NAME#>Op<T>::eval() {
+    /* eval code in here ... */
+    return ret;
+}
 
 template <typename T>
-Operation<T> *<#OPERATION_NAME#>Op<T>::grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad) {}
+Operation<T> *<#OPERATION_NAME#>Op<T>::grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad) {
+    /* return gradient in here ... */
+    return grad;
+}
 
 template class <#OPERATION_NAME#>Op<int>;
 template class <#OPERATION_NAME#>Op<float>;
@@ -20,7 +30,7 @@ template class <#OPERATION_NAME#>Op<double>;
 
 template <typename T>
 <#OPERATION_NAME#>Op<T> *<#OPERATION_NAME_LOWER#>() {
-    return <#OPERATION_NAME_LOWER#>();
+    return new <#OPERATION_NAME#>Op<T>();
 }
 template <#OPERATION_NAME#>Op<int> *<#OPERATION_NAME_LOWER#>();
 template <#OPERATION_NAME#>Op<float> *<#OPERATION_NAME_LOWER#>();

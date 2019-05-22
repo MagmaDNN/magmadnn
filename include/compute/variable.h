@@ -57,5 +57,15 @@ Variable<T>* var(std::string name, Tensor<T>* val);
 template <typename T>
 Variable<T>* var(std::string name, std::vector<unsigned int> shape, tensor_filler_t<T> filler, memory_t mem_type);
 
+/** Creates a scalar variable.
+ * @tparam T 
+ * @param name 
+ * @param val 
+ * @param mem_type 
+ * @return Variable<T>* 
+ */
+template <typename T>
+Variable<T> *scalar(std::string name, T val, memory_t mem_type);
+
 } // namespace op
 } // namespace magmadnn

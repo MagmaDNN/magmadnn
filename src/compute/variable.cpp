@@ -64,6 +64,14 @@ template Variable<int>* var(std::string, std::vector<unsigned int>, tensor_fille
 template Variable<float>* var(std::string, std::vector<unsigned int>, tensor_filler_t<float>, memory_t mem_type);
 template Variable<double>* var(std::string, std::vector<unsigned int>, tensor_filler_t<double>, memory_t mem_type);
 
+template <typename T>
+Variable<T> *scalar(std::string name, T val, memory_t mem_type) {
+    return new Variable<T> (name, {1}, {CONSTANT, {val}}, mem_type);
+}
+template Variable<int> *scalar(std::string, int, memory_t mem_type);
+template Variable<float> *scalar(std::string, float, memory_t mem_type);
+template Variable<double> *scalar(std::string, double, memory_t mem_type);
+
 
 } // namespace op
 } // namespace magmadnn

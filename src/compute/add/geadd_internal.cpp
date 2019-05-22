@@ -33,7 +33,9 @@ void geadd_full(T alpha, Tensor<T> *A, T beta, Tensor<T> *B, Tensor<T> *C) {
         T *a_ptr = A->get_ptr();
         T *b_ptr = B->get_ptr();
         T *c_ptr = C->get_ptr();
-        for (unsigned int i = 0; i < A->get_size(); i++) {
+        unsigned int size = A->get_size();
+
+        for (unsigned int i = 0; i < size; i++) {
             c_ptr[i] = (alpha * a_ptr[i]) + (beta * b_ptr[i]);
         }
     }
@@ -43,10 +45,30 @@ void geadd_full(T alpha, Tensor<T> *A, T beta, Tensor<T> *B, Tensor<T> *C) {
     }
     #endif
 }
-
 template void geadd_full(int alpha, Tensor<int> *A, int beta, Tensor<int> *B, Tensor<int> *C);
 template void geadd_full(float alpha, Tensor<float> *A, float beta, Tensor<float> *B, Tensor<float> *C);
 template void geadd_full(double alpha, Tensor<double> *A, double beta, Tensor<double> *B, Tensor<double> *C);
+
+template <typename T>
+void tensor_scalar_add_full(T alpha, Tensor<T> *x, Tensor<T> *out) {
+    if (x->get_memory_type() == HOST) {
+        T *x_ptr = x->get_ptr();
+        T *out_ptr = out->get_ptr();
+        unsigned int size = x->get_size();
+
+        for (unsigned int i = 0; i < size; i++) {
+            out_ptr[i] = alpha + x_ptr[i];
+        }
+    }
+    #if defined(_HAS_CUDA_)
+    else {
+        tensor_scalar_add_full_device(alpha, x, out);
+    }
+    #endif
+}
+template void tensor_scalar_add_full(int alpha, Tensor<int> *x, Tensor<int> *out);
+template void tensor_scalar_add_full(float alpha, Tensor<float> *x, Tensor<float> *out);
+template void tensor_scalar_add_full(double alpha, Tensor<double> *x, Tensor<double> *out);
 
 }   // namespace internal
 }   // namespace magmadnn

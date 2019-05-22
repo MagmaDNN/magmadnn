@@ -16,14 +16,21 @@ AddOp<T>::AddOp(Operation<T>* a, Operation<T>* b, bool copy) :
 	Operation<T>::Operation({a,b}), a(a), b(b), copy(copy) {
 	
 	assert( a->get_memory_type() == b->get_memory_type() );
-	assert( a->get_output_size() == b->get_output_size() );
+	assert( a->get_output_size() == b->get_output_size() || a->get_output_size() == 1 || b->get_output_size() == 1 );
 
-	this->output_shape = a->get_output_shape();
+	/* if a is scalar then use b's size */
+	if (a->get_output_size() == 1) {
+		this->output_shape = b->get_output_shape();
+	} else {
+		/* other wise a's size is good */
+		this->output_shape = a->get_output_shape();
+	}
 	this->mem_type = a->get_memory_type();
 
 	/* Go ahead and create copy tensor if we can */
-	if (copy)
+	if (copy) {
 		this->ret = new Tensor<T> (this->output_shape, this->mem_type);
+	}
 }
 
 template <typename T>
@@ -33,7 +40,13 @@ Tensor<T>* AddOp<T>::eval() {
 
 	if (!copy) this->ret = b_tensor;
 
-	internal::geadd_full((T)1, a_tensor, (T)1, b_tensor, this->ret);
+	if (a_tensor->get_size() == 1) {
+		internal::tensor_scalar_add_full(a_tensor->get(0), b_tensor, this->ret);
+	} else if (b_tensor->get_size() == 1) {
+		internal::tensor_scalar_add_full(b_tensor->get(0), a_tensor, this->ret);
+	} else {
+		internal::geadd_full((T)1, a_tensor, (T)1, b_tensor, this->ret);
+	}
 	
 	return this->ret;
 } 

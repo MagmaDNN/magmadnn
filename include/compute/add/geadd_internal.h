@@ -50,5 +50,26 @@ template <typename T>
 void geadd_full_device(unsigned int M, unsigned int N, T alpha, T *A, T beta, T *B, T *C);
 #endif
 
+
+/**
+ * @tparam T numeric
+ * @param alpha 
+ * @param x 
+ * @param out 
+ */
+template <typename T>
+void tensor_scalar_add_full(T alpha, Tensor<T> *x, Tensor<T> *out);
+
+#if defined(_HAS_CUDA_)
+/**
+ * @tparam T numeric
+ * @param alpha 
+ * @param x 
+ * @param out 
+ */
+template <typename T>
+void tensor_scalar_add_full_device(T alpha, Tensor<T> *x, Tensor<T> *out);
+#endif
+
 }   // namespace internal
 }   // namespace magmadnn

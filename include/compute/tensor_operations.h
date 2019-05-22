@@ -5,6 +5,7 @@
 
 #include "matmul/matmulop.h"
 #include "scalarproduct/scalarproductop.h"
+#include "dot/dotop.h"
 
 #include "sigmoid/sigmoidop.h"
 #include "tanh/tanhop.h"

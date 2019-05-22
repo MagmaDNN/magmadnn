@@ -14,6 +14,7 @@ using namespace magmadnn;
 void test_add(memory_t mem_type, unsigned int size);
 void test_sum(memory_t mem_type, unsigned int size);
 void test_matmul(memory_t mem_type, unsigned int size);
+void test_scalarproduct(memory_t mem_type, unsigned int size);
 void test_affine(memory_t mem_type, unsigned int size);
 void test_sigmoid(memory_t mem_type, unsigned int size);
 void test_tanh(memory_t mem_type, unsigned int size);
@@ -23,20 +24,11 @@ int main(int argc, char **argv) {
 
 	// test add
 	test_for_all_mem_types(test_add, 50);
-
-	// test sum
 	test_for_all_mem_types(test_sum, 6);
-
-	// test matmul
 	test_for_all_mem_types(test_matmul, 50);
-
-	// test affine transformation
+	test_for_all_mem_types(test_scalarproduct, 50);
 	test_for_all_mem_types(test_affine, 50);
-
-	// test sigmoid
 	test_for_all_mem_types(test_sigmoid, 50);
-
-	// test tanh
 	test_for_all_mem_types(test_tanh, 50);
     
 	magmadnn_finalize();
@@ -151,6 +143,31 @@ void test_matmul(memory_t mem_type, unsigned int size) {
 
 	delete t0;
 	delete t1;
+	delete prod;
+
+	show_success();
+}
+
+void test_scalarproduct(memory_t mem_type, unsigned int size) {
+	float alpha = 1.5f;
+	float val = 50.0f;
+
+	printf("Testing %s scalarproduct...  ", get_memory_type_name(mem_type));
+
+	op::Variable<float> *x = op::var<float>("x", {size, size}, {CONSTANT, {val}}, mem_type);
+	op::Operation<float> *prod = op::scalarproduct(alpha, x);
+
+	Tensor<float> *fin = prod->eval();
+
+	assert( fin->get_shape(0) == size );
+	assert( fin->get_shape(1) == size );
+	for (unsigned int i = 0; i < size; i++) {
+		for (unsigned int j = 0; j < size; j++) {
+			//internal::debugf("(%lu, %lu)\n", i, j);
+			assert( fequal(fin->get({(int)i,(int)j}), alpha * val) );
+		}
+	}
+
 	delete prod;
 
 	show_success();

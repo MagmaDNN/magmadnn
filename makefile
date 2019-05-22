@@ -80,7 +80,7 @@ export NVCCFLAGS
 o_ext ?= o
 
 # where are the source files (files that need to be compiled) found
-TARGET_DIRS = src
+TARGET_DIRS ?= src
 
 all: $(TARGET_DIRS)
 
@@ -96,12 +96,14 @@ endif
 	@echo
 
 # collect all the object files from the source directories (deepest: src/compute/*/*.cpp)
-OBJ_FILES = $(wildcard $(TARGET_DIRS)/*.o $(TARGET_DIRS)/*/*.o $(TARGET_DIRS)/*/*/*.o)
+OBJ_FILES = $(wildcard $(TARGET_DIRS)/*.$(o_ext) $(TARGET_DIRS)/*/*.$(o_ext) $(TARGET_DIRS)/*/*/*.$(o_ext))
 # collect dependency files (.d)
 DEP_FILES = $(wildcard $(TARGET_DIRS)/*.d $(TARGET_DIRS)/*/*.d $(TARGET_DIRS)/*/*/*.d)
 
 
 # MAKE THE LIB FILES
+
+LIB_DIR ?= lib
 
 # archiver and flags
 ARCH ?= ar
@@ -113,8 +115,8 @@ RANLIB_FLAGS ?=
 LIBSHARED_EXT ?= .so
 LIBSHARED_FLAG ?= -shared
 
-libstatic := lib/libmagmadnn.a
-libshared := lib/libmagmadnn$(LIBSHARED_EXT)
+libstatic := $(LIB_DIR)/libmagmadnn.a
+libshared := $(LIB_DIR)/libmagmadnn$(LIBSHARED_EXT)
 
 lib: $(TARGET_DIRS) static shared
 static: $(libstatic)
@@ -122,14 +124,14 @@ shared: $(libshared)
 
 $(libstatic): 
 	@echo "==== building static lib ===="
-	mkdir -p lib
+	mkdir -p $(LIB_DIR)
 	$(ARCH) $(ARCH_FLAGS) $@ $(OBJ_FILES)
 	$(RANLIB) $(RANLIB_FLAGS) $@
 	@echo 
 
 $(libshared):
 	@echo "==== building shared lib ===="
-	mkdir -p lib
+	mkdir -p $(LIB_DIR)
 	$(CXX) $(LIBSHARED_FLAG) $(FPIC) -o $@ $(OBJ_FILES) -L./lib $(LD_FLAGS)
 	@echo 
 
@@ -165,11 +167,11 @@ install: lib
 
 
 # build the docs files and the refman.pdf
+DOCS_DIR ?= docs
 docs:
 ifneq ($(shell which doxygen),)
 	doxygen doxygen.config
-	@echo "gucci"
-	$(MAKE) -C docs/latex
+	$(MAKE) -C $(DOCS_DIR)/latex
 endif
 
 
@@ -178,6 +180,6 @@ clean:
 	rm $(OBJ_FILES) $(DEP_FILES)
 
 
-.PHONY: $(TARGET_DIRS) $(libstatic) $(libshared) testing examples docs
+.PHONY: $(TARGET_DIRS) $(libstatic) $(libshared) $(TESTING_DIR) $(EXAMPLE_DIR) $(DOCS_DIR)
 
 

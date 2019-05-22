@@ -15,21 +15,28 @@ template <typename T>
 class ScalarProductOp : public Operation<T> {
 public:
 	ScalarProductOp(T alpha, Operation<T> *x, bool copy=true, bool needs_grad=true);
+	ScalarProductOp(Operation<T> *scalar, Operation<T> *x, bool copy=true, bool needs_grad=true);
 
 	Tensor<T> *eval();
 	Operation<T> *grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad);
 	
-	std::string to_string() { return "( num * " + x->to_string() + " )"; }
+	std::string to_string();
 protected:
 	T alpha;
+	Operation<T> *scalar;
 	Operation<T> *x;
+
 	Tensor<T> *x_tensor;
+	Tensor<T> *scalar_tensor;
 	
 	bool copy;
 };
 
 template <typename T>
 ScalarProductOp<T> *scalarproduct(T alpha, Operation<T> *x, bool copy=true, bool needs_grad=true);
+
+template <typename T>
+ScalarProductOp<T> *scalarproduct(Operation<T> *scalar, Operation<T> *x, bool copy=true, bool needs_grad=true);
 
 } // namespace op
 } // namespace magmadnn

@@ -40,36 +40,36 @@ echo "===== CREATING OPERATION \"${OPERATION_NAME_LOWER}\" =====\n"
 mkdir "$OPERATION_INCLUDE_DIR"
 mkdir "$OPERATION_SRC_DIR"
 
-echo "Creating $OPERATION_INCLUDE_DIR/${OPERATION_NAME_LOWER}op.h"
+echo "Creating $OPERATION_INCLUDE_DIR/${OPERATION_NAME_LOWER}op.h ..."
 cp "$PWD/scripts/operation_templates/op_header_template.h" "$OPERATION_INCLUDE_DIR/${OPERATION_NAME_LOWER}op.h"
 
-echo "Creating $OPERATION_SRC_DIR/${OPERATION_NAME_LOWER}op.cpp"
+echo "Creating $OPERATION_SRC_DIR/${OPERATION_NAME_LOWER}op.cpp ..."
 cp "$PWD/scripts/operation_templates/op_source_template.cpp" "$OPERATION_SRC_DIR/${OPERATION_NAME_LOWER}op.cpp"
 
 if [ ${GEN_INTERNALS:0:1} = "y" ]; then
-    echo "Creating $OPERATION_INCLUDE_DIR/${OPERATION_NAME_LOWER}_internal.h"
+    echo "Creating $OPERATION_INCLUDE_DIR/${OPERATION_NAME_LOWER}_internal.h ..."
     cp "$PWD/scripts/operation_templates/op_internal_header_template.h" "$OPERATION_INCLUDE_DIR/${OPERATION_NAME_LOWER}_internal.h"
 
-    echo "Creating $OPERATION_SRC_DIR/${OPERATION_NAME_LOWER}_internal.cpp"
+    echo "Creating $OPERATION_SRC_DIR/${OPERATION_NAME_LOWER}_internal.cpp ..."
     cp "$PWD/scripts/operation_templates/op_internal_source_template.cpp" "$OPERATION_SRC_DIR/${OPERATION_NAME_LOWER}_internal.cpp"
 
-    echo "Creating $OPERATION_SRC_DIR/${OPERATION_NAME_LOWER}_internal_device.cu"
+    echo "Creating $OPERATION_SRC_DIR/${OPERATION_NAME_LOWER}_internal_device.cu ..."
     cp "$PWD/scripts/operation_templates/op_internal_device_source_template.cu" "$OPERATION_SRC_DIR/${OPERATION_NAME_LOWER}_internal_device.cu"
 fi
 
 # replace template params with product name info
 for file in $(ls $OPERATION_INCLUDE_DIR); do 
-    echo "Generating source for $OPERATION_INCLUDE_DIR/$file"
-    sed -i '' -e "s/<#OPERATION_NAME_LOWER#>/${OPERATION_NAME_LOWER}/g" -e "s/<#OPERATION_NAME_FIRST_UPPER#>/${OPERATION_NAME_FIRST_UPPER}/g" "$OPERATION_INCLUDE_DIR/$file"
+    echo "Generating source for $OPERATION_INCLUDE_DIR/$file ..."
+    sed -i '' -e "s/<#OPERATION_NAME_LOWER#>/${OPERATION_NAME_LOWER}/g" -e "s/<#OPERATION_NAME#>/${OPERATION_NAME}/g" -e "s/<#OPERATION_NAME_FIRST_UPPER#>/${OPERATION_NAME_FIRST_UPPER}/g" "$OPERATION_INCLUDE_DIR/$file"
 done
 for file in $(ls $OPERATION_SRC_DIR); do 
-    echo "Generating source for $OPERATION_SRC_DIR/$file"
-    sed -i '' -e "s/<#OPERATION_NAME_LOWER#>/${OPERATION_NAME_LOWER}/g" -e "s/<#OPERATION_NAME_FIRST_UPPER#>/${OPERATION_NAME_FIRST_UPPER}/g" "$OPERATION_SRC_DIR/$file"
+    echo "Generating source for $OPERATION_SRC_DIR/$file ..."
+    sed -i '' -e "s/<#OPERATION_NAME_LOWER#>/${OPERATION_NAME_LOWER}/g" -e "s/<#OPERATION_NAME#>/${OPERATION_NAME}/g" -e "s/<#OPERATION_NAME_FIRST_UPPER#>/${OPERATION_NAME_FIRST_UPPER}/g" "$OPERATION_SRC_DIR/$file"
 done
 
 
 # include header in compute/tensor_operations.h
-echo "Including headers in library"
+echo "Including headers in library ..."
 echo "\n#include \"${OPERATION_NAME_LOWER}/${OPERATION_NAME_LOWER}op.h\"" >> "$PWD/include/compute/tensor_operations.h"
 
 # finished

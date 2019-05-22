@@ -47,6 +47,13 @@ void test_simple_grad(memory_t mem, unsigned int size) {
     internal::debugf("affine_wrt_x = %s .\n", affine_wrt_x->to_string().c_str());
     Tensor<float> *res_x = affine_wrt_x->eval();
 
+    for (int i = 0; i < (int) size; i++) {
+        for (int j = 0; j < (int) size; j++) {
+            printf("%.4g ", res_x->get({i,j}));
+        }
+        printf("\n");
+    }
+
 
     op::Operation<float> *affine_wrt_b = table.get(b);
     internal::debugf("affine_wrt_b = %s .\n", affine_wrt_b->to_string().c_str());

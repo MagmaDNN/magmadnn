@@ -23,8 +23,8 @@ magmadnn_error_t get_grad_table(const std::vector<Operation<T> *>& vars, Operati
     /* TODO */
 
     /* init Loss in grad table to one */
-    Operation<T> *ones = op::var<T>("__grad_loss", graph->get_output_shape(), {IDENTITY, {}}, graph->get_memory_type());
-    table.set(graph, ones);
+    Operation<T> *grad_loss = op::scalar<T>("1", 1, graph->get_memory_type());
+    table.set(graph, grad_loss);
 
     /* compute the gradients for each variable */
     for (typename std::vector<Operation<T> *>::const_iterator vit = vars.begin(); vit != vars.end(); vit++) {

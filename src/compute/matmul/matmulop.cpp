@@ -65,9 +65,9 @@ Tensor<T>* MatmulOp<T>::eval() {
 template <typename T>
 Operation<T> *MatmulOp<T>::grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad) {
     if (var == a) {
-        return op::matmul(grad, b, false);
+        return dot(grad, b, false, false);
     } else {
-        return op::matmul(a, grad, false);
+        return dot(a, grad, false, false);
     }
 }
 template class MatmulOp<int>;
@@ -82,7 +82,7 @@ MatmulOp<T>* matmul(Operation<T> *a, Operation<T> *b, bool needs_grad) {
     assert( b->get_output_shape().size() == 2 );
 
     Tensor<T> *c_tensor = new Tensor<T> ({a->get_output_shape(0), b->get_output_shape(1)}, a->get_memory_type());
-    Operation<T> *c = var("__matmul_internal_c", c_tensor);
+    Operation<T> *c = var("__matmul_c_internal", c_tensor);
     return new MatmulOp<T> ((T)1, a, b, (T)0, c, false, needs_grad);
 }
 template MatmulOp<int>* matmul(Operation<int> *a, Operation<int> *b, bool needs_grad);

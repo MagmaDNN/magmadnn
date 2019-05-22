@@ -10,6 +10,7 @@
 #include <vector>
 #include "compute/operation.h"
 #include "compute/variable.h"
+#include "compute/dot/dotop.h"
 #include "tensor/tensor.h"
 #include "gemm_internal.h"
 

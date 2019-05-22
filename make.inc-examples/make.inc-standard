@@ -6,12 +6,23 @@
 # install location
 #prefix = /usr/local
 
+# set if you want to make the library in debug mode (adds "-O0 -g -DDEBUG" to flags)
+#DEBUG = 1
+
 # define which compilers to use
 #CXX = g++
 #NVCC = nvcc
 
 # GPU targets
 #GPU_TARGET = Kepler Pascal
+
+# LINKS to locations of CUDA and MAGMA
+#CUDADIR ?= /usr/local/cuda
+#MAGMADIR ?= /usr/local/magma
+
+# LINKS to your CPU C BLAS library (i.e. atlas, mkl, openblas)
+#BLASDIR ?= /usr/local/openblas
+#BLASLIB ?= openblas
 
 # compiler options
 #OPTIMIZATION_LEVEL = -O3
@@ -31,4 +42,12 @@
 #ARCH_FLAGS = cr
 #RANLIB = ranlib
 #RANLIB_FLAGS = -no_warning_for_no_symbols
+
+
+# don't mess with these unless you know what you're doing.
+#TESTING_DIR = testing
+#LIB_DIR = lib
+#TARGET_DIRS = src
+#EXAMPLE_DIR = examples
+#DOCS_DIR = docs
 

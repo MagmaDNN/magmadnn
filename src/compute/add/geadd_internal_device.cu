@@ -49,9 +49,9 @@ void tensor_scalar_add_full_device(T alpha, Tensor<T> *x, Tensor<T> *out) {
 	unsigned int size = x->get_size();
 	kernel_tensor_scalar_add_full_device <<< 1, size >>> (alpha, x->get_ptr(), out->get_ptr(), size);
 }
-template tensor_scalar_add_full_device(int alpha, Tensor<int> *x, Tensor<int> *out);
-template tensor_scalar_add_full_device(float alpha, Tensor<float> *x, Tensor<float> *out);
-template tensor_scalar_add_full_device(double alpha, Tensor<double> *x, Tensor<double> *out);
+template void tensor_scalar_add_full_device(int alpha, Tensor<int> *x, Tensor<int> *out);
+template void tensor_scalar_add_full_device(float alpha, Tensor<float> *x, Tensor<float> *out);
+template void tensor_scalar_add_full_device(double alpha, Tensor<double> *x, Tensor<double> *out);
 
 }	// namespace internal
 }	// namespace magmadnn

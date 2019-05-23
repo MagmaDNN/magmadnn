@@ -10,6 +10,7 @@
 
 #include <cstdio>
 #include <cstdarg>
+#include <vector>
 
 namespace magmadnn {
 namespace internal {
@@ -18,7 +19,10 @@ namespace internal {
  * @param fmt 
  * @param ... 
  */
-void debugf(const char *fmt, ...);
+int debugf(const char *fmt, ...);
+
+
+void print_vector(const std::vector<unsigned int>& vec, bool debug=true, char begin='{', char end='}', char delim=',');
 
 }   // namespace internal
 }   // namespace magmadnn

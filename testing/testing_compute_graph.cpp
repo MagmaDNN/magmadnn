@@ -26,7 +26,7 @@ int main(int argc, char **argv) {
 	test_for_all_mem_types(test_add, 50);
 	test_for_all_mem_types(test_sum, 6);
 	test_for_all_mem_types(test_matmul, 50);
-	test_for_all_mem_types(test_scalarproduct, 50);
+	test_for_all_mem_types(test_scalarproduct, 10);
 	test_for_all_mem_types(test_affine, 50);
 	test_for_all_mem_types(test_sigmoid, 50);
 	test_for_all_mem_types(test_tanh, 50);
@@ -159,11 +159,16 @@ void test_scalarproduct(memory_t mem_type, unsigned int size) {
 
 	Tensor<float> *fin = prod->eval();
 
+	#if defined(_HAS_CUDA_)
+	if (mem_type == DEVICE || mem_type == CUDA_MANAGED) fin->get_memory_manager()->sync();
+	if (mem_type == MANAGED) fin->get_memory_manager()->sync(true);
+	#endif
+
 	assert( fin->get_shape(0) == size );
 	assert( fin->get_shape(1) == size );
 	for (unsigned int i = 0; i < size; i++) {
 		for (unsigned int j = 0; j < size; j++) {
-			//internal::debugf("(%lu, %lu)\n", i, j);
+			//printf("%.4g %.4g\n", fin->get({(int)i,(int)j}), alpha * val);
 			assert( fequal(fin->get({(int)i,(int)j}), alpha * val) );
 		}
 	}
@@ -199,10 +204,7 @@ void test_affine(memory_t mem_type, unsigned int size) {
 
 	Tensor<float> *fin = aff->eval();
 
-	#if defined(_HAS_CUDA_)
-	if (mem_type == DEVICE || mem_type == CUDA_MANAGED) fin->get_memory_manager()->sync();
-	if (mem_type == MANAGED) fin->get_memory_manager()->sync(true);
-	#endif
+	sync(fin);
 
 	for (int i = 0; i < (int) m; i++) {
 		for (int j = 0; j < (int) p; j++) {
@@ -230,10 +232,7 @@ void test_sigmoid(memory_t mem_type, unsigned int size) {
 
 	auto fin = sig->eval();
 
-	#if defined(_HAS_CUDA_)
-	if (mem_type == DEVICE || mem_type == CUDA_MANAGED) fin->get_memory_manager()->sync();
-	else if (mem_type == MANAGED) fin->get_memory_manager()->sync(true);
-	#endif
+	sync(fin);
 
 	for (unsigned int i = 0; i < fin->get_size(); i++) {
 		assert( fabs(fin->get(i) - (-0.875)) < 1E-8 );

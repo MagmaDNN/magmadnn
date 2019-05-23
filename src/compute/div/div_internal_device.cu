@@ -41,7 +41,7 @@ void tensor_div_scalar_full_device(Tensor<T> *a, T scalar, Tensor<T> *out) {
 }
 template void tensor_div_scalar_full_device(Tensor<int> *a, int scalar, Tensor<int> *out);
 template void tensor_div_scalar_full_device(Tensor<float> *a, float scalar, Tensor<float> *out);
-template void tensor_div_scalar_full_device(Tensor<double> *a, float scalar, Tensor<double> *out);
+template void tensor_div_scalar_full_device(Tensor<double> *a, double scalar, Tensor<double> *out);
  
  
 template <typename T>

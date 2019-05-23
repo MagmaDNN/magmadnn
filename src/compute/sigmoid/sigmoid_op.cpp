@@ -21,7 +21,7 @@ SigmoidOp<T>::SigmoidOp(Operation<T> *x, bool copy, bool fast) :
     /* create copy when tree is created, not at evaluation time. This avoids allocating memory when
        evaluating a compute tree. */
     if (copy) {
-        this->ret = new Tensor<T> (x->get_output_shape(), x->get_memory_type());
+        this->ret = new Tensor<T> (this->output_shape, {NONE,{}}, this->mem_type);
     }
 }
 

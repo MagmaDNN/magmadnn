@@ -59,9 +59,9 @@ void scalar_div_tensor_full_device(T scalar, Tensor<T> *a, Tensor<T> *out) {
     unsigned int size = out->get_size();
     kernel_scalar_div_tensor_full_device <<< 1, size >>> (scalar, a->get_ptr(), out->get_ptr(), size);    
 }
-template void tensor_div_scalar_full_device(int scalar, Tensor<int> *b, Tensor<int> *out);
-template void tensor_div_scalar_full_device(float scalar, Tensor<float> *b, Tensor<float> *out);
-template void tensor_div_scalar_full_device(double scalar, Tensor<double> *b, Tensor<double> *out);
+template void scalar_div_tensor_full_device(int scalar, Tensor<int> *b, Tensor<int> *out);
+template void scalar_div_tensor_full_device(float scalar, Tensor<float> *b, Tensor<float> *out);
+template void scalar_div_tensor_full_device(double scalar, Tensor<double> *b, Tensor<double> *out);
  
 }   // namespace op
 }   // namespace magmadnn

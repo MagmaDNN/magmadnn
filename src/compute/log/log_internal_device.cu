@@ -13,7 +13,7 @@ __global__ void kernel_log_full_device(T *x, T *out, unsigned int size) {
         out[i] = log( x[i] );
     }
 }
-template __global__ void kernel_log_full_device(int *x, int *out, unsigned int size) {
+template <> __global__ void kernel_log_full_device(int *x, int *out, unsigned int size) {
     unsigned int idx = blockDim.x * blockIdx.x + threadIdx.x;
     unsigned int stride = blockDim.x * gridDim.x;
 

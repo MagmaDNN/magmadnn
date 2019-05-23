@@ -11,3 +11,5 @@
 #include "tanh/tanhop.h"
 #include "log/logop.h"
 
+#include "div/divop.h"
+

@@ -83,13 +83,29 @@ magmadnn_error_t build_grad(op::Operation<T> *var, op::Operation<T> *graph, op::
         internal::debugf("calling build_grad on %s.\n", consumer->to_string().c_str());
         err = build_grad(consumer, graph, table, &tmp_grad);
         if (err != 0) return err;
+
+        internal::debugf("bprop = [%s]->grad([%s], [%s], [%s]);\n", consumer->to_string().c_str(),
+                    consumer->to_string().c_str(), var->to_string().c_str(), tmp_grad->to_string().c_str());
         bprop = consumer->grad(consumer, var, tmp_grad);
         bprops.push_back(bprop);
+
+        internal::debugf("%s has output shape: ", bprop->to_string().c_str());
+        internal::print_vector(bprop->get_output_shape(), true);
     }
 
     /* sum of each partial gradient is the total gradient */
     /* TODO : no need to sum if just one */
-    result = op::sum(bprops);
+    if (bprops.size() == 0) {
+        internal::debugf("For some reason no gradients were found for [%s].", var->to_string().c_str());
+        return (magmadnn_error_t) 2;
+    } else if (bprops.size() == 1) {
+        result = bprops.at(0);
+    } else if (bprops.size() == 2) {
+        result = op::add(bprops.at(0), bprops.at(1), true, false);
+    } else {
+        result = op::sum(bprops);
+    }
+    
     table.set(var, result);
     *grad = result;
 

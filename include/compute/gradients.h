@@ -14,6 +14,7 @@
 #include "compute/variable.h"
 #include "compute/gradtable.h"
 #include "compute/variable.h"
+#include "compute/add/addop.h"
 #include "compute/sum/sumop.h"
 #include "utilities_internal.h"
 

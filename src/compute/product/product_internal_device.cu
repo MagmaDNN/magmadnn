@@ -29,5 +29,25 @@ template void product_full_device(int alpha, Tensor<int> *a, Tensor<int> *b, Ten
 template void product_full_device(float alpha, Tensor<float> *a, Tensor<float> *b, Tensor<float> *out);
 template void product_full_device(double alpha, Tensor<double> *a, Tensor<double> *b, Tensor<double> *out);
 
+
+template <typename T>
+__global__ void kernel_scalar_tensor_product_full_device(T scalar, T *a, T *out, unsigned int arr_size) {
+    unsigned int idx = blockIdx.x * blockDim.x + threadIdx.x;
+    unsigned int stride = blockDim.x * gridDim.x;
+
+    for (unsigned int i = idx; i < arr_size; i += stride) {
+        out[i] = scalar * a[i];
+    }
+}
+
+template <typename T>
+void scalar_tensor_product_full_device(T scalar, Tensor<T> *a, Tensor<T> *out) {
+    unsigned int size = out->get_size();
+    kernel_scalar_tensor_product_full_device <<< 1, size >>> (scalar, a->get_ptr(), out->get_ptr(), size);
+}
+template void scalar_tensor_product_full_device(int scalar, Tensor<int> *a, Tensor<int> *out);
+template void scalar_tensor_product_full_device(float scalar, Tensor<float> *a, Tensor<float> *out);
+template void scalar_tensor_product_full_device(double scalar, Tensor<double> *a, Tensor<double> *out);
+
 }   // namespace op
 }   // namespace magmadnn

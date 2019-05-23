@@ -12,10 +12,23 @@ namespace magmadnn {
 namespace op {
 
 template <typename T>
-ProductOp<T>::ProductOp(T alpha, Operation<T> *a, Operation<T> *b, bool copy) {
+ProductOp<T>::ProductOp(T alpha, Operation<T> *a, Operation<T> *b, bool copy, bool needs_grad)
+    : Operation<T>::Operation({a,b}, needs_grad), alpha(alpha), a(a), b(b), copy(copy) {
     
+    if (a->get_output_size() == 1) {
+        op_type = internal::SCALAR_PROD_TENSOR;
+        this->output_shape = b->get_output_shape();
+    } else if (b->get_output_size() == 1) {
+        op_type = internal::TENSOR_PROD_SCALAR;
+        this->output_shape = a->get_output_shape();
+    } else {
+        assert( a->get_output_size() == b->get_output_size() );
+        op_type = internal::TENSOR_PROD_TENSOR;
+        this->output_shape = a->get_output_shape();
+    }
+
     if (copy) {
-        this->ret = new Tensor<T> (a->get_output_shape(), {ONE, {}}, a->get_memory_type());
+        this->ret = new Tensor<T> (this->output_shape, {ONE, {}}, this->mem_type);
     }
 }
 
@@ -25,10 +38,23 @@ Tensor<T> *ProductOp<T>::eval() {
     b_tensor = b->eval();
     
     if (!copy) {
-        this->ret = b_tensor;
+        if (op_type == internal::TENSOR_PROD_SCALAR) {
+            this->ret = a_tensor;
+        } else {
+            this->ret = b_tensor;
+        }
     }
 
-    internal::product_full(alpha, a_tensor, b_tensor, this->ret);
+    switch (op_type) {
+        case internal::SCALAR_PROD_TENSOR:
+            internal::scalar_tensor_product_full(alpha * a_tensor->get(0), b_tensor, this->ret); break;
+        case internal::TENSOR_PROD_SCALAR:
+            internal::scalar_tensor_product_full(alpha * b_tensor->get(0), a_tensor, this->ret); break;
+        case internal::TENSOR_PROD_TENSOR:
+            internal::product_full(alpha, a_tensor, b_tensor, this->ret); break;
+        default:
+            internal::debugf("INVALID PRODUCT\n");
+    }
 
     return this->ret;
 }
@@ -43,20 +69,20 @@ template class ProductOp<double>;
 
 
 template <typename T>
-ProductOp<T> *product(Operation<T> *a, Operation<T> *b, bool copy) {
-    return product((T) 1, a, b, copy);
+ProductOp<T> *product(Operation<T> *a, Operation<T> *b, bool copy, bool needs_grad) {
+    return product((T) 1, a, b, copy, needs_grad);
 }
-template ProductOp<int> *product(Operation<int> *a, Operation<int> *b, bool copy);
-template ProductOp<float> *product(Operation<float> *a, Operation<float> *b, bool copy);
-template ProductOp<double> *product(Operation<double> *a, Operation<double> *b, bool copy);
+template ProductOp<int> *product(Operation<int> *a, Operation<int> *b, bool copy, bool needs_grad);
+template ProductOp<float> *product(Operation<float> *a, Operation<float> *b, bool copy, bool needs_grad);
+template ProductOp<double> *product(Operation<double> *a, Operation<double> *b, bool copy, bool needs_grad);
 
 template <typename T>
-ProductOp<T> *product(T alpha, Operation<T> *a, Operation<T> *b, bool copy) {
-    return new ProductOp<T> (alpha, a, b, copy);
+ProductOp<T> *product(T alpha, Operation<T> *a, Operation<T> *b, bool copy, bool needs_grad) {
+    return new ProductOp<T> (alpha, a, b, copy, needs_grad);
 }
-template ProductOp<int> *product(int alpha, Operation<int> *a, Operation<int> *b, bool copy);
-template ProductOp<float> *product(float alpha, Operation<float> *a, Operation<float> *b, bool copy);
-template ProductOp<double> *product(double alpha, Operation<double> *a, Operation<double> *b, bool copy);
+template ProductOp<int> *product(int alpha, Operation<int> *a, Operation<int> *b, bool copy, bool needs_grad);
+template ProductOp<float> *product(float alpha, Operation<float> *a, Operation<float> *b, bool copy, bool needs_grad);
+template ProductOp<double> *product(double alpha, Operation<double> *a, Operation<double> *b, bool copy, bool needs_grad);
 
 
 

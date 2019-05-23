@@ -22,6 +22,16 @@ int debugf(const char *fmt, ...) {
     #endif
     return 0;
 }
+
+void print_vector(const std::vector<unsigned int>& vec, bool debug, char begin, char end, char delim) {
+    int (*print)(const char*,...) = (debug) ? debugf : std::printf;
+
+    print("%c ", begin);
+    for (std::vector<unsigned int>::const_iterator it = vec.begin(); it != vec.end(); it++) {
+        print("%lu", *it);
+        if (it != vec.end()-1) print("%c ", delim);
+    }
+    print(" %c\n", end);
 }
 
 }   // namespace internal

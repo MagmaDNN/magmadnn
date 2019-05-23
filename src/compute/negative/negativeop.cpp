@@ -30,7 +30,7 @@ Tensor<T> *NegativeOp<T>::eval() {
 template <typename T>
 Operation<T> *NegativeOp<T>::grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad) {
     /* grad : -grad */
-    return negative(grad, false, false);
+    return negative(grad, true, false);
 }
 
 template class NegativeOp<int>;

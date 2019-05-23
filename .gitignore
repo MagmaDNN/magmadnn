@@ -39,6 +39,7 @@ make.inc
 
 # misc. scripts
 build_and_test.sh
+test.sh
 fix_libs.sh
 
 # executable files

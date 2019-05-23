@@ -21,7 +21,7 @@ namespace op {
 template <typename T>
 class AddOp : public Operation<T> {
 public:
-	AddOp(Operation<T>* a, Operation<T>* b, bool copy=true);
+	AddOp(Operation<T>* a, Operation<T>* b, bool copy=true, bool needs_grad=true);
 
 	Tensor<T> *eval();
 	Operation<T> *grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad);
@@ -45,7 +45,7 @@ protected:
  * @return AddOp<T>* 
  */
 template <typename T>
-AddOp<T>* add(Operation<T> *a, Operation<T> *b, bool copy=true);
+AddOp<T>* add(Operation<T> *a, Operation<T> *b, bool copy=true, bool needs_grad=true);
 
 } // namespace op
 } // namespace magmadnn

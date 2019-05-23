@@ -12,8 +12,8 @@ namespace magmadnn {
 namespace op {
 
 template <typename T>
-AddOp<T>::AddOp(Operation<T>* a, Operation<T>* b, bool copy) : 
-	Operation<T>::Operation({a,b}), a(a), b(b), copy(copy) {
+AddOp<T>::AddOp(Operation<T>* a, Operation<T>* b, bool copy, bool needs_grad) : 
+	Operation<T>::Operation({a,b}, needs_grad), a(a), b(b), copy(copy) {
 	
 	assert( a->get_memory_type() == b->get_memory_type() );
 	assert( a->get_output_size() == b->get_output_size() || a->get_output_size() == 1 || b->get_output_size() == 1 );
@@ -61,12 +61,12 @@ template class AddOp<double>;
 
 
 template <typename T>
-AddOp<T>* add(Operation<T> *a, Operation<T> *b, bool copy) {
-    return new AddOp<T> (a, b, copy);
+AddOp<T>* add(Operation<T> *a, Operation<T> *b, bool copy, bool needs_grad) {
+    return new AddOp<T> (a, b, copy, needs_grad);
 }
-template AddOp<int>* add(Operation<int> *a, Operation<int> *b, bool copy);
-template AddOp<float>* add(Operation<float> *a, Operation<float> *b, bool copy);
-template AddOp<double>* add(Operation<double> *a, Operation<double> *b, bool copy);
+template AddOp<int>* add(Operation<int> *a, Operation<int> *b, bool copy, bool needs_grad);
+template AddOp<float>* add(Operation<float> *a, Operation<float> *b, bool copy, bool needs_grad);
+template AddOp<double>* add(Operation<double> *a, Operation<double> *b, bool copy, bool needs_grad);
 
 } // namespace op
 } // namespace magmadnn

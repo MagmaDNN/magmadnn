@@ -11,13 +11,17 @@
 namespace magmadnn {
 namespace internal {
 
-void debugf(const char *fmt, ...) {
+int debugf(const char *fmt, ...) {
     #if defined(DEBUG)
+    int bytes;
     va_list args;
     va_start(args, fmt);
-    vfprintf(stdout, fmt, args);
+    bytes = vfprintf(stdout, fmt, args);
     va_end(args);
+    return bytes;
     #endif
+    return 0;
+}
 }
 
 }   // namespace internal

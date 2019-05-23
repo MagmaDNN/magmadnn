@@ -13,7 +13,15 @@ namespace op {
 
 template <typename T>
 SumOp<T>::SumOp(std::vector<Operation<T> *> ops, bool copy) : Operation<T>::Operation(ops), ops(ops), copy(copy) {
-    if (ops.empty()) return;
+    if (ops.empty()) {
+        return;
+    }
+
+    typename std::vector<Operation<T> *>::const_iterator it = ops.begin();
+    unsigned int first_size = (*it)->get_output_size();
+    for (it++; it != ops.end(); it++) {
+        assert( (*it)->get_output_size() == first_size );
+    }
 
     this->output_shape = ops.at(0)->get_output_shape();
     this->mem_type = ops.at(0)->get_memory_type();
@@ -42,7 +50,7 @@ Tensor<T> *SumOp<T>::eval() {
 
 template <typename T>
 Operation<T> *SumOp<T>::grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad) {
-    return NULL;
+    return grad;
 }
 
 template <typename T>

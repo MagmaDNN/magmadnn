@@ -26,6 +26,7 @@ ProductOp<T>::ProductOp(T alpha, Operation<T> *a, Operation<T> *b, bool copy, bo
         op_type = internal::TENSOR_PROD_TENSOR;
         this->output_shape = a->get_output_shape();
     }
+    this->mem_type = a->get_memory_type();
 
     if (copy) {
         this->ret = new Tensor<T> (this->output_shape, {ONE, {}}, this->mem_type);

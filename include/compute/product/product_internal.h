@@ -23,5 +23,15 @@ void product_full_device(T alpha, Tensor<T> *a, Tensor<T> *b, Tensor<T> *out);
 #endif
 
 
+template <typename T>
+void scalar_tensor_product_full(T alpha, Tensor<T> *a, Tensor<T> *out);
+
+
+#if defined(_HAS_CUDA_)
+template <typename T>
+void scalar_tensor_product_full_device(T alpha, Tensor<T> *a, Tensor<T> *out);
+#endif
+
+
 }   // namespace internal
 }   // namespace magmadnn

@@ -9,6 +9,9 @@
 #pragma once
 #include <string>
 #include "compute/operation.h"
+#include "compute/add/addop.h"
+#include "compute/dot/dotop.h"
+#include "compute/variable.h"
 #include "sigmoid_internal.h"
 
 namespace magmadnn {
@@ -29,6 +32,7 @@ public:
 
 protected:
     Operation<T> *x;
+    Tensor<T> *x_tensor;
     
     bool copy;
     bool fast;

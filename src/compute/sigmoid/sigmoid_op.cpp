@@ -27,7 +27,7 @@ SigmoidOp<T>::SigmoidOp(Operation<T> *x, bool copy, bool fast) :
 
 template <typename T>
 Tensor<T>* SigmoidOp<T>::eval() {
-    Tensor<T> *x_tensor = x->eval();
+    x_tensor = x->eval();
 
     /* ret was created in constructor, now just copy evaluated x_tensor into it */
     if (copy) {
@@ -43,7 +43,10 @@ Tensor<T>* SigmoidOp<T>::eval() {
 
 template <typename T>
 Operation<T> *SigmoidOp<T>::grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad) {
-    return NULL;
+    /* sigmoid grad is   grad * output * (1-output)  */
+    Operation<T> *output = op::var<T>(x->to_string(), x_tensor);
+    Operation<T> *c = add<T>(scalar<T>("1", 1.0f, this->mem_type), dot<T>(scalar<T>("-1", -1.0f, this->mem_type), output, false, false));
+    return product<T>(grad, product<T>(output, c, false), false);
 }
 template class SigmoidOp<int>;
 template class SigmoidOp<float>;

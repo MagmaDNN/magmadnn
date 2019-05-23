@@ -42,6 +42,7 @@ void test_input(memory_t mem, unsigned int size) {
 
     op::Operation<float> *output = input_layer->out();
     Tensor<float> *output_tensor = output->eval();
+    sync(output_tensor);
 
     for (unsigned int i = 0; i < size; i++) {
         for (unsigned int j = 0; j < size; j++) {
@@ -69,6 +70,7 @@ void test_fullyconnected(memory_t mem, unsigned int size) {
 
     op::Operation<float> *output = fc->out();
     Tensor<float> *output_tensor = output->eval();
+    sync(output_tensor);
 
     assert( output_tensor->get_shape().size() == 2 );
     assert( output_tensor->get_shape(0) == size );
@@ -94,9 +96,7 @@ void test_activation(memory_t mem, unsigned int size) {
     Tensor<float> *output_tensor = output->eval();
 
     /* synchronize the memory if managed was being used */
-    #if defined(_HAS_CUDA_)
-    if (mem == MANAGED || mem == CUDA_MANAGED) output_tensor->get_memory_manager()->sync(true);
-    #endif
+    sync(output_tensor);
 
     for (unsigned int i = 0; i < output_tensor->get_size(); i++) {
         assert( fabs(output_tensor->get(i) - tanh(val)) <= 1E-8 );
@@ -122,9 +122,7 @@ void test_layers(memory_t mem, unsigned int size) {
     op::Operation<float> *out = output->out();
     Tensor<float> *out_tensor = out->eval();
 
-    #if defined(_HAS_CUDA_)
-    if (mem == MANAGED || mem == CUDA_MANAGED) out_tensor->get_memory_manager()->sync(true);
-    #endif
+    sync(out_tensor);
 
     assert( out_tensor->get_shape(0) == size );
     assert( out_tensor->get_shape(1) == output_classes );

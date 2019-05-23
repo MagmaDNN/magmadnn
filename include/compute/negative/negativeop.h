@@ -16,7 +16,7 @@ public:
 	Tensor<T> *eval();
 	Operation<T> *grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad);
 	
-	std::string to_string() { return " -" + x->to_string() + " "; }
+	std::string to_string() { return "-" + x->to_string() + ""; }
 protected:
 	Operation<T> *x;
 	Tensor<T> *x_tensor;
@@ -25,7 +25,7 @@ protected:
 };
 
 template <typename T>
-NegativeOp<T>* negative(Operation<T> *x, bool copy, bool needs_grad);
+NegativeOp<T>* negative(Operation<T> *x, bool copy=true, bool needs_grad=true);
 
 } // namespace op
 } // namespace magmadnn

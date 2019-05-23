@@ -14,6 +14,7 @@
 #include "compute/variable.h"
 #include "compute/negative/negativeop.h"
 #include "sigmoid_internal.h"
+#include "utilities_internal.h"
 
 namespace magmadnn {
 namespace op {

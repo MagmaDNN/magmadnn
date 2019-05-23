@@ -44,9 +44,11 @@ Tensor<T>* SigmoidOp<T>::eval() {
 template <typename T>
 Operation<T> *SigmoidOp<T>::grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad) {
     /* sigmoid grad is   grad * output * (1-output)  */
-    Operation<T> *output = op::var<T>(x->to_string(), x_tensor);
-    Operation<T> *c = add<T>(scalar<T>("1", 1.0f, this->mem_type), negative<T>(output, false, false));
-    return product<T>(grad, product<T>(output, c, false), false);
+    //if (grad == NULL) internal::debugf("Grad is null for some reason\n");
+    //Operation<T> *output = op::var<T>(x->to_string(), this->ret);
+    Operation<T> *output = (Operation<T> *) this;
+    Operation<T> *c = add<T>(scalar<T>("1", 1.0f, this->mem_type), negative<T>(output, true, false), true, false);
+    return product<T>(grad, product<T>(output, c, true, false), true, false);
 }
 template class SigmoidOp<int>;
 template class SigmoidOp<float>;

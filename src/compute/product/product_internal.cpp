@@ -48,7 +48,7 @@ void scalar_tensor_product_full(T scalar, Tensor<T> *a, Tensor<T> *out) {
     }
     #if defined(_HAS_CUDA_)
     else {
-        internal::scalar_tensor_product_full_device(alpha, a, b, out);
+        internal::scalar_tensor_product_full_device(scalar, a, out);
     }
     #endif
 

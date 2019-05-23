@@ -17,7 +17,7 @@ namespace op {
 template <typename T>
 class ReluOp : public Operation<T> {
 public:
-    ReluOp(Operation<T> *x, bool copy=true);
+    ReluOp(Operation<T> *x, bool copy=true, bool needs_grad=true);
 
     Tensor<T>* eval();
     Operation<T> *grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad);
@@ -30,6 +30,9 @@ protected:
 
     bool copy;
 };
+
+template <typename T>
+ReluOp<T> *relu(Operation<T> *x, bool copy=true, bool needs_grad=true);
 
 
 }   // namespace op

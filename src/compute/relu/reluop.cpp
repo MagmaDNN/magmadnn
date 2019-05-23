@@ -12,7 +12,8 @@ namespace magmadnn {
 namespace op {
 
 template <typename T>
-ReluOp<T>::ReluOp(Operation<T> *x, bool copy) : Operation<T>::Operation({x}), x(x), copy(copy) {
+ReluOp<T>::ReluOp(Operation<T> *x, bool copy, bool needs_grad)
+    : Operation<T>::Operation({x}, needs_grad), x(x), copy(copy) {
     this->output_shape = x->get_output_shape();
     this->mem_type = x->get_memory_type();
 
@@ -36,9 +37,18 @@ template <typename T>
 Operation<T> *ReluOp<T>::grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad) {
     return NULL;
 }
+ 
 template class ReluOp<int>;
 template class ReluOp<float>;
 template class ReluOp<double>;
+
+template <typename T>
+ReluOp<T> *relu(Operation<T> *x, bool copy, bool needs_grad) {
+    return new ReluOp<T> (x, copy, needs_grad);
+}
+template ReluOp<int> *relu(Operation<int> *x, bool copy, bool needs_grad);
+template ReluOp<float> *relu(Operation<float> *x, bool copy, bool needs_grad);
+template ReluOp<double> *relu(Operation<double> *x, bool copy, bool needs_grad);
 
 }   // namespace op
 }   // namespace magmadnn

@@ -45,7 +45,7 @@ template <typename T>
 Operation<T> *SigmoidOp<T>::grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad) {
     /* sigmoid grad is   grad * output * (1-output)  */
     Operation<T> *output = op::var<T>(x->to_string(), x_tensor);
-    Operation<T> *c = add<T>(scalar<T>("1", 1.0f, this->mem_type), dot<T>(scalar<T>("-1", -1.0f, this->mem_type), output, false, false));
+    Operation<T> *c = add<T>(scalar<T>("1", 1.0f, this->mem_type), negative<T>(output, false, false));
     return product<T>(grad, product<T>(output, c, false), false);
 }
 template class SigmoidOp<int>;

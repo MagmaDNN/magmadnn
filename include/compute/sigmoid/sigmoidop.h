@@ -12,6 +12,7 @@
 #include "compute/add/addop.h"
 #include "compute/dot/dotop.h"
 #include "compute/variable.h"
+#include "compute/negative/negativeop.h"
 #include "sigmoid_internal.h"
 
 namespace magmadnn {

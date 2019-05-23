@@ -10,6 +10,7 @@
 #include <cmath>
 #include "magmadnn.h"
 #include "utilities.h"
+#include "utilities_internal.h"
 
 using namespace magmadnn;
 
@@ -21,7 +22,7 @@ int main(int argc, char **argv) {
     magmadnn_init();
     
     test_for_all_mem_types(test_simple_grad, 20);
-    test_for_all_mem_types(test_full_grad, 20);
+    test_for_all_mem_types(test_full_grad, 10);
     test_for_all_mem_types(test_optimize, 20);
 
     magmadnn_finalize();
@@ -48,6 +49,8 @@ void test_simple_grad(memory_t mem, unsigned int size) {
     internal::debugf("affine_wrt_x = %s .\n", affine_wrt_x->to_string().c_str());
     Tensor<float> *res_x = affine_wrt_x->eval();
 
+    sync(res_x);
+
     for (unsigned int i = 0; i < res_x->get_size(); i++) {
         assert( fequal(res_x->get(i), 5.0) );
     }
@@ -55,6 +58,8 @@ void test_simple_grad(memory_t mem, unsigned int size) {
     op::Operation<float> *affine_wrt_b = table.get(b);
     internal::debugf("affine_wrt_b = %s .\n", affine_wrt_b->to_string().c_str());
     Tensor<float> *res_b = affine_wrt_b->eval();
+
+    sync(res_b);
 
     for (unsigned int i = 0; i < res_b->get_size(); i++) {
         assert( fequal(res_b->get(i), 1.0) );
@@ -74,7 +79,13 @@ void test_full_grad(memory_t mem, unsigned int size) {
     op::Operation<float> *one = op::scalar<float> ("1.0", 1.0f, mem);
     op::Operation<float> *x = op::var<float> ("x", {size, size}, {CONSTANT, {val}}, mem);
     op::Operation<float> *expr = op::sigmoid( op::add(one, op::negative(x)) );
+
+    //internal::print_compute_graph(expr, true);
+
+
     Tensor<float> *forward = expr->eval();
+
+    sync(forward);
 
     op::GradTable<float> table;
     magmadnn_error_t err = op::get_grad_table({x}, expr, table);
@@ -82,9 +93,15 @@ void test_full_grad(memory_t mem, unsigned int size) {
     assert( err == 0 );
 
     op::Operation<float> *d_expr_wrt_x = table.get(x);
+
+    internal::print_compute_graph(d_expr_wrt_x, true);
+
     Tensor<float> *fin = d_expr_wrt_x->eval();
 
+    sync(fin);
+
     for (unsigned int i = 0; i < fin->get_size(); i++) {
+        //printf("%.4g %.4g\n", fin->get(i), out);
         assert( fequal(fin->get(i), out) );
     }
 

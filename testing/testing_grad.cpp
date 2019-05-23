@@ -7,6 +7,7 @@
  * @copyright Copyright (c) 2019
  */
 
+#include <cmath>
 #include "magmadnn.h"
 #include "utilities.h"
 
@@ -64,6 +65,28 @@ void test_simple_grad(memory_t mem, unsigned int size) {
 
 void test_full_grad(memory_t mem, unsigned int size) {
     printf("Testing full grad on %s...  ", get_memory_type_name(mem));
+
+    /* compute the grad of sigmoid( 1 - x ) */
+    float val = 9.0f;
+    float s_x = (1.0f - val) / (1.0f + std::fabs(1.0f - val));
+    float out = -1.0f * (s_x) * (1 - s_x);
+
+    op::Operation<float> *one = op::scalar<float> ("1.0", 1.0f, mem);
+    op::Operation<float> *x = op::var<float> ("x", {size, size}, {CONSTANT, {val}}, mem);
+    op::Operation<float> *expr = op::sigmoid( op::add(one, op::negative(x)) );
+    Tensor<float> *forward = expr->eval();
+
+    op::GradTable<float> table;
+    magmadnn_error_t err = op::get_grad_table({x}, expr, table);
+
+    assert( err == 0 );
+
+    op::Operation<float> *d_expr_wrt_x = table.get(x);
+    Tensor<float> *fin = d_expr_wrt_x->eval();
+
+    for (unsigned int i = 0; i < fin->get_size(); i++) {
+        assert( fequal(fin->get(i), out) );
+    }
 
     show_success();
 }

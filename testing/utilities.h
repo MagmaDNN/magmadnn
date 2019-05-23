@@ -47,3 +47,11 @@ const char* get_memory_type_name(magmadnn::memory_t mem) {
 		default: 			return "UNDEFINED_MEMORY_TYPE";
 	}
 }
+
+template <typename T>
+void sync(magmadnn::Tensor<T> *t) {
+	#if defined(_HAS_CUDA_)
+	if (t->get_memory_type() == magmadnn::DEVICE || t->get_memory_type() == magmadnn::CUDA_MANAGED) t->get_memory_manager()->sync();
+	else if (t->get_memory_type() == magmadnn::MANAGED) t->get_memory_manager()->sync(true);
+	#endif
+}

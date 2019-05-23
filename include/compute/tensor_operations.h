@@ -9,3 +9,5 @@
 
 #include "sigmoid/sigmoidop.h"
 #include "tanh/tanhop.h"
+#include "log/logop.h"
+

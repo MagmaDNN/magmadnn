@@ -3,6 +3,9 @@
 
 #include "compute/operation.h"
 #include "tensor/tensor.h"
+#include "compute/variable.h"
+#include "compute/div/divop.h"
+#include "compute/product/productop.h"
 #include "compute/log/log_internal.h"
 
 namespace magmadnn {

@@ -30,7 +30,7 @@ Tensor<T> *LogOp<T>::eval() {
 template <typename T>
 Operation<T> *LogOp<T>::grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad) {
     /* TODO : grad * (1/x) */
-    return grad;
+    return product(grad, div((Operation<T> *)scalar("1", 1, this->mem_type), x, false, false), false);
 }
 
 template class LogOp<int>;

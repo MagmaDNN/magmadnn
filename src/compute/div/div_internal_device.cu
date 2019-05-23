@@ -17,7 +17,7 @@ __global__ void tensor_div_tensor_full_device(T *a, T *b, T *out, unsigned int s
 template <typename T>
 void tensor_div_tensor_full_device(Tensor<T> *a, Tensor<T> *b, Tensor<T> *out) {
     unsigned int size = out->get_size();
-    tensor_div_tensor_full_device <<< 1, size >>> ()
+    tensor_div_tensor_full_device <<< 1, size >>> (a->get_ptr(), b->get_ptr(), out->get_ptr(), size);
 }
 template void tensor_div_tensor_full_device(Tensor<int> *a, Tensor<int> *b, Tensor<int> *out);
 template void tensor_div_tensor_full_device(Tensor<float> *a, Tensor<float> *b, Tensor<float> *out);

@@ -22,7 +22,7 @@ void scalarproduct_full(T alpha, Tensor<T> *x, Tensor<T> *out) {
     }
     #if defined(_HAS_CUDA_)
     else {
-        internal::scalarproduct_device_full(alpha, x, out);
+        internal::scalarproduct_full_device(alpha, x, out);
     }
     #endif
 }

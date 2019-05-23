@@ -29,7 +29,7 @@ AddOp<T>::AddOp(Operation<T>* a, Operation<T>* b, bool copy, bool needs_grad) :
 
 	/* Go ahead and create copy tensor if we can */
 	if (copy) {
-		this->ret = new Tensor<T> (this->output_shape, this->mem_type);
+		this->ret = new Tensor<T> (this->output_shape, {NONE, {}}, this->mem_type);
 	}
 }
 

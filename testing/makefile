@@ -10,7 +10,7 @@ LIB_PATH := $(prefix)/lib
 DEST = ./bin
 
 ifeq ($(DEBUG),1)
-TESTING_FLAGS += -g
+TESTING_FLAGS += -g -DDEBUG
 endif
 
 all: $(DEST) $(TARGETS)

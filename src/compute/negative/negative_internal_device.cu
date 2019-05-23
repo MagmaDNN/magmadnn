@@ -19,9 +19,9 @@ void negative_full_device(Tensor<T> *x, Tensor<T> *out) {
     unsigned int size = out->get_size();
     kernel_negative_full_device <<< 1, size >>> (x->get_ptr(), out->get_ptr(), size);
 }
-template void negative_full_device();
-template void negative_full_device();
-template void negative_full_device();
+template void negative_full_device(Tensor<int> *x, Tensor<int> *out);
+template void negative_full_device(Tensor<float> *x, Tensor<float> *out);
+template void negative_full_device(Tensor<double> *x, Tensor<double> *out);
  
 }   // namespace op
 }   // namespace magmadnn

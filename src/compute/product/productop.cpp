@@ -48,8 +48,10 @@ Tensor<T> *ProductOp<T>::eval() {
 
     switch (op_type) {
         case internal::SCALAR_PROD_TENSOR:
+            a_tensor->get_memory_manager()->sync(true);
             internal::scalar_tensor_product_full(alpha * a_tensor->get(0), b_tensor, this->ret); break;
         case internal::TENSOR_PROD_SCALAR:
+            b_tensor->get_memory_manager()->sync(true);
             internal::scalar_tensor_product_full(alpha * b_tensor->get(0), a_tensor, this->ret); break;
         case internal::TENSOR_PROD_TENSOR:
             internal::product_full(alpha, a_tensor, b_tensor, this->ret); break;

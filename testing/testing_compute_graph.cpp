@@ -15,6 +15,7 @@ void test_add(memory_t mem_type, unsigned int size);
 void test_sum(memory_t mem_type, unsigned int size);
 void test_matmul(memory_t mem_type, unsigned int size);
 void test_scalarproduct(memory_t mem_type, unsigned int size);
+void test_sumreduce(memory_t mem_type, unsigned int);
 void test_affine(memory_t mem_type, unsigned int size);
 void test_sigmoid(memory_t mem_type, unsigned int size);
 void test_tanh(memory_t mem_type, unsigned int size);
@@ -27,6 +28,7 @@ int main(int argc, char **argv) {
 	test_for_all_mem_types(test_sum, 6);
 	test_for_all_mem_types(test_matmul, 50);
 	test_for_all_mem_types(test_scalarproduct, 10);
+	test_for_all_mem_types(test_sumreduce, 10);
 	test_for_all_mem_types(test_affine, 50);
 	test_for_all_mem_types(test_sigmoid, 50);
 	test_for_all_mem_types(test_tanh, 50);
@@ -174,6 +176,42 @@ void test_scalarproduct(memory_t mem_type, unsigned int size) {
 	}
 
 	delete prod;
+
+	show_success();
+}
+
+void test_sumreduce(memory_t mem_type, unsigned int size) {
+	printf("Testing %s sumreduce...  ", get_memory_type_name(mem_type));
+
+	Tensor<float> *t = new Tensor<float> ({2,3}, {ZERO, {}}, mem_type);
+	/* [ [1,2,3], [3,2,1] ] */
+	t->set({0,0}, 1);
+	t->set({0,1}, 2);
+	t->set({0,2}, 3);
+	t->set({1,0}, 3);
+	t->set({1,1}, 2);
+	t->set({1,2}, 1);
+	op::Operation<float> *v = op::var<float> ("x", t);
+
+
+	op::Operation<float> *col_sums_o = op::reducesum(v, 0);
+	op::Operation<float> *row_sums_o = op::reducesum(v, 1);
+
+	Tensor<float> *col_sums = col_sums_o->eval();
+	Tensor<float> *row_sums = row_sums_o->eval();
+
+	sync(col_sums);
+	sync(row_sums);
+
+	for (unsigned int i = 0; i < col_sums->get_size(); i++) {
+		if (!fequal(col_sums->get(i), 4.0f)) { printf("Bad vals : %.3g %.3g\n", col_sums->get(i), 4.0f); }
+		assert( fequal(col_sums->get(i), 4.0f) );
+	}
+
+	for (unsigned int i = 0; i < row_sums->get_size(); i++) {
+		if (!fequal(row_sums->get(i), 6.0f)) { printf("Bad vals : %.3g %.3g\n", row_sums->get(i), 6.0f); }
+		assert( fequal(row_sums->get(i), 6.0f) );
+	}
 
 	show_success();
 }

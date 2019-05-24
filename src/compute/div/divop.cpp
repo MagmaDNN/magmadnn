@@ -48,8 +48,10 @@ Tensor<T> *DivOp<T>::eval() {
         case internal::TENSOR_DIV_TENSOR:
             internal::tensor_div_tensor_full(a_tensor, b_tensor, this->ret); break;
         case internal::SCALAR_DIV_TENSOR:
+            a_tensor->get_memory_manager()->sync(true);
             internal::scalar_div_tensor_full(a_tensor->get(0), b_tensor, this->ret); break;
         case internal::TENSOR_DIV_SCALAR:
+            b_tensor->get_memory_manager()->sync(true);
             internal::tensor_div_scalar_full(a_tensor, b_tensor->get(0), this->ret); break;
         default:
             std::fprintf(stderr, "This type of div is not yet supported.\n");

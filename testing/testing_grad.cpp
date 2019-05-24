@@ -102,6 +102,7 @@ void test_full_grad(memory_t mem, unsigned int size) {
 
     for (unsigned int i = 0; i < fin->get_size(); i++) {
         //printf("%.4g %.4g\n", fin->get(i), out);
+        if (!fequal(fin->get(i), out)) printf("bad vals: %.5g %.5g\n", fin->get(i), out);
         assert( fequal(fin->get(i), out) );
     }
 

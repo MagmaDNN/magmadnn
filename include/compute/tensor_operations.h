@@ -14,3 +14,5 @@
 #include "div/divop.h"
 
 #include "negative/negativeop.h"
+
+#include "reducesum/reducesumop.h"

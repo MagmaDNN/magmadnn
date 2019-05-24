@@ -1,3 +1,4 @@
+#!/bin/bash
 
 # check arg count
 if [ $# -ne 2 ]; then
@@ -32,8 +33,18 @@ if [ -d "$OPERATION_INCLUDE_DIR" ] || [ -d "$OPERATION_SRC_DIR" ]; then
     exit 1
 fi
 
+# get the proper 'in-place' flag for sed based on OS type
+SED_INPLACE_FLAG=""
+if [[ "$OSTYPE" == "linux-gnu " ]]; then
+    SED_INPLACE_FLAG="-i ''"
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+    SED_INPLACE_FLAG="-i"
+else
+    SED_INPLACE_FLAG="-i"
+fi
 
-echo "===== CREATING OPERATION \"${OPERATION_NAME_LOWER}\" =====\n"
+
+echo -e "===== CREATING OPERATION \"${OPERATION_NAME_LOWER}\" =====\n"
 
 
 # make the operation folder and copy templates
@@ -60,17 +71,17 @@ fi
 # replace template params with product name info
 for file in $(ls $OPERATION_INCLUDE_DIR); do 
     echo "Generating source for $OPERATION_INCLUDE_DIR/$file ..."
-    sed -i '' -e "s/<#OPERATION_NAME_LOWER#>/${OPERATION_NAME_LOWER}/g" -e "s/<#OPERATION_NAME#>/${OPERATION_NAME}/g" -e "s/<#OPERATION_NAME_FIRST_UPPER#>/${OPERATION_NAME_FIRST_UPPER}/g" "$OPERATION_INCLUDE_DIR/$file"
+    sed $SED_INPLACE_FLAG -e "s/<#OPERATION_NAME_LOWER#>/${OPERATION_NAME_LOWER}/g" -e "s/<#OPERATION_NAME#>/${OPERATION_NAME}/g" -e "s/<#OPERATION_NAME_FIRST_UPPER#>/${OPERATION_NAME_FIRST_UPPER}/g" "$OPERATION_INCLUDE_DIR/$file"
 done
 for file in $(ls $OPERATION_SRC_DIR); do 
     echo "Generating source for $OPERATION_SRC_DIR/$file ..."
-    sed -i '' -e "s/<#OPERATION_NAME_LOWER#>/${OPERATION_NAME_LOWER}/g" -e "s/<#OPERATION_NAME#>/${OPERATION_NAME}/g" -e "s/<#OPERATION_NAME_FIRST_UPPER#>/${OPERATION_NAME_FIRST_UPPER}/g" "$OPERATION_SRC_DIR/$file"
+    sed $SED_INPLACE_FLAG -e "s/<#OPERATION_NAME_LOWER#>/${OPERATION_NAME_LOWER}/g" -e "s/<#OPERATION_NAME#>/${OPERATION_NAME}/g" -e "s/<#OPERATION_NAME_FIRST_UPPER#>/${OPERATION_NAME_FIRST_UPPER}/g" "$OPERATION_SRC_DIR/$file"
 done
 
 
 # include header in compute/tensor_operations.h
 echo "Including headers in library ..."
-echo "\n#include \"${OPERATION_NAME_LOWER}/${OPERATION_NAME_LOWER}op.h\"" >> "$PWD/include/compute/tensor_operations.h"
+echo -e "\n#include \"${OPERATION_NAME_LOWER}/${OPERATION_NAME_LOWER}op.h\"" >> "$PWD/include/compute/tensor_operations.h"
 
 # finished
-echo "\nDONE"
+echo -e "\nDONE"

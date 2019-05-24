@@ -22,7 +22,7 @@ MagmaDNN makes heavy use of BLAS libraries. For CPU only code a C BLAS library m
 First get the repository on your computer with
 
 ```sh
-git clone https://github.com/Dando18/magmadnn
+git clone https://github.com/MagmaDNN/magmadnn
 cd magmadnn
 ```
 
@@ -39,7 +39,7 @@ After this simply run `make install` to build and install MagmaDNN. If your pref
 So the entire script looks like:
 
 ```sh
-git clone https://github.com/Dando18/magmadnn
+git clone https://github.com/MagmaDNN/magmadnn
 cd magmadnn
 cp make.inc-examples/make.inc-standard ./make.inc
 sudo make install
@@ -57,7 +57,7 @@ sh run_tests.sh
 
 ### Examples
 -----------
-For examples of what MagmaDNN code looks like see the [examples/ folder](https://github.com/Dando18/magmadnn/tree/master/examples). If MagmaDNN is downloaded and installed, then the examples can be made and run with `make examples`.
+For examples of what MagmaDNN code looks like see the [examples/ folder](https://github.com/MagmaDNN/magmadnn/tree/master/examples). If MagmaDNN is downloaded and installed, then the examples can be made and run with `make examples`.
 
 
 ### Task List:

@@ -9,6 +9,7 @@ ReduceSumOp<T>::ReduceSumOp(Operation<T> *x, int axis, bool copy, bool needs_gra
     : Operation<T>::Operation({x}, needs_grad), x(x), axis(axis), copy(copy) {
 
     std::vector<unsigned int> const& x_output_shape = x->get_output_shape();
+    this->mem_type = x->get_memory_type();
 
     /* don't allow an axis greater than size of shape */
     assert( axis < (int)x_output_shape.size() );
@@ -43,8 +44,6 @@ ReduceSumOp<T>::ReduceSumOp(Operation<T> *x, int axis, bool copy, bool needs_gra
         /* init to ones */
         this->ret = new Tensor<T> (this->get_output_shape(), {ONE, {}}, this->mem_type);
     }
-    
-    this->mem_type = x->get_memory_type();
 }
 
 template <typename T>

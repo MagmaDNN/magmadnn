@@ -2,6 +2,7 @@
 #pragma once
 
 #include "tensor/tensor.h"
+#include "utilities_internal.h"
 #include "cblas.h"
 #if defined(_HAS_CUDA_)
 #include "magma.h"

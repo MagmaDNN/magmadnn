@@ -8,7 +8,7 @@ template <typename T>
 void tensor_reducesum_full(Tensor<T> *x, unsigned int axis, Tensor<T> *out) {
 
     if (out->get_memory_type() == HOST) {
-        
+        internal::debugf("general tensor reduce sum not yet implemented\n");
     }
     #if defined(_HAS_CUDA_)
     else {
@@ -36,14 +36,22 @@ template <> void col_reducesum_full(Tensor<int> *x, Tensor<int> *ones, Tensor<in
 }
 template <> void col_reducesum_full(Tensor<float> *x, Tensor<float> *ones, Tensor<float> *out) {
     if (out->get_memory_type() == HOST) {
+
+        CBLAS_TRANSPOSE op = CblasTrans;
+        unsigned int a_shape_0 = x->get_shape(0);
+        unsigned int a_shape_1 = x->get_shape(1);
+        unsigned int ldda = x->get_shape(1);
+
+        internal::debugf("sgemv Av: (op: %s) (A_shape: (%d x %d)) (ldda: (%d))\n", (op==CblasTrans)?"Trans":"NoTrans", a_shape_0, a_shape_1, ldda);
+
         cblas_sgemv(CblasRowMajor, 
-                    CblasTrans, 
-                    x->get_shape(0), 
-                    x->get_shape(1), 
+                    op, 
+                    a_shape_0, 
+                    a_shape_1, 
                     (float) 1, 
-                    ones->get_ptr(), 
-                    x->get_shape(1),
-                    out->get_ptr(),
+                    x->get_ptr(), 
+                    ldda,
+                    ones->get_ptr(),
                     1,
                     (float) 0,
                     out->get_ptr(),
@@ -121,7 +129,7 @@ template <> void row_reducesum_full(Tensor<float> *x, Tensor<float> *ones, Tenso
                     x->get_shape(1),
                     (float)1,
                     x->get_ptr(),
-                    x->get_shape(1),
+                    x->get_shape(0),
                     ones->get_ptr(),
                     1,
                     (float)0,

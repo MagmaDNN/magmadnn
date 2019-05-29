@@ -36,21 +36,13 @@ template <> void col_reducesum_full(Tensor<int> *x, Tensor<int> *ones, Tensor<in
 }
 template <> void col_reducesum_full(Tensor<float> *x, Tensor<float> *ones, Tensor<float> *out) {
     if (out->get_memory_type() == HOST) {
-
-        CBLAS_TRANSPOSE op = CblasTrans;
-        unsigned int a_shape_0 = x->get_shape(0);
-        unsigned int a_shape_1 = x->get_shape(1);
-        unsigned int ldda = x->get_shape(1);
-
-        internal::debugf("sgemv Av: (op: %s) (A_shape: (%d x %d)) (ldda: (%d))\n", (op==CblasTrans)?"Trans":"NoTrans", a_shape_0, a_shape_1, ldda);
-
         cblas_sgemv(CblasRowMajor, 
-                    op, 
-                    a_shape_0, 
-                    a_shape_1, 
+                    CblasTrans, 
+                    x->get_shape(0), 
+                    x->get_shape(1), 
                     (float) 1, 
                     x->get_ptr(), 
-                    ldda,
+                    x->get_shape(1),
                     ones->get_ptr(),
                     1,
                     (float) 0,
@@ -60,9 +52,9 @@ template <> void col_reducesum_full(Tensor<float> *x, Tensor<float> *ones, Tenso
     #if defined(_HAS_CUDA_)
     else {
         /* gemv to col reduce */
-        magma_sgemv(MagmaTrans,
-                    x->get_shape(0),
+        magma_sgemv(MagmaNoTrans,
                     x->get_shape(1),
+                    x->get_shape(0),
                     (float) 1,
                     x->get_ptr(),
                     x->get_shape(1),
@@ -92,9 +84,9 @@ template <> void col_reducesum_full(Tensor<double> *x, Tensor<double> *ones, Ten
     #if defined(_HAS_CUDA_)
     else {
         /* gemv to col reduce */
-        magma_dgemv(MagmaTrans,
-                    x->get_shape(0),
+        magma_dgemv(MagmaNoTrans,
                     x->get_shape(1),
+                    x->get_shape(0),
                     (float) 1,
                     x->get_ptr(),
                     x->get_shape(1),
@@ -129,7 +121,7 @@ template <> void row_reducesum_full(Tensor<float> *x, Tensor<float> *ones, Tenso
                     x->get_shape(1),
                     (float)1,
                     x->get_ptr(),
-                    x->get_shape(0),
+                    x->get_shape(1),
                     ones->get_ptr(),
                     1,
                     (float)0,
@@ -138,7 +130,7 @@ template <> void row_reducesum_full(Tensor<float> *x, Tensor<float> *ones, Tenso
     }
     #if defined(_HAS_CUDA_)
     else {
-        magma_sgemv(MagmaNoTrans,
+        magma_sgemv(MagmaTrans,
                     x->get_shape(1),
                     x->get_shape(0),
                     (float)1,
@@ -147,7 +139,7 @@ template <> void row_reducesum_full(Tensor<float> *x, Tensor<float> *ones, Tenso
                     ones->get_ptr(),
                     1,
                     (float)0,
-                    x->get_ptr(),
+                    out->get_ptr(),
                     1);
     }
     #endif
@@ -169,7 +161,7 @@ template <> void row_reducesum_full(Tensor<double> *x, Tensor<double> *ones, Ten
     }
     #if defined(_HAS_CUDA_)
     else {
-        magma_dgemv(MagmaNoTrans,
+        magma_dgemv(MagmaTrans,
                     x->get_shape(1),
                     x->get_shape(0),
                     (float)1,
@@ -178,7 +170,7 @@ template <> void row_reducesum_full(Tensor<double> *x, Tensor<double> *ones, Ten
                     ones->get_ptr(),
                     1,
                     (float)0,
-                    x->get_ptr(),
+                    out->get_ptr(),
                     1);
     }
     #endif

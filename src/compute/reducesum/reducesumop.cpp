@@ -24,25 +24,24 @@ ReduceSumOp<T>::ReduceSumOp(Operation<T> *x, int axis, bool copy, bool needs_gra
             op_type = internal::COL_REDUCE;
             /* the number of cols */
             this->output_shape = {x_output_shape.at(1)};
+            ones = new Tensor<T> ({x_output_shape.at(0)}, {ONE,{}}, this->mem_type);
         } else {
             op_type = internal::ROW_REDUCE;
             /* the number of rows */
             this->output_shape = {x_output_shape.at(0)};
+            ones = new Tensor<T> ({x_output_shape.at(1)}, {ONE,{}}, this->mem_type);
         }
-        ones = new Tensor<T> (this->output_shape, {ONE,{}}, this->mem_type);
     } else {
         op_type = internal::TENSOR_REDUCE;
         this->output_shape = x_output_shape;
         std::fprintf(stderr, "ReduceSum not available for general tensors with more than 2 axes.\n");
     }
 
-    if (!copy) {
-        std::fprintf(stderr, "Non-Copy ReduceSum not supported.\n");
-    }
-
     if (copy) {
         /* init to ones */
         this->ret = new Tensor<T> (this->get_output_shape(), {ONE, {}}, this->mem_type);
+    } else {
+        std::fprintf(stderr, "Non-Copy ReduceSum not supported.\n");
     }
 }
 

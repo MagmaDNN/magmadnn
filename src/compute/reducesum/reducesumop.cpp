@@ -68,6 +68,13 @@ Tensor<T> *ReduceSumOp<T>::eval() {
 template <typename T>
 Operation<T> *ReduceSumOp<T>::grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad) {
     /* repeat grad along specified axis */
+
+    /* output_shape = x.shape */
+    /* output_shape[axis] = 1 */
+    /* tile_scaling = x.shape // output_shape */
+    /* reshape grad to output_shape */
+    /* tile grad tile_scaling */
+
     return grad;
 }
 

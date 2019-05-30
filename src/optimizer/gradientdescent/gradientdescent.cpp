@@ -32,11 +32,15 @@ template <typename T>
 void GradientDescent<T>::update(op::Operation<T> *var, op::Operation<T> *grad) {
     Tensor<T> *var_tensor, *grad_tensor;
 
-    var_tensor = var->eval();
-    grad_tensor = grad->eval();
+    var_tensor = var->eval(true);
+    grad_tensor = grad->eval(true);
 
     internal::gradientdescent_update_internal(var_tensor, grad_tensor, this->learning_rate);
 }
+
+template class GradientDescent<int>;
+template class GradientDescent<float>;
+template class GradientDescent<double>;
 
 }   // namespace optimizer
 }   // namespace magmadnn

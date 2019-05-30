@@ -46,7 +46,8 @@ Tensor<T> *ScalarProductOp<T>::eval(bool recompute) {
     x_tensor = x->eval(recompute);
     
     if (scalar != NULL) {
-        scalar_tensor = scalar->eval();
+        scalar_tensor = scalar->eval(recompute);
+        scalar_tensor->get_memory_manager()->sync(true);
         alpha = scalar_tensor->get(0);
     }
 

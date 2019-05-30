@@ -22,3 +22,6 @@
 #include "compute/gradients.h"
 
 #include "layer/layers.h"
+
+#include "optimizer/optimizers.h"
+#include "model/models.h"

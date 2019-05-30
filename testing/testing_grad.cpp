@@ -80,9 +80,6 @@ void test_full_grad(memory_t mem, unsigned int size) {
     op::Operation<float> *x = op::var<float> ("x", {size, size}, {CONSTANT, {val}}, mem);
     op::Operation<float> *expr = op::sigmoid( op::add(one, op::negative(x)) );
 
-    //internal::print_compute_graph(expr, true);
-
-
     Tensor<float> *forward = expr->eval();
 
     sync(forward);
@@ -94,15 +91,14 @@ void test_full_grad(memory_t mem, unsigned int size) {
 
     op::Operation<float> *d_expr_wrt_x = table.get(x);
 
-    internal::print_compute_graph(d_expr_wrt_x, true);
+    internal::debugf("%s\n", d_expr_wrt_x->to_string().c_str());
 
     Tensor<float> *fin = d_expr_wrt_x->eval();
 
     sync(fin);
 
     for (unsigned int i = 0; i < fin->get_size(); i++) {
-        //printf("%.4g %.4g\n", fin->get(i), out);
-        if (!fequal(fin->get(i), out)) printf("bad vals: %.5g %.5g\n", fin->get(i), out);
+        if (!fequal(fin->get(i), out)) std::printf("bad vals: %.5g %.5g\n", fin->get(i), out);
         assert( fequal(fin->get(i), out) );
     }
 

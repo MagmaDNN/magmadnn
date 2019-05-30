@@ -34,9 +34,15 @@ AddOp<T>::AddOp(Operation<T>* a, Operation<T>* b, bool copy, bool needs_grad) :
 }
 
 template <typename T>
-Tensor<T>* AddOp<T>::eval() {
-	a_tensor = a->eval();
-	b_tensor = b->eval();
+Tensor<T>* AddOp<T>::eval(bool recompute) {
+
+	/* early exit if we can */
+	if (!recompute && this->ret != NULL) {
+		return this->ret;
+	}
+
+	a_tensor = a->eval(recompute);
+	b_tensor = b->eval(recompute);
 
 	if (!copy) this->ret = b_tensor;
 

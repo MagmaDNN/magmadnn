@@ -46,7 +46,12 @@ ReduceSumOp<T>::ReduceSumOp(Operation<T> *x, int axis, bool copy, bool needs_gra
 }
 
 template <typename T>
-Tensor<T> *ReduceSumOp<T>::eval() {
+Tensor<T> *ReduceSumOp<T>::eval(bool recompute) {
+
+    if (!recompute && this->ret != NULL) {
+        return this->ret;
+    }
+
     x_tensor = x->eval();
 
     if (!copy) { std::fprintf(stderr, "Non-Copy ReduceSum not supported.\n"); return this->ret; }

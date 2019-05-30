@@ -22,7 +22,7 @@ class MatmulOp : public Operation<T> {
 public:
 	MatmulOp(T alpha, Operation<T>* a, Operation<T>* b, T beta, Operation<T> *c, bool copy=true, bool needs_grad=true);
 
-	Tensor<T>* eval();
+	Tensor<T>* eval(bool recompute=true);
 	Operation<T> *grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad);
 	
 	std::string to_string() { return "(" + a->to_string() + " x " + b->to_string() + ")"; }

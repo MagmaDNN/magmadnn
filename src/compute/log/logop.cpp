@@ -17,8 +17,13 @@ LogOp<T>::LogOp(Operation<T> *x, bool copy, bool needs_grad)
 }
 
 template <typename T>
-Tensor<T> *LogOp<T>::eval() {
-    x_tensor = x->eval();
+Tensor<T> *LogOp<T>::eval(bool recompute) {
+
+    if (!recompute && this->ret != NULL) {
+        return this->ret;
+    }
+
+    x_tensor = x->eval(recompute);
 
     if (!copy) this->ret = x_tensor;
 

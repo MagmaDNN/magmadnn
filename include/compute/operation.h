@@ -61,9 +61,10 @@ public:
     virtual memory_t get_memory_type() const { return this->mem_type; }
 
     /** Returns the operation's evaluated tensor.
+     * @param recompute
      * @return Tensor<T>* 
      */
-    virtual Tensor<T>* eval() = 0;
+    virtual Tensor<T>* eval(bool recompute=true) = 0;
 
     /** Computes the gradient with respect to the outputs and var.
      * @param consumer the operation that consumes this that needs the gradient

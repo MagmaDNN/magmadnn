@@ -46,10 +46,15 @@ MatmulOp<T>::MatmulOp(T alpha, Operation<T>* a, Operation<T>* b, T beta, Operati
 }
 
 template <typename T>
-Tensor<T>* MatmulOp<T>::eval() {
-	a_tensor = a->eval();    // MxK
-	b_tensor = b->eval();    // KxN
-    c_tensor = c->eval();
+Tensor<T>* MatmulOp<T>::eval(bool recompute) {
+    
+    if (!recompute && this->ret != NULL) {
+        return this->ret;
+    }
+
+	a_tensor = a->eval(recompute);    // MxK
+	b_tensor = b->eval(recompute);    // KxN
+    c_tensor = c->eval(recompute);
 
     if (copy) {
         this->ret->copy_from(*c_tensor);

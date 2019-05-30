@@ -23,7 +23,7 @@ class SumOp : public Operation<T> {
 public:
     SumOp(std::vector<Operation<T> *> ops, bool copy=true);
 
-    Tensor<T> *eval();
+    Tensor<T> *eval(bool recompute=true);
     Operation<T> *grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad);
 
     std::string to_string();

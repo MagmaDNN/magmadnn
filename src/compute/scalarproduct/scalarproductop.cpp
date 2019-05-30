@@ -37,8 +37,14 @@ ScalarProductOp<T>::ScalarProductOp(Operation<T> *scalar, Operation<T> *x, bool 
 }
 
 template <typename T>
-Tensor<T> *ScalarProductOp<T>::eval() {
-    x_tensor = x->eval();
+Tensor<T> *ScalarProductOp<T>::eval(bool recompute) {
+
+    if (!recompute && this->ret != NULL) {
+        return this->ret;
+    }
+
+    x_tensor = x->eval(recompute);
+    
     if (scalar != NULL) {
         scalar_tensor = scalar->eval();
         alpha = scalar_tensor->get(0);

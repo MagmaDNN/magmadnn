@@ -34,9 +34,14 @@ ProductOp<T>::ProductOp(T alpha, Operation<T> *a, Operation<T> *b, bool copy, bo
 }
 
 template <typename T>
-Tensor<T> *ProductOp<T>::eval() {
-    a_tensor = a->eval();
-    b_tensor = b->eval();
+Tensor<T> *ProductOp<T>::eval(bool recompute) {
+
+    if (!recompute && this->ret != NULL) {
+        return this->ret;
+    }
+
+    a_tensor = a->eval(recompute);
+    b_tensor = b->eval(recompute);
     
     if (!copy) {
         if (op_type == internal::TENSOR_PROD_SCALAR) {

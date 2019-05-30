@@ -19,7 +19,7 @@ class ReluOp : public Operation<T> {
 public:
     ReluOp(Operation<T> *x, bool copy=true, bool needs_grad=true);
 
-    Tensor<T>* eval();
+    Tensor<T>* eval(bool recompute=true);
     Operation<T> *grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad);
 
     std::string to_string() { return "RELU( " + x->to_string() + " )"; }

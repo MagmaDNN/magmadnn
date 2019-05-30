@@ -26,8 +26,13 @@ SigmoidOp<T>::SigmoidOp(Operation<T> *x, bool copy, bool fast) :
 }
 
 template <typename T>
-Tensor<T>* SigmoidOp<T>::eval() {
-    x_tensor = x->eval();
+Tensor<T>* SigmoidOp<T>::eval(bool recompute) {
+
+    if (!recompute && this->ret != NULL) {
+        return this->ret;
+    }
+
+    x_tensor = x->eval(recompute);
 
     /* ret was created in constructor, now just copy evaluated x_tensor into it */
     if (copy) {

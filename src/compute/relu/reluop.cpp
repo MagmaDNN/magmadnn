@@ -23,7 +23,11 @@ ReluOp<T>::ReluOp(Operation<T> *x, bool copy, bool needs_grad)
 }
 
 template <typename T>
-Tensor<T>* ReluOp<T>::eval() {
+Tensor<T>* ReluOp<T>::eval(bool recompute) {
+    if (!recompute && this->ret != NULL) {
+        return this->ret;
+    }
+
     x_tensor = x->eval();
     
     if (!copy) this->ret = x_tensor;

@@ -24,7 +24,7 @@ public:
     Variable (std::string name, Tensor<T> *val);
     ~Variable();
 
-    Tensor<T>* eval();
+    Tensor<T>* eval(bool recompute=true);
     Operation<T> *grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad);
 
     std::string to_string() { return name; }

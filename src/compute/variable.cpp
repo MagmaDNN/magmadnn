@@ -33,7 +33,7 @@ Variable<T>::~Variable() {
 }
 
 template <typename T>
-Tensor<T>* Variable<T>::eval() {
+Tensor<T>* Variable<T>::eval(bool recompute) {
     return val;
 }
 

@@ -24,7 +24,12 @@ TanhOp<T>::TanhOp(Operation<T> *x, bool copy) : Operation<T>::Operation({x}), x(
 }
 
 template <typename T>
-Tensor<T>* TanhOp<T>::eval() {
+Tensor<T>* TanhOp<T>::eval(bool recompute) {
+
+    if (!recompute && this->ret != NULL) {
+        return this->ret;
+    }
+
     x_tensor = x->eval();
 
     if (copy) {

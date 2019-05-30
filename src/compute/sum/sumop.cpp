@@ -34,7 +34,12 @@ SumOp<T>::SumOp(std::vector<Operation<T> *> ops, bool copy) : Operation<T>::Oper
 }
 
 template <typename T>
-Tensor<T> *SumOp<T>::eval() {
+Tensor<T> *SumOp<T>::eval(bool recompute) {
+
+    if (!recompute && this->ret != NULL) {
+        return this->ret;
+    }
+
     std::vector<Tensor<T> *> vals (ops.size());
 
     for (unsigned int i = 0; i < ops.size(); i++) {

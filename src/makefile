@@ -9,7 +9,7 @@ CU_FILES = $(wildcard *.cu)
 CU_OBJ_FILES = $(patsubst %.cu,%.o,$(CU_FILES))
 endif
 
-SUB_DIRS = memory tensor compute layer
+SUB_DIRS = memory tensor compute layer optimizer
 
 all: $(SUB_DIRS) $(CU_OBJ_FILES) $(OBJ_FILES)
 

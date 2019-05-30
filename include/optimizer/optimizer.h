@@ -18,7 +18,7 @@ namespace optimizer {
 template <typename T>
 class Optimizer {
 public:
-    virtual Optimizer(op::Operation<T> *_obj_func) : _obj_func(_obj_func) {}
+    Optimizer(op::Operation<T> *_obj_func) : _obj_func(_obj_func) {}
 
 
     virtual void minimize(const std::vector<op::Operation<T> *>& wrt) = 0;
@@ -26,8 +26,9 @@ public:
     virtual std::string get_name() { return _name; }
 
 protected:
-    op::Operation<T> *_obj_func;
+    virtual void update(op::Operation<T> *var, op::Operation<T> *grad) = 0;
 
+    op::Operation<T> *_obj_func;
     std::string _name = "Generic Optimizer";
 };
 

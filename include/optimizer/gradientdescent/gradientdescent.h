@@ -11,6 +11,7 @@
 #include "optimizer/optimizer.h"
 #include "compute/gradtable.h"
 #include "compute/gradients.h"
+#include "optimizer/gradientdescent/gradientdescent_internal.h"
 
 namespace magmadnn {
 namespace optimizer {
@@ -18,13 +19,15 @@ namespace optimizer {
 template <typename T>
 class GradientDescent : public Optimizer<T> {
 public:
-    virtual GradientDescent(op::Operation<T> *_obj_func, T learning_rate);
+    GradientDescent(op::Operation<T> *_obj_func, T learning_rate);
 
     virtual void minimize(const std::vector<op::Operation<T> *>& wrt);
 
 protected:
+    virtual void update(op::Operation<T> *var, op::Operation<T> *grad);
+
     T learning_rate;
-    GradTable<T> table;
+    op::GradTable<T> table;
 };
 
 }   // namespace optimizer

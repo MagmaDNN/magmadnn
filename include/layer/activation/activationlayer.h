@@ -27,6 +27,8 @@ public:
     ActivationLayer(op::Operation<T> *input, activation_t activation_func);
     ~ActivationLayer();
 
+    virtual std::vector<op::Operation<T> *> get_weights();
+
 protected:
     void init();
 

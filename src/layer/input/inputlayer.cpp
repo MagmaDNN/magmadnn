@@ -17,6 +17,11 @@ InputLayer<T>::InputLayer(op::Operation<T> *input) : Layer<T>::Layer(input->get_
 }
 
 template <typename T>
+std::vector<op::Operation<T> *> InputLayer<T>::get_weights() {
+    return {};
+}
+
+template <typename T>
 void InputLayer<T>::init() {
     this->output = this->input;
 

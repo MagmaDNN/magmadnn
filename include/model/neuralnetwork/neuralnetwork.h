@@ -23,7 +23,6 @@ struct nn_params_t {
 template <typename T>
 class NeuralNetwork : public Model<T> {
 public:
-    NeuralNetwork(std::vector<layer::Layer<T> *> layers, optimizer::loss_t loss_func, optimizer::Optimizer<T> *optim, nn_params_t params);
     NeuralNetwork(std::vector<layer::Layer<T> *> layers, optimizer::loss_t loss_func, optimizer::optimizer_t optimizer, nn_params_t params);
 
     virtual magmadnn_error_t fit(Tensor<T> *x, Tensor<T> *y, metric_t& metric_out, bool verbose=false);
@@ -33,11 +32,11 @@ public:
 protected:
     typename std::vector<layer::Layer<T> *> layers;
     optimizer::loss_t loss_func;
-    optimizer::Optimizer<T> *optimizer;
+    optimizer::optimizer_t optimizer;
     nn_params_t model_params;
 
     T default_learning_rate = (T) 0.05;
-
+    std::vector<op::Operation<T> *> _vars;
     op::Operation<T> *_obj;
 };
 

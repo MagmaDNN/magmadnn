@@ -26,6 +26,11 @@ ActivationLayer<T>::~ActivationLayer() {
 }
 
 template <typename T>
+std::vector<op::Operation<T> *> ActivationLayer<T>::get_weights() {
+    return {};
+}
+
+template <typename T>
 void ActivationLayer<T>::init() {
     this->name = "Activation";
     

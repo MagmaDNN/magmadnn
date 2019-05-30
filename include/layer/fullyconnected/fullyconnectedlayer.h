@@ -21,6 +21,8 @@ public:
     FullyConnectedLayer(op::Operation<T> *input, unsigned int hidden_units, bool use_bias=true);
     ~FullyConnectedLayer();
 
+    virtual std::vector<op::Operation<T> *> get_weights();
+
 protected:
     void init();
 

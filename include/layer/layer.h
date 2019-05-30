@@ -18,6 +18,8 @@ template <typename T>
 class Layer {
 public:
 	
+	virtual std::vector<op::Operation<T> *> get_weights() = 0;
+
 	virtual op::Operation<T>* out() {
 		return output;
 	}

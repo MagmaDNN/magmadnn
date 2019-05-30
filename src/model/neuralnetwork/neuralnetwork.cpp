@@ -12,40 +12,59 @@ namespace magmadnn {
 namespace model {
 
 template <typename T>
-NeuralNetwork<T>::NeuralNetwork(std::vector<layer::Layer<T> *> layers, optimizer::loss_t loss_func, optimizer::Optimizer<T> *optim, nn_params_t params)
-: Model<T>::Model(), layers(layers), loss_func(loss_func), optimizer(optim), model_params(params) {
-
-    this->_name = "NeuralNetworkModel";
-}
-
-template <typename T>
 NeuralNetwork<T>::NeuralNetwork(std::vector<layer::Layer<T> *> layers, optimizer::loss_t loss_func, optimizer::optimizer_t optimizer, nn_params_t params)
-: Model<T>::Model(), layers(layers), loss_func(loss_func), model_params(params) {
+: Model<T>::Model(), layers(layers), loss_func(loss_func), optimizer(optimizer), model_params(params) {
     this->_name = "NeuralNetworkModel";
 
-    switch (loss_func) {
-        case optimizer::CROSS_ENTROPY:
-            /* _obj = op::crossentropy(); break; */
-            break;
-        case optimizer::MSE:
-            /* _obj = op::mse(); break; */
-            break;
-        default:
-            std::fprintf(stderr, "Unknown loss func.\n");
+    typename std::vector<layer::Layer<T> *>::iterator vit;
+    typename std::vector<op::Operation<T> *>::iterator it;
+    std::vector<op::Operation<T> *> tmp_vars;
+
+    for (vit = layers.begin(); vit != layers.end(); vit++) {
+        tmp_vars = (*vit)->get_weights();
+        this->_vars.insert(this->_vars.end(), tmp_vars.begin(), tmp_vars.end());
     }
 
-    switch (optimizer) {
-        case optimizer::SGD:
-            this->optimizer = new optimizer::GradientDescent<T> (_obj, this->default_learning_rate); break;
-        case optimizer::ADAM:
-            std::fprintf(stderr, "ADAM optimizer not yet supported.\n"); break;
-        default:
-            std::fprintf(stderr, "Unknown optimizer type.\n");
-    }
 }
 
 template <typename T>
 magmadnn_error_t NeuralNetwork<T>::fit(Tensor<T> *x, Tensor<T> *y, metric_t& metric_out, bool verbose) {
+    /* init */
+    optimizer::Optimizer<T> *optim;
+    op::Operation<T> *network_output;
+    op::Operation<T> *ground_truth;
+    Tensor<T> *input_tensor;
+
+    /* get the network output from the last layer */
+    network_output = this->layers.back()->out();
+
+    /* ground truth is given to use by y */
+    ground_truth = op::var("y", y);
+
+    /* input tensor is input layer eval */
+    /* TODO : this is rather bootleg~ish. there should be an easier way to do this. */
+    input_tensor = this->layers.front()->out()->eval();
+
+    switch (this->loss_func) {
+        case optimizer::CROSS_ENTROPY:
+            this->_obj = op::crossentropy(network_output, ground_truth); break;
+        case optimizer::MSE:
+            std::fprintf(stderr, "MSE not yet implemented.\n"); break;
+        default:
+            std::fprintf(stderr, "Unknown loss function.\n");
+    }
+
+    switch (this->optimizer) {
+        case optimizer::SGD:
+            optim = new optimizer::GradientDescent<T> (this->_obj, this->default_learning_rate); break;
+        case optimizer::ADAM:
+            std::fprintf(stderr, "Adam not yet implemented.\n");
+            return (magmadnn_error_t) 2;
+        default:
+            std::fprintf(stderr, "Unknown optimizer!\n");
+            return (magmadnn_error_t) 2;
+    }
+
     /* Neural Network training Routine.
         1. Copy x tensor into input layer
         2. Forward propagate layer
@@ -62,13 +81,13 @@ magmadnn_error_t NeuralNetwork<T>::fit(Tensor<T> *x, Tensor<T> *y, metric_t& met
     /* main training routine */
     for (unsigned int i = 0; i < n_iter; i++) {
         /* copy x into input layer */
-
+        err = input_tensor->copy_from(*x);
 
         /* forward propagate */
-
+        
 
         /* minimize using gradients */
-
+        optim->minimize(this->_vars);
     }
 
     /* update metrics */

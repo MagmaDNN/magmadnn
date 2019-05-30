@@ -21,6 +21,8 @@ public:
     OutputLayer(op::Operation<T> *input);
     ~OutputLayer();
 
+    virtual std::vector<op::Operation<T> *> get_weights();
+
 protected:
     void init();
 

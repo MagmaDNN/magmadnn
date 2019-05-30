@@ -19,6 +19,8 @@ class InputLayer : public Layer<T> {
 public:
     InputLayer(op::Operation<T> *input);
 
+    virtual std::vector<op::Operation<T> *> get_weights();
+
 protected:
     void init();
 

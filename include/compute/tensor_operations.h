@@ -16,3 +16,5 @@
 #include "negative/negativeop.h"
 
 #include "reducesum/reducesumop.h"
+
+#include "crossentropy/crossentropyop.h"

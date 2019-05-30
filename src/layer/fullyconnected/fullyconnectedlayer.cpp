@@ -25,6 +25,11 @@ FullyConnectedLayer<T>::~FullyConnectedLayer() {
 }
 
 template <typename T>
+std::vector<op::Operation<T> *> FullyConnectedLayer<T>::get_weights() {
+    return {this->weights, this->bias};
+}
+
+template <typename T>
 void FullyConnectedLayer<T>::init() {
     this->name = "FullyConnected";
 

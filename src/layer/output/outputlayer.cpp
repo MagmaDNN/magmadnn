@@ -19,6 +19,11 @@ OutputLayer<T>::OutputLayer(op::Operation<T> *input)
 }
 
 template <typename T>
+std::vector<op::Operation<T> *> OutputLayer<T>::get_weights() {
+    return {};
+}
+
+template <typename T>
 OutputLayer<T>::~OutputLayer() {
 
 }

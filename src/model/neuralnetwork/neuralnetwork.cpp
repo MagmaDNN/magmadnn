@@ -77,17 +77,20 @@ magmadnn_error_t NeuralNetwork<T>::fit(Tensor<T> *x, Tensor<T> *y, metric_t& met
     double loss = 0.0;
     double training_time = 0.0;
     unsigned int n_iter = this->model_params.n_epochs;
+    Tensor<T> *loss_tensor;
 
     /* main training routine */
     for (unsigned int i = 0; i < n_iter; i++) {
         /* copy x into input layer */
         err = input_tensor->copy_from(*x);
 
-        /* forward propagate */
-        
-
         /* minimize using gradients */
         optim->minimize(this->_vars);
+
+        /* get the loss from the loss func (_obj) */
+        loss_tensor = this->_obj->eval(false);
+        loss_tensor->get_memory_manager()->sync();
+        loss = loss_tensor->get(0);
     }
 
     /* update metrics */

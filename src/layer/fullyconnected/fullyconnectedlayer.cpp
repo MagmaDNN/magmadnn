@@ -26,7 +26,7 @@ FullyConnectedLayer<T>::~FullyConnectedLayer() {
 
 template <typename T>
 std::vector<op::Operation<T> *> FullyConnectedLayer<T>::get_weights() {
-    return {this->weights, this->bias};
+    return {this->weights};
 }
 
 template <typename T>

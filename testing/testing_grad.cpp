@@ -46,7 +46,6 @@ void test_simple_grad(memory_t mem, unsigned int size) {
     assert( err == 0 );
 
     op::Operation<float> *affine_wrt_x = table.get(x);
-    internal::debugf("affine_wrt_x = %s .\n", affine_wrt_x->to_string().c_str());
     Tensor<float> *res_x = affine_wrt_x->eval();
 
     sync(res_x);
@@ -56,7 +55,6 @@ void test_simple_grad(memory_t mem, unsigned int size) {
     }
 
     op::Operation<float> *affine_wrt_b = table.get(b);
-    internal::debugf("affine_wrt_b = %s .\n", affine_wrt_b->to_string().c_str());
     Tensor<float> *res_b = affine_wrt_b->eval();
 
     sync(res_b);
@@ -107,6 +105,16 @@ void test_full_grad(memory_t mem, unsigned int size) {
 
 void test_optimize(memory_t mem, unsigned int size) {
     printf("Testing optimization on %s...  ", get_memory_type_name(mem));
+
+    unsigned int steps = 10;
+
+    op::Operation<float> *x = op::var<float> ("x", {10}, {CONSTANT, {9.0f}}, mem);
+    op::Operation<float> *c = op::var<float> ("c", {10}, {CONSTANT, {-5.0f}}, mem);
+    op::Operation<float> *expr = op::add(op::product(x, x), c);
+
+    optimizer::GradientDescent<float> optim (expr, 0.05f);
+
+    
 
     show_success();
 }

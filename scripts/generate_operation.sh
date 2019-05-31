@@ -36,15 +36,15 @@ fi
 # get the proper 'in-place' flag for sed based on OS type
 SED_INPLACE_FLAG=""
 if [[ "$OSTYPE" == "linux-gnu " ]]; then
-    SED_INPLACE_FLAG="-i ''"
-elif [[ "$OSTYPE" == "darwin"* ]]; then
     SED_INPLACE_FLAG="-i"
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+    SED_INPLACE_FLAG="-i ''"
 else
     SED_INPLACE_FLAG="-i"
 fi
 
 
-echo -e "===== CREATING OPERATION \"${OPERATION_NAME_LOWER}\" =====\n"
+printf "===== CREATING OPERATION \"%s\" =====\n" "${OPERATION_NAME_LOWER}"
 
 
 # make the operation folder and copy templates
@@ -81,7 +81,7 @@ done
 
 # include header in compute/tensor_operations.h
 echo "Including headers in library ..."
-echo -e "\n#include \"${OPERATION_NAME_LOWER}/${OPERATION_NAME_LOWER}op.h\"" >> "$PWD/include/compute/tensor_operations.h"
+printf "\n#include \"%s/%sop.h\"" "${OPERATION_NAME_LOWER}" "${OPERATION_NAME_LOWER}" >> "$PWD/include/compute/tensor_operations.h"
 
 # finished
-echo -e "\nDONE"
+printf "\nDONE"

@@ -69,10 +69,11 @@ Tensor<T>* MatmulOp<T>::eval(bool recompute) {
 
 template <typename T>
 Operation<T> *MatmulOp<T>::grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad) {
+    /* wrt a: dot(grad, B^T)  |  wrt b: dot(a^T, grad) */
     if (var == a) {
-        return dot(grad, b, false, false);
+        return dot(grad, transpose(b, true, false), true, false);
     } else {
-        return dot(a, grad, false, false);
+        return dot(transpose(a, true, false), grad, true, false);
     }
 }
 template class MatmulOp<int>;

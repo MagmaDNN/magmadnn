@@ -11,6 +11,7 @@
 #include "compute/operation.h"
 #include "compute/variable.h"
 #include "compute/dot/dotop.h"
+#include "compute/transpose/transposeop.h"
 #include "tensor/tensor.h"
 #include "gemm_internal.h"
 

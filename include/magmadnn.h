@@ -16,6 +16,7 @@
 
 #include "memory/memorymanager.h"
 #include "tensor/tensor.h"
+#include "tensor/tensor_io.h"
 
 #include "compute/variable.h"
 #include "compute/tensor_operations.h"

@@ -18,3 +18,5 @@
 #include "reducesum/reducesumop.h"
 
 #include "crossentropy/crossentropyop.h"
+
+#include "transpose/transposeop.h"

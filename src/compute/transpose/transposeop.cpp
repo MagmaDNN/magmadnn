@@ -14,23 +14,20 @@ TransposeOp<T>::TransposeOp(Operation<T> *x, bool copy, bool needs_grad)
     this->mem_type = x->get_memory_type();
 
     if (copy) {
-        this->ret = new Tensor<T> (this->output_shape, {NONE, {}}, this->mem_type);
+        this->output_tensor = new Tensor<T> (this->output_shape, {NONE, {}}, this->mem_type);
     } else {
         std::fprintf(stderr, "Cannot transpose into same tensor.\n");
     }
 }
 
 template <typename T>
-Tensor<T> *TransposeOp<T>::eval(bool recompute) {
-    if (!recompute && this->ret != NULL) {
-        return this->ret;
-    }
+Tensor<T> *TransposeOp<T>::_eval(bool recompute) {
 
     x_tensor = x->eval(recompute);
 
-    internal::transpose_full(x_tensor, this->ret);
+    internal::transpose_full(x_tensor, this->output_tensor);
 
-    return this->ret;
+    return this->output_tensor;
 }
 
 template <typename T>

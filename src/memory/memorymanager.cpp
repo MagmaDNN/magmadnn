@@ -41,7 +41,7 @@ void MemoryManager<T>::init_host() {
 #if defined(_HAS_CUDA_)
 template <typename T>
 void MemoryManager<T>::init_device() {
-    cudaMalloc((void**) &device_ptr, size * sizeof(T));
+    gpuErrchk( cudaMalloc((void**) &device_ptr, size * sizeof(T)) );
 }
 
 template <typename T>

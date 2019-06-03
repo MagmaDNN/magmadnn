@@ -41,7 +41,7 @@ The eval method is simply responsible for the evaluation of the operation. It sh
 
 ```c++
 template <typename T>
-Tensor<T>* MatmulOp<T>::eval() {
+Tensor<T>* MatmulOp<T>::_eval() {
     /* evaluate the child nodes */
     a_tensor = a->eval();    // MxK
     b_tensor = b->eval();    // KxN

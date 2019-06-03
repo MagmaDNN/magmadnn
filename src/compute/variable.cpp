@@ -33,14 +33,17 @@ Variable<T>::~Variable() {
 }
 
 template <typename T>
-Tensor<T>* Variable<T>::eval(bool recompute) {
+Tensor<T>* Variable<T>::_eval(bool recompute) {
     return val;
 }
 
 template <typename T>
 Operation<T> *Variable<T>::grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad) {
     /* TODO : if (var == this) return 1; */
-    return NULL;
+
+    if (var == this) return (Operation<T> *) scalar("1", 1, this->mem_type);
+
+    return grad;
 }
 // compile for int, float, double
 template class Variable<int>;

@@ -19,7 +19,7 @@ ScalarProductOp<T>::ScalarProductOp(T alpha, Operation<T> *x, bool copy, bool ne
     this->output_shape = x->get_output_shape();
 
     if (copy) {
-        this->ret = new Tensor<T> (x->get_output_shape(), {NONE, {}}, x->get_memory_type());
+        this->output_tensor = new Tensor<T> (x->get_output_shape(), {NONE, {}}, x->get_memory_type());
     }
 }
 
@@ -32,16 +32,12 @@ ScalarProductOp<T>::ScalarProductOp(Operation<T> *scalar, Operation<T> *x, bool 
     this->output_shape = x->get_output_shape();
 
     if (copy) {
-        this->ret = new Tensor<T> (x->get_output_shape(), {NONE, {}}, x->get_memory_type());
+        this->output_tensor = new Tensor<T> (x->get_output_shape(), {NONE, {}}, x->get_memory_type());
     }
 }
 
 template <typename T>
-Tensor<T> *ScalarProductOp<T>::eval(bool recompute) {
-
-    if (!recompute && this->ret != NULL) {
-        return this->ret;
-    }
+Tensor<T> *ScalarProductOp<T>::_eval(bool recompute) {
 
     x_tensor = x->eval(recompute);
     
@@ -51,11 +47,11 @@ Tensor<T> *ScalarProductOp<T>::eval(bool recompute) {
         alpha = scalar_tensor->get(0);
     }
 
-    if (!copy) this->ret = x_tensor;
+    if (!copy) this->output_tensor = x_tensor;
 
-    internal::scalarproduct_full(alpha, x_tensor, this->ret);
+    internal::scalarproduct_full(alpha, x_tensor, this->output_tensor);
 
-    return this->ret;
+    return this->output_tensor;
 }
 
 template <typename T>

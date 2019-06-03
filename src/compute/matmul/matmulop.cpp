@@ -41,30 +41,26 @@ MatmulOp<T>::MatmulOp(T alpha, Operation<T>* a, Operation<T>* b, T beta, Operati
 
     /* avoid allocating memory in eval */
     if (copy) {
-        this->ret = new Tensor<T> (this->output_shape, this->mem_type);
+        this->output_tensor = new Tensor<T> (this->output_shape, this->mem_type);
     }
 }
 
 template <typename T>
-Tensor<T>* MatmulOp<T>::eval(bool recompute) {
-    
-    if (!recompute && this->ret != NULL) {
-        return this->ret;
-    }
+Tensor<T>* MatmulOp<T>::_eval(bool recompute) {
 
 	a_tensor = a->eval(recompute);    // MxK
 	b_tensor = b->eval(recompute);    // KxN
     c_tensor = c->eval(recompute);
 
     if (copy) {
-        this->ret->copy_from(*c_tensor);
+        this->output_tensor->copy_from(*c_tensor);
     } else {
-        this->ret = c_tensor;
+        this->output_tensor = c_tensor;
     }
 
-    internal::gemm_full(alpha, a_tensor, b_tensor, beta, this->ret);
+    internal::gemm_full(alpha, a_tensor, b_tensor, beta, this->output_tensor);
 
-    return this->ret;
+    return this->output_tensor;
 } 
 
 template <typename T>

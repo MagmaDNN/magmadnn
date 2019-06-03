@@ -29,42 +29,38 @@ ProductOp<T>::ProductOp(T alpha, Operation<T> *a, Operation<T> *b, bool copy, bo
     this->mem_type = a->get_memory_type();
 
     if (copy) {
-        this->ret = new Tensor<T> (this->output_shape, {ONE, {}}, this->mem_type);
+        this->output_tensor = new Tensor<T> (this->output_shape, {ONE, {}}, this->mem_type);
     }
 }
 
 template <typename T>
-Tensor<T> *ProductOp<T>::eval(bool recompute) {
-
-    if (!recompute && this->ret != NULL) {
-        return this->ret;
-    }
+Tensor<T> *ProductOp<T>::_eval(bool recompute) {
 
     a_tensor = a->eval(recompute);
     b_tensor = b->eval(recompute);
     
     if (!copy) {
         if (op_type == internal::TENSOR_PROD_SCALAR) {
-            this->ret = a_tensor;
+            this->output_tensor = a_tensor;
         } else {
-            this->ret = b_tensor;
+            this->output_tensor = b_tensor;
         }
     }
 
     switch (op_type) {
         case internal::SCALAR_PROD_TENSOR:
             a_tensor->get_memory_manager()->sync(true);
-            internal::scalar_tensor_product_full(alpha * a_tensor->get(0), b_tensor, this->ret); break;
+            internal::scalar_tensor_product_full(alpha * a_tensor->get(0), b_tensor, this->output_tensor); break;
         case internal::TENSOR_PROD_SCALAR:
             b_tensor->get_memory_manager()->sync(true);
-            internal::scalar_tensor_product_full(alpha * b_tensor->get(0), a_tensor, this->ret); break;
+            internal::scalar_tensor_product_full(alpha * b_tensor->get(0), a_tensor, this->output_tensor); break;
         case internal::TENSOR_PROD_TENSOR:
-            internal::product_full(alpha, a_tensor, b_tensor, this->ret); break;
+            internal::product_full(alpha, a_tensor, b_tensor, this->output_tensor); break;
         default:
             internal::debugf("INVALID PRODUCT\n");
     }
 
-    return this->ret;
+    return this->output_tensor;
 }
 
 template <typename T>

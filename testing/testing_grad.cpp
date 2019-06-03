@@ -51,6 +51,7 @@ void test_simple_grad(memory_t mem, unsigned int size) {
     sync(res_x);
 
     for (unsigned int i = 0; i < res_x->get_size(); i++) {
+        if (!fequal(res_x->get(i), 5.0f)) printf("bad vals: %.5g %.5g\n", res_x->get(i), 5.0f);
         assert( fequal(res_x->get(i), 5.0) );
     }
 

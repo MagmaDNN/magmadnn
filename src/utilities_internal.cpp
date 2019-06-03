@@ -35,6 +35,41 @@ void print_vector(const std::vector<unsigned int>& vec, bool debug, char begin, 
 }
 
 template <typename T>
+void print_tensor(const Tensor<T>& t, bool print_flat, bool debug, const char *begin, const char *end, const char *delim) {
+    int (*print)(const char*,...) = (debug) ? debugf : std::printf;
+
+    if (print_flat) {
+        unsigned int size = t.get_size();
+
+        print("%s", begin);
+        for (unsigned int i = 0; i < size; i++) {
+            print("%.5g%s", t.get(i), delim);
+            if (i != size) print(" ");
+        }
+        print("%s", end);
+    } else {
+        const std::vector<unsigned int>& axes = t.get_shape();
+        std::vector<unsigned int>::const_iterator vit;
+        unsigned int axis_size;
+
+        /* 4 x 2 x 3 */
+        /*  {
+                {
+                    {1, 2, 3},
+                }
+            }
+        */
+        print("%s", begin);
+        for (vit = axes.begin(); vit != axes.end(); vit++) {
+            axis_size = *vit;
+
+            print("%llu%s", axis_size, delim);
+        }
+        print("%s", end);
+    }
+}
+
+template <typename T>
 void print_compute_graph(op::Operation<T> *node, bool debug) {
     std::set<op::Operation<T> *> visited;
     std::deque<op::Operation<T> *> to_visit;

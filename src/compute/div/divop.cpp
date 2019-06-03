@@ -33,36 +33,32 @@ DivOp<T>::DivOp(Operation<T> *a, Operation<T> *b, bool copy, bool needs_grad)
     }
 
     if (copy) {
-        this->ret = new Tensor<T> (this->output_shape, {NONE,{}}, this->mem_type);
+        this->output_tensor = new Tensor<T> (this->output_shape, {NONE,{}}, this->mem_type);
     }
 }
 
 template <typename T>
-Tensor<T> *DivOp<T>::eval(bool recompute) {
-
-    if (!recompute && this->ret != NULL) {
-        return this->ret;
-    }
+Tensor<T> *DivOp<T>::_eval(bool recompute) {
 
     a_tensor = a->eval(recompute);
     b_tensor = b->eval(recompute);
 
-    if (!copy) this->ret = b_tensor;
+    if (!copy) this->output_tensor = b_tensor;
 
     switch (op_type) {
         case internal::TENSOR_DIV_TENSOR:
-            internal::tensor_div_tensor_full(a_tensor, b_tensor, this->ret); break;
+            internal::tensor_div_tensor_full(a_tensor, b_tensor, this->output_tensor); break;
         case internal::SCALAR_DIV_TENSOR:
             a_tensor->get_memory_manager()->sync(true);
-            internal::scalar_div_tensor_full(a_tensor->get(0), b_tensor, this->ret); break;
+            internal::scalar_div_tensor_full(a_tensor->get(0), b_tensor, this->output_tensor); break;
         case internal::TENSOR_DIV_SCALAR:
             b_tensor->get_memory_manager()->sync(true);
-            internal::tensor_div_scalar_full(a_tensor, b_tensor->get(0), this->ret); break;
+            internal::tensor_div_scalar_full(a_tensor, b_tensor->get(0), this->output_tensor); break;
         default:
             std::fprintf(stderr, "This type of div is not yet supported.\n");
     }
 
-    return this->ret;
+    return this->output_tensor;
 }
 
 template <typename T>

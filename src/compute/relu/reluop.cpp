@@ -18,23 +18,20 @@ ReluOp<T>::ReluOp(Operation<T> *x, bool copy, bool needs_grad)
     this->mem_type = x->get_memory_type();
 
     if (copy) {
-        this->ret = new Tensor<T> (this->output_shape, this->mem_type);
+        this->output_tensor = new Tensor<T> (this->output_shape, this->mem_type);
     }
 }
 
 template <typename T>
-Tensor<T>* ReluOp<T>::eval(bool recompute) {
-    if (!recompute && this->ret != NULL) {
-        return this->ret;
-    }
+Tensor<T>* ReluOp<T>::_eval(bool recompute) {
 
     x_tensor = x->eval();
     
-    if (!copy) this->ret = x_tensor;
+    if (!copy) this->output_tensor = x_tensor;
 
-    internal::relu_full(x_tensor, this->ret);
+    internal::relu_full(x_tensor, this->output_tensor);
 
-    return this->ret;
+    return this->output_tensor;
 }
 
 template <typename T>

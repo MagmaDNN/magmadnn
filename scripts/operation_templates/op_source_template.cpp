@@ -12,7 +12,7 @@ template <typename T>
 }
 
 template <typename T>
-Tensor<T> *<#OPERATION_NAME#>Op<T>::eval() {
+Tensor<T> *<#OPERATION_NAME#>Op<T>::_eval() {
     /* eval code in here ... */
     return ret;
 }

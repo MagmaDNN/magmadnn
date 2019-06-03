@@ -22,12 +22,13 @@ class TanhOp : public Operation<T> {
 public:
     TanhOp(Operation<T> *x, bool copy=true);
 
-    Tensor<T>* eval(bool recompute=true);
     Operation<T> *grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad);
 
     std::string to_string() { return "TANH( " + x->to_string() + " )"; }
 
 protected:
+	Tensor<T> *_eval(bool recompute=true);
+    
     Operation<T> *x;
     Tensor<T> *x_tensor;
     

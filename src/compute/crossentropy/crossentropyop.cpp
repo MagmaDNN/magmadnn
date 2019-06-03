@@ -21,7 +21,7 @@ CrossEntropyOp<T>::CrossEntropyOp(Operation<T> *x, Operation<T> *y, bool copy, b
     this->mem_type = x->get_memory_type();
 
     if (copy) {
-        this->ret = new Tensor<T> (this->output_shape, {NONE, {}}, this->mem_type);
+        this->output_tensor = new Tensor<T> (this->output_shape, {NONE, {}}, this->mem_type);
     } else {
         std::fprintf(stderr, "no copy cross entropy not supported yet.\n");
     }
@@ -35,18 +35,14 @@ CrossEntropyOp<T>::~CrossEntropyOp() {
 }
 
 template <typename T>
-Tensor<T> *CrossEntropyOp<T>::eval(bool recompute) {
-    
-    if (!recompute && this->ret != NULL) {
-        return this->ret;
-    }
+Tensor<T> *CrossEntropyOp<T>::_eval(bool recompute) {
 
     x_tensor = x->eval(recompute);
     y_tensor = y->eval(recompute);
 
-    internal::crossentropy_full(x_tensor, y_tensor, this->softmax, this->ret);
+    internal::crossentropy_full(x_tensor, y_tensor, this->softmax, this->output_tensor);
 
-    return this->ret;
+    return this->output_tensor;
 }
 
 template <typename T>

@@ -27,18 +27,14 @@ SumOp<T>::SumOp(std::vector<Operation<T> *> ops, bool copy) : Operation<T>::Oper
     this->mem_type = ops.at(0)->get_memory_type();
 
     if (copy) {
-        this->ret = new Tensor<T> (ops.at(0)->get_output_shape(), {ZERO, {}}, ops.at(0)->get_memory_type());
+        this->output_tensor = new Tensor<T> (ops.at(0)->get_output_shape(), {ZERO, {}}, ops.at(0)->get_memory_type());
     } else {
         std::fprintf(stderr, "no_copy sum not supported yet.\n");
     }
 }
 
 template <typename T>
-Tensor<T> *SumOp<T>::eval(bool recompute) {
-
-    if (!recompute && this->ret != NULL) {
-        return this->ret;
-    }
+Tensor<T> *SumOp<T>::_eval(bool recompute) {
 
     std::vector<Tensor<T> *> vals (ops.size());
 
@@ -47,10 +43,10 @@ Tensor<T> *SumOp<T>::eval(bool recompute) {
     }
 
     /* TODO sum into first OR last element for non-copy */
-    assert( this->ret != NULL );
-    internal::sum_full(vals, *this->ret);
+    assert( this->output_tensor != NULL );
+    internal::sum_full(vals, *this->output_tensor);
     
-    return this->ret;
+    return this->output_tensor;
 }
 
 template <typename T>

@@ -40,6 +40,9 @@ int debugf(const char *fmt, ...);
 void print_vector(const std::vector<unsigned int>& vec, bool debug=true, char begin='{', char end='}', char delim=',');
 
 template <typename T>
+void print_tensor(const Tensor<T>& t, bool print_flat=false, bool debug=true, const char *begin="{", const char *end="}\n", const char *delim=", ");
+
+template <typename T>
 void print_compute_graph(op::Operation<T> *node, bool debug=true);
 
 }   // namespace internal

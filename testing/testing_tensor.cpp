@@ -41,10 +41,23 @@ void test_indexing(memory_t mem, bool verbose) {
             for (int k = 0; k < (int)z_size; k++)
                 t->set({i,j,k}, i*j*k);
 
-    for (int i = 0; i < (int)x_size; i++)
-        for (int j = 0; j < (int)y_size; j++)
-            for (int k = 0; k < (int)z_size; k++)
+    for (int i = 0; i < (int)x_size; i++) {
+        for (int j = 0; j < (int)y_size; j++) {
+            for (int k = 0; k < (int)z_size; k++) {
 				assert( t->get({i,j,k}) == i*j*k );
+			}
+		}
+	}
+
+	/* try the [] indexing */
+	for (unsigned int i = 0; i < x_size; i++) {
+		for (unsigned int j = 0; j < y_size; j++) {
+			for (unsigned int k = 0; k < z_size; k++) {
+				float val = (*t)[{i,j,k}];
+				assert( val == i*j*k );
+			}
+		}
+	}
     
     delete t;
 

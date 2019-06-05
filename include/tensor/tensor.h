@@ -95,16 +95,60 @@ public:
 	T get(const std::vector<int>& idx) const;
 
 	/** gets the value at the given index.
+	 * @param idx indices to retrieve value from
+	 * @return T the value at idx
+	 */
+	T get(const std::vector<unsigned int>& idx) const;
+
+	/** gets the value at the given index.
+	 * @param idx indices to retrieve value from
+	 * @return T the value at idx
+	 */
+	T get(const std::initializer_list<int>& idx) const;
+
+	/** gets the value at the given index.
+	 * @param idx indices to retrieve value from
+	 * @return T the value at idx
+	 */
+	T get(const std::initializer_list<unsigned int>& idx) const;
+
+	/** gets the value at the given index.
 	 * @param idx indices to retreive value from
 	 * @return the value at idx
 	 */
 	T get(unsigned int flattened_idx) const;
+
+	/** Gets the value at the given index.
+	 * @param idx 
+	 * @return const T 
+	 */
+	const T operator[](unsigned int idx) const;
+
+	const T operator[](const std::initializer_list<unsigned int>& idx);
 
 	/** sets the value at the given index.
 	 * @param idx indices to set value at
 	 * @param val value to write into idx
 	 */
 	void set(const std::vector<int>& idx, T val);
+
+	/** sets the value at the given index.
+	 * @param idx indices to set value at
+	 * @param val value to write into idx
+	 */
+	void set(const std::vector<unsigned int>& idx, T val);
+
+	/** sets the value at the given index.
+	 * @param idx indices to set value at
+	 * @param val value to write into idx
+	 */
+	void set(const std::initializer_list<int>& idx, T val);
+
+	/** sets the value at the given index.
+	 * @param idx indices to set value at
+	 * @param val value to write into idx
+	 */
+	void set(const std::initializer_list<unsigned int>& idx, T val);
 
 	/** sets the value at the given index.
 	 * @param idx indices to set value at
@@ -151,7 +195,7 @@ public:
 
 private:
 	void init(std::vector<unsigned int>& shape, tensor_filler_t<T> filler, memory_t mem_type, device_t device_id);
-	unsigned int get_flattened_index(const std::vector<int>& idx) const;
+	unsigned int get_flattened_index(const std::vector<unsigned int>& idx) const;
 
 	MemoryManager<T> *mem_manager;	/* allocated by init */
 	

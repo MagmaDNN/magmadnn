@@ -85,7 +85,24 @@ magmadnn_error_t Tensor<T>::copy_from(const Tensor<T>& src) {
 
 
 template <typename T>
-T Tensor<T>::get(const std::vector<int>& idx) const { 
+T Tensor<T>::get(const std::vector<int>& idx) const {
+    std::vector<unsigned int> ui_vec (idx.begin(), idx.end());
+    return mem_manager->get( get_flattened_index(ui_vec) );
+}
+
+template <typename T>
+T Tensor<T>::get(const std::vector<unsigned int>& idx) const {
+    return mem_manager->get( get_flattened_index(idx) );
+}
+
+template <typename T>
+T Tensor<T>::get(const std::initializer_list<int>& idx) const {
+    std::vector<unsigned int> ui_vec (idx.begin(), idx.end());
+    return mem_manager->get( get_flattened_index(ui_vec) );
+}
+
+template <typename T>
+T Tensor<T>::get(const std::initializer_list<unsigned int>& idx) const {
     return mem_manager->get( get_flattened_index(idx) );
 }
 
@@ -95,7 +112,34 @@ T Tensor<T>::get(unsigned int flattened_idx) const {
 }
 
 template <typename T>
-void Tensor<T>::set(const std::vector<int>& idx, T val) { 
+const T Tensor<T>::operator[](unsigned int idx) const {
+    return mem_manager->get( idx );
+}
+
+template <typename T>
+const T Tensor<T>::operator[](const std::initializer_list<unsigned int>& idx) {
+    return mem_manager->get( get_flattened_index(idx) );
+}
+
+template <typename T>
+void Tensor<T>::set(const std::vector<int>& idx, T val) {
+    std::vector<unsigned int> ui_vec (idx.begin(), idx.end()); 
+    mem_manager->set( get_flattened_index(ui_vec), val );
+}
+
+template <typename T>
+void Tensor<T>::set(const std::vector<unsigned int>& idx, T val) { 
+    mem_manager->set( get_flattened_index(idx), val );
+}
+
+template <typename T>
+void Tensor<T>::set(const std::initializer_list<int>& idx, T val) {
+    std::vector<unsigned int> ui_vec (idx.begin(), idx.end()); 
+    mem_manager->set( get_flattened_index(ui_vec), val );
+}
+
+template <typename T>
+void Tensor<T>::set(const std::initializer_list<unsigned int>& idx, T val) { 
     mem_manager->set( get_flattened_index(idx), val );
 }
 
@@ -111,8 +155,8 @@ unsigned int Tensor<T>::get_shape(unsigned int idx) const {
 }
 
 template <typename T>
-unsigned int Tensor<T>::get_flattened_index(const std::vector<int>& idx) const {
-    unsigned int jump_size = 1; // the total amout to jump to get to next axis
+unsigned int Tensor<T>::get_flattened_index(const std::vector<unsigned int>& idx) const {
+    unsigned int jump_size = 1; // the total amount to jump to get to next axis
     unsigned int flattened_idx = 0;
 
     for (int i = ((int)idx.size()) - 1; i >= 0; i--) {
@@ -120,7 +164,7 @@ unsigned int Tensor<T>::get_flattened_index(const std::vector<int>& idx) const {
         jump_size *= shape[i];
     }
     return flattened_idx;
- }
+}
 
 
 

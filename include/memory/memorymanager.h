@@ -20,17 +20,6 @@
 #include <cuda.h>
 #include <cuda_runtime_api.h>
 #include "memory_internal_device.h"
-
-#define gpuErrchk(ans) { gpuAssert((ans), __FILE__, __LINE__); }
-inline void gpuAssert(cudaError_t code, const char *file, int line, bool abort=true)
-{
-   if (code != cudaSuccess) 
-   {
-      fprintf(stderr,"GPUassert: %s %s %d\n", cudaGetErrorString(code), file, line);
-      if (abort) exit(code);
-   }
-}
-
 #endif
 
 namespace magmadnn {
@@ -44,6 +33,17 @@ public:
      *  @param device_id what device will the data reside on (preferred if mem_type is CUDA_MANAGED) 
      */
     MemoryManager(unsigned int size, memory_t mem_type, device_t device_id);
+
+    /** Copy Constructor
+     * @param that 
+     */
+    MemoryManager(const MemoryManager& that);
+
+    /** Copy assignment operator.
+     * @param that 
+     * @return MemoryManager& 
+     */
+    MemoryManager& operator=(const MemoryManager& that);
 
     /** Destroys the memory manager object and releases all its data.
      */

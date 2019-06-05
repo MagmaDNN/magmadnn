@@ -41,7 +41,7 @@ void MemoryManager<T>::init_host() {
 #if defined(_HAS_CUDA_)
 template <typename T>
 void MemoryManager<T>::init_device() {
-    gpuErrchk( cudaMalloc((void**) &device_ptr, size * sizeof(T)) );
+    cudaMalloc((void**) &device_ptr, size * sizeof(T));
 }
 
 template <typename T>
@@ -56,6 +56,23 @@ void MemoryManager<T>::init_cuda_managed() {
 }
 #endif
 
+
+template <typename T>
+MemoryManager<T>::MemoryManager(const MemoryManager& that) : mem_type(that.mem_type), device_id(that.device_id), size(that.size) {
+    this->copy_from(that);
+}
+
+template <typename T>
+MemoryManager<T>& MemoryManager<T>::operator=(const MemoryManager<T>& that) {
+    this->mem_type = that.mem_type;
+    this->device_id = that.device_id;
+    this->size = that.size;
+
+    this->copy_from(that);
+
+    return *this;
+}
+
 template <typename T>
 MemoryManager<T>::~MemoryManager<T>() {
     switch (mem_type) {
@@ -68,7 +85,7 @@ MemoryManager<T>::~MemoryManager<T>() {
             std::free(host_ptr); break;
             cudaFree(device_ptr); break;
         case CUDA_MANAGED:
-            cudaFree(device_ptr); break;
+            cudaFree(cuda_managed_ptr); break;
         #endif
     }
 }

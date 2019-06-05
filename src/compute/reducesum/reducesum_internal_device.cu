@@ -6,12 +6,27 @@ namespace internal {
 
 template <typename T>
 __global__ void kernel_tensor_reducesum_full_device(T *arr, T *axes, unsigned int n_axes, int axis, T *out) {
-    /* TODO */
+    
 }
  
 template <typename T>
 void tensor_reducesum_full_device(Tensor<T> *x, unsigned int axis, Tensor<T> *out) {
-    /* TODO */
+    unsigned int *axes = new unsigned int[x->get_shape().size()];
+
+
+    cudnnHandle_t handle;
+    cudnnCreate(&handle);
+
+    cudnnReduceTensorDescriptor_t reduce_desc;
+    cudnnCreateReduceTensorDescriptor(&reduce_desc);
+    /*cudnnSetReduceTensorDescriptor(reduce_desc,
+                                   CUDNN_REDUCE_TENSOR_ADD,
+                                   CUDNN_DATA_FLOAT,
+                                   );
+    */
+    cudnnReduceTensor(handle);
+
+    delete axes;
 }
 template void tensor_reducesum_full_device(Tensor<int> *x, unsigned int axis, Tensor<int> *out);
 template void tensor_reducesum_full_device(Tensor<float> *x, unsigned int axis, Tensor<float> *out);

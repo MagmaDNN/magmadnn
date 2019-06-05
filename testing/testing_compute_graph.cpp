@@ -153,7 +153,7 @@ void test_matmul(memory_t mem_type, unsigned int size) {
 }
 
 void test_transpose(memory_t mem, unsigned int size) {
-	size = 6;
+	size=6;
 	printf("Testing %s transpose...  ", get_memory_type_name(mem));
 
 	Tensor<float> *x = new Tensor<float> ({size, size/2}, {GLOROT, {0.0f, 1.0f}}, mem);
@@ -169,25 +169,10 @@ void test_transpose(memory_t mem, unsigned int size) {
 	assert( trans->get_shape(0) == x->get_shape(1) );
 	assert( trans->get_shape(1) == x->get_shape(0) );
 
-	printf("\nx: \n");
-	for (unsigned int i = 0; i < size; i++) {
-		for (unsigned int j = 0; j < size/2; j++) {
-			printf("%.3g ", x->get({i,j}));
-		}
-		printf("\n");
-	}
-
-	printf("trans: \n");
 	for (unsigned int i = 0; i < size/2; i++) {
 		for (unsigned int j = 0; j < size; j++) {
-			/*if (!fequal(trans->get({i, j}), x->get({j, i}))) {
-				printf("x[%d, %d]=%.4g  !=  trans[%d, %d]=%.4g\n", j, i, x->get({j, i}), i, j, trans->get({i,j}));
-			}
 			assert( fequal(trans->get({i, j}), x->get({j, i})) );
-			*/
-			printf("%.3g ", trans->get({i,j}));
 		}
-		printf("\n");
 	}
 
 	show_success();

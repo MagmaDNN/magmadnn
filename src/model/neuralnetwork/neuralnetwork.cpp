@@ -33,10 +33,11 @@ magmadnn_error_t NeuralNetwork<T>::fit(Tensor<T> *x, Tensor<T> *y, metric_t& met
     optimizer::Optimizer<T> *optim;
     op::Operation<T> *network_output;
     op::Operation<T> *ground_truth;
-    Tensor<T> *input_tensor;
+    Tensor<T> *input_tensor, *output_tensor;
 
     /* get the network output from the last layer */
     network_output = this->layers.back()->out();
+    output_tensor = network_output->get_output_tensor();
 
     /* ground truth is given to use by y */
     ground_truth = op::var("y", y);
@@ -73,19 +74,32 @@ magmadnn_error_t NeuralNetwork<T>::fit(Tensor<T> *x, Tensor<T> *y, metric_t& met
     */
 
     magmadnn_error_t err = (magmadnn_error_t) 0;
-    double accuracy = 1.0;
     double loss = 0.0;
     double training_time = 0.0;
+    unsigned int n_samples = y->get_shape(0);
+    unsigned int n_classes = y->get_shape(1);
     unsigned int n_iter = this->model_params.n_epochs;
     Tensor<T> *loss_tensor;
 
     /* main training routine */
+    int n_correct = 0;
     for (unsigned int i = 0; i < n_iter; i++) {
         /* copy x into input layer */
         err = input_tensor->copy_from(*x);
 
         /* minimize using gradients */
         optim->minimize(this->_vars);
+
+        /* calc accuracy */
+        for (unsigned int i = 0; i < n_samples; i++) {
+            int n_matches = 0;
+            for (unsigned int j = 0; j < n_classes; j++) {
+                if (std::fabs(output_tensor->get({i,j}) - y->get({i,j})) <= 1E-8) {
+                    n_matches++;
+                }
+            }
+            if (n_matches == 1) n_correct++;
+        }
 
         /* get the loss from the loss func (_obj) */
         loss_tensor = this->_obj->eval(false);
@@ -94,7 +108,7 @@ magmadnn_error_t NeuralNetwork<T>::fit(Tensor<T> *x, Tensor<T> *y, metric_t& met
     }
 
     /* update metrics */
-    metric_out.accuracy = accuracy;
+    metric_out.accuracy = ((double)n_correct) / (n_samples * n_iter);
     metric_out.loss = loss;
     metric_out.training_time = training_time;
 
@@ -103,6 +117,9 @@ magmadnn_error_t NeuralNetwork<T>::fit(Tensor<T> *x, Tensor<T> *y, metric_t& met
 
 template <typename T>
 Tensor<T> *NeuralNetwork<T>::predict(Tensor<T> *sample) {
+
+
+
     return NULL;
 }
 

@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include <cmath>
 #include "model/model.h"
 #include "layer/layers.h"
 #include "optimizer/optimizers.h"

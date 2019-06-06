@@ -56,7 +56,7 @@ void test_model_MLP(memory_t mem, unsigned int size) {
     /* training routing */
     model.fit(&x, &y, metrics);
 
-    printf("loss: %.5g ", metrics.loss);
+    printf("loss: %.5g acc: %.5g ", metrics.loss, metrics.accuracy);
 
     show_success();
 }

@@ -107,7 +107,7 @@ void test_full_grad(memory_t mem, unsigned int size) {
 void test_optimize(memory_t mem, unsigned int size) {
     printf("Testing optimization on %s...  ", get_memory_type_name(mem));
 
-    unsigned int steps = 10;
+    //unsigned int steps = 10;
 
     op::Operation<float> *x = op::var<float> ("x", {10}, {CONSTANT, {9.0f}}, mem);
     op::Operation<float> *c = op::var<float> ("c", {10}, {CONSTANT, {-5.0f}}, mem);

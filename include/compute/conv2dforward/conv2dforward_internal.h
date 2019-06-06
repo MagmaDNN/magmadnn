@@ -7,13 +7,7 @@ namespace magmadnn {
 namespace internal {
 
 template <typename T>
-void conv2dforward_full();
-
-
-#if defined(_HAS_CUDA_)
-template <typename T>
-void conv2dforward_full_device();
-#endif
+void conv2dforward_full(Tensor<T> *in, Tensor<T> *out);
 
 
 }   // namespace internal

@@ -11,21 +11,35 @@ __global__ void kernel_tensor_reducesum_full_device(T *arr, T *axes, unsigned in
  
 template <typename T>
 void tensor_reducesum_full_device(Tensor<T> *x, unsigned int axis, Tensor<T> *out) {
-    unsigned int *axes = new unsigned int[x->get_shape().size()];
+    unsigned int n_axes = x->get_shape().size();
+    unsigned int *axes = new unsigned int[n_axes];
+
+    for (unsigned int i = 0; i < n_axes; i++) {
+        if (i == axis) {
+            axes[i] = 1;
+        } else {
+            axes[i] = x->get_shape(i);
+        }
+    }
 
 
-    cudnnHandle_t handle;
-    cudnnCreate(&handle);
+    cudnnHandle_t handle = internal::MAGMADNN_SETTINGS->cudnn_handle;
 
     cudnnReduceTensorDescriptor_t reduce_desc;
     cudnnCreateReduceTensorDescriptor(&reduce_desc);
-    /*cudnnSetReduceTensorDescriptor(reduce_desc,
+    cudnnSetReduceTensorDescriptor(reduce_desc,
                                    CUDNN_REDUCE_TENSOR_ADD,
                                    CUDNN_DATA_FLOAT,
-                                   );
-    */
-    cudnnReduceTensor(handle);
+                                   CUDNN_NOT_PROPAGATE_NAN,
+                                   CUDNN_REDUCE_TENSOR_NO_INDICES,
+                                   CUDNN_32BIT_INDICES);
 
+    
+    
+    /*cudnnReduceTensor(handle,
+                      reduce_desc,
+                      );
+    */
     delete axes;
 }
 template void tensor_reducesum_full_device(Tensor<int> *x, unsigned int axis, Tensor<int> *out);

@@ -24,7 +24,7 @@ Tensor<T> *<#OPERATION_NAME#>Op<T>::_eval(bool recompute) {
 }
 
 template <typename T>
-Operation<T> *<#OPERATION_NAME#>Op<T>::grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad) {
+Operation<T> *<#OPERATION_NAME#>Op<T>::grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad) {
     /* return gradient in here ... */
     return grad;
 }

@@ -40,7 +40,7 @@ Tensor<T>* TanhOp<T>::_eval(bool recompute) {
 }
 
 template <typename T>
-Operation<T> *TanhOp<T>::grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad) {
+Operation<T> *TanhOp<T>::grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad) {
     return NULL;
 }
 template class TanhOp<int>;

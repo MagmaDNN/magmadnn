@@ -30,6 +30,26 @@ void log_full_device(Tensor<T> *x, Tensor<T> *out) {
 template void log_full_device(Tensor<int> *x, Tensor<int> *out);
 template void log_full_device(Tensor<float> *x, Tensor<float> *out);
 template void log_full_device(Tensor<double> *x, Tensor<double> *out);
+
+
+template <typename T>
+__global__ void kernel_log_grad_device(T *x, T *grad, T *out, unsigned int size) {
+    unsigned int idx = blockDim.x * blockIdx.x + threadIdx.x;
+    unsigned int stride = blockDim.x * gridDim.x;
+
+    for (unsigned int i = idx; i < size; i += stride) {
+        out[i] = grad[i] / x[i];
+    }
+}
+
+template <typename T>
+void log_grad_device(Tensor<T> *x, Tensor<T> *grad, Tensor<T> *out) {
+    unsigned int size = x->get_size();
+    kernel_log_grad_device <<< 1, size >>> (x->get_ptr(), grad->get_ptr(), out->get_ptr(), size);
+}
+template void log_full_device(Tensor<int> *x, Tensor<int> *grad, Tensor<int> *out);
+template void log_full_device(Tensor<float> *x, Tensor<float> *grad, Tensor<float> *out);
+template void log_full_device(Tensor<double> *x, Tensor<double> *grad, Tensor<double> *out);
  
 }   // namespace op
 }   // namespace magmadnn

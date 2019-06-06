@@ -62,7 +62,7 @@ Tensor<T> *DivOp<T>::_eval(bool recompute) {
 }
 
 template <typename T>
-Operation<T> *DivOp<T>::grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad) {
+Tensor<T> *DivOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad) {
     /* grad is ... */
     return grad;
 }

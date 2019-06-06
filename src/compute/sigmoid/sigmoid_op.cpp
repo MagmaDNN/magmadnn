@@ -43,7 +43,7 @@ Tensor<T>* SigmoidOp<T>::_eval(bool recompute) {
 }
 
 template <typename T>
-Operation<T> *SigmoidOp<T>::grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad) {
+Operation<T> *SigmoidOp<T>::grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad) {
     /* sigmoid grad is   grad * output * (1-output)  */
     Operation<T> *output = (Operation<T> *) this;
     Operation<T> *c = add<T>(scalar<T>("1", 1.0f, this->mem_type), negative<T>(output, true, false), true, false);

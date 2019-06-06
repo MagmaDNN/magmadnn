@@ -50,7 +50,7 @@ Tensor<T> *SumOp<T>::_eval(bool recompute) {
 }
 
 template <typename T>
-Operation<T> *SumOp<T>::grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad) {
+Operation<T> *SumOp<T>::grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad) {
     return grad;
 }
 

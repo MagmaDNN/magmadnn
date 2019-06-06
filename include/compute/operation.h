@@ -81,14 +81,21 @@ public:
 
     /** Clears the operation so that it will be recomputed.
      */
-    virtual void reset() { this->has_been_computed = false; }
+    virtual void reset() { this->has_been_computed = false; this->has_grad_been_computed = false; }
 
     /** Computes the gradient with respect to the outputs and var.
      * @param consumer the operation that consumes this that needs the gradient
      * @param grad the gradient of the loss w.r.t. the consumers output
      * @return Tensor<T>* 
      */
-    virtual Operation<T>* grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad) = 0;
+    virtual Tensor<T>* grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad, bool recompute=true) {
+        if (!recompute && this->has_been_computed && this->grad_tensor != NULL) {
+            return this->grad_tensor;
+        } else {
+            this->has_been_computed = true;
+            return _grad(consumer, var, grad);
+        }
+    }
 
     /**
      * @param consumer 
@@ -127,6 +134,15 @@ protected:
      */
     virtual Tensor<T> *_eval(bool recompute=true) = 0;
 
+    /** Computes the gradient of this operation wrt the output of consumer.
+     * @param consumer 
+     * @param var 
+     * @param grad 
+     * @param recompute 
+     * @return Tensor<T>* 
+     */
+    virtual Tensor<T> *_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad) = 0;
+
     std::vector<Operation<T>*> inputs;
     std::vector<Operation<T>*> consumers;
     std::vector<unsigned int> output_shape;
@@ -134,9 +150,11 @@ protected:
     std::string name = "DefaultOpName";
 
     Tensor<T> *output_tensor; /* the return tensor */
+    Tensor<T> *grad_tensor;
 
     bool needs_grad;
     bool has_been_computed;
+    bool has_grad_been_computed;
 };
 
 } // namespace op

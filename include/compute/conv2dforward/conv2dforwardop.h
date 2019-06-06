@@ -18,6 +18,7 @@ public:
 	std::string to_string() { return "Conv2DForward(" + input->to_string() + ")"; }
 protected:
 	Tensor<T> *_eval(bool recompute);
+	Tensor<T> *_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad);
 
 	Operation<T> *input;
 	Tensor<T> *input_tensor;

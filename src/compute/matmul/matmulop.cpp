@@ -64,13 +64,27 @@ Tensor<T>* MatmulOp<T>::_eval(bool recompute) {
 } 
 
 template <typename T>
-Operation<T> *MatmulOp<T>::grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad) {
+Tensor<T> *MatmulOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad) {
     /* wrt a: dot(grad, B^T)  |  wrt b: dot(a^T, grad) */
+
     if (var == a) {
-        return dot(grad, transpose(b, true, false), true, false);
+        b_tensor = b->eval(false);
+
+        /* init grad tensor */
+        if (this->grad_tensor == NULL) {
+            //this->grad_tensor
+        }
+
+        math::matmul((T)1, false, grad, true, b_tensor, (T)0, this->grad_tensor);
+
+        //return dot(grad, transpose(b, true, false), true, false);
     } else {
-        return dot(transpose(a, true, false), grad, true, false);
+        a_tensor = a->eval(false);
+
+        math::matmul((T)1, true, a_tensor, false, grad, (T)0, this->grad_tensor);
+        //return dot(transpose(a, true, false), grad, true, false);
     }
+    return this->grad_tensor;
 }
 template class MatmulOp<int>;
 template class MatmulOp<float>;

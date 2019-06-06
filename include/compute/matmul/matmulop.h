@@ -13,6 +13,7 @@
 #include "compute/dot/dotop.h"
 #include "compute/transpose/transposeop.h"
 #include "tensor/tensor.h"
+#include "math/matmul.h"
 #include "gemm_internal.h"
 
 namespace magmadnn {
@@ -28,6 +29,7 @@ public:
 	std::string to_string() { return "(" + a->to_string() + " x " + b->to_string() + ")"; }
 protected:
 	Tensor<T> *_eval(bool recompute=true);
+	Tensor<T> *_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad);
 
 	Operation<T> *a;
 	Operation<T> *b;

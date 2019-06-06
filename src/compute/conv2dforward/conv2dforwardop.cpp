@@ -27,7 +27,7 @@ Tensor<T> *Conv2DForwardOp<T>::_eval(bool recompute) {
 }
 
 template <typename T>
-Operation<T> *Conv2DForwardOp<T>::grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad) {
+Tensor<T> *Conv2DForwardOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad) {
     /* return gradient in here ... */
     return grad;
 }

@@ -15,12 +15,11 @@ template <typename T>
 class LogOp : public Operation<T> {
 public:
 	LogOp(Operation<T> *x, bool copy=true, bool needs_grad=true);
-
-	Operation<T> *grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad);
 	
 	std::string to_string() { return "log( " + x->to_string() + " )"; }
 protected:
 	Tensor<T> *_eval(bool recompute=true);
+	Tensor<T> *_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad);
 
 	Operation<T> *x;
 	Tensor<T> *x_tensor;

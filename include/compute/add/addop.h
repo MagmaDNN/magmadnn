@@ -28,6 +28,7 @@ public:
 	std::string to_string() { return "(" + a->to_string() + " + " + b->to_string() + ")"; }
 protected:
 	Tensor<T> *_eval(bool recompute=true);
+	Tensor<T> *_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad);
 
 	Operation<T>* a;
 	Operation<T>* b;

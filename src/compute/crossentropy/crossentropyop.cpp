@@ -46,7 +46,7 @@ Tensor<T> *CrossEntropyOp<T>::_eval(bool recompute) {
 }
 
 template <typename T>
-Operation<T> *CrossEntropyOp<T>::grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad) {
+Tensor<T> *CrossEntropyOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad) {
     /* softmax(x) -= 1 and /= N */
     return grad;
 }

@@ -31,7 +31,7 @@ Tensor<T> *TransposeOp<T>::_eval(bool recompute) {
 }
 
 template <typename T>
-Operation<T> *TransposeOp<T>::grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad) {
+Operation<T> *TransposeOp<T>::grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad) {
     return transpose(grad, true, false);
 }
 

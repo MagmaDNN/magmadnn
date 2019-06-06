@@ -38,7 +38,7 @@ Tensor<T>* Variable<T>::_eval(bool recompute) {
 }
 
 template <typename T>
-Operation<T> *Variable<T>::grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad) {
+Operation<T> *Variable<T>::grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad) {
     /* TODO : if (var == this) return 1; */
 
     if (var == this) return (Operation<T> *) scalar("1", 1, this->mem_type);

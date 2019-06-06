@@ -35,7 +35,7 @@ Tensor<T>* ReluOp<T>::_eval(bool recompute) {
 }
 
 template <typename T>
-Operation<T> *ReluOp<T>::grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad) {
+Operation<T> *ReluOp<T>::grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad) {
     return NULL;
 }
  

@@ -14,6 +14,10 @@ LogOp<T>::LogOp(Operation<T> *x, bool copy, bool needs_grad)
     if (copy) {
         this->output_tensor = new Tensor<T> (this->output_shape, {NONE,{}}, this->mem_type);
     }
+
+    if (needs_grad) {
+        this->grad_tensor = new Tensor<T> (x->get_output_shape(), {ZERO, {}}, this->mem_type);
+    }
 }
 
 template <typename T>
@@ -29,9 +33,14 @@ Tensor<T> *LogOp<T>::_eval(bool recompute) {
 }
 
 template <typename T>
-Operation<T> *LogOp<T>::grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad) {
+Tensor<T> *LogOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad) {
     /* TODO : grad * (1/x) */
-    return product(grad, div((Operation<T> *)scalar("1", 1, this->mem_type), x, false, false), false);
+
+    this->x_tensor = x->eval(false);    /* don't recompute x if we don't have to */
+
+    internal::log_grad(x_tensor, grad, this->output_tensor);
+    
+    return this->output_tensor;
 }
 
 template class LogOp<int>;

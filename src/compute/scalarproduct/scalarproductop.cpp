@@ -55,7 +55,7 @@ Tensor<T> *ScalarProductOp<T>::_eval(bool recompute) {
 }
 
 template <typename T>
-Operation<T> *ScalarProductOp<T>::grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad) {
+Operation<T> *ScalarProductOp<T>::grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad) {
     if (scalar != NULL) {
         return scalarproduct(scalar, grad, false, false);
     } else {

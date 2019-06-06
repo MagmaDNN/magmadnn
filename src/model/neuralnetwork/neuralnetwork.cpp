@@ -75,7 +75,7 @@ magmadnn_error_t NeuralNetwork<T>::fit(Tensor<T> *x, Tensor<T> *y, metric_t& met
 
     magmadnn_error_t err = (magmadnn_error_t) 0;
     double loss = 0.0;
-    double training_time = 0.0;
+    time_t start_time, end_time;
     unsigned int n_samples = y->get_shape(0);
     unsigned int n_classes = y->get_shape(1);
     unsigned int n_iter = this->model_params.n_epochs;
@@ -83,6 +83,7 @@ magmadnn_error_t NeuralNetwork<T>::fit(Tensor<T> *x, Tensor<T> *y, metric_t& met
 
     /* main training routine */
     int n_correct = 0;
+    time(&start_time);
     for (unsigned int i = 0; i < n_iter; i++) {
         /* copy x into input layer */
         err = input_tensor->copy_from(*x);
@@ -106,11 +107,12 @@ magmadnn_error_t NeuralNetwork<T>::fit(Tensor<T> *x, Tensor<T> *y, metric_t& met
         loss_tensor->get_memory_manager()->sync();
         loss = loss_tensor->get(0);
     }
+    time(&end_time);
 
     /* update metrics */
     metric_out.accuracy = ((double)n_correct) / (n_samples * n_iter);
     metric_out.loss = loss;
-    metric_out.training_time = training_time;
+    metric_out.training_time = (end_time - start_time);
 
     return err;
 }

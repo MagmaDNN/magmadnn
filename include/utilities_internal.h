@@ -23,7 +23,7 @@
 #define T_IS_VECTOR(tensor_ptr) ((tensor_ptr)->get_size() != 1 && ((tensor_ptr)->get_shape().size() == 1))
 #define T_IS_MATRIX(tensor_ptr) ((tensor_ptr)->get_shape().size() == 2)
 #define OP_IS_SCALAR(op_ptr) ((op_ptr)->get_output_size() == 1)
-#define OP_IS_VECTOR(op_ptr) (((op_ptr)->get_output_size() != 1) && ((op_ptr)->get_shape().size() == 1))
+#define OP_IS_VECTOR(op_ptr) (((op_ptr)->get_output_size() != 1) && ((op_ptr)->get_output_shape().size() == 1))
 #define OP_IS_MATRIX(op_ptr) ((op_ptr)->get_output_shape().size() == 2)
 
 

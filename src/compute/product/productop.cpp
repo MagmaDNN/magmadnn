@@ -64,8 +64,8 @@ Tensor<T> *ProductOp<T>::_eval(bool recompute) {
 }
 
 template <typename T>
-Operation<T> *ProductOp<T>::grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad) {
-    return NULL;
+Tensor<T> *ProductOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad) {
+    return grad;
 }
 template class ProductOp<int>;
 template class ProductOp<float>;

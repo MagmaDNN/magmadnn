@@ -13,11 +13,11 @@ class NegativeOp : public Operation<T> {
 public:
 	NegativeOp(Operation<T> *x, bool copy, bool needs_grad);
 
-	Operation<T> *grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad);
 	
 	std::string to_string() { return "-" + x->to_string() + ""; }
 protected:
 	Tensor<T> *_eval(bool recompute=true);
+	Tensor<T> *_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad);
 
 	Operation<T> *x;
 	Tensor<T> *x_tensor;

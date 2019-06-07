@@ -24,13 +24,12 @@ public:
     Variable (std::string name, Tensor<T> *val);
     ~Variable();
 
-    Operation<T> *grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad);
-
     std::string to_string() { return name; }
     std::string get_name() { return name; }
 
 protected:
 	Tensor<T> *_eval(bool recompute=true);
+    Tensor<T> *_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad);
 
     std::string name;
     Tensor<T> *val;

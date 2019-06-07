@@ -32,5 +32,16 @@ template <typename T>
 void sigmoid_full_device(Tensor<T> *x, bool fast=true);
 #endif
 
+
+
+template <typename T>
+void sigmoid_grad(Tensor<T> *output, Tensor<T> *grad, Tensor<T> *out);
+
+#if defined(_HAS_CUDA_)
+template <typename T>
+void sigmoid_grad_device(Tensor<T> *output, Tensor<T> *grad, Tensor<T> *out);
+#endif
+
+
 }   // namespace internal
 }   // namespace magmadnn

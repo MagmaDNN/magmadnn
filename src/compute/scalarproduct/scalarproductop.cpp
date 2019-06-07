@@ -55,12 +55,16 @@ Tensor<T> *ScalarProductOp<T>::_eval(bool recompute) {
 }
 
 template <typename T>
-Operation<T> *ScalarProductOp<T>::grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad) {
+Tensor<T> *ScalarProductOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad) {
     if (scalar != NULL) {
-        return scalarproduct(scalar, grad, false, false);
+        scalar_tensor = scalar->eval(false);
+        scalar_tensor->get_memory_manager()->sync(true);
+        
+        internal::scalarproduct_full(scalar_tensor->get(0), grad, grad);
     } else {
-        return scalarproduct(alpha, grad, false, false);
+        internal::scalarproduct_full(alpha, grad, grad);
     }
+    return grad;
 }
 
 template <typename T>

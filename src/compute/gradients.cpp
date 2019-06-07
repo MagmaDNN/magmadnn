@@ -15,7 +15,7 @@ namespace op {
 template <typename T>
 magmadnn_error_t get_grad_table(const std::vector<Operation<T> *>& vars, Operation<T> *graph, GradTable<T> &table) {
     magmadnn_error_t err;
-    Operation<T> *tmp;
+    Tensor<T> *tmp;
 
     /* prune compute graph:
         construct a new graph G' that only contains nodes that are ancestors of graph and 
@@ -23,7 +23,7 @@ magmadnn_error_t get_grad_table(const std::vector<Operation<T> *>& vars, Operati
     /* TODO */
 
     /* init Loss in grad table to one */
-    Operation<T> *grad_loss = op::scalar<T>("1", 1, graph->get_memory_type());
+    Tensor<T> *grad_loss = new Tensor<T> ({1}, {ONE, {}}, graph->get_memory_type());
     table.set(graph, grad_loss);
 
     /* compute the gradients for each variable */
@@ -49,9 +49,10 @@ template magmadnn_error_t get_grad_table(const std::vector<Operation<double> *>&
 namespace internal {
 
 template <typename T>
-magmadnn_error_t build_grad(op::Operation<T> *var, op::Operation<T> *graph, op::GradTable<T> &table, op::Operation<T> **grad) {
-    op::Operation<T> *tmp_grad, *result, *bprop, *consumer;
-    std::vector<op::Operation<T> *> bprops;
+magmadnn_error_t build_grad(op::Operation<T> *var, op::Operation<T> *graph, op::GradTable<T> &table, Tensor<T> **grad) {
+    Tensor<T> *tmp_grad, *bprop, *result;
+    op::Operation<T> *consumer;
+    std::vector<Tensor<T> *> bprops;
     magmadnn_error_t err;
     std::vector<op::Operation<T> *> consumers;
 
@@ -74,6 +75,7 @@ magmadnn_error_t build_grad(op::Operation<T> *var, op::Operation<T> *graph, op::
 
         consumer = (*vit);
         
+        /* if this is null for some reason stop here */
         if (consumer == NULL) continue;
 
         /* build the gradient for consumer and keep track of it in bprops */
@@ -92,15 +94,22 @@ magmadnn_error_t build_grad(op::Operation<T> *var, op::Operation<T> *graph, op::
     } else if (bprops.size() == 1) {
         result = bprops.at(0);
     } else if (bprops.size() == 2) {
+        /*
         result = op::add(bprops.at(0), bprops.at(1), true, false);
+        */
+        /* TODO : Add and sum tensors */
+        result = NULL;
+        fprintf(stderr, "Implement add in gradients\n");
     } else {
         /* currently sum cannot handle scalar values, so just tetrate adds for now */
         //result = op::sum(bprops);
-        
+        /* 
         result = bprops.at(0);
         for (unsigned int i = 1; i < bprops.size(); i++) {
             result = op::add(result, bprops.at(i));
-        }
+        }*/
+        result = NULL;
+        fprintf(stderr, "Implement sum in gradients\n");
     }
     
     table.set(var, result);
@@ -108,9 +117,9 @@ magmadnn_error_t build_grad(op::Operation<T> *var, op::Operation<T> *graph, op::
 
     return (magmadnn_error_t) 0;
 }
-template magmadnn_error_t build_grad(op::Operation<int>* var, op::Operation<int> *graph, op::GradTable<int> &table, op::Operation<int> **grad);
-template magmadnn_error_t build_grad(op::Operation<float>* var, op::Operation<float> *graph, op::GradTable<float> &table, op::Operation<float> **grad);
-template magmadnn_error_t build_grad(op::Operation<double>* var, op::Operation<double> *graph, op::GradTable<double> &table, op::Operation<double> **grad);
+template magmadnn_error_t build_grad(op::Operation<int>* var, op::Operation<int> *graph, op::GradTable<int> &table, Tensor<int> **grad);
+template magmadnn_error_t build_grad(op::Operation<float>* var, op::Operation<float> *graph, op::GradTable<float> &table, Tensor<float> **grad);
+template magmadnn_error_t build_grad(op::Operation<double>* var, op::Operation<double> *graph, op::GradTable<double> &table, Tensor<double> **grad);
 
 
 }   // namespace internal

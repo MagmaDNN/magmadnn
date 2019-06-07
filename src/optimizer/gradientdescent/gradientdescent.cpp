@@ -29,13 +29,12 @@ void GradientDescent<T>::minimize(const std::vector<op::Operation<T> *>& wrt) {
 }
 
 template <typename T>
-void GradientDescent<T>::update(op::Operation<T> *var, op::Operation<T> *grad) {
-    Tensor<T> *var_tensor, *grad_tensor;
+void GradientDescent<T>::update(op::Operation<T> *var, Tensor<T> *grad) {
+    Tensor<T> *var_tensor;
 
-    var_tensor = var->eval(true);
-    grad_tensor = grad->eval(true);
+    var_tensor = var->eval(false);
 
-    internal::gradientdescent_update_internal(var_tensor, grad_tensor, this->learning_rate);
+    internal::gradientdescent_update_internal(var_tensor, grad, this->learning_rate);
 }
 
 template class GradientDescent<int>;

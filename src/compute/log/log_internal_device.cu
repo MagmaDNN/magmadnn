@@ -47,9 +47,9 @@ void log_grad_device(Tensor<T> *x, Tensor<T> *grad, Tensor<T> *out) {
     unsigned int size = x->get_size();
     kernel_log_grad_device <<< 1, size >>> (x->get_ptr(), grad->get_ptr(), out->get_ptr(), size);
 }
-template void log_full_device(Tensor<int> *x, Tensor<int> *grad, Tensor<int> *out);
-template void log_full_device(Tensor<float> *x, Tensor<float> *grad, Tensor<float> *out);
-template void log_full_device(Tensor<double> *x, Tensor<double> *grad, Tensor<double> *out);
+template void log_grad_device(Tensor<int> *x, Tensor<int> *grad, Tensor<int> *out);
+template void log_grad_device(Tensor<float> *x, Tensor<float> *grad, Tensor<float> *out);
+template void log_grad_device(Tensor<double> *x, Tensor<double> *grad, Tensor<double> *out);
  
 }   // namespace op
 }   // namespace magmadnn

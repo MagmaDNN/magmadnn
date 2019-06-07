@@ -31,8 +31,18 @@ Tensor<T> *TransposeOp<T>::_eval(bool recompute) {
 }
 
 template <typename T>
-Operation<T> *TransposeOp<T>::grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad) {
-    return transpose(grad, true, false);
+Tensor<T> *TransposeOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad) {
+    Tensor<T> *out;
+
+    out = this->_grad_cache[(uintptr_t)var];
+    if (out == NULL) {
+        out = new Tensor<T> ({grad->get_shape(1), grad->get_shape(0)}, {NONE,{}}, this->mem_type);
+        this->_grad_cache[(uintptr_t)var] = out;
+    }
+
+    internal::transpose_full(grad, out);
+
+    return out;
 }
 
 template class TransposeOp<int>;

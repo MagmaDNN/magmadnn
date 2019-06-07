@@ -38,10 +38,19 @@ Tensor<T>* Variable<T>::_eval(bool recompute) {
 }
 
 template <typename T>
-Operation<T> *Variable<T>::grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad) {
+Tensor<T> *Variable<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad) {
     /* TODO : if (var == this) return 1; */
 
-    if (var == this) return (Operation<T> *) scalar("1", 1, this->mem_type);
+    Tensor<T> *out;
+
+    if (var == this) {
+        out = this->_grad_cache[(uintptr_t)var];
+        if (out == NULL) {
+            out = new Tensor<T> ({1}, {ONE, {}}, this->mem_type);
+            this->_grad_cache[(uintptr_t)var] = out;
+        }
+        return out;
+    }
 
     return grad;
 }
@@ -49,6 +58,8 @@ Operation<T> *Variable<T>::grad(Operation<T> *consumer, Operation<T> *var, Tenso
 template class Variable<int>;
 template class Variable<float>;
 template class Variable<double>;
+
+
 
 template <typename T>
 Variable<T>* var(std::string name, Tensor<T>* val) {

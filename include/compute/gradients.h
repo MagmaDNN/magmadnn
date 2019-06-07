@@ -44,7 +44,7 @@ namespace internal {
  * @return magmadnn_error_t non-zero on error
  */
 template <typename T>
-magmadnn_error_t build_grad(op::Operation<T>* var, op::Operation<T> *graph, op::GradTable<T> &table, op::Operation<T> **grad);
+magmadnn_error_t build_grad(op::Operation<T>* var, op::Operation<T> *graph, op::GradTable<T> &table, Tensor<T> **grad);
 
 }   // namespace internal
 }   // namespace magmadnn

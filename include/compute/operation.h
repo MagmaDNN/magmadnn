@@ -8,6 +8,7 @@
  */
 #pragma once
 #include <string>
+#include <map>
 #include "tensor/tensor.h"
 
 namespace magmadnn {
@@ -21,10 +22,11 @@ public:
      */
     Operation() : has_been_computed(false) {}
     Operation(std::vector<Operation<T> *> inputs, bool needs_grad=true) : inputs(inputs), needs_grad(needs_grad) {
-        if (needs_grad) {
-            for (typename std::vector<Operation<T> *>::iterator vit = inputs.begin(); vit != inputs.end(); vit++) {
+        for (typename std::vector<Operation<T> *>::iterator vit = inputs.begin(); vit != inputs.end(); vit++) {
+            if (needs_grad) {   /* TODO : verify this is necessary */
                 (*vit)->add_consumer(this);
             }
+            this->_grad_cache.insert( std::make_pair((uintptr_t) (*vit), (Tensor<T> *) NULL) );
         }
     }
 	virtual ~Operation() {
@@ -89,10 +91,16 @@ public:
      * @return Tensor<T>* 
      */
     virtual Tensor<T>* grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad, bool recompute=true) {
-        if (!recompute && this->has_been_computed && this->grad_tensor != NULL) {
-            return this->grad_tensor;
+        if (!recompute) {
+            typename std::map<uintptr_t, Tensor<T> *>::iterator mit;
+            mit = this->_grad_cache.find((uintptr_t)var);
+            
+            if (mit != this->_grad_cache.end()) {
+                return mit->second;
+            } else {
+                return _grad(consumer, var, grad);
+            }
         } else {
-            this->has_been_computed = true;
             return _grad(consumer, var, grad);
         }
     }
@@ -117,6 +125,12 @@ public:
      * @return Tensor<T>* 
      */
     virtual Tensor<T> *get_output_tensor() { return this->output_tensor; }
+
+    /** Gets the current grad_tensor wrt to wrt.
+     * @param wrt 
+     * @return Tensor<T>* 
+     */
+    virtual Tensor<T> *get_grad_tensor(Operation<T> *wrt) { return this->_grad_cache.find((uintptr_t)wrt)->second; }
 
     /** string form of the given operation. Expands on input.
      * @return std::string 
@@ -147,10 +161,10 @@ protected:
     std::vector<Operation<T>*> consumers;
     std::vector<unsigned int> output_shape;
     memory_t mem_type;
+    std::map<uintptr_t, Tensor<T> *> _grad_cache;   /* this will cache the tensors for the gradient computation */
     std::string name = "DefaultOpName";
 
     Tensor<T> *output_tensor; /* the return tensor */
-    Tensor<T> *grad_tensor;
 
     bool needs_grad;
     bool has_been_computed;

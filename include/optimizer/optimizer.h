@@ -26,7 +26,7 @@ public:
     virtual std::string get_name() { return _name; }
 
 protected:
-    virtual void update(op::Operation<T> *var, op::Operation<T> *grad) = 0;
+    virtual void update(op::Operation<T> *var, Tensor<T> *grad) = 0;
 
     op::Operation<T> *_obj_func;
     std::string _name = "Generic Optimizer";

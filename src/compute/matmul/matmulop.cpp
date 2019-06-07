@@ -66,25 +66,39 @@ Tensor<T>* MatmulOp<T>::_eval(bool recompute) {
 template <typename T>
 Tensor<T> *MatmulOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad) {
     /* wrt a: dot(grad, B^T)  |  wrt b: dot(a^T, grad) */
+    Tensor<T> *out = this->_grad_cache[(uintptr_t)var];
 
     if (var == a) {
         b_tensor = b->eval(false);
 
         /* init grad tensor */
-        if (this->grad_tensor == NULL) {
-            //this->grad_tensor
+        if (out == NULL) {
+            out = new Tensor<T> ({grad->get_shape(0), b_tensor->get_shape(0)}, {NONE,{}}, this->mem_type);
+            this->_grad_cache[(uintptr_t)a] = out;
         }
 
-        math::matmul((T)1, false, grad, true, b_tensor, (T)0, this->grad_tensor);
+        math::dot((T)1, false, grad, true, b_tensor, (T)0, out);
 
         //return dot(grad, transpose(b, true, false), true, false);
     } else {
         a_tensor = a->eval(false);
 
-        math::matmul((T)1, true, a_tensor, false, grad, (T)0, this->grad_tensor);
+        if (out == NULL) {
+            if (T_IS_MATRIX(grad)) {
+                out = new Tensor<T> ({a_tensor->get_shape(1), grad->get_shape(1)}, {NONE,{}}, this->mem_type);
+            } else if (T_IS_VECTOR(grad)) {
+                out = new Tensor<T> ({a_tensor->get_shape(1)}, {NONE,{}}, this->mem_type);
+            } else {
+                out = new Tensor<T> (a_tensor->get_shape(), {NONE,{}}, this->mem_type);
+            }
+            this->_grad_cache[(uintptr_t)b] = out;
+        }
+
+        math::dot((T)1, true, a_tensor, false, grad, (T)0, out);
+
         //return dot(transpose(a, true, false), grad, true, false);
     }
-    return this->grad_tensor;
+    return out;
 }
 template class MatmulOp<int>;
 template class MatmulOp<float>;

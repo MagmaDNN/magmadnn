@@ -9,6 +9,18 @@
 #pragma once
 
 #include "tensor/tensor.h"
+#include "cblas.h"
+#if defined(_HAS_CUDA_)
+#include "magma.h"
+#endif
+
+
+#define MAGMA_SGEMM_ROWMAJOR(A,B,C,m,n,k,alpha,beta,transf_A,transf_B,lda,ldb,ldc) \
+    magma_sgemm(transf_B, transf_A, n, m, k, alpha, B, ldb, A, lda, beta, C, ldc)
+
+#define MAGMA_DGEMM_ROWMAJOR(A,B,C,m,n,k,alpha,beta,transf_A,transf_B,lda,ldb,ldc) \
+    magma_dgemm(transf_B, transf_A, n, m, k, alpha, B, ldb, A, lda, beta, C, ldc)
+
 
 namespace magmadnn {
 namespace math {

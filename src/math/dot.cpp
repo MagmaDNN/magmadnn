@@ -43,6 +43,9 @@ void dot(T alpha, bool trans_A, Tensor<T> *A, bool trans_B, Tensor<T> *B, T beta
     } else if (a_is_scalar || b_is_scalar) {
         /* broadcast product */
         fprintf(stderr, "add prod\n");
+
+        
+
     } else {
         /* other */
         fprintf(stderr, "undefined dot product!");

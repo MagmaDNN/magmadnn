@@ -9,6 +9,7 @@
 #pragma once
 #include "tensor/tensor.h"
 #include "math/matmul.h"
+#include "math/scalar_tensor_product.h"
 
 namespace magmadnn {
 namespace math {

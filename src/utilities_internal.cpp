@@ -116,5 +116,50 @@ template void print_compute_graph(op::Operation<int> *node, bool debug);
 template void print_compute_graph(op::Operation<float> *node, bool debug);
 template void print_compute_graph(op::Operation<double> *node, bool debug);
 
+
+/** Resets the compute graph.
+ * @tparam T 
+ * @param node 
+ */
+template <typename T>
+void reset_compute_graph(op::Operation<T> *node) {
+    std::set<op::Operation<T> *> visited;
+    std::deque<op::Operation<T> *> to_visit;
+    op::Operation<T> *cur;
+    typename std::vector<op::Operation<T> *>::const_iterator vit;
+
+    to_visit.push_back( node );
+    visited.insert( node );
+
+    while (!to_visit.empty()) {
+        cur = to_visit.front();
+        to_visit.pop_front();
+
+        /* reset this Operation */
+        cur->reset();
+
+        std::vector<op::Operation<T> *> const& consumers = cur->get_consumers();
+        for (vit = consumers.begin(); vit != consumers.end(); vit++) {
+
+            if (visited.find((*vit)) == visited.end()) {
+                to_visit.push_back(*vit);
+                visited.insert((*vit));
+            }
+        }
+        
+        std::vector<op::Operation<T> *> const& inputs = cur->get_inputs();
+        for (vit = inputs.begin(); vit != inputs.end(); vit++) {
+
+            if (visited.find((*vit)) == visited.end()) {
+                to_visit.push_back(*vit);
+                visited.insert((*vit));
+            }
+        }
+    }
+}
+template void reset_compute_graph(op::Operation<int> *node);
+template void reset_compute_graph(op::Operation<float> *node);
+template void reset_compute_graph(op::Operation<double> *node);
+
 }   // namespace internal
 }   // namespace magmadnn

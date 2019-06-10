@@ -46,7 +46,7 @@ __global__ void kernel_tensor_scalar_add_full_device(T alpha, T *x, T *out, unsi
 
 template <typename T>
 void tensor_scalar_add_full_device(T alpha, Tensor<T> *x, Tensor<T> *out) {
-	unsigned int size = x->get_size();
+	unsigned int size = out->get_size();
 	kernel_tensor_scalar_add_full_device <<< 1, size >>> (alpha, x->get_ptr(), out->get_ptr(), size);
 }
 template void tensor_scalar_add_full_device(int alpha, Tensor<int> *x, Tensor<int> *out);

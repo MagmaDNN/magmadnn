@@ -45,7 +45,10 @@ void FullyConnectedLayer<T>::init() {
 
     /*  output = (weights) * (input) + (bias) 
         this creates a new tensor and puts it into a new var, which is stored in output. */
-    this->output = op::matmul(this->input, this->weights);
+    //this->output = op::matmul(this->input, this->weights);
+
+    /* ROW-WISE add bias */
+    this->output = op::linearforward(this->input, this->weights);
 }
 template class FullyConnectedLayer <int>;
 template class FullyConnectedLayer <float>;

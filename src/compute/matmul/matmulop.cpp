@@ -74,11 +74,21 @@ Tensor<T> *MatmulOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor<
     Tensor<T> *out = this->_grad_cache[(uintptr_t)var];
 
     if (var == a) {
-        b_tensor = b->eval(false);
+        b_tensor = b->eval(false);  /* don't recalculate if necessary */
 
         /* init grad tensor */
         if (out == NULL) {
-            out = new Tensor<T> ({grad->get_shape(0), b_tensor->get_shape(0)}, {NONE,{}}, this->mem_type);
+            if (T_IS_MATRIX(b_tensor)) {
+                /* grad.B^T has shape row(grad) x row(B) */
+                out = new Tensor<T> ({grad->get_shape(0), b_tensor->get_shape(0)}, {NONE,{}}, this->mem_type);
+            } else if (T_IS_VECTOR(a_tensor)) {
+                /* grad.B^T has shape row(B) */
+                out = new Tensor<T> ({b_tensor->get_shape(0)}, {NONE,{}}, this->mem_type);
+            } else {
+                /* grad.B^T has shape of B^T */
+                out = new Tensor<T> ({b_tensor->get_shape(1), b_tensor->get_shape(0)}, {NONE,{}}, this->mem_type);
+            }
+            
             this->_grad_cache[(uintptr_t)a] = out;
         }
 
@@ -88,13 +98,17 @@ Tensor<T> *MatmulOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor<
     } else {
         a_tensor = a->eval(false);
 
+        /* need to create grad out for this */
         if (out == NULL) {
             if (T_IS_MATRIX(grad)) {
+                /* if grad is a matrix, then a^T grad is the gradient */
                 out = new Tensor<T> ({a_tensor->get_shape(1), grad->get_shape(1)}, {NONE,{}}, this->mem_type);
             } else if (T_IS_VECTOR(grad)) {
+                /* if grad is a vector, then a^T grad has the same shape as col(a) */
                 out = new Tensor<T> ({a_tensor->get_shape(1)}, {NONE,{}}, this->mem_type);
             } else {
-                out = new Tensor<T> (a_tensor->get_shape(), {NONE,{}}, this->mem_type);
+                /* if grad is a scalar?, then a^T grad has the same shape as A^T */
+                out = new Tensor<T> ({a_tensor->get_shape(1), a_tensor->get_shape(0)}, {NONE,{}}, this->mem_type);
             }
             this->_grad_cache[(uintptr_t)b] = out;
         }

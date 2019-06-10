@@ -49,11 +49,11 @@ void sigmoid_grad(Tensor<T> *output, Tensor<T> *grad, Tensor<T> *out) {
 
         if (grad->get_size() == 1) {
             for (unsigned int i = 0; i < size; i++) {
-                out_ptr[i] = grad_ptr[0] * output_ptr[i] * (1 - output_ptr[i]);
+                out_ptr[i] = grad_ptr[0] * output_ptr[i] * (((T)1) - output_ptr[i]);
             }
         } else {
             for (unsigned int i = 0; i < size; i++) {
-                out_ptr[i] = grad_ptr[i] * output_ptr[i] * (1 - output_ptr[i]);
+                out_ptr[i] = grad_ptr[i] * output_ptr[i] * (((T)1) - output_ptr[i]);
             }
         }
     }

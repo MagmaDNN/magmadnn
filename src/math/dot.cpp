@@ -40,12 +40,17 @@ void dot(T alpha, bool trans_A, Tensor<T> *A, bool trans_B, Tensor<T> *B, T beta
     } else if (n_axes_a == 1 && n_axes_b == 2 && !a_is_scalar) {
         /* gemv(B^T,A) */
         fprintf(stderr, "add gemv\n");
-    } else if (a_is_scalar || b_is_scalar) {
-        /* broadcast product */
-        fprintf(stderr, "add prod\n");
+    } else if (a_is_scalar && !b_is_scalar) {
+        /* broadcast product - a(scalar) b(tensor) */
 
-        
+        A->get_memory_manager()->sync();
+        scalar_tensor_product(A->get(0), B, out);
+    
+    } else if (b_is_scalar) {
+        /* broadcast product - a(scalar?OR?tensor) b(scalar) */
 
+        B->get_memory_manager()->sync();
+        scalar_tensor_product(B->get(0), A, out);
     } else {
         /* other */
         fprintf(stderr, "undefined dot product!");

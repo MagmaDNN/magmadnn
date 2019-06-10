@@ -51,10 +51,10 @@ template void geadd_full(double alpha, Tensor<double> *A, double beta, Tensor<do
 
 template <typename T>
 void tensor_scalar_add_full(T alpha, Tensor<T> *x, Tensor<T> *out) {
-    if (x->get_memory_type() == HOST) {
+    if (out->get_memory_type() == HOST) {
         T *x_ptr = x->get_ptr();
         T *out_ptr = out->get_ptr();
-        unsigned int size = x->get_size();
+        unsigned int size = out->get_size();
 
         for (unsigned int i = 0; i < size; i++) {
             out_ptr[i] = alpha + x_ptr[i];

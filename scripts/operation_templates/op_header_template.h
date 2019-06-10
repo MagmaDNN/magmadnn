@@ -13,11 +13,11 @@ class <#OPERATION_NAME#>Op : public Operation<T> {
 public:
 	<#OPERATION_NAME#>Op(Operation<T> *input, bool copy=true, bool needs_grad=true);
 
-	Operation<T> *grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad);
 	
 	std::string to_string() { return ""; }
 protected:
 	Tensor<T> *_eval(bool recompute);
+	Tensor<T> *_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad);
 
 	Operation<T> *input;
 	Tensor<T> *input_tensor;

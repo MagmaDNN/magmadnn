@@ -21,8 +21,13 @@ template <typename T>
 void GradientDescent<T>::minimize(const std::vector<op::Operation<T> *>& wrt) {
     typename std::vector<op::Operation<T> *>::const_iterator vit;
 
+    /* evaluate if need be */
+    this->_obj_func->eval(false);
+
+    /* build the gradients */
     op::get_grad_table(wrt, this->_obj_func, this->table);
     
+    /* now update each one */
     for (vit = wrt.begin(); vit != wrt.end(); vit++) {
         this->update((*vit), table.get(*vit));
     }

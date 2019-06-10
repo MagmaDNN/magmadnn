@@ -42,9 +42,11 @@ void test_model_MLP(memory_t mem, unsigned int size) {
     Tensor<float> y ({n_samples, n_classes}, {CONSTANT, {1.0f}}, mem);
 
     auto input = layer::input<float>(var);
-    auto fc1 = layer::fullyconnected<float>(input->out(), n_classes, true);
+    auto fc1 = layer::fullyconnected<float>(input->out(), 10);
     auto act1 = layer::activation<float>(fc1->out(), layer::SIGMOID);
-    auto output = layer::output<float>(act1->out());
+    auto fc2 = layer::fullyconnected<float>(act1->out(), n_classes);
+    auto act2 = layer::fullyconnected<float>(fc2->out(), layer::SIGMOID);
+    auto output = layer::output<float>(act2->out());
 
     std::vector<layer::Layer<float> *> layers = {input, fc1, act1, output};
 

@@ -8,6 +8,8 @@
  */
  #include "math/scalar_tensor_product.h"
 
+#define BLK_SIZE 1024
+
 namespace magmadnn {
 namespace math {
 
@@ -24,7 +26,7 @@ __global__ void kernel_scalar_tensor_product_device(T scalar, T *x, T *out, unsi
 template <typename T>
 void scalar_tensor_product_device(T scalar, Tensor<T> *x, Tensor<T> *out) {
     unsigned int size = out->get_size();
-    kernel_scalar_tensor_product_device <<< 1, size >>> (scalar, x->get_ptr(), out->get_ptr(), size);
+    kernel_scalar_tensor_product_device <<<(size+BLK_SIZE-1)/BLK_SIZE, BLK_SIZE>>> (scalar, x->get_ptr(), out->get_ptr(), size);
 }
 template void scalar_tensor_product_device(int scalar, Tensor<int> *x, Tensor<int> *out);
 template void scalar_tensor_product_device(float scalar, Tensor<float> *x, Tensor<float> *out);
@@ -32,3 +34,5 @@ template void scalar_tensor_product_device(double scalar, Tensor<double> *x, Ten
 
 }
 }
+
+#undef BLK_SIZE

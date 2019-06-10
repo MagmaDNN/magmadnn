@@ -8,6 +8,7 @@
  */
 #include "compute/add/geadd_internal.h"
 
+#define BLK_SIZE 1024
 
 namespace magmadnn {
 namespace internal {
@@ -47,7 +48,7 @@ __global__ void kernel_tensor_scalar_add_full_device(T alpha, T *x, T *out, unsi
 template <typename T>
 void tensor_scalar_add_full_device(T alpha, Tensor<T> *x, Tensor<T> *out) {
 	unsigned int size = out->get_size();
-	kernel_tensor_scalar_add_full_device <<< 1, size >>> (alpha, x->get_ptr(), out->get_ptr(), size);
+	kernel_tensor_scalar_add_full_device <<<(size+BLK_SIZE-1)/BLK_SIZE, BLK_SIZE>>> (alpha, x->get_ptr(), out->get_ptr(), size);
 }
 template void tensor_scalar_add_full_device(int alpha, Tensor<int> *x, Tensor<int> *out);
 template void tensor_scalar_add_full_device(float alpha, Tensor<float> *x, Tensor<float> *out);
@@ -55,3 +56,5 @@ template void tensor_scalar_add_full_device(double alpha, Tensor<double> *x, Ten
 
 }	// namespace internal
 }	// namespace magmadnn
+
+#undef BLK_SIZE

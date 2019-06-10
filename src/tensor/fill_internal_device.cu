@@ -9,6 +9,7 @@
 
 #include "tensor/fill_internal.h"
 
+#define BLK_SIZE 1024
 
 namespace magmadnn {
 namespace internal {
@@ -25,7 +26,8 @@ __global__ void kernel_fill_constant(T* arr, unsigned int size, T val) {
 
 template <typename T>
 void fill_constant_device(MemoryManager<T> &m, T val) {
-	kernel_fill_constant <<<m.get_size(), 1>>> (m.get_device_ptr(), m.get_size(), val);
+	unsigned int size = m.get_size();
+	kernel_fill_constant <<<(size+BLK_SIZE-1)/BLK_SIZE, BLK_SIZE>>> (m.get_device_ptr(), size, val);
 }
 template void fill_constant_device(MemoryManager<int> &m, int val);
 template void fill_constant_device(MemoryManager<float> &m, float val);
@@ -34,3 +36,4 @@ template void fill_constant_device(MemoryManager<double> &m, double val);
 } // namespace internal
 } // namespace magmadnn
 
+#undef BLK_SIZE

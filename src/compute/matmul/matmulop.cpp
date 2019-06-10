@@ -43,6 +43,11 @@ MatmulOp<T>::MatmulOp(T alpha, Operation<T>* a, Operation<T>* b, T beta, Operati
     if (copy) {
         this->output_tensor = new Tensor<T> (this->output_shape, this->mem_type);
     }
+
+    /* init gradient tensors to NULL */
+    this->_grad_cache[(uintptr_t)a] = NULL;
+    this->_grad_cache[(uintptr_t)b] = NULL;
+    this->_grad_cache[(uintptr_t)c] = NULL;
 }
 
 template <typename T>

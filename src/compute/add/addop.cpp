@@ -31,6 +31,9 @@ AddOp<T>::AddOp(Operation<T>* a, Operation<T>* b, bool copy, bool needs_grad) :
 	if (copy) {
 		this->output_tensor = new Tensor<T> (this->output_shape, {NONE, {}}, this->mem_type);
 	}
+	
+	this->_grad_cache[(uintptr_t)a] = NULL;
+	this->_grad_cache[(uintptr_t)b] = NULL;
 }
 
 template <typename T>
@@ -56,6 +59,7 @@ Tensor<T>* AddOp<T>::_eval(bool recompute) {
 
 template <typename T>
 Tensor<T> *AddOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad) {
+	printf("calling add:_grad\n");
 	return grad;
 }
 template class AddOp<int>;

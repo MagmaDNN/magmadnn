@@ -14,6 +14,8 @@ NegativeOp<T>::NegativeOp(Operation<T> *x, bool copy, bool needs_grad)
     if (copy) {
         this->output_tensor = new Tensor<T> (this->output_shape, {NONE,{}}, this->mem_type);
     }
+
+    this->_grad_cache[(uintptr_t)x] = NULL;
 }
 
 template <typename T>

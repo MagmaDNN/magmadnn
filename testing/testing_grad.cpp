@@ -62,6 +62,8 @@ void test_simple_grad(memory_t mem, unsigned int size) {
         assert( fequal(affine_wrt_b->get(i), 1.0) );
     }
 
+    delete affine;
+
     show_success();
 }
 

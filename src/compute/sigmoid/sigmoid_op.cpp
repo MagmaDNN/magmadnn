@@ -23,6 +23,8 @@ SigmoidOp<T>::SigmoidOp(Operation<T> *x, bool copy, bool fast) :
     if (copy) {
         this->output_tensor = new Tensor<T> (this->output_shape, {NONE,{}}, this->mem_type);
     }
+
+    this->_grad_cache[(uintptr_t)x] = NULL;
 }
 
 template <typename T>
@@ -45,12 +47,9 @@ Tensor<T>* SigmoidOp<T>::_eval(bool recompute) {
 template <typename T>
 Tensor<T> *SigmoidOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad) {
     /* sigmoid grad is   grad * output * (1-output)  */
-    /* Operation<T> *output = (Operation<T> *) this;
-    Operation<T> *c = add<T>(scalar<T>("1", 1.0f, this->mem_type), negative<T>(output, true, false), true, false);
-    return product<T>(grad, product<T>(output, c, true, false), true, false); */
 
     Tensor<T> *out;
-    x_tensor = x->eval(false);  /* dont recompute */
+    Tensor<T> *output = this->eval(false);
     out = this->_grad_cache[(uintptr_t)var];
 
     if (out == NULL) {
@@ -58,7 +57,7 @@ Tensor<T> *SigmoidOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor
         this->_grad_cache[(uintptr_t)var] = out;
     }
 
-    internal::sigmoid_grad(x_tensor, grad, out);
+    internal::sigmoid_grad(output, grad, out);
 
     return out;
 }

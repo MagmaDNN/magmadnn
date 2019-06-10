@@ -32,14 +32,7 @@ Tensor<T>* SigmoidOp<T>::_eval(bool recompute) {
 
     x_tensor = x->eval(recompute);
 
-    /* ret was created in constructor, now just copy evaluated x_tensor into it */
-    if (copy) {
-        this->output_tensor->copy_from(*x_tensor);
-    } else {
-        this->output_tensor = x_tensor;
-    }
-
-    internal::sigmoid_full(this->output_tensor, fast);
+    internal::sigmoid_full(x_tensor, this->output_tensor, fast);
     
     return this->output_tensor;
 }

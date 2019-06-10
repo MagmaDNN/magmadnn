@@ -13,21 +13,24 @@ namespace math {
 
 template <typename T>
 void scalar_tensor_product(T scalar, Tensor<T> *x, Tensor<T> *out) {
-    if (out->get_memory_type()) {
+    if (out->get_memory_type() == HOST) {
         T *x_ptr = x->get_ptr();
         T *out_ptr = out->get_ptr();
         unsigned int size = out->get_size();
 
         for (unsigned int i = 0; i < size; i++) {
-            out[i] = scalar * x[i];
+            out_ptr[i] = scalar * x_ptr[i];
         }
     }
     #if defined(_HAS_CUDA_)
     else {
-        internal::scalar_tensor_product_device(scalar, x, out);
+        scalar_tensor_product_device(scalar, x, out);
     }
     #endif
 }
+template void scalar_tensor_product(int scalar, Tensor<int> *x, Tensor<int> *out);
+template void scalar_tensor_product(float scalar, Tensor<float> *x, Tensor<float> *out);
+template void scalar_tensor_product(double scalar, Tensor<double> *x, Tensor<double> *out);
 
 }
 }

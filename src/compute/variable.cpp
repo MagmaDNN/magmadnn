@@ -19,12 +19,20 @@ Variable<T>::Variable(std::string name, std::vector<unsigned int> shape, tensor_
 
     this->output_shape = val->get_shape();
     this->mem_type = val->get_memory_type();
+
+    /* so eval doesn't return NULL */
+    this->output_tensor = val;
+    this->has_been_computed = true;
 }
 template <typename T>
 Variable<T>::Variable(std::string name, Tensor<T> *val) : Operation<T>::Operation(), name(name), val(val) {
     this->output_shape = val->get_shape();
     this->mem_type = val->get_memory_type();
     delete_tensor = false;
+
+    /* so eval doesn't return NULL */
+    this->output_tensor = val;
+    this->has_been_computed = true;
 }
 
 template <typename T>

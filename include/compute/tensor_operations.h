@@ -23,3 +23,4 @@
 
 #include "conv2dforward/conv2dforwardop.h"
 #include "pow/powop.h"
+#include "linearforward/linearforwardop.h"

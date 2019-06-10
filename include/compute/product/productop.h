@@ -14,6 +14,7 @@
 #include "tensor/tensor.h"
 #include "utilities_internal.h"
 #include "compute/product/product_internal.h"
+#include "math/scalar_tensor_product.h"
 
 namespace magmadnn {
 

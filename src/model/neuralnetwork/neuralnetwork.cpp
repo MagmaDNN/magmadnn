@@ -88,6 +88,9 @@ magmadnn_error_t NeuralNetwork<T>::fit(Tensor<T> *x, Tensor<T> *y, metric_t& met
         /* copy x into input layer */
         err = input_tensor->copy_from(*x);
 
+        /* forward pass */
+        this->_obj->eval(true);     /* forces evaluation */
+
         /* minimize using gradients */
         optim->minimize(this->_vars);
 

@@ -12,3 +12,5 @@
 
 #include "math/dot.h"
 #include "math/matmul.h"
+#include "math/scalar_tensor_product.h"
+#include "math/pow.h"

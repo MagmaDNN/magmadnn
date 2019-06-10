@@ -47,7 +47,7 @@ void geadd_full(T alpha, Tensor<T> *A, T beta, Tensor<T> *B, Tensor<T> *C);
  * @param C 
  */
 template <typename T>
-void geadd_full_device(unsigned int M, unsigned int N, T alpha, T *A, T beta, T *B, T *C);
+void geadd_full_device(T alpha, Tensor<T> *A, T beta, Tensor<T> *B, Tensor<T> *C);
 #endif
 
 

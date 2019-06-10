@@ -64,8 +64,6 @@ Tensor<T> *ProductOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor
     if (var == a) {
         Tensor<T> *b_tensor = b->eval(false);
 
-        printf("b_tensor: 0x%x\n", (uintptr_t)b_tensor);
-
         if (out == NULL) {
             /* init grad tensor wrt a */
             out = new Tensor<T> (b_tensor->get_shape(), {NONE,{}}, this->mem_type);

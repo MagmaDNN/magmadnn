@@ -59,7 +59,6 @@ Tensor<T>* AddOp<T>::_eval(bool recompute) {
 
 template <typename T>
 Tensor<T> *AddOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad) {
-	printf("calling add:_grad\n");
 	return grad;
 }
 template class AddOp<int>;

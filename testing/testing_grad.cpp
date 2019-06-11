@@ -106,23 +106,28 @@ void test_optimize(memory_t mem, unsigned int size) {
     printf("Testing optimization on %s...  ", get_memory_type_name(mem));
 
     /* optimizing x^2 + c */
-    float x_val = 9.0f;
-    float c_val = -5.0f;
-    unsigned int n_iter = 100;
+    double x_val = 9.0;
+    double c_val = -5.0;
+    unsigned int n_iter = 50;
 
-    op::Operation<float> *x = op::var<float> ("x", {size}, {CONSTANT, {x_val}}, mem);
-    op::Operation<float> *c = op::var<float> ("c", {size}, {CONSTANT, {c_val}}, mem);
-    op::Operation<float> *expr = op::add(op::pow(x,2), c);
+    op::Operation<double> *x = op::var<double> ("x", {size}, {CONSTANT, {x_val}}, mem);
+    op::Operation<double> *c = op::var<double> ("c", {size}, {CONSTANT, {c_val}}, mem);
+    op::Operation<double> *expr = op::add(op::pow(x,2), c);
 
-    optimizer::GradientDescent<float> optim (expr, 0.05f);
+    optimizer::GradientDescent<double> optim (expr, 0.2f);
 
     
     for (unsigned int i = 0; i < n_iter; i++) {
+        expr->eval(true);
+
         optim.minimize({x});
     }
 
+    Tensor<double> *x_tensor = x->get_output_tensor();
+    sync(x_tensor);
+    
     for (unsigned int i = 0; i < size; i++) {
-        printf("%.5g ", x->get_output_tensor()->get(i));
+        assert( fequal(x_tensor->get(i), 0.0f) );
     }
 
     delete expr;

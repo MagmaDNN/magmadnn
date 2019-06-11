@@ -6,7 +6,7 @@ namespace op {
 
 template <typename T>
 LinearForwardOp<T>::LinearForwardOp(Operation<T> *input, Operation<T> *weights, bool copy, bool needs_grad)
-: Operation<T>::Operation({input}, needs_grad), input(input), weights(weights), copy(copy) {
+: Operation<T>::Operation({input, weights}, needs_grad), input(input), weights(weights), copy(copy) {
     /* setup code in here */
     this->output_shape = {input->get_output_shape(0), weights->get_output_shape(1)};
     this->mem_type = input->get_memory_type();

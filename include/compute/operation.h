@@ -95,7 +95,7 @@ public:
             typename std::map<uintptr_t, Tensor<T> *>::iterator mit;
             mit = this->_grad_cache.find((uintptr_t)var);
             
-            if (mit != this->_grad_cache.end()) {
+            if (mit != this->_grad_cache.end() || mit->second != NULL) {
                 return mit->second;
             } else {
                 return _grad(consumer, var, grad);

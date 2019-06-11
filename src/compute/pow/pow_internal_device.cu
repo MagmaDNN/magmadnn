@@ -12,7 +12,7 @@ __global__ void kernel_pow_grad_device(T *x, int power, T *grad, T *out, bool gr
     unsigned int stride = blockDim.x * gridDim.x;
 
     for (unsigned int i = idx; i < size; i += stride) {
-        out[i] = grad[i] * ((T)power) * powf(x[i], power-1);
+        out[i] = grad[(grad_is_scalar) ? 0 : i] * ((T)power) * powf(x[i], power-1);
     }
 }
 
@@ -22,7 +22,7 @@ __global__ void kernel_pow_grad_device(int *x, int power, int *grad, int *out, b
     unsigned int stride = blockDim.x * gridDim.x;
 
     for (unsigned int i = idx; i < size; i += stride) {
-        out[i] = grad[i] * ((int)power) * ((int)powf((float)x[i], power-1));
+        out[i] = grad[(grad_is_scalar) ? 0 : i] * ((int)power) * ((int)powf((float)x[i], power-1));
     }
 }
  

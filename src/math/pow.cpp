@@ -21,7 +21,7 @@ void pow(Tensor<T> *x, int power, Tensor<T> *out) {
         
         for (unsigned int i = 0; i < size; i++) {
             /* TODO : support different precisions for pow */
-            out_ptr[i] = (T) powf((float)x_ptr[i], (float)power);
+            out_ptr[i] = std::pow((T)x_ptr[i], (T)power);
         }
     }
     #if defined(_HAS_CUDA_)
@@ -38,7 +38,7 @@ template <> void pow(Tensor<int> *x, int power, Tensor<int> *out) {
         unsigned int size = out->get_size();
 
         for (unsigned int i = 0; i < size; i++) {
-            out_ptr[i] = (int) powf((float)x_ptr[i], (float)power);
+            out_ptr[i] = (int) std::pow((float)x_ptr[i], (float)power);
         }
     }
     #if defined(_HAS_CUDA_)
@@ -47,43 +47,8 @@ template <> void pow(Tensor<int> *x, int power, Tensor<int> *out) {
     }
     #endif
 }
-
-
-template <> void pow(Tensor<float> *x, int power, Tensor<float> *out) {
-    if (out->get_memory_type() == HOST) {
-        float *x_ptr = x->get_ptr();
-        float *out_ptr = out->get_ptr();
-        unsigned int size = out->get_size();
-        
-        for (unsigned int i = 0; i < size; i++) {
-            out_ptr[i] = powf(x_ptr[i], (float)power);
-        }
-    }
-    #if defined(_HAS_CUDA_)
-    else {
-        pow_device(x, power, out);
-    }
-    #endif
-}
-
-
-template <> void pow(Tensor<double> *x, int power, Tensor<double> *out) {
-    if (out->get_memory_type() == HOST) {
-        double *x_ptr = x->get_ptr();
-        double *out_ptr = out->get_ptr();
-        unsigned int size = out->get_size();
-        
-        for (unsigned int i = 0; i < size; i++) {
-            /* TODO : support different precisions for pow */
-            out_ptr[i] = powf64(x_ptr[i], power);
-        }
-    }
-    #if defined(_HAS_CUDA_)
-    else {
-        pow_device(x, power, out);
-    }
-    #endif
-}
+template void pow(Tensor<float> *x, int power, Tensor<float> *out);
+template void pow(Tensor<double> *x, int power, Tensor<double> *out);
 
 }
 }

@@ -14,11 +14,13 @@
 using namespace magmadnn;
 
 void test_matmul(memory_t mem, unsigned int size);
+void test_pow(memory_t mem, unsigned int size);
 
 int main(int argc, char **argv) {
     magmadnn_init();
 
     test_for_all_mem_types(test_matmul, 50);
+    test_for_all_mem_types(test_pow, 15);
 
     magmadnn_finalize();
 }
@@ -44,5 +46,24 @@ void test_matmul(memory_t mem, unsigned int size) {
     delete A;
     delete B;
     delete C;
+    show_success();
+}
+
+void test_pow(memory_t mem, unsigned int size) {
+    printf("testing %s pow...  ", get_memory_type_name(mem));
+
+    float val = 3.0f;
+
+    Tensor<float> *x = new Tensor<float> ({size, size}, {CONSTANT, {val}}, mem);
+    Tensor<float> *out = new Tensor<float> ({size, size}, {NONE, {}}, mem);
+
+    math::pow(x, 3, out);
+
+    sync(out);
+
+    for (unsigned int i = 0; i < size*size; i++) {
+        assert( fequal(out->get(i), 3.0f*3.0f*3.0f) );
+    }
+
     show_success();
 }

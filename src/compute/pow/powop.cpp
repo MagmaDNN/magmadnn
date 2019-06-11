@@ -12,19 +12,14 @@ PowOp<T>::PowOp(Operation<T> *input, int power, bool copy, bool needs_grad)
     this->mem_type = input->get_memory_type();
     this->name = "POW";
 
-    if (copy) {
-        this->output_tensor = new Tensor<T> (this->output_shape, {NONE, {}}, this->mem_type);
-    } else {
-        this->output_tensor = new Tensor<T> (this->output_shape, {NONE,{}}, this->mem_type);
-    }
+    this->output_tensor = new Tensor<T> (this->output_shape, {NONE, {}}, this->mem_type);
 }
 
 template <typename T>
 Tensor<T> *PowOp<T>::_eval(bool recompute) {
-    
     input_tensor = input->eval(recompute);
 
-    math::pow(input_tensor, power, this->output_tensor);
+    math::pow(input_tensor, this->power, this->output_tensor);
 
     return this->output_tensor;
 }
@@ -53,12 +48,12 @@ template class PowOp<double>;
 
 
 template <typename T>
-PowOp<T> *pow(Operation<T> *input, bool copy, bool needs_grad) {
-    return new PowOp<T>(input, copy, needs_grad);
+PowOp<T> *pow(Operation<T> *input, int power, bool copy, bool needs_grad) {
+    return new PowOp<T>(input, power, copy, needs_grad);
 }
-template PowOp<int> *pow(Operation<int> *input, bool copy, bool needs_grad);
-template PowOp<float> *pow(Operation<float> *input, bool copy, bool needs_grad);
-template PowOp<double> *pow(Operation<double> *input, bool copy, bool needs_grad);
+template PowOp<int> *pow(Operation<int> *input, int power, bool copy, bool needs_grad);
+template PowOp<float> *pow(Operation<float> *input, int power, bool copy, bool needs_grad);
+template PowOp<double> *pow(Operation<double> *input, int power, bool copy, bool needs_grad);
 
 
 }   // namespace op

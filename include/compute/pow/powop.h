@@ -29,7 +29,7 @@ protected:
 };
 
 template <typename T>
-PowOp<T>* pow(Operation<T> *input, bool copy=true, bool needs_grad=true);
+PowOp<T>* pow(Operation<T> *input, int power, bool copy=true, bool needs_grad=true);
 
 } // namespace op
 } // namespace magmadnn

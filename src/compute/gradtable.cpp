@@ -42,6 +42,11 @@ void GradTable<T>::set(Operation<T> *var, Tensor<T> *grad) {
     
 }
 
+template <typename T>
+void GradTable<T>::clear() {
+    this->_table.clear();
+}
+
 template class GradTable<int>;
 template class GradTable<float>;
 template class GradTable<double>;

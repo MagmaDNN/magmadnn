@@ -47,9 +47,9 @@ void test_input(memory_t mem, unsigned int size) {
     for (unsigned int i = 0; i < size; i++) {
         for (unsigned int j = 0; j < size; j++) {
             if (i == j)
-                assert( output_tensor->get({i,j}) == 1.0);
+                assert( fequal(output_tensor->get({i,j}), 1.0f) );
             else
-                assert( output_tensor->get({i,j}) == 0.0);
+                assert( fequal(output_tensor->get({i,j}), 0.0f) );
         }
     }
 

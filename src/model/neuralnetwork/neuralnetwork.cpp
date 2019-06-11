@@ -33,7 +33,7 @@ magmadnn_error_t NeuralNetwork<T>::fit(Tensor<T> *x, Tensor<T> *y, metric_t& met
     optimizer::Optimizer<T> *optim;
     op::Operation<T> *network_output;
     op::Operation<T> *ground_truth;
-    Tensor<T> *input_tensor, *output_tensor;
+    Tensor<T> *input_tensor, *output_tensor, *predicted, *actual, *output_on_host, *y_on_host;
 
     /* get the network output from the last layer */
     network_output = this->layers.back()->out();
@@ -41,6 +41,16 @@ magmadnn_error_t NeuralNetwork<T>::fit(Tensor<T> *x, Tensor<T> *y, metric_t& met
 
     /* ground truth is given to use by y */
     ground_truth = op::var("y", y);
+    
+    /* init the argmax tensor */
+    predicted = new Tensor<T> ({y->get_shape(0)}, {ZERO,{}}, HOST);
+    actual = new Tensor<T> ({y->get_shape(0)}, {ZERO, {}}, HOST);
+    output_on_host = new Tensor<T> (output_tensor->get_shape(), {NONE, {}}, HOST);
+    y_on_host = new Tensor<T> (y->get_shape(), {NONE,{}}, HOST);
+
+    /* copy y into y_on_host */
+    y_on_host->copy_from(*y);
+    math::argmax(y_on_host, 0, actual);
 
     /* input tensor is input layer eval */
     /* TODO : this is rather bootleg~ish. there should be an easier way to do this. */
@@ -95,14 +105,12 @@ magmadnn_error_t NeuralNetwork<T>::fit(Tensor<T> *x, Tensor<T> *y, metric_t& met
         optim->minimize(this->_vars);
 
         /* calc accuracy */
+        output_on_host->copy_from(*output_tensor);
+        math::argmax(output_on_host, 0, predicted);
         for (unsigned int i = 0; i < n_samples; i++) {
-            int n_matches = 0;
-            for (unsigned int j = 0; j < n_classes; j++) {
-                if (std::fabs(output_tensor->get({i,j}) - y->get({i,j})) <= 1E-8) {
-                    n_matches++;
-                }
+            if (std::fabs(predicted->get({i}) - actual->get({i})) <= 1E-8) {
+                n_correct++;
             }
-            if (n_matches == 1) n_correct++;
         }
 
         /* get the loss from the loss func (_obj) */
@@ -116,6 +124,13 @@ magmadnn_error_t NeuralNetwork<T>::fit(Tensor<T> *x, Tensor<T> *y, metric_t& met
     metric_out.accuracy = ((double)n_correct) / (n_samples * n_iter);
     metric_out.loss = loss;
     metric_out.training_time = (end_time - start_time);
+
+
+    /* free up any memory we used here */
+    delete predicted;
+    delete actual;
+    delete output_on_host;
+    delete y_on_host;
 
     return err;
 }

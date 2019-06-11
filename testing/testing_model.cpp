@@ -45,10 +45,10 @@ void test_model_MLP(memory_t mem, unsigned int size) {
     auto fc1 = layer::fullyconnected<float>(input->out(), 10);
     auto act1 = layer::activation<float>(fc1->out(), layer::SIGMOID);
     auto fc2 = layer::fullyconnected<float>(act1->out(), n_classes);
-    auto act2 = layer::fullyconnected<float>(fc2->out(), layer::SIGMOID);
+    auto act2 = layer::activation<float>(fc2->out(), layer::SIGMOID);
     auto output = layer::output<float>(act2->out());
 
-    std::vector<layer::Layer<float> *> layers = {input, fc1, act1, output};
+    std::vector<layer::Layer<float> *> layers = {input, fc1, act1, fc2, act2, output};
 
     model::nn_params_t p;
     p.n_epochs = 5;

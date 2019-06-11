@@ -97,6 +97,8 @@ void test_full_grad(memory_t mem, unsigned int size) {
         assert( fequal(d_expr_wrt_x->get(i), out) );
     }
 
+    delete expr;
+
     show_success();
 }
 
@@ -104,14 +106,26 @@ void test_optimize(memory_t mem, unsigned int size) {
     printf("Testing optimization on %s...  ", get_memory_type_name(mem));
 
     /* optimizing x^2 + c */
+    float x_val = 9.0f;
+    float c_val = -5.0f;
+    unsigned int n_iter = 100;
 
-    op::Operation<float> *x = op::var<float> ("x", {10}, {CONSTANT, {9.0f}}, mem);
-    op::Operation<float> *c = op::var<float> ("c", {10}, {CONSTANT, {-5.0f}}, mem);
+    op::Operation<float> *x = op::var<float> ("x", {size}, {CONSTANT, {x_val}}, mem);
+    op::Operation<float> *c = op::var<float> ("c", {size}, {CONSTANT, {c_val}}, mem);
     op::Operation<float> *expr = op::add(op::pow(x,2), c);
 
     optimizer::GradientDescent<float> optim (expr, 0.05f);
 
-    optim.minimize({x});
+    
+    for (unsigned int i = 0; i < n_iter; i++) {
+        optim.minimize({x});
+    }
+
+    for (unsigned int i = 0; i < size; i++) {
+        printf("%.5g ", x->get_output_tensor()->get(i));
+    }
+
+    delete expr;
 
     show_success();
 }

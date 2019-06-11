@@ -12,9 +12,7 @@ LinearForwardOp<T>::LinearForwardOp(Operation<T> *input, Operation<T> *weights, 
     this->mem_type = input->get_memory_type();
     this->name = "LinearForward";
 
-    if (copy) {
-        this->output_tensor = new Tensor<T> (this->output_shape, {NONE, {}}, this->mem_type);
-    }
+    this->output_tensor = new Tensor<T> (this->output_shape, {NONE, {}}, this->mem_type);
 }
 
 template <typename T>

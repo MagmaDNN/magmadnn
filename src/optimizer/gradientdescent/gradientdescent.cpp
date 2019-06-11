@@ -25,6 +25,7 @@ void GradientDescent<T>::minimize(const std::vector<op::Operation<T> *>& wrt) {
     this->_obj_func->eval(false);
 
     /* build the gradients */
+    this->table.clear();
     op::get_grad_table(wrt, this->_obj_func, this->table);
     
     /* now update each one */

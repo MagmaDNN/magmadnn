@@ -92,11 +92,11 @@ public:
      */
     virtual Tensor<T>* grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad, bool recompute=true) {
         if (!recompute) {
-            typename std::map<uintptr_t, Tensor<T> *>::iterator mit;
-            mit = this->_grad_cache.find((uintptr_t)var);
+            Tensor<T> *ret;
+            ret = this->_grad_cache[(uintptr_t)var];
             
-            if (mit != this->_grad_cache.end() || mit->second != NULL) {
-                return mit->second;
+            if (ret != NULL) {
+                return ret;
             } else {
                 return _grad(consumer, var, grad);
             }

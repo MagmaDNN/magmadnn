@@ -123,15 +123,40 @@ magmadnn_error_t NeuralNetwork<T>::fit(Tensor<T> *x, Tensor<T> *y, metric_t& met
 template <typename T>
 Tensor<T> *NeuralNetwork<T>::predict(Tensor<T> *sample) {
 
+    Tensor<T> *input_tensor = this->layers.front()->out()->get_output_tensor();
 
+    input_tensor->copy_from(*sample);
 
-    return NULL;
+    /* Forward propagate -- get the output tensor */
+    return this->layers.back()->out()->eval(true);
 }
 
 template <typename T>
 unsigned int NeuralNetwork<T>::predict_class(Tensor<T> *sample) {
 
-    return 0;
+    Tensor<T> *input_tensor = this->layers.front()->out()->get_output_tensor();
+
+    input_tensor->copy_from(*sample);
+
+    this->layers.back()->out()->eval(true);
+
+    Tensor<T> *output_tensor = this->layers.back()->out()->get_output_tensor();
+    output_tensor->get_memory_manager()->sync();
+
+    /* TODO -- define argmax in magmadnn::math */
+    T val;
+    T max = output_tensor->get(0);
+    unsigned int arg_max = 0;
+    
+    for (unsigned int i = 1; i < output_tensor->get_size(); i++) {
+        val = output_tensor->get(i);
+        if (val > max) {
+            max = val;
+            arg_max = i;
+        }
+    }
+
+    return arg_max;
 }
 
 template class NeuralNetwork<int>;

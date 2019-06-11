@@ -28,12 +28,7 @@ AddOp<T>::AddOp(Operation<T>* a, Operation<T>* b, bool copy, bool needs_grad) :
 	this->mem_type = a->get_memory_type();
 
 	/* Go ahead and create copy tensor if we can */
-	if (copy) {
-		this->output_tensor = new Tensor<T> (this->output_shape, {NONE, {}}, this->mem_type);
-	}
-	
-	this->_grad_cache[(uintptr_t)a] = NULL;
-	this->_grad_cache[(uintptr_t)b] = NULL;
+	this->output_tensor = new Tensor<T> (this->output_shape, {NONE, {}}, this->mem_type);
 }
 
 template <typename T>
@@ -42,7 +37,6 @@ Tensor<T>* AddOp<T>::_eval(bool recompute) {
 	a_tensor = a->eval(recompute);
 	b_tensor = b->eval(recompute);
 
-	if (!copy) this->output_tensor = b_tensor;
 
 	if (a_tensor->get_size() == 1) {
 		a_tensor->get_memory_manager()->sync(true);

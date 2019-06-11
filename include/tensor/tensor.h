@@ -206,4 +206,10 @@ private:
 
 };
 
+/** Tensor typedefs. Shorthand for Tensors of different types.
+ */
+typedef Tensor<int> tensori_t;
+typedef Tensor<float> tensorf_t;
+typedef Tensor<double> tensord_t;
+
 } // namespace magmadnn

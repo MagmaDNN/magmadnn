@@ -23,9 +23,9 @@ template <> void matmul(float alpha, bool trans_A, Tensor<float> *A, bool trans_
 	M = C->get_shape(0);	/* rows of C and op(A) */
 	N = C->get_shape(1);	/* columns of C and op(B) */
 	K = A->get_shape((trans_A) ? 0 : 1);	/* columns of op(A) and rows of op(B) */
-	ldda = (trans_A) ? K : M;	/* leading dimension of op(A) */
-	lddb = (trans_B) ? N : K;	/* leading dimension of op(B) */
-	lddc = M;
+	ldda = (trans_A) ? M : K;	/* leading dimension of op(A) */
+	lddb = (trans_B) ? K : N;	/* leading dimension of op(B) */
+	lddc = N;
 
 	// A: MxK  B: KxN  C: MxN
 	// (MxR)(RxN) + (MxN) = (MxN) + (MxN) = (MxN)
@@ -59,13 +59,14 @@ template <> void matmul(double alpha, bool trans_A, Tensor<double> *A, bool tran
     unsigned int M, N, K, ldda, lddb, lddc;
 
 	/* op(A) : MxK ; op(B) : KxN ; C : MxN */
+	/* lddX is the leading dimension of X or the number of elements between rows.  */
 
 	M = C->get_shape(0);	/* rows of C and op(A) */
 	N = C->get_shape(1);	/* columns of C and op(B) */
 	K = A->get_shape((trans_A) ? 0 : 1);	/* columns of op(A) and rows of op(B) */
-	ldda = (trans_A) ? K : M;	/* leading dimension of op(A) */
-	lddb = (trans_B) ? N : K;	/* leading dimension of op(B) */
-	lddc = M;
+	ldda = (trans_A) ? M : K;	/* leading dimension of op(A) */
+	lddb = (trans_B) ? K : N;	/* leading dimension of op(B) */
+	lddc = N;
 
 	// A: MxK  B: KxN  C: MxN
 	// (MxR)(RxN) + (MxN) = (MxN) + (MxN) = (MxN)

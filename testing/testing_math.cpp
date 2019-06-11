@@ -37,10 +37,12 @@ void test_matmul(memory_t mem, unsigned int size) {
 
     for (unsigned int i = 0; i < size/2; i++) {
         for (unsigned int j = 0; j < size-5; j++) {
-            printf("%.3g ", C->get({i,j}));
+            assert( fequal(C->get({i,j}), 300.0f) );
         }
-        printf("\n");
     }
 
+    delete A;
+    delete B;
+    delete C;
     show_success();
 }

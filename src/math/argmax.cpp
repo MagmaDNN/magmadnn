@@ -16,6 +16,7 @@ void argmax(Tensor<T> *x, int axis, Tensor<T> *out) {
     unsigned int x_n_axes = x->get_shape().size();
     
     assert( out->get_shape().size() == (x_n_axes-1) );
+    assert( out->get_size() == x->get_shape(axis) );
 
     T max, val, arg_max;
     if (x_n_axes > 2) {
@@ -23,11 +24,17 @@ void argmax(Tensor<T> *x, int axis, Tensor<T> *out) {
         fprintf(stderr, "argmax for tensors with more than 2 axes not supported.\n");
         return;
     } else if (x_n_axes == 2) {
-        for (unsigned int i = 0; i < x->get_shape(0); i++) {
-            max = x->get({i,(unsigned int)0});
+        /* ARG_MAX OF EACH ROW */
+        for (unsigned int i = 0; i < x->get_shape((axis==0) ? 0 : 1); i++) {
+
+            if (axis == 0)  max = x->get({i, (unsigned int)0});
+            else            max = x->get({(unsigned int)0, i});
+
             arg_max = (T)0;
-            for (unsigned int j = 1; j < x->get_shape(1); j++) {
-                val = x->get({i, j});
+            for (unsigned int j = 1; j < x->get_shape((axis==0) ? 1 : 0); j++) {
+                if (axis == 0)  val = x->get({i, j});
+                else            val = x->get({j, i});
+                
                 if (val > max) {
                     arg_max = (T) j;
                     max = val;
@@ -36,10 +43,10 @@ void argmax(Tensor<T> *x, int axis, Tensor<T> *out) {
             out->set({i}, arg_max);
         }
     } else {
-        max = x->get({0});
+        max = x->get(0);
         arg_max = (T)0;
         for (unsigned int i = 1; i < x->get_shape(0); i++) {
-            val = x->get({i});
+            val = x->get(i);
             if (val > max) {
                 arg_max = (T) i;
                 max = val;

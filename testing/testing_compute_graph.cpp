@@ -16,6 +16,7 @@ void test_sum(memory_t mem_type, unsigned int size);
 void test_matmul(memory_t mem_type, unsigned int size);
 void test_transpose(memory_t mem_type, unsigned int size);
 void test_scalarproduct(memory_t mem_type, unsigned int size);
+void test_softmax(memory_t mem_type, unsigned int size);
 void test_sumreduce(memory_t mem_type, unsigned int);
 void test_affine(memory_t mem_type, unsigned int size);
 void test_sigmoid(memory_t mem_type, unsigned int size);
@@ -30,6 +31,7 @@ int main(int argc, char **argv) {
 	test_for_all_mem_types(test_matmul, 50);
 	test_for_all_mem_types(test_transpose, 100);
 	test_for_all_mem_types(test_scalarproduct, 10);
+	test_for_all_mem_types(test_softmax, 10);
 	test_for_all_mem_types(test_sumreduce, 10);
 	test_for_all_mem_types(test_affine, 50);
 	test_for_all_mem_types(test_sigmoid, 50);
@@ -204,6 +206,29 @@ void test_scalarproduct(memory_t mem_type, unsigned int size) {
 	}
 
 	delete prod;
+
+	show_success();
+}
+
+void test_softmax(memory_t mem, unsigned int size) {
+	printf("Testing %s softmax...  ", get_memory_type_name(mem));
+
+	float val = 1.0f;
+	float expected = 2.0f / (float) size;
+
+	op::Operation<float> *x = op::var<float> ("x", {size, size/2}, {CONSTANT, {val}}, mem);
+	op::Operation<float> *out = op::softmax(x);
+
+	Tensor<float> *input = x->get_output_tensor();
+	Tensor<float> *output = out->eval();
+
+	sync(output);
+
+	for (unsigned int i = 0; i < size; i++) {
+		for (unsigned int j = 0; j < size/2; j++) {
+			assert( fequal(output->get({i,j}), expected) );
+		}
+	}
 
 	show_success();
 }

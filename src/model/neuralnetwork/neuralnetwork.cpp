@@ -54,7 +54,7 @@ magmadnn_error_t NeuralNetwork<T>::fit(Tensor<T> *x, Tensor<T> *y, metric_t& met
 
     /* input tensor is input layer eval */
     /* TODO : this is rather bootleg~ish. there should be an easier way to do this. */
-    input_tensor = this->layers.front()->out()->eval();
+    input_tensor = this->layers.front()->out()->get_output_tensor();
 
     switch (this->loss_func) {
         case optimizer::CROSS_ENTROPY:

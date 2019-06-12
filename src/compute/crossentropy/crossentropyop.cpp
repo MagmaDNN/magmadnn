@@ -40,7 +40,9 @@ Tensor<T> *CrossEntropyOp<T>::_eval(bool recompute) {
     x_tensor = x->eval(recompute);
     y_tensor = y->eval(recompute);
 
-    internal::crossentropy_full(x_tensor, y_tensor, this->softmax, this->output_tensor);
+    //internal::crossentropy_full(x_tensor, y_tensor, this->softmax, this->output_tensor);
+    math::crossentropy(x_tensor, y_tensor, this->output_tensor);
+
 
     return this->output_tensor;
 }

@@ -4,6 +4,7 @@
 #include "compute/operation.h"
 #include "tensor/tensor.h"
 #include "utilities_internal.h"
+#include "math/crossentropy.h"
 #include "compute/crossentropy/crossentropy_internal.h"
 
 namespace magmadnn {

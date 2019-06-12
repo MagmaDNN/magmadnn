@@ -72,8 +72,10 @@ void Tensor<T>::init(std::vector<unsigned int>& shape, tensor_filler_t<T> filler
 
     internal::fill_memory(*mem_manager, filler);
 
+    #if defined(_HAS_CUDA_)
     /* create a cudnn descriptor */
     this->init_cudnn_descriptor();
+    #endif
 }
 
 

@@ -15,19 +15,21 @@ using namespace magmadnn;
 
 void test_matmul(memory_t mem, unsigned int size);
 void test_pow(memory_t mem, unsigned int size);
+void test_crossentropy(memory_t mem, unsigned int size);
 
 int main(int argc, char **argv) {
     magmadnn_init();
 
     test_for_all_mem_types(test_matmul, 50);
     test_for_all_mem_types(test_pow, 15);
+    test_for_all_mem_types(test_crossentropy, 10);
 
     magmadnn_finalize();
 }
 
 void test_matmul(memory_t mem, unsigned int size) {
 
-    printf("testing %s matmul...  ", get_memory_type_name(mem));
+    printf("Testing %s matmul...  ", get_memory_type_name(mem));
 
     Tensor<float> *A = new Tensor<float> ({size, size/2}, {CONSTANT,{1.0f}}, mem);
     Tensor<float> *B = new Tensor<float> ({size, size-5}, {CONSTANT,{6.0f}}, mem);
@@ -50,7 +52,7 @@ void test_matmul(memory_t mem, unsigned int size) {
 }
 
 void test_pow(memory_t mem, unsigned int size) {
-    printf("testing %s pow...  ", get_memory_type_name(mem));
+    printf("Testing %s pow...  ", get_memory_type_name(mem));
 
     float val = 3.0f;
 
@@ -64,6 +66,23 @@ void test_pow(memory_t mem, unsigned int size) {
     for (unsigned int i = 0; i < size*size; i++) {
         assert( fequal(out->get(i), 3.0f*3.0f*3.0f) );
     }
+
+    show_success();
+}
+
+void test_crossentropy(memory_t mem, unsigned int size) {
+    printf("Testing %s crossentropy...  ", get_memory_type_name(mem));
+
+    unsigned int n_samples = size;
+    unsigned int n_classes = size;
+
+    Tensor<float> *ground_truth = new Tensor<float> ({n_samples, n_classes}, {IDENTITY,{}}, mem);
+    Tensor<float> *predicted = new Tensor<float> ({n_samples, n_classes}, {DIAGONAL, {0.2f}}, mem);
+    Tensor<float> *out = new Tensor<float> ({1}, {NONE,{}}, mem);
+
+    math::crossentropy(predicted, ground_truth, out);
+
+    sync(out);
 
     show_success();
 }

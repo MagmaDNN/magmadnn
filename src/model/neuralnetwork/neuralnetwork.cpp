@@ -43,10 +43,10 @@ magmadnn_error_t NeuralNetwork<T>::fit(Tensor<T> *x, Tensor<T> *y, metric_t& met
     ground_truth = op::var("y", y);
     
     /* init the argmax tensor */
-    predicted = new Tensor<T> ({y->get_shape(0)}, {ZERO,{}}, HOST);
-    actual = new Tensor<T> ({y->get_shape(0)}, {ZERO, {}}, HOST);
-    output_on_host = new Tensor<T> (output_tensor->get_shape(), {NONE, {}}, HOST);
-    y_on_host = new Tensor<T> (y->get_shape(), {NONE,{}}, HOST);
+    predicted = new Tensor<T> ({y->get_shape(0)}, {ZERO,{}}, HOST); /* this will store the result of the argmax on the output of the network */
+    actual = new Tensor<T> ({y->get_shape(0)}, {ZERO, {}}, HOST);   /* this will store the result of the argmax on the ground_truth */
+    output_on_host = new Tensor<T> (output_tensor->get_shape(), {NONE, {}}, HOST);  /* used to move network output onto CPU */
+    y_on_host = new Tensor<T> (y->get_shape(), {NONE,{}}, HOST);    /* used to move ground_truth onto CPU */
 
     /* copy y into y_on_host */
     y_on_host->copy_from(*y);

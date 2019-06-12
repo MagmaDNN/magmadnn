@@ -34,6 +34,7 @@ void print_vector(const std::vector<unsigned int>& vec, bool debug, char begin, 
     print(" %c\n", end);
 }
 
+#if defined(_TENSOR_IN_UTIL_)
 template <typename T>
 void print_tensor(const Tensor<T>& t, bool print_flat, bool debug, const char *begin, const char *end, const char *delim) {
     int (*print)(const char*,...) = (debug) ? debugf : std::printf;
@@ -160,6 +161,8 @@ void reset_compute_graph(op::Operation<T> *node) {
 template void reset_compute_graph(op::Operation<int> *node);
 template void reset_compute_graph(op::Operation<float> *node);
 template void reset_compute_graph(op::Operation<double> *node);
+#endif
+
 
 }   // namespace internal
 }   // namespace magmadnn

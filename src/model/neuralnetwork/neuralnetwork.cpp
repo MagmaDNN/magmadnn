@@ -87,7 +87,7 @@ magmadnn_error_t NeuralNetwork<T>::fit(Tensor<T> *x, Tensor<T> *y, metric_t& met
     double loss = 0.0;
     time_t start_time, end_time;
     unsigned int n_samples = y->get_shape(0);
-    unsigned int n_classes = y->get_shape(1);
+    //unsigned int n_classes = y->get_shape(1);
     unsigned int n_iter = this->model_params.n_epochs;
     Tensor<T> *loss_tensor;
 

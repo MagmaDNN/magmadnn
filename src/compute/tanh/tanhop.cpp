@@ -18,9 +18,7 @@ TanhOp<T>::TanhOp(Operation<T> *x, bool copy) : Operation<T>::Operation({x}), x(
     this->mem_type = x->get_memory_type();
 
     /* create tensor here to avoid memory allocation at tree execution */
-    if (copy) {
-        this->output_tensor = new Tensor<T> (this->output_shape, this->mem_type);
-    }
+    this->output_tensor = new Tensor<T> (this->output_shape, this->mem_type);
 }
 
 template <typename T>
@@ -28,13 +26,7 @@ Tensor<T>* TanhOp<T>::_eval(bool recompute) {
 
     x_tensor = x->eval();
 
-    if (copy) {
-        this->output_tensor->copy_from(*x_tensor);
-    } else {
-        this->output_tensor = x_tensor;
-    }
-
-    internal::tanh_full(this->output_tensor);
+    internal::tanh_full(x_tensor, this->output_tensor);
     
     return this->output_tensor;
 }

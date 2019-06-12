@@ -14,8 +14,10 @@
 #include <vector>
 #include <set>
 #include <deque>
-#include "compute/operation.h"
 
+#if defined(_HAS_CUDA_)
+#include "cudnn_v7.h"
+#endif
 
 
 
@@ -46,6 +48,11 @@ void print_tensor(const Tensor<T>& t, bool print_flat=false, bool debug=true, co
 
 template <typename T>
 void print_compute_graph(op::Operation<T> *node, bool debug=true);
+
+#if defined(_HAS_CUDA_)
+template <typename T>
+cudnnDataType_t get_cudnn_data_type(T val);
+#endif
 
 }   // namespace internal
 }   // namespace magmadnn

@@ -44,6 +44,10 @@ Tensor<T>::Tensor(std::vector<unsigned int> shape, tensor_filler_t<T> filler, me
 template <typename T>
 Tensor<T>::~Tensor() { 
     delete mem_manager;
+
+    #if defined(_HAS_CUDA_)
+    this->free_cudnn_descriptor();
+    #endif
 }
 
 
@@ -67,6 +71,9 @@ void Tensor<T>::init(std::vector<unsigned int>& shape, tensor_filler_t<T> filler
     this->mem_manager = new MemoryManager<T> (size, mem_type, device_id);
 
     internal::fill_memory(*mem_manager, filler);
+
+    /* create a cudnn descriptor */
+    this->init_cudnn_descriptor();
 }
 
 
@@ -165,6 +172,40 @@ unsigned int Tensor<T>::get_flattened_index(const std::vector<unsigned int>& idx
     }
     return flattened_idx;
 }
+
+#if defined(_HAS_CUDA_)
+template <typename T>
+void Tensor<T>::init_cudnn_descriptor() {
+    int n = 1, c = 1, h = 1, w = 1;
+
+    cudnnCreateTensorDescriptor(&desc);
+
+    if (shape.size() == 4) {
+        n = shape[0];
+        c = shape[1];
+        h = shape[2];
+        w = shape[3];
+    } else if (shape.size() == 3) {
+        n = shape[0];
+        h = shape[1];
+        w = shape[2];
+    } else if (shape.size() == 2) {
+        n = shape[0];
+        w = shape[1];
+    } else if (shape.size() == 1) {
+        n = shape[0];
+    } else {
+        fprintf(stderr, "Cannot create tensor descriptor for tensor of this shape\n");
+    }
+
+    cudnnSetTensor4dDescriptor(desc, CUDNN_TENSOR_NCHW, internal::get_cudnn_data_type((T) 0), n, c, h, w);
+}
+
+template <typename T>
+void Tensor<T>::free_cudnn_descriptor() {
+    cudnnDestroyTensorDescriptor(this->desc);
+}
+#endif
 
 
 

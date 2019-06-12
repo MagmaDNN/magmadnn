@@ -12,6 +12,11 @@
 #include "types.h"
 #include "memory/memorymanager.h"
 #include "tensor_internal.h"
+#include "utilities_internal.h"
+
+#if defined(_HAS_CUDA_)
+#include "cudnn_v7.h"
+#endif
 
 namespace magmadnn {
 
@@ -193,9 +198,21 @@ public:
 	 */
 	device_t get_device_id() const { return this->device_id; }
 
+	#if defined(_HAS_CUDA_)
+	cudnnTensorDescriptor_t get_cudnn_tensor_descriptor() { return desc; }
+	#endif
+
 private:
 	void init(std::vector<unsigned int>& shape, tensor_filler_t<T> filler, memory_t mem_type, device_t device_id);
 	unsigned int get_flattened_index(const std::vector<unsigned int>& idx) const;
+
+	/* device specific code */
+	#if defined(_HAS_CUDA_)
+	void init_cudnn_descriptor();
+	void free_cudnn_descriptor();
+
+	cudnnTensorDescriptor_t desc;
+	#endif
 
 	MemoryManager<T> *mem_manager;	/* allocated by init */
 	

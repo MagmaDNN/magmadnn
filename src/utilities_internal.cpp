@@ -164,5 +164,25 @@ template void reset_compute_graph(op::Operation<double> *node);
 #endif
 
 
+
+#if defined(_HAS_CUDA_)
+template <typename T>
+cudnnDataType_t get_cudnn_data_type(T v) {
+    return CUDNN_DATA_FLOAT;    /* default */
+}
+
+template <> cudnnDataType_t get_cudnn_data_type(int v) {
+    return CUDNN_DATA_INT32;
+}
+template <> cudnnDataType_t get_cudnn_data_type(float v) {
+    return CUDNN_DATA_FLOAT;
+}
+template <> cudnnDataType_t get_cudnn_data_type(double v) {
+    return CUDNN_DATA_DOUBLE;
+}
+
+#endif
+
+
 }   // namespace internal
 }   // namespace magmadnn

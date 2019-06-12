@@ -121,9 +121,9 @@ magmadnn_error_t NeuralNetwork<T>::fit(Tensor<T> *x, Tensor<T> *y, metric_t& met
     time(&end_time);
 
     /* update metrics */
-    metric_out.accuracy = ((double)n_correct) / (n_samples * n_iter);
+    metric_out.accuracy = ((double)n_correct) / ((double) n_samples * n_iter);
     metric_out.loss = loss;
-    metric_out.training_time = (end_time - start_time);
+    metric_out.training_time = (double) (end_time - start_time);
 
 
     /* free up any memory we used here */

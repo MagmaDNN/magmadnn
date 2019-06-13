@@ -17,6 +17,24 @@
 
 #if defined(_HAS_CUDA_)
 #include "cudnn_v7.h"
+#include <cuda.h>
+#include <cuda_runtime_api.h>
+
+#define cudaErrchk(ans) { cudaAssert((ans), __FILE__, __LINE__); }
+inline void cudaAssert(cudaError_t code, const char *file, int line, bool abort=true) {
+    if (code != cudaSuccess) {
+        fprintf(stderr, "GPUassert: %s %s %d\n", cudaGetErrorString(code), file, line);
+        if (abort) exit(code);
+    }
+}
+
+#define cudnnErrchk(ans) { cudnnAssert((ans), __FILE__, __LINE__); }
+inline void cudnnAssert(cudnnStatus_t code, const char *file, int line, bool abort=true) {
+    if (code != CUDNN_STATUS_SUCCESS) {
+        fprintf(stderr, "CuDNNassert: %s %s %d\n", cudnnGetErrorString(code), file, line);
+        if (abort) exit(code);
+    }
+}
 #endif
 
 

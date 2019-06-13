@@ -98,8 +98,8 @@ template void softmax_grad(Tensor<double> *softmax, Tensor<double> *grad, Tensor
 template <typename T>
 void softmax_device(Tensor<T> *x, Tensor<T> *out, cudnn_softmax_settings_t settings) {
     T alpha = (T) 1, beta = (T) 0;
-    cudnnSoftmaxForward(settings.handle, settings.alg, settings.mode, (void *)&alpha, settings.xdesc, 
-        (void *)x->get_ptr(), (void *)&beta, settings.ydesc, (void *)out->get_ptr());
+    cudnnErrchk( cudnnSoftmaxForward(settings.handle, settings.alg, settings.mode, (void *)&alpha, settings.xdesc, 
+        (void *)x->get_ptr(), (void *)&beta, settings.ydesc, (void *)out->get_ptr()) );
 }
 template void softmax_device(Tensor<int> *x, Tensor<int> *out, cudnn_softmax_settings_t settings);
 template void softmax_device(Tensor<float> *x, Tensor<float> *out, cudnn_softmax_settings_t settings);
@@ -108,8 +108,8 @@ template void softmax_device(Tensor<double> *x, Tensor<double> *out, cudnn_softm
 template <typename T>
 void softmax_grad_device(Tensor<T> *y, Tensor<T> *grad, Tensor<T> *out, cudnn_softmax_grad_settings_t settings) {
     T alpha = (T) 1, beta = (T) 0;
-    cudnnSoftmaxBackward(settings.handle, settings.alg, settings.mode, (void *)&alpha, settings.ydesc, (void *)y->get_ptr(),
-        settings.dydesc, (void *)grad->get_ptr(), (void *)&beta, settings.dxdesc, (void *)out->get_ptr());
+    cudnnErrchk( cudnnSoftmaxBackward(settings.handle, settings.alg, settings.mode, (void *)&alpha, settings.ydesc, (void *)y->get_ptr(),
+        settings.dydesc, (void *)grad->get_ptr(), (void *)&beta, settings.dxdesc, (void *)out->get_ptr()) );
 }
 template void softmax_grad_device(Tensor<int> *y, Tensor<int> *grad, Tensor<int> *out, cudnn_softmax_grad_settings_t settings);
 template void softmax_grad_device(Tensor<float> *y, Tensor<float> *grad, Tensor<float> *out, cudnn_softmax_grad_settings_t settings);

@@ -58,7 +58,29 @@ template void softmax(Tensor<double> *x, Tensor<double> *out);
 template <typename T>
 void softmax_grad(Tensor<T> *softmax, Tensor<T> *grad, Tensor<T> *out) {
     if (out->get_memory_type() == HOST) {
-        fprintf(stderr, "softmax_grad on HOST not yet implemented\n");
+        assert( T_IS_MATRIX(softmax) && T_IS_MATRIX(out) );
+
+        /* softmax grad is: (grad - RowReduce(grad * softmax)) * softmax */
+        T *softmax_ptr = softmax->get_ptr();
+        T *grad_ptr = grad->get_ptr();
+        T *out_ptr = out->get_ptr();
+        unsigned int size = out->get_size();
+        unsigned int n_rows = out->get_shape(0);
+        unsigned int n_cols = out->get_shape(1);
+        bool grad_is_scalar = T_IS_SCALAR(grad);
+        T sum;
+
+        for (unsigned int i = 0; i < n_rows; i++) {
+            sum = (T) 0;
+            for (unsigned int j = 0; j < n_cols; j++) {
+                sum += grad_ptr[(grad_is_scalar) ? 0 : (i*n_cols+j)] * softmax_ptr[i*n_cols + j];
+            }
+
+            for (unsigned int j = 0; j < n_cols; j++) {
+                out_ptr[i*n_cols+j] = (grad_ptr[(grad_is_scalar) ? 0 : (i*n_cols+j)] - sum) * softmax_ptr[i*n_cols + j];
+            }
+        }
+
     }
     #if defined(_HAS_CUDA_)
     else {

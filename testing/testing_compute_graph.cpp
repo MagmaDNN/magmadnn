@@ -219,7 +219,6 @@ void test_softmax(memory_t mem, unsigned int size) {
 	op::Operation<float> *x = op::var<float> ("x", {size, size/2}, {CONSTANT, {val}}, mem);
 	op::Operation<float> *out = op::softmax(x);
 
-	Tensor<float> *input = x->get_output_tensor();
 	Tensor<float> *output = out->eval();
 
 	sync(output);

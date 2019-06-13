@@ -89,6 +89,7 @@ magmadnn_error_t NeuralNetwork<T>::fit(Tensor<T> *x, Tensor<T> *y, metric_t& met
     unsigned int n_iter = this->model_params.n_epochs;
     unsigned int sample_size = x->get_size() / x->get_shape(0); /* the size of each sample */
     unsigned int ground_truth_sample_size = y->get_size() / y->get_shape(0);
+    unsigned int n_iter = this->model_params.n_epochs * (n_samples / this->model_params.batch_size);
     unsigned int cur_sample_idx = 0;
     Tensor<T> *loss_tensor;
 

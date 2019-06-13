@@ -32,12 +32,13 @@ void test_model_MLP(memory_t mem, unsigned int size) {
     unsigned int n_features = 6;
     unsigned int n_classes = 5;
     unsigned int n_samples = 10;
+    unsigned int batch_size = 2;
     model::metric_t metrics;
 
     printf("testing %s MLP...  ", get_memory_type_name(mem));
 
     Tensor<float> x ({n_samples, n_features}, {CONSTANT, {1.0f}}, mem);
-    auto var = op::var<float>("x", &x);
+    auto var = op::var<float>("x", {batch_size, n_features}, {NONE, {}}, mem);
 
     Tensor<float> y ({n_samples, n_classes}, {CONSTANT, {1.0f}}, mem);
 
@@ -52,7 +53,7 @@ void test_model_MLP(memory_t mem, unsigned int size) {
 
     model::nn_params_t p;
     p.n_epochs = 5;
-    p.batch_size = 10;
+    p.batch_size = batch_size;
     model::NeuralNetwork<float> model (layers, optimizer::CROSS_ENTROPY, optimizer::SGD, p);
 
     /* training routing */

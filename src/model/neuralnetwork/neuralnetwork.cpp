@@ -31,38 +31,36 @@ template <typename T>
 magmadnn_error_t NeuralNetwork<T>::fit(Tensor<T> *x, Tensor<T> *y, metric_t& metric_out, bool verbose) {
     /* init */
     optimizer::Optimizer<T> *optim;
-    op::Operation<T> *network_output;
-    op::Operation<T> *ground_truth;
-    Tensor<T> *input_tensor, *output_tensor, *predicted, *actual, *output_on_host, *y_on_host;
+    op::Operation<T> *network_output, *ground_truth;
+    Tensor<T> *output_tensor, *predicted, *actual, *output_on_host, *y_on_host, *x_batch, *y_batch;    
 
     /* get the network output from the last layer */
     network_output = this->layers.back()->out();
     output_tensor = network_output->get_output_tensor();
 
-    /* ground truth is given to use by y */
-    ground_truth = op::var("y", y);
+    /* construct batches */
+    ground_truth = op::var<T>("y", {this->model_params.batch_size, y->get_shape(1)}, {NONE, {}}, y->get_memory_type());
+    y_batch = ground_truth->get_output_tensor();
     
     /* init the argmax tensor */
-    predicted = new Tensor<T> ({y->get_shape(0)}, {ZERO,{}}, HOST); /* this will store the result of the argmax on the output of the network */
-    actual = new Tensor<T> ({y->get_shape(0)}, {ZERO, {}}, HOST);   /* this will store the result of the argmax on the ground_truth */
+    predicted = new Tensor<T> ({output_tensor->get_shape(0)}, {ZERO,{}}, HOST); /* this will store the result of the argmax on the output of the network */
+    actual = new Tensor<T> ({output_tensor->get_shape(0)}, {ZERO, {}}, HOST);   /* this will store the result of the argmax on the ground_truth */
     output_on_host = new Tensor<T> (output_tensor->get_shape(), {NONE, {}}, HOST);  /* used to move network output onto CPU */
-    y_on_host = new Tensor<T> (y->get_shape(), {NONE,{}}, HOST);    /* used to move ground_truth onto CPU */
-
-    /* copy y into y_on_host */
-    y_on_host->copy_from(*y);
-    math::argmax(y_on_host, 0, actual);
+    y_on_host = new Tensor<T> (y_batch->get_shape(), {NONE,{}}, HOST);    /* used to move ground_truth onto CPU */
 
     /* input tensor is input layer eval */
     /* TODO : this is rather bootleg~ish. there should be an easier way to do this. */
-    input_tensor = this->layers.front()->out()->get_output_tensor();
+    x_batch = this->layers.front()->out()->get_output_tensor();
 
     switch (this->loss_func) {
         case optimizer::CROSS_ENTROPY:
             this->_obj = op::crossentropy(network_output, ground_truth); break;
         case optimizer::MSE:
-            std::fprintf(stderr, "MSE not yet implemented.\n"); break;
+            std::fprintf(stderr, "MSE not yet implemented.\n"); 
+            return (magmadnn_error_t) 2;
         default:
             std::fprintf(stderr, "Unknown loss function.\n");
+            return (magmadnn_error_t) 2;
     }
 
     switch (this->optimizer) {
@@ -89,14 +87,23 @@ magmadnn_error_t NeuralNetwork<T>::fit(Tensor<T> *x, Tensor<T> *y, metric_t& met
     unsigned int n_samples = y->get_shape(0);
     //unsigned int n_classes = y->get_shape(1);
     unsigned int n_iter = this->model_params.n_epochs;
+    unsigned int sample_size = x->get_size() / x->get_shape(0); /* the size of each sample */
+    unsigned int ground_truth_sample_size = y->get_size() / y->get_shape(0);
+    unsigned int cur_sample_idx = 0;
     Tensor<T> *loss_tensor;
 
     /* main training routine */
     int n_correct = 0;
     time(&start_time);
     for (unsigned int i = 0; i < n_iter; i++) {
-        /* copy x into input layer */
-        err = input_tensor->copy_from(*x);
+        /* load next batch into x*/
+        if (cur_sample_idx + this->model_params.batch_size <= n_samples) {
+            cur_sample_idx = 0;
+        }
+        err = x_batch->copy_from(*x, cur_sample_idx*sample_size, this->model_params.batch_size * sample_size);
+        y_batch->copy_from(*y, cur_sample_idx * ground_truth_sample_size, this->model_params.batch_size * ground_truth_sample_size);
+
+        cur_sample_idx += this->model_params.batch_size;
 
         /* forward pass */
         this->_obj->eval(true);     /* forces evaluation */
@@ -104,11 +111,16 @@ magmadnn_error_t NeuralNetwork<T>::fit(Tensor<T> *x, Tensor<T> *y, metric_t& met
         /* minimize using gradients */
         optim->minimize(this->_vars);
 
-        /* calc accuracy */
+        /* get the argmax of the networks output (on CPU) */
         output_on_host->copy_from(*output_tensor);
         math::argmax(output_on_host, 0, predicted);
-        for (unsigned int i = 0; i < n_samples; i++) {
-            if (std::fabs(predicted->get({i}) - actual->get({i})) <= 1E-8) {
+
+        /* get the argmax of the ground truth (on CPU) */
+        y_on_host->copy_from(*y_batch);
+        math::argmax(y_on_host, 0, actual);
+
+        for (unsigned int i = 0; i < this->model_params.batch_size; i++) {
+            if (std::fabs(predicted->get(i) - actual->get(i)) <= 1E-8) {
                 n_correct++;
             }
         }

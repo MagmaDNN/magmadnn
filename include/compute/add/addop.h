@@ -23,7 +23,6 @@ class AddOp : public Operation<T> {
 public:
 	AddOp(Operation<T>* a, Operation<T>* b, bool copy=true, bool needs_grad=true);
 
-	Operation<T> *grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad);
 	
 	std::string to_string() { return "(" + a->to_string() + " + " + b->to_string() + ")"; }
 protected:

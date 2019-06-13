@@ -12,8 +12,6 @@ template <typename T>
 class Conv2DForwardOp : public Operation<T> {
 public:
 	Conv2DForwardOp(Operation<T> *input, bool copy=true, bool needs_grad=true);
-
-	Operation<T> *grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad);
 	
 	std::string to_string() { return "Conv2DForward(" + input->to_string() + ")"; }
 protected:

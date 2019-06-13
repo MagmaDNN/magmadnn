@@ -44,6 +44,10 @@ Tensor<T>::Tensor(std::vector<unsigned int> shape, tensor_filler_t<T> filler, me
 template <typename T>
 Tensor<T>::~Tensor() { 
     delete mem_manager;
+
+    #if defined(_HAS_CUDA_)
+    this->free_cudnn_descriptor();
+    #endif
 }
 
 
@@ -67,13 +71,17 @@ void Tensor<T>::init(std::vector<unsigned int>& shape, tensor_filler_t<T> filler
     this->mem_manager = new MemoryManager<T> (size, mem_type, device_id);
 
     internal::fill_memory(*mem_manager, filler);
+
+    #if defined(_HAS_CUDA_)
+    /* create a cudnn descriptor */
+    this->init_cudnn_descriptor();
+    #endif
 }
 
 
 template <typename T>
 magmadnn_error_t Tensor<T>::copy_from(const Tensor<T>& src, unsigned int begin_idx, unsigned int size) {
-    assert( this->size == src.get_size() );
-    assert( begin_idx+size <= this->size );
+    assert( this->size >= (begin_idx + size) );
 
     return this->mem_manager->copy_from(*src.get_memory_manager(), begin_idx, size);
 }
@@ -85,7 +93,24 @@ magmadnn_error_t Tensor<T>::copy_from(const Tensor<T>& src) {
 
 
 template <typename T>
-T Tensor<T>::get(const std::vector<int>& idx) const { 
+T Tensor<T>::get(const std::vector<int>& idx) const {
+    std::vector<unsigned int> ui_vec (idx.begin(), idx.end());
+    return mem_manager->get( get_flattened_index(ui_vec) );
+}
+
+template <typename T>
+T Tensor<T>::get(const std::vector<unsigned int>& idx) const {
+    return mem_manager->get( get_flattened_index(idx) );
+}
+
+template <typename T>
+T Tensor<T>::get(const std::initializer_list<int>& idx) const {
+    std::vector<unsigned int> ui_vec (idx.begin(), idx.end());
+    return mem_manager->get( get_flattened_index(ui_vec) );
+}
+
+template <typename T>
+T Tensor<T>::get(const std::initializer_list<unsigned int>& idx) const {
     return mem_manager->get( get_flattened_index(idx) );
 }
 
@@ -95,7 +120,34 @@ T Tensor<T>::get(unsigned int flattened_idx) const {
 }
 
 template <typename T>
-void Tensor<T>::set(const std::vector<int>& idx, T val) { 
+const T Tensor<T>::operator[](unsigned int idx) const {
+    return mem_manager->get( idx );
+}
+
+template <typename T>
+const T Tensor<T>::operator[](const std::initializer_list<unsigned int>& idx) {
+    return mem_manager->get( get_flattened_index(idx) );
+}
+
+template <typename T>
+void Tensor<T>::set(const std::vector<int>& idx, T val) {
+    std::vector<unsigned int> ui_vec (idx.begin(), idx.end()); 
+    mem_manager->set( get_flattened_index(ui_vec), val );
+}
+
+template <typename T>
+void Tensor<T>::set(const std::vector<unsigned int>& idx, T val) { 
+    mem_manager->set( get_flattened_index(idx), val );
+}
+
+template <typename T>
+void Tensor<T>::set(const std::initializer_list<int>& idx, T val) {
+    std::vector<unsigned int> ui_vec (idx.begin(), idx.end()); 
+    mem_manager->set( get_flattened_index(ui_vec), val );
+}
+
+template <typename T>
+void Tensor<T>::set(const std::initializer_list<unsigned int>& idx, T val) { 
     mem_manager->set( get_flattened_index(idx), val );
 }
 
@@ -111,8 +163,8 @@ unsigned int Tensor<T>::get_shape(unsigned int idx) const {
 }
 
 template <typename T>
-unsigned int Tensor<T>::get_flattened_index(const std::vector<int>& idx) const {
-    unsigned int jump_size = 1; // the total amout to jump to get to next axis
+unsigned int Tensor<T>::get_flattened_index(const std::vector<unsigned int>& idx) const {
+    unsigned int jump_size = 1; // the total amount to jump to get to next axis
     unsigned int flattened_idx = 0;
 
     for (int i = ((int)idx.size()) - 1; i >= 0; i--) {
@@ -120,7 +172,41 @@ unsigned int Tensor<T>::get_flattened_index(const std::vector<int>& idx) const {
         jump_size *= shape[i];
     }
     return flattened_idx;
- }
+}
+
+#if defined(_HAS_CUDA_)
+template <typename T>
+void Tensor<T>::init_cudnn_descriptor() {
+    int n = 1, c = 1, h = 1, w = 1;
+
+    cudnnCreateTensorDescriptor(&desc);
+
+    if (shape.size() == 4) {
+        n = shape[0];
+        c = shape[1];
+        h = shape[2];
+        w = shape[3];
+    } else if (shape.size() == 3) {
+        n = shape[0];
+        h = shape[1];
+        w = shape[2];
+    } else if (shape.size() == 2) {
+        n = shape[0];
+        w = shape[1];
+    } else if (shape.size() == 1) {
+        n = shape[0];
+    } else {
+        fprintf(stderr, "Cannot create tensor descriptor for tensor of this shape\n");
+    }
+
+    cudnnSetTensor4dDescriptor(desc, CUDNN_TENSOR_NCHW, internal::get_cudnn_data_type((T) 0), n, c, h, w);
+}
+
+template <typename T>
+void Tensor<T>::free_cudnn_descriptor() {
+    cudnnDestroyTensorDescriptor(this->desc);
+}
+#endif
 
 
 

@@ -24,7 +24,7 @@ public:
     virtual void minimize(const std::vector<op::Operation<T> *>& wrt);
 
 protected:
-    virtual void update(op::Operation<T> *var, op::Operation<T> *grad);
+    virtual void update(op::Operation<T> *var, Tensor<T> *grad);
 
     T learning_rate;
     op::GradTable<T> table;

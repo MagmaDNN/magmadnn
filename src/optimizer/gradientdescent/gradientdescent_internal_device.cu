@@ -8,6 +8,8 @@
  */
 #include "optimizer/gradientdescent/gradientdescent_internal.h"
 
+#define BLK_SIZE 1024
+
 namespace magmadnn {
 namespace internal {
  
@@ -26,7 +28,7 @@ magmadnn_error_t gradientdescent_update_internal_device(Tensor<T> *var, Tensor<T
     magmadnn_error_t err = (magmadnn_error_t) 0;
  
     unsigned int size = var->get_size();
-    kernel_gradientdescent_update_internal_device <<< 1, size >>> (var->get_ptr(), grad->get_ptr(), learning_rate, size);
+    kernel_gradientdescent_update_internal_device <<<(size+BLK_SIZE-1)/BLK_SIZE,BLK_SIZE>>> (var->get_ptr(), grad->get_ptr(), learning_rate, size);
  
     return (magmadnn_error_t) err;
 }
@@ -37,3 +39,5 @@ template magmadnn_error_t gradientdescent_update_internal_device(Tensor<double> 
  
 }   // namespace internal
 }   // namespace magmadnn
+
+#undef BLK_SIZE

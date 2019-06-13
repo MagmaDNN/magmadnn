@@ -18,6 +18,8 @@
 #include "tensor/tensor.h"
 #include "tensor/tensor_io.h"
 
+#include "math/tensor_math.h"
+
 #include "compute/variable.h"
 #include "compute/tensor_operations.h"
 #include "compute/gradients.h"

@@ -20,7 +20,7 @@ namespace internal {
  * @param fast if true, then x=1/(1+|x|) is computed instead of normal sigmoid
  */
 template <typename T>
-void sigmoid_full(Tensor<T> *x, bool fast=true);
+void sigmoid_full(Tensor<T> *x, Tensor<T> *out, bool fast=true);
 
 #if defined(_HAS_CUDA_)
 /** Computes the element-wise sigmoid on a device.
@@ -29,8 +29,19 @@ void sigmoid_full(Tensor<T> *x, bool fast=true);
  * @param fast 
  */
 template <typename T>
-void sigmoid_full_device(Tensor<T> *x, bool fast=true);
+void sigmoid_full_device(Tensor<T> *x, Tensor<T> *out, bool fast=true);
 #endif
+
+
+
+template <typename T>
+void sigmoid_grad(Tensor<T> *output, Tensor<T> *grad, Tensor<T> *out);
+
+#if defined(_HAS_CUDA_)
+template <typename T>
+void sigmoid_grad_device(Tensor<T> *output, Tensor<T> *grad, Tensor<T> *out);
+#endif
+
 
 }   // namespace internal
 }   // namespace magmadnn

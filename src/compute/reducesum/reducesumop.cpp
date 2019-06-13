@@ -39,39 +39,35 @@ ReduceSumOp<T>::ReduceSumOp(Operation<T> *x, int axis, bool copy, bool needs_gra
 
     if (copy) {
         /* init to ones */
-        this->ret = new Tensor<T> (this->get_output_shape(), {ONE, {}}, this->mem_type);
+        this->output_tensor = new Tensor<T> (this->get_output_shape(), {ONE, {}}, this->mem_type);
     } else {
         std::fprintf(stderr, "Non-Copy ReduceSum not supported.\n");
     }
 }
 
 template <typename T>
-Tensor<T> *ReduceSumOp<T>::eval(bool recompute) {
+Tensor<T> *ReduceSumOp<T>::_eval(bool recompute) {
 
-    if (!recompute && this->ret != NULL) {
-        return this->ret;
-    }
+    x_tensor = x->eval(recompute);
 
-    x_tensor = x->eval();
-
-    if (!copy) { std::fprintf(stderr, "Non-Copy ReduceSum not supported.\n"); return this->ret; }
+    if (!copy) { std::fprintf(stderr, "Non-Copy ReduceSum not supported.\n"); return this->output_tensor; }
 
     switch (op_type) {
         case internal::TENSOR_REDUCE:
-            internal::tensor_reducesum_full(x_tensor, axis, this->ret); break;
+            internal::tensor_reducesum_full(x_tensor, axis, this->output_tensor); break;
         case internal::COL_REDUCE:
-            internal::col_reducesum_full(x_tensor, ones, this->ret); break;
+            internal::col_reducesum_full(x_tensor, ones, this->output_tensor); break;
         case internal::ROW_REDUCE:
-            internal::row_reducesum_full(x_tensor, ones, this->ret); break;
+            internal::row_reducesum_full(x_tensor, ones, this->output_tensor); break;
         case internal::ELEM_REDUCE:
-            internal::reducesum_full(x_tensor, this->ret); break;
+            internal::reducesum_full(x_tensor, this->output_tensor); break;
     }
 
-    return this->ret;
+    return this->output_tensor;
 }
 
 template <typename T>
-Operation<T> *ReduceSumOp<T>::grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad) {
+Tensor<T> *ReduceSumOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad) {
     /* repeat grad along specified axis */
 
     /* output_shape = x.shape */

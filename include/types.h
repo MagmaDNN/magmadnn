@@ -9,6 +9,9 @@
 #pragma once
 
 #include <vector> // for tensor_filler_t
+#if defined(_HAS_CUDA_)
+#include "cudnn_v7.h"
+#endif
 
 namespace magmadnn {
 
@@ -23,6 +26,18 @@ typedef enum memory_t {
 
 typedef unsigned int device_t;
 typedef unsigned int magmadnn_error_t;
+
+
+
+struct magmadnn_settings_t {
+	unsigned int n_devices;
+	#if defined(_HAS_CUDA_)
+	cudnnHandle_t cudnn_handle;
+	#endif
+};
+namespace internal {
+extern magmadnn_settings_t *MAGMADNN_SETTINGS;	/* make this available to everything */
+}	// namespace internal
 
 
 /**	 Different ways to initialize the tensor on creation.

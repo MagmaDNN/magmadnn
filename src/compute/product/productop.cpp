@@ -29,47 +29,74 @@ ProductOp<T>::ProductOp(T alpha, Operation<T> *a, Operation<T> *b, bool copy, bo
     this->mem_type = a->get_memory_type();
 
     if (copy) {
-        this->ret = new Tensor<T> (this->output_shape, {ONE, {}}, this->mem_type);
+        this->output_tensor = new Tensor<T> (this->output_shape, {ONE, {}}, this->mem_type);
     }
 }
 
 template <typename T>
-Tensor<T> *ProductOp<T>::eval(bool recompute) {
-
-    if (!recompute && this->ret != NULL) {
-        return this->ret;
-    }
+Tensor<T> *ProductOp<T>::_eval(bool recompute) {
 
     a_tensor = a->eval(recompute);
     b_tensor = b->eval(recompute);
-    
-    if (!copy) {
-        if (op_type == internal::TENSOR_PROD_SCALAR) {
-            this->ret = a_tensor;
-        } else {
-            this->ret = b_tensor;
-        }
-    }
 
     switch (op_type) {
         case internal::SCALAR_PROD_TENSOR:
             a_tensor->get_memory_manager()->sync(true);
-            internal::scalar_tensor_product_full(alpha * a_tensor->get(0), b_tensor, this->ret); break;
+            internal::scalar_tensor_product_full(alpha * a_tensor->get(0), b_tensor, this->output_tensor); break;
         case internal::TENSOR_PROD_SCALAR:
             b_tensor->get_memory_manager()->sync(true);
-            internal::scalar_tensor_product_full(alpha * b_tensor->get(0), a_tensor, this->ret); break;
+            internal::scalar_tensor_product_full(alpha * b_tensor->get(0), a_tensor, this->output_tensor); break;
         case internal::TENSOR_PROD_TENSOR:
-            internal::product_full(alpha, a_tensor, b_tensor, this->ret); break;
+            internal::product_full(alpha, a_tensor, b_tensor, this->output_tensor); break;
         default:
             internal::debugf("INVALID PRODUCT\n");
     }
 
-    return this->ret;
+    return this->output_tensor;
 }
 
 template <typename T>
-Operation<T> *ProductOp<T>::grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad) {
-    return NULL;
+Tensor<T> *ProductOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad) {
+
+    Tensor<T> *out;
+    out = this->_grad_cache[(uintptr_t)var];
+
+    if (var == a) {
+        Tensor<T> *b_tensor = b->eval(false);
+
+        if (out == NULL) {
+            /* init grad tensor wrt a */
+            out = new Tensor<T> (b_tensor->get_shape(), {NONE,{}}, this->mem_type);
+            this->_grad_cache[(uintptr_t)a] = out;
+        }
+
+        if (T_IS_SCALAR(grad)) {
+            grad->get_memory_manager()->sync();
+            T scalar = grad->get(0);
+            math::scalar_tensor_product(scalar, b_tensor, out);
+        } else {
+            internal::product_full((T)1, grad, b_tensor, out);
+        }
+
+    } else {
+        Tensor<T> *a_tensor = a->eval(false);
+
+        if (out == NULL) {
+            /* init grad tensor wrt b */
+            out = new Tensor<T> (a_tensor->get_shape(), {NONE,{}}, this->mem_type);
+            this->_grad_cache[(uintptr_t)b] = out;
+        }
+
+        if (T_IS_SCALAR(grad)) {
+            grad->get_memory_manager()->sync();
+            T scalar = grad->get(0);
+            math::scalar_tensor_product(scalar, a_tensor, out);
+        } else {
+            internal::product_full((T)1, grad, a_tensor, out);
+        }
+    }
+
+    return out;
 }
 template class ProductOp<int>;
 template class ProductOp<float>;

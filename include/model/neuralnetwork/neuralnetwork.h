@@ -8,9 +8,12 @@
  */
 #pragma once
 
+#include <cmath>
+#include <ctime>
 #include "model/model.h"
 #include "layer/layers.h"
 #include "optimizer/optimizers.h"
+#include "math/argmax.h"
 
 namespace magmadnn {
 namespace model {

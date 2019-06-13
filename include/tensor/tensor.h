@@ -12,6 +12,11 @@
 #include "types.h"
 #include "memory/memorymanager.h"
 #include "tensor_internal.h"
+#include "utilities_internal.h"
+
+#if defined(_HAS_CUDA_)
+#include "cudnn_v7.h"
+#endif
 
 namespace magmadnn {
 
@@ -95,16 +100,60 @@ public:
 	T get(const std::vector<int>& idx) const;
 
 	/** gets the value at the given index.
+	 * @param idx indices to retrieve value from
+	 * @return T the value at idx
+	 */
+	T get(const std::vector<unsigned int>& idx) const;
+
+	/** gets the value at the given index.
+	 * @param idx indices to retrieve value from
+	 * @return T the value at idx
+	 */
+	T get(const std::initializer_list<int>& idx) const;
+
+	/** gets the value at the given index.
+	 * @param idx indices to retrieve value from
+	 * @return T the value at idx
+	 */
+	T get(const std::initializer_list<unsigned int>& idx) const;
+
+	/** gets the value at the given index.
 	 * @param idx indices to retreive value from
 	 * @return the value at idx
 	 */
 	T get(unsigned int flattened_idx) const;
+
+	/** Gets the value at the given index.
+	 * @param idx 
+	 * @return const T 
+	 */
+	const T operator[](unsigned int idx) const;
+
+	const T operator[](const std::initializer_list<unsigned int>& idx);
 
 	/** sets the value at the given index.
 	 * @param idx indices to set value at
 	 * @param val value to write into idx
 	 */
 	void set(const std::vector<int>& idx, T val);
+
+	/** sets the value at the given index.
+	 * @param idx indices to set value at
+	 * @param val value to write into idx
+	 */
+	void set(const std::vector<unsigned int>& idx, T val);
+
+	/** sets the value at the given index.
+	 * @param idx indices to set value at
+	 * @param val value to write into idx
+	 */
+	void set(const std::initializer_list<int>& idx, T val);
+
+	/** sets the value at the given index.
+	 * @param idx indices to set value at
+	 * @param val value to write into idx
+	 */
+	void set(const std::initializer_list<unsigned int>& idx, T val);
 
 	/** sets the value at the given index.
 	 * @param idx indices to set value at
@@ -149,9 +198,21 @@ public:
 	 */
 	device_t get_device_id() const { return this->device_id; }
 
+	#if defined(_HAS_CUDA_)
+	cudnnTensorDescriptor_t get_cudnn_tensor_descriptor() { return desc; }
+	#endif
+
 private:
 	void init(std::vector<unsigned int>& shape, tensor_filler_t<T> filler, memory_t mem_type, device_t device_id);
-	unsigned int get_flattened_index(const std::vector<int>& idx) const;
+	unsigned int get_flattened_index(const std::vector<unsigned int>& idx) const;
+
+	/* device specific code */
+	#if defined(_HAS_CUDA_)
+	void init_cudnn_descriptor();
+	void free_cudnn_descriptor();
+
+	cudnnTensorDescriptor_t desc;
+	#endif
 
 	MemoryManager<T> *mem_manager;	/* allocated by init */
 	
@@ -161,5 +222,11 @@ private:
 	device_t device_id;		/* device number i.e. gpu0 or cpu1 */
 
 };
+
+/** Tensor typedefs. Shorthand for Tensors of different types.
+ */
+typedef Tensor<int> tensori_t;
+typedef Tensor<float> tensorf_t;
+typedef Tensor<double> tensord_t;
 
 } // namespace magmadnn

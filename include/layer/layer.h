@@ -40,7 +40,7 @@ public:
 	/** Returns a copy of the output shape as a vector
 	 * @return std::vector<unsigned int> 
 	 */
-	std::vector<unsigned int> get_output_shape() const { return input_shape; }
+	std::vector<unsigned int> get_output_shape() const { return this->output->get_output_shape(); }
 
 	/** Gets the size of the i-th axis of the input tensor
 	 * @param i axis

@@ -31,7 +31,7 @@ include make.device
 CUDA_MACRO = -D_HAS_CUDA_
 INC += -I$(CUDADIR)/include -I$(MAGMADIR)/include
 LIBDIRS += -L$(CUDADIR)/lib64 -L$(MAGMADIR)/lib
-LIBS += -lcudart -lmagma
+LIBS += -lcudart -lcudnn -lmagma
 USE_CUDA=1
 endif
 

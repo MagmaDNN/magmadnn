@@ -14,28 +14,35 @@ TransposeOp<T>::TransposeOp(Operation<T> *x, bool copy, bool needs_grad)
     this->mem_type = x->get_memory_type();
 
     if (copy) {
-        this->ret = new Tensor<T> (this->output_shape, {NONE, {}}, this->mem_type);
+        this->output_tensor = new Tensor<T> (this->output_shape, {NONE, {}}, this->mem_type);
     } else {
         std::fprintf(stderr, "Cannot transpose into same tensor.\n");
     }
 }
 
 template <typename T>
-Tensor<T> *TransposeOp<T>::eval(bool recompute) {
-    if (!recompute && this->ret != NULL) {
-        return this->ret;
-    }
+Tensor<T> *TransposeOp<T>::_eval(bool recompute) {
 
     x_tensor = x->eval(recompute);
 
-    internal::transpose_full(x_tensor, this->ret);
+    internal::transpose_full(x_tensor, this->output_tensor);
 
-    return this->ret;
+    return this->output_tensor;
 }
 
 template <typename T>
-Operation<T> *TransposeOp<T>::grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad) {
-    return transpose(grad, true, false);
+Tensor<T> *TransposeOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad) {
+    Tensor<T> *out;
+
+    out = this->_grad_cache[(uintptr_t)var];
+    if (out == NULL) {
+        out = new Tensor<T> ({grad->get_shape(1), grad->get_shape(0)}, {NONE,{}}, this->mem_type);
+        this->_grad_cache[(uintptr_t)var] = out;
+    }
+
+    internal::transpose_full(grad, out);
+
+    return out;
 }
 
 template class TransposeOp<int>;

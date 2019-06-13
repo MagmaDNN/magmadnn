@@ -41,40 +41,83 @@ MatmulOp<T>::MatmulOp(T alpha, Operation<T>* a, Operation<T>* b, T beta, Operati
 
     /* avoid allocating memory in eval */
     if (copy) {
-        this->ret = new Tensor<T> (this->output_shape, this->mem_type);
+        this->output_tensor = new Tensor<T> (this->output_shape, this->mem_type);
     }
+
+    /* init gradient tensors to NULL */
+    this->_grad_cache[(uintptr_t)a] = NULL;
+    this->_grad_cache[(uintptr_t)b] = NULL;
+    this->_grad_cache[(uintptr_t)c] = NULL;
 }
 
 template <typename T>
-Tensor<T>* MatmulOp<T>::eval(bool recompute) {
-    
-    if (!recompute && this->ret != NULL) {
-        return this->ret;
-    }
+Tensor<T>* MatmulOp<T>::_eval(bool recompute) {
 
 	a_tensor = a->eval(recompute);    // MxK
 	b_tensor = b->eval(recompute);    // KxN
     c_tensor = c->eval(recompute);
 
     if (copy) {
-        this->ret->copy_from(*c_tensor);
+        this->output_tensor->copy_from(*c_tensor);
     } else {
-        this->ret = c_tensor;
+        this->output_tensor = c_tensor;
     }
 
-    internal::gemm_full(alpha, a_tensor, b_tensor, beta, this->ret);
+    internal::gemm_full(alpha, a_tensor, b_tensor, beta, this->output_tensor);
 
-    return this->ret;
+    return this->output_tensor;
 } 
 
 template <typename T>
-Operation<T> *MatmulOp<T>::grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad) {
+Tensor<T> *MatmulOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad) {
     /* wrt a: dot(grad, B^T)  |  wrt b: dot(a^T, grad) */
+    Tensor<T> *out = this->_grad_cache[(uintptr_t)var];
+
     if (var == a) {
-        return dot(grad, transpose(b, true, false), true, false);
+        b_tensor = b->eval(false);  /* don't recalculate if necessary */
+
+        /* init grad tensor */
+        if (out == NULL) {
+            if (T_IS_MATRIX(b_tensor)) {
+                /* grad.B^T has shape row(grad) x row(B) */
+                out = new Tensor<T> ({grad->get_shape(0), b_tensor->get_shape(0)}, {NONE,{}}, this->mem_type);
+            } else if (T_IS_VECTOR(a_tensor)) {
+                /* grad.B^T has shape row(B) */
+                out = new Tensor<T> ({b_tensor->get_shape(0)}, {NONE,{}}, this->mem_type);
+            } else {
+                /* grad.B^T has shape of B^T */
+                out = new Tensor<T> ({b_tensor->get_shape(1), b_tensor->get_shape(0)}, {NONE,{}}, this->mem_type);
+            }
+            
+            this->_grad_cache[(uintptr_t)a] = out;
+        }
+
+        math::dot((T)1, false, grad, true, b_tensor, (T)0, out);
+
+        //return dot(grad, transpose(b, true, false), true, false);
     } else {
-        return dot(transpose(a, true, false), grad, true, false);
+        a_tensor = a->eval(false);
+
+        /* need to create grad out for this */
+        if (out == NULL) {
+            if (T_IS_MATRIX(grad)) {
+                /* if grad is a matrix, then a^T grad is the gradient */
+                out = new Tensor<T> ({a_tensor->get_shape(1), grad->get_shape(1)}, {NONE,{}}, this->mem_type);
+            } else if (T_IS_VECTOR(grad)) {
+                /* if grad is a vector, then a^T grad has the same shape as col(a) */
+                out = new Tensor<T> ({a_tensor->get_shape(1)}, {NONE,{}}, this->mem_type);
+            } else {
+                /* if grad is a scalar?, then a^T grad has the same shape as A^T */
+                out = new Tensor<T> ({a_tensor->get_shape(1), a_tensor->get_shape(0)}, {NONE,{}}, this->mem_type);
+            }
+            this->_grad_cache[(uintptr_t)b] = out;
+        }
+
+        math::dot((T)1, true, a_tensor, false, grad, (T)0, out);
+
+        //return dot(transpose(a, true, false), grad, true, false);
     }
+    return out;
 }
 template class MatmulOp<int>;
 template class MatmulOp<float>;

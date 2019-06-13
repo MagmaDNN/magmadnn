@@ -13,12 +13,12 @@ template <typename T>
 class TransposeOp : public Operation<T> {
 public:
 	TransposeOp(Operation<T> *x, bool copy=true, bool needs_grad=true);
-
-	Tensor<T> *eval(bool recompute=true);
-	Operation<T> *grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad);
 	
 	std::string to_string() { return x->to_string() + ".T"; }
 protected:
+	Tensor<T> *_eval(bool recompute=true);
+	Tensor<T> *_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad);
+
 	Operation<T> *x;
 	Tensor<T> *x_tensor;
 

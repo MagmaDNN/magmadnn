@@ -21,21 +21,26 @@ template <typename T>
 void GradientDescent<T>::minimize(const std::vector<op::Operation<T> *>& wrt) {
     typename std::vector<op::Operation<T> *>::const_iterator vit;
 
+    /* evaluate if need be */
+    this->_obj_func->eval(false);
+
+    /* build the gradients */
+    this->table.clear();
     op::get_grad_table(wrt, this->_obj_func, this->table);
     
+    /* now update each one */
     for (vit = wrt.begin(); vit != wrt.end(); vit++) {
         this->update((*vit), table.get(*vit));
     }
 }
 
 template <typename T>
-void GradientDescent<T>::update(op::Operation<T> *var, op::Operation<T> *grad) {
-    Tensor<T> *var_tensor, *grad_tensor;
+void GradientDescent<T>::update(op::Operation<T> *var, Tensor<T> *grad) {
+    Tensor<T> *var_tensor;
 
-    var_tensor = var->eval(true);
-    grad_tensor = grad->eval(true);
+    var_tensor = var->eval(false);
 
-    internal::gradientdescent_update_internal(var_tensor, grad_tensor, this->learning_rate);
+    internal::gradientdescent_update_internal(var_tensor, grad, this->learning_rate);
 }
 
 template class GradientDescent<int>;

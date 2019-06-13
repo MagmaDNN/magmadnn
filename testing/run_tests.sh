@@ -1,6 +1,11 @@
 # get the testers
 TESTING_FILES=$(cd bin && ls)
 
+# define a specific ordering for testers
+TESTING_FILES="testing_memorymanager testing_tensor testing_math testing_compute_graph testing_grad testing_layers testing_model"
+
+
+
 # run each tester
 for i in $TESTING_FILES; do
     printf "==== TESTING %s ====\n" "$i"

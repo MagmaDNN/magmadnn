@@ -28,39 +28,31 @@ AddOp<T>::AddOp(Operation<T>* a, Operation<T>* b, bool copy, bool needs_grad) :
 	this->mem_type = a->get_memory_type();
 
 	/* Go ahead and create copy tensor if we can */
-	if (copy) {
-		this->ret = new Tensor<T> (this->output_shape, {NONE, {}}, this->mem_type);
-	}
+	this->output_tensor = new Tensor<T> (this->output_shape, {NONE, {}}, this->mem_type);
 }
 
 template <typename T>
-Tensor<T>* AddOp<T>::eval(bool recompute) {
-
-	/* early exit if we can */
-	if (!recompute && this->ret != NULL) {
-		return this->ret;
-	}
+Tensor<T>* AddOp<T>::_eval(bool recompute) {
 
 	a_tensor = a->eval(recompute);
 	b_tensor = b->eval(recompute);
 
-	if (!copy) this->ret = b_tensor;
 
 	if (a_tensor->get_size() == 1) {
 		a_tensor->get_memory_manager()->sync(true);
-		internal::tensor_scalar_add_full(a_tensor->get(0), b_tensor, this->ret);
+		internal::tensor_scalar_add_full(a_tensor->get(0), b_tensor, this->output_tensor);
 	} else if (b_tensor->get_size() == 1) {
 		b_tensor->get_memory_manager()->sync(true);
-		internal::tensor_scalar_add_full(b_tensor->get(0), a_tensor, this->ret);
+		internal::tensor_scalar_add_full(b_tensor->get(0), a_tensor, this->output_tensor);
 	} else {
-		internal::geadd_full((T)1, a_tensor, (T)1, b_tensor, this->ret);
+		internal::geadd_full((T)1, a_tensor, (T)1, b_tensor, this->output_tensor);
 	}
 	
-	return this->ret;
+	return this->output_tensor;
 } 
 
 template <typename T>
-Operation<T> *AddOp<T>::grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad) {
+Tensor<T> *AddOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad) {
 	return grad;
 }
 template class AddOp<int>;

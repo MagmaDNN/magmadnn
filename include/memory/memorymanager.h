@@ -34,6 +34,17 @@ public:
      */
     MemoryManager(unsigned int size, memory_t mem_type, device_t device_id);
 
+    /** Copy Constructor
+     * @param that 
+     */
+    MemoryManager(const MemoryManager& that);
+
+    /** Copy assignment operator.
+     * @param that 
+     * @return MemoryManager& 
+     */
+    MemoryManager& operator=(const MemoryManager& that);
+
     /** Destroys the memory manager object and releases all its data.
      */
     ~MemoryManager();

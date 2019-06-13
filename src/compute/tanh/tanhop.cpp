@@ -18,34 +18,22 @@ TanhOp<T>::TanhOp(Operation<T> *x, bool copy) : Operation<T>::Operation({x}), x(
     this->mem_type = x->get_memory_type();
 
     /* create tensor here to avoid memory allocation at tree execution */
-    if (copy) {
-        this->ret = new Tensor<T> (this->output_shape, this->mem_type);
-    }
+    this->output_tensor = new Tensor<T> (this->output_shape, this->mem_type);
 }
 
 template <typename T>
-Tensor<T>* TanhOp<T>::eval(bool recompute) {
-
-    if (!recompute && this->ret != NULL) {
-        return this->ret;
-    }
+Tensor<T>* TanhOp<T>::_eval(bool recompute) {
 
     x_tensor = x->eval();
 
-    if (copy) {
-        this->ret->copy_from(*x_tensor);
-    } else {
-        this->ret = x_tensor;
-    }
-
-    internal::tanh_full(this->ret);
+    internal::tanh_full(x_tensor, this->output_tensor);
     
-    return this->ret;
+    return this->output_tensor;
 }
 
 template <typename T>
-Operation<T> *TanhOp<T>::grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad) {
-    return NULL;
+Tensor<T> *TanhOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad) {
+    return grad;
 }
 template class TanhOp<int>;
 template class TanhOp<float>;

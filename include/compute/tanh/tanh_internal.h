@@ -19,7 +19,7 @@ namespace internal {
  * @param x 
  */
 template <typename T>
-void tanh_full(Tensor<T> *x);
+void tanh_full(Tensor<T> *x, Tensor<T> *out);
 
 #if defined(_HAS_CUDA_)
 /** Computes the tanh function element-wise on the tensor x
@@ -27,7 +27,7 @@ void tanh_full(Tensor<T> *x);
  * @param x 
  */
 template <typename T>
-void tanh_full_device(Tensor<T> *x); 
+void tanh_full_device(Tensor<T> *x, Tensor<T> *out); 
 #endif
 
 }   // namespace internal

@@ -27,8 +27,6 @@ bool geadd_check(Tensor<T> *A, Tensor<T> *B, Tensor<T> *C) {
 template <typename T>
 void geadd_full(T alpha, Tensor<T> *A, T beta, Tensor<T> *B, Tensor<T> *C) {
 
-    if (!geadd_check(A, B, C)) return;
-
     if (A->get_memory_type() == HOST) {
         T *a_ptr = A->get_ptr();
         T *b_ptr = B->get_ptr();
@@ -41,7 +39,7 @@ void geadd_full(T alpha, Tensor<T> *A, T beta, Tensor<T> *B, Tensor<T> *C) {
     }
     #if defined(_HAS_CUDA_)
     else {
-        geadd_full_device(A->get_shape(0), A->get_shape(1), alpha, A->get_ptr(), beta, B->get_ptr(), C->get_ptr());
+        geadd_full_device(alpha, A, beta, B, C);
     }
     #endif
 }
@@ -51,10 +49,10 @@ template void geadd_full(double alpha, Tensor<double> *A, double beta, Tensor<do
 
 template <typename T>
 void tensor_scalar_add_full(T alpha, Tensor<T> *x, Tensor<T> *out) {
-    if (x->get_memory_type() == HOST) {
+    if (out->get_memory_type() == HOST) {
         T *x_ptr = x->get_ptr();
         T *out_ptr = out->get_ptr();
-        unsigned int size = x->get_size();
+        unsigned int size = out->get_size();
 
         for (unsigned int i = 0; i < size; i++) {
             out_ptr[i] = alpha + x_ptr[i];

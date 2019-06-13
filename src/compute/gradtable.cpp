@@ -23,23 +23,28 @@ unsigned int GradTable<T>::get_size() {
 }
 
 template <typename T>
-Operation<T>* GradTable<T>::get(Operation<T> *var) {
+Tensor<T>* GradTable<T>::get(Operation<T> *var) {
     tmp_map_iterator = _table.find((uintptr_t) var);
 
     // return NULL if not found
     if (tmp_map_iterator == _table.end()) {
-        return (Operation<T> *) NULL;
+        return (Tensor<T> *) NULL;
     }
 
     return tmp_map_iterator->second;
 }
 
 template <typename T>
-void GradTable<T>::set(Operation<T> *var, Operation<T> *grad) {
+void GradTable<T>::set(Operation<T> *var, Tensor<T> *grad) {
     if (var == NULL) return;
 
     _table[(uintptr_t) var] = grad;
     
+}
+
+template <typename T>
+void GradTable<T>::clear() {
+    this->_table.clear();
 }
 
 template class GradTable<int>;

@@ -36,17 +36,21 @@ public:
      * @param var 
      * @return Operation<T>* 
      */
-    Operation<T>* get(Operation<T>* var);
+    Tensor<T>* get(Operation<T>* var);
 
     /** Sets var's gradient to grad.
      * @param var 
      * @param grad 
      */
-    void set(Operation<T>* var, Operation<T>* grad);
+    void set(Operation<T>* var, Tensor<T>* grad);
+
+    /** Removes all entries.
+     */
+    void clear();
 
 protected:
-    std::map<uintptr_t, Operation<T>* > _table;   // the underlying table to store data
-    typename std::map<uintptr_t, Operation<T>* >::iterator tmp_map_iterator;
+    std::map<uintptr_t, Tensor<T>* > _table;   // the underlying table to store data
+    typename std::map<uintptr_t, Tensor<T>* >::iterator tmp_map_iterator;
 
 };
 

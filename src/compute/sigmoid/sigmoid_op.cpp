@@ -21,37 +21,38 @@ SigmoidOp<T>::SigmoidOp(Operation<T> *x, bool copy, bool fast) :
     /* create copy when tree is created, not at evaluation time. This avoids allocating memory when
        evaluating a compute tree. */
     if (copy) {
-        this->ret = new Tensor<T> (this->output_shape, {NONE,{}}, this->mem_type);
+        this->output_tensor = new Tensor<T> (this->output_shape, {NONE,{}}, this->mem_type);
     }
+
+    this->_grad_cache[(uintptr_t)x] = NULL;
 }
 
 template <typename T>
-Tensor<T>* SigmoidOp<T>::eval(bool recompute) {
-
-    if (!recompute && this->ret != NULL) {
-        return this->ret;
-    }
+Tensor<T>* SigmoidOp<T>::_eval(bool recompute) {
 
     x_tensor = x->eval(recompute);
 
-    /* ret was created in constructor, now just copy evaluated x_tensor into it */
-    if (copy) {
-        this->ret->copy_from(*x_tensor);
-    } else {
-        this->ret = x_tensor;
-    }
-
-    internal::sigmoid_full(this->ret, fast);
+    internal::sigmoid_full(x_tensor, this->output_tensor, fast);
     
-    return this->ret;
+    return this->output_tensor;
 }
 
 template <typename T>
-Operation<T> *SigmoidOp<T>::grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad) {
+Tensor<T> *SigmoidOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad) {
     /* sigmoid grad is   grad * output * (1-output)  */
-    Operation<T> *output = (Operation<T> *) this;
-    Operation<T> *c = add<T>(scalar<T>("1", 1.0f, this->mem_type), negative<T>(output, true, false), true, false);
-    return product<T>(grad, product<T>(output, c, true, false), true, false);
+
+    Tensor<T> *out;
+    Tensor<T> *output = this->eval(false);
+    out = this->_grad_cache[(uintptr_t)var];
+
+    if (out == NULL) {
+        out = new Tensor<T> (this->output_shape, {NONE,{}}, this->mem_type);
+        this->_grad_cache[(uintptr_t)var] = out;
+    }
+
+    internal::sigmoid_grad(output, grad, out);
+
+    return out;
 }
 template class SigmoidOp<int>;
 template class SigmoidOp<float>;

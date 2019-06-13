@@ -4,8 +4,10 @@
 #include "tensor/tensor.h"
 #include "utilities_internal.h"
 #include "cblas.h"
+#include "types.h"
 #if defined(_HAS_CUDA_)
 #include "magma.h"
+#include "cudnn_v7.h"
 #endif
 
 namespace magmadnn {

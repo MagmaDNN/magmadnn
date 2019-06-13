@@ -198,6 +198,8 @@ void fill_diagonal(MemoryManager<T> &m, const std::vector<T>& params) {
                 val = params[i / (root+1)];
             
             m.set(i, val);
+        } else {
+            m.set(i, (T)0);
         }
     }
 }

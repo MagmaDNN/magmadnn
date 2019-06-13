@@ -19,12 +19,20 @@ Variable<T>::Variable(std::string name, std::vector<unsigned int> shape, tensor_
 
     this->output_shape = val->get_shape();
     this->mem_type = val->get_memory_type();
+
+    /* so eval doesn't return NULL */
+    this->output_tensor = val;
+    this->has_been_computed = true;
 }
 template <typename T>
 Variable<T>::Variable(std::string name, Tensor<T> *val) : Operation<T>::Operation(), name(name), val(val) {
     this->output_shape = val->get_shape();
     this->mem_type = val->get_memory_type();
     delete_tensor = false;
+
+    /* so eval doesn't return NULL */
+    this->output_tensor = val;
+    this->has_been_computed = true;
 }
 
 template <typename T>
@@ -33,19 +41,33 @@ Variable<T>::~Variable() {
 }
 
 template <typename T>
-Tensor<T>* Variable<T>::eval(bool recompute) {
+Tensor<T>* Variable<T>::_eval(bool recompute) {
     return val;
 }
 
 template <typename T>
-Operation<T> *Variable<T>::grad(Operation<T> *consumer, Operation<T> *var, Operation<T> *grad) {
+Tensor<T> *Variable<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad) {
     /* TODO : if (var == this) return 1; */
-    return NULL;
+
+    Tensor<T> *out;
+
+    if (var == this) {
+        out = this->_grad_cache[(uintptr_t)var];
+        if (out == NULL) {
+            out = new Tensor<T> ({1}, {ONE, {}}, this->mem_type);
+            this->_grad_cache[(uintptr_t)var] = out;
+        }
+        return out;
+    }
+
+    return grad;
 }
 // compile for int, float, double
 template class Variable<int>;
 template class Variable<float>;
 template class Variable<double>;
+
+
 
 template <typename T>
 Variable<T>* var(std::string name, Tensor<T>* val) {

@@ -8,30 +8,30 @@
  */
 #include "compute/add/geadd_internal.h"
 
+#define BLK_SIZE 1024
 
 namespace magmadnn {
 namespace internal {
 
 
 template <typename T>
-__global__ void kernel_geadd_full_device(unsigned int M, unsigned int N, T alpha, T *A, T beta, T *B, T *C) {
-
+__global__ void kernel_geadd_full_device(T alpha, T *A, T beta, T *B, T *C, unsigned int size) {
 	unsigned int idx = blockIdx.x * blockDim.x + threadIdx.x;
 	unsigned int stride = blockDim.x * gridDim.x;
 
-	for (unsigned int i = idx; i < M*N; i += stride) {
+	for (unsigned int i = idx; i < size; i += stride) {
 		C[i] = alpha*A[i] + beta*B[i];
 	}
 }
 
 template <typename T>
-void geadd_full_device(unsigned int M, unsigned int N, T alpha, T *A, T beta, T *B, T *C) {
-	kernel_geadd_full_device <<<M,N>>> (M, N, alpha, A, beta, B, C);
+void geadd_full_device(T alpha, Tensor<T> *A, T beta, Tensor<T> *B, Tensor<T> *C) {
+	unsigned int size = C->get_size();
+	kernel_geadd_full_device <<<(size+BLK_SIZE-1)/BLK_SIZE,BLK_SIZE>>> (alpha, A->get_ptr(), beta, B->get_ptr(), C->get_ptr(), size);
 }
-template void geadd_full_device(unsigned int M, unsigned int N, int alpha, int *A, int beta, int *B, int *C);
-template void geadd_full_device(unsigned int M, unsigned int N, float alpha, float *A, float beta, float *B, float *C);
-template void geadd_full_device(unsigned int M, unsigned int N, double alpha, double *A, double beta, double *B, double *C);
-
+template void geadd_full_device(int alpha, Tensor<int> *A, int beta, Tensor<int> *B, Tensor<int> *C);
+template void geadd_full_device(float alpha, Tensor<float> *A, float beta, Tensor<float> *B, Tensor<float> *C);
+template void geadd_full_device(double alpha, Tensor<double> *A, double beta, Tensor<double> *B, Tensor<double> *C);
 
 template <typename T>
 __global__ void kernel_tensor_scalar_add_full_device(T alpha, T *x, T *out, unsigned int arr_size) {
@@ -46,8 +46,8 @@ __global__ void kernel_tensor_scalar_add_full_device(T alpha, T *x, T *out, unsi
 
 template <typename T>
 void tensor_scalar_add_full_device(T alpha, Tensor<T> *x, Tensor<T> *out) {
-	unsigned int size = x->get_size();
-	kernel_tensor_scalar_add_full_device <<< 1, size >>> (alpha, x->get_ptr(), out->get_ptr(), size);
+	unsigned int size = out->get_size();
+	kernel_tensor_scalar_add_full_device <<<(size+BLK_SIZE-1)/BLK_SIZE, BLK_SIZE>>> (alpha, x->get_ptr(), out->get_ptr(), size);
 }
 template void tensor_scalar_add_full_device(int alpha, Tensor<int> *x, Tensor<int> *out);
 template void tensor_scalar_add_full_device(float alpha, Tensor<float> *x, Tensor<float> *out);
@@ -55,3 +55,5 @@ template void tensor_scalar_add_full_device(double alpha, Tensor<double> *x, Ten
 
 }	// namespace internal
 }	// namespace magmadnn
+
+#undef BLK_SIZE

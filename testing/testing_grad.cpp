@@ -45,23 +45,24 @@ void test_simple_grad(memory_t mem, unsigned int size) {
     
     assert( err == 0 );
 
-    op::Operation<float> *affine_wrt_x = table.get(x);
-    Tensor<float> *res_x = affine_wrt_x->eval();
+    Tensor<float> *affine_wrt_x = table.get(x);
 
-    sync(res_x);
+    sync(affine_wrt_x);
 
-    for (unsigned int i = 0; i < res_x->get_size(); i++) {
-        assert( fequal(res_x->get(i), 5.0) );
+    for (unsigned int i = 0; i < affine_wrt_x->get_size(); i++) {
+        if (!fequal(affine_wrt_x->get(i), 5.0f)) printf("bad vals: %.5g %.5g\n", affine_wrt_x->get(i), 5.0f);
+        assert( fequal(affine_wrt_x->get(i), 5.0) );
     }
 
-    op::Operation<float> *affine_wrt_b = table.get(b);
-    Tensor<float> *res_b = affine_wrt_b->eval();
+    Tensor<float> *affine_wrt_b = table.get(b);
 
-    sync(res_b);
+    sync(affine_wrt_b);
 
-    for (unsigned int i = 0; i < res_b->get_size(); i++) {
-        assert( fequal(res_b->get(i), 1.0) );
+    for (unsigned int i = 0; i < affine_wrt_b->get_size(); i++) {
+        assert( fequal(affine_wrt_b->get(i), 1.0) );
     }
+
+    delete affine;
 
     show_success();
 }
@@ -87,18 +88,16 @@ void test_full_grad(memory_t mem, unsigned int size) {
 
     assert( err == 0 );
 
-    op::Operation<float> *d_expr_wrt_x = table.get(x);
+    Tensor<float> *d_expr_wrt_x = table.get(x);
 
-    internal::debugf("%s\n", d_expr_wrt_x->to_string().c_str());
+    sync(d_expr_wrt_x);
 
-    Tensor<float> *fin = d_expr_wrt_x->eval();
-
-    sync(fin);
-
-    for (unsigned int i = 0; i < fin->get_size(); i++) {
-        if (!fequal(fin->get(i), out)) std::printf("bad vals: %.5g %.5g\n", fin->get(i), out);
-        assert( fequal(fin->get(i), out) );
+    for (unsigned int i = 0; i < d_expr_wrt_x->get_size(); i++) {
+        if (!fequal(d_expr_wrt_x->get(i), out)) std::printf("bad vals: %.5g %.5g\n", d_expr_wrt_x->get(i), out);
+        assert( fequal(d_expr_wrt_x->get(i), out) );
     }
+
+    delete expr;
 
     show_success();
 }
@@ -106,15 +105,32 @@ void test_full_grad(memory_t mem, unsigned int size) {
 void test_optimize(memory_t mem, unsigned int size) {
     printf("Testing optimization on %s...  ", get_memory_type_name(mem));
 
-    unsigned int steps = 10;
+    /* optimizing x^2 + c */
+    double x_val = 9.0;
+    double c_val = -5.0;
+    unsigned int n_iter = 50;
 
-    op::Operation<float> *x = op::var<float> ("x", {10}, {CONSTANT, {9.0f}}, mem);
-    op::Operation<float> *c = op::var<float> ("c", {10}, {CONSTANT, {-5.0f}}, mem);
-    op::Operation<float> *expr = op::add(op::product(x, x), c);
+    op::Operation<double> *x = op::var<double> ("x", {size}, {CONSTANT, {x_val}}, mem);
+    op::Operation<double> *c = op::var<double> ("c", {size}, {CONSTANT, {c_val}}, mem);
+    op::Operation<double> *expr = op::add(op::pow(x,2), c);
 
-    optimizer::GradientDescent<float> optim (expr, 0.05f);
+    optimizer::GradientDescent<double> optim (expr, 0.2f);
 
     
+    for (unsigned int i = 0; i < n_iter; i++) {
+        expr->eval(true);
+
+        optim.minimize({x});
+    }
+
+    Tensor<double> *x_tensor = x->get_output_tensor();
+    sync(x_tensor);
+    
+    for (unsigned int i = 0; i < size; i++) {
+        assert( fequal(x_tensor->get(i), 0.0f) );
+    }
+
+    delete expr;
 
     show_success();
 }

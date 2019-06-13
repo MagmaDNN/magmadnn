@@ -34,6 +34,42 @@ void print_vector(const std::vector<unsigned int>& vec, bool debug, char begin, 
     print(" %c\n", end);
 }
 
+#if defined(_TENSOR_IN_UTIL_)
+template <typename T>
+void print_tensor(const Tensor<T>& t, bool print_flat, bool debug, const char *begin, const char *end, const char *delim) {
+    int (*print)(const char*,...) = (debug) ? debugf : std::printf;
+
+    if (print_flat) {
+        unsigned int size = t.get_size();
+
+        print("%s", begin);
+        for (unsigned int i = 0; i < size; i++) {
+            print("%.5g%s", t.get(i), delim);
+            if (i != size) print(" ");
+        }
+        print("%s", end);
+    } else {
+        const std::vector<unsigned int>& axes = t.get_shape();
+        std::vector<unsigned int>::const_iterator vit;
+        unsigned int axis_size;
+
+        /* 4 x 2 x 3 */
+        /*  {
+                {
+                    {1, 2, 3},
+                }
+            }
+        */
+        print("%s", begin);
+        for (vit = axes.begin(); vit != axes.end(); vit++) {
+            axis_size = *vit;
+
+            print("%llu%s", axis_size, delim);
+        }
+        print("%s", end);
+    }
+}
+
 template <typename T>
 void print_compute_graph(op::Operation<T> *node, bool debug) {
     std::set<op::Operation<T> *> visited;
@@ -80,6 +116,73 @@ void print_compute_graph(op::Operation<T> *node, bool debug) {
 template void print_compute_graph(op::Operation<int> *node, bool debug);
 template void print_compute_graph(op::Operation<float> *node, bool debug);
 template void print_compute_graph(op::Operation<double> *node, bool debug);
+
+
+/** Resets the compute graph.
+ * @tparam T 
+ * @param node 
+ */
+template <typename T>
+void reset_compute_graph(op::Operation<T> *node) {
+    std::set<op::Operation<T> *> visited;
+    std::deque<op::Operation<T> *> to_visit;
+    op::Operation<T> *cur;
+    typename std::vector<op::Operation<T> *>::const_iterator vit;
+
+    to_visit.push_back( node );
+    visited.insert( node );
+
+    while (!to_visit.empty()) {
+        cur = to_visit.front();
+        to_visit.pop_front();
+
+        /* reset this Operation */
+        cur->reset();
+
+        std::vector<op::Operation<T> *> const& consumers = cur->get_consumers();
+        for (vit = consumers.begin(); vit != consumers.end(); vit++) {
+
+            if (visited.find((*vit)) == visited.end()) {
+                to_visit.push_back(*vit);
+                visited.insert((*vit));
+            }
+        }
+        
+        std::vector<op::Operation<T> *> const& inputs = cur->get_inputs();
+        for (vit = inputs.begin(); vit != inputs.end(); vit++) {
+
+            if (visited.find((*vit)) == visited.end()) {
+                to_visit.push_back(*vit);
+                visited.insert((*vit));
+            }
+        }
+    }
+}
+template void reset_compute_graph(op::Operation<int> *node);
+template void reset_compute_graph(op::Operation<float> *node);
+template void reset_compute_graph(op::Operation<double> *node);
+#endif
+
+
+
+#if defined(_HAS_CUDA_)
+template <typename T>
+cudnnDataType_t get_cudnn_data_type(T v) {
+    return CUDNN_DATA_FLOAT;    /* default */
+}
+
+template <> cudnnDataType_t get_cudnn_data_type(int v) {
+    return CUDNN_DATA_INT32;
+}
+template <> cudnnDataType_t get_cudnn_data_type(float v) {
+    return CUDNN_DATA_FLOAT;
+}
+template <> cudnnDataType_t get_cudnn_data_type(double v) {
+    return CUDNN_DATA_DOUBLE;
+}
+
+#endif
+
 
 }   // namespace internal
 }   // namespace magmadnn

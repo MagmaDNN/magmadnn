@@ -92,7 +92,7 @@ MemoryManager<T>::~MemoryManager<T>() {
 
 template <typename T>
 magmadnn_error_t MemoryManager<T>::copy_from(const MemoryManager<T>& src, unsigned int begin_idx, unsigned int copy_size) {
-    assert( this->size == src.size );
+    assert( this->size >= (begin_idx + copy_size) );
     
     if (copy_size == 0) return (magmadnn_error_t) 0;
 

@@ -26,12 +26,10 @@ CrossEntropyOp<T>::CrossEntropyOp(Operation<T> *x, Operation<T> *y, bool copy, b
         std::fprintf(stderr, "no copy cross entropy not supported yet.\n");
     }
 
-    softmax = new Tensor<T> (x->get_output_shape(), {NONE, {}}, this->mem_type);
 }
 
 template <typename T>
 CrossEntropyOp<T>::~CrossEntropyOp() {
-    delete this->softmax;
 }
 
 template <typename T>
@@ -49,7 +47,6 @@ Tensor<T> *CrossEntropyOp<T>::_eval(bool recompute) {
 
 template <typename T>
 Tensor<T> *CrossEntropyOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad) {
-    /* softmax(x) -= 1 and /= N */
     this->_grad_cache[(uintptr_t)var] = grad;
     return grad;
 }

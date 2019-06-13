@@ -98,7 +98,7 @@ public:
 	 * @param dims should have same size as src.get_shape()
 	 * @return magmadnn_error_t non-zero if error	
 	 */
-	magmadnn_error_t copy_from(const Tensor<T>& src, const std::vector<unsigned int>& dims);
+	magmadnn_error_t copy_from(const Tensor<T>& src, const std::vector<int>& dims);
 
 
 	/** gets the value at the given index.
@@ -209,6 +209,11 @@ public:
 	#if defined(_HAS_CUDA_)
 	cudnnTensorDescriptor_t get_cudnn_tensor_descriptor() { return desc; }
 	#endif
+
+	/** changes shape of tensor to match dims
+	 * @param dims should have the same size as this->size 
+	 */
+	void reshape(const std::vector<unsigned int>& dims);
 
 private:
 	void init(std::vector<unsigned int>& shape, tensor_filler_t<T> filler, memory_t mem_type, device_t device_id);

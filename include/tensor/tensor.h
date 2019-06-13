@@ -98,7 +98,7 @@ public:
 	 * @param dims should have same size as src.get_shape()
 	 * @return magmadnn_error_t non-zero if error	
 	 */
-	magmadnn_error_t copy_from(const Tensor<T>& src, const std::vector<int>& dims);
+	magmadnn_error_t copy_from(const Tensor<T>& src, const std::vector<unsigned int>& dims);
 
 
 	/** gets the value at the given index.
@@ -214,6 +214,15 @@ public:
 	 * @param dims should have the same size as this->size 
 	 */
 	void reshape(const std::vector<unsigned int>& dims);
+
+	/** removes axes with length 1
+	 */
+	void squeeze();
+
+	/** adds a dimension with length 1 along axis dim
+	 * @param dim
+	 */
+	void unsqueeze(unsigned int dim = 0);
 
 private:
 	void init(std::vector<unsigned int>& shape, tensor_filler_t<T> filler, memory_t mem_type, device_t device_id);

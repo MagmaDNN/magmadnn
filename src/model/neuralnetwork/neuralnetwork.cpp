@@ -120,8 +120,8 @@ magmadnn_error_t NeuralNetwork<T>::fit(Tensor<T> *x, Tensor<T> *y, metric_t& met
         y_on_host->copy_from(*y_batch);
         math::argmax(y_on_host, 0, actual);
 
-        for (unsigned int i = 0; i < this->model_params.batch_size; i++) {
-            if (std::fabs(predicted->get(i) - actual->get(i)) <= 1E-8) {
+        for (unsigned int j = 0; j < this->model_params.batch_size; j++) {
+            if (std::fabs(predicted->get(j) - actual->get(j)) <= 1E-8) {
                 n_correct++;
             }
         }

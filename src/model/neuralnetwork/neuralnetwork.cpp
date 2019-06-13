@@ -85,10 +85,9 @@ magmadnn_error_t NeuralNetwork<T>::fit(Tensor<T> *x, Tensor<T> *y, metric_t& met
     double loss = 0.0;
     time_t start_time, end_time;
     unsigned int n_samples = y->get_shape(0);
-    //unsigned int n_classes = y->get_shape(1);
-    unsigned int n_iter = this->model_params.n_epochs;
     unsigned int sample_size = x->get_size() / x->get_shape(0); /* the size of each sample */
     unsigned int ground_truth_sample_size = y->get_size() / y->get_shape(0);
+    unsigned int n_iter = this->model_params.n_epochs * (n_samples / this->model_params.batch_size);
     unsigned int cur_sample_idx = 0;
     Tensor<T> *loss_tensor;
 
@@ -119,8 +118,8 @@ magmadnn_error_t NeuralNetwork<T>::fit(Tensor<T> *x, Tensor<T> *y, metric_t& met
         y_on_host->copy_from(*y_batch);
         math::argmax(y_on_host, 0, actual);
 
-        for (unsigned int i = 0; i < this->model_params.batch_size; i++) {
-            if (std::fabs(predicted->get(i) - actual->get(i)) <= 1E-8) {
+        for (unsigned int j = 0; j < this->model_params.batch_size; j++) {
+            if (std::fabs(predicted->get(j) - actual->get(j)) <= 1E-8) {
                 n_correct++;
             }
         }
@@ -129,6 +128,15 @@ magmadnn_error_t NeuralNetwork<T>::fit(Tensor<T> *x, Tensor<T> *y, metric_t& met
         loss_tensor = this->_obj->eval(false);
         loss_tensor->get_memory_manager()->sync();
         loss = loss_tensor->get(0);
+
+        if (verbose && i % 10 == 0) {
+            printf("Training iteration (%u/%u): accuracy=%.4g loss=%.4g time=%.4g\n",
+                i,
+                n_iter, 
+                n_correct/((double)i*this->model_params.batch_size), 
+                loss, 
+                (double)time(NULL)-start_time);
+        }
     }
     time(&end_time);
 

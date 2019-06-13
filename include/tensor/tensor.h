@@ -93,6 +93,14 @@ public:
 	magmadnn_error_t copy_from(const Tensor<T>& src);
 
 
+	/** Truncates the tensor src to match the dimensions in dims
+	 * @param src
+	 * @param dims should have same size as src.get_shape()
+	 * @return magmadnn_error_t non-zero if error	
+	 */
+	magmadnn_error_t copy_from(const Tensor<T>& src, const std::vector<unsigned int>& dims);
+
+
 	/** gets the value at the given index.
 	 * @param idx indices to retreive value from
 	 * @return the value at idx

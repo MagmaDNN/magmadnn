@@ -91,6 +91,28 @@ magmadnn_error_t Tensor<T>::copy_from(const Tensor<T>& src) {
     return copy_from(src, 0, src.get_size());
 }
 
+template <typename T>
+magmadnn_error_t Tensor<T>::copy_from(const Tensor<T>& src, const std::vector<unsigned int>& dims) {
+    for (unsigned int i = 0; i < dims.size(); i ++) {
+        assert(dims[i] != 0);
+        assert(dims[i] <= src.get_shape()[i]);
+    } 
+    magmadnn_error_t m = 0;
+    std::vector<unsigned int> target_shape(dims.size(), 0);
+    int curr_pos = target_shape.size() - 1;
+    while (curr_pos >= 0) {
+        curr_pos = target_shape.size() - 1;
+        this->set(target_shape, src.get(target_shape));
+        target_shape[curr_pos] ++;
+        while(target_shape[curr_pos] == dims[curr_pos]) {
+            target_shape[curr_pos] = 0;
+            curr_pos --;
+            if (curr_pos < 0) break;
+            target_shape[curr_pos] ++;
+        }
+    }
+    return m;
+}
 
 template <typename T>
 T Tensor<T>::get(const std::vector<int>& idx) const {

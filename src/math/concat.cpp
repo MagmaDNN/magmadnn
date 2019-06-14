@@ -1,8 +1,8 @@
 /**
  * @file concat.cpp
- * @author Daniel Nichols
+ * @author Sedrick Keh
  * @version 0.1
- * @date 2019-06-06
+ * @date 2019-06-14
  * 
  * @copyright Copyright (c) 2019
  */

@@ -24,11 +24,11 @@ void concat(Tensor<T> *A, Tensor<T> *B, Tensor<T> *C, unsigned int axis) {
     unsigned int diff_index_B = axis;
     unsigned int diff_index_C = axis;
     for (unsigned int i = 0; i < dims; i ++) {
-        if (A->get_shape()[i] != B->get_shape()[i]) {
+        if (A->get_shape(i) != B->get_shape(i)) {
             num_diff_B ++;
             diff_index_B = i;
         }
-        if (A->get_shape()[i] != C->get_shape()[i]) {
+        if (A->get_shape(i) != C->get_shape(i)) {
             num_diff_C ++;
             diff_index_C = i;
         }
@@ -37,7 +37,7 @@ void concat(Tensor<T> *A, Tensor<T> *B, Tensor<T> *C, unsigned int axis) {
     assert(diff_index_B == axis);
     assert(num_diff_C == 1);
     assert(diff_index_C == axis);
-    assert(C->get_shape()[axis] == A->get_shape()[axis] + B->get_shape()[axis]);
+    assert(C->get_shape(axis) == A->get_shape(axis) + B->get_shape(axis));
 
     
     // actual concatenation
@@ -46,15 +46,15 @@ void concat(Tensor<T> *A, Tensor<T> *B, Tensor<T> *C, unsigned int axis) {
     int curr_pos = target_shape.size() - 1;
     while (curr_pos >= 0) {
         curr_pos = target_shape.size() - 1;
-        if (target_shape[axis] < A->get_shape()[axis]) {
+        if (target_shape[axis] < A->get_shape(axis)) {
             C->set(target_shape, A->get(target_shape));
         } else {
             target_shape_copy = target_shape;
-            target_shape_copy[axis] -= A->get_shape()[axis];
+            target_shape_copy[axis] -= A->get_shape(axis);
             C->set(target_shape, B->get(target_shape_copy));
         }
         target_shape[curr_pos] ++;
-        while(target_shape[curr_pos] == C->get_shape()[curr_pos]) {
+        while(target_shape[curr_pos] == C->get_shape(curr_pos)) {
             target_shape[curr_pos] = 0;
             curr_pos --;
             if (curr_pos < 0) break;

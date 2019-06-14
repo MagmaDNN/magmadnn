@@ -97,7 +97,8 @@ void test_concat(memory_t mem, unsigned int size) {
     Tensor<float> *C = new Tensor<float> ({size, size*3/2, size*2});
 
     math::concat(A, B, C, 1);
-
+    sync(C);
+    
     for (int i = 0; i < size; i++) {
         for (int j = 0; j < size *3/2; j ++) {
             for (int k = 0; k < size*2; k ++) {

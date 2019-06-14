@@ -16,10 +16,5 @@ namespace math {
 template <typename T>
 void concat(Tensor<T> *A, Tensor<T> *B, Tensor<T> *C, unsigned int axis);
 
-#if defined(_HAS_CUDA_)
-template <typename T>
-void concat_device(Tensor<T> *A, Tensor<T> *B, Tensor<T> *C);
-#endif
-
 }
 }

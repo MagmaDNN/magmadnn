@@ -16,6 +16,7 @@ using namespace magmadnn;
 void test_matmul(memory_t mem, unsigned int size);
 void test_pow(memory_t mem, unsigned int size);
 void test_crossentropy(memory_t mem, unsigned int size);
+void test_reduce_sum(memory_t mem, unsigned int size);
 
 int main(int argc, char **argv) {
     magmadnn_init();
@@ -23,6 +24,7 @@ int main(int argc, char **argv) {
     test_for_all_mem_types(test_matmul, 50);
     test_for_all_mem_types(test_pow, 15);
     test_for_all_mem_types(test_crossentropy, 10);
+    test_for_all_mem_types(test_reduce_sum, 10);
 
     magmadnn_finalize();
 }
@@ -83,6 +85,37 @@ void test_crossentropy(memory_t mem, unsigned int size) {
     math::crossentropy(predicted, ground_truth, out);
 
     sync(out);
+
+    show_success();
+}
+
+void test_reduce_sum(memory_t mem, unsigned int size) {
+    printf("Testing %s reduce_sum...  ", get_memory_type_name(mem));
+
+    Tensor<float> x ({size, size}, {IDENTITY,{}}, mem);
+    Tensor<float> reduced ({size}, {NONE,{}}, mem);
+
+    if (mem == HOST) {
+        Tensor<float> ones ({size}, {ONE,{}}, mem);
+        math::reduce_sum(&x, 1, &ones, &reduced);
+    }
+    #if defined(_HAS_CUDA_) 
+    else {
+        math::reduce_sum_cudnn_settings_t settings;
+        cudnnCreateReduceTensorDescriptor(&settings.descriptor);
+        cudnnSetReduceTensorDescriptor(settings.descriptor, CUDNN_REDUCE_TENSOR_ADD, CUDNN_DATA_FLOAT, CUDNN_NOT_PROPAGATE_NAN, CUDNN_REDUCE_TENSOR_NO_INDICES, CUDNN_32BIT_INDICES);
+        cudnnGetReductionWorkspaceSize(internal::MAGMADNN_SETTINGS->cudnn_handle, settings.descriptor, x.get_cudnn_tensor_descriptor(), reduced.get_cudnn_tensor_descriptor(), &settings.workspace_size);
+        settings.workspace = new float[settings.workspace_size];
+        
+        math::reduce_sum_device(&x, 1, &reduced, settings);
+    }
+    #endif
+
+    sync(&reduced);
+
+    for (unsigned int i = 0; i < size; i++) {
+        assert( fequal(reduced.get(i), 1.0f) );
+    }
 
     show_success();
 }

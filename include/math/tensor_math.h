@@ -16,3 +16,4 @@
 #include "math/pow.h"
 #include "math/argmax.h"
 #include "reduce_sum.h"
+#include "math/concat.h"

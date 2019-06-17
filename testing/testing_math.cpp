@@ -17,6 +17,7 @@ void test_matmul(memory_t mem, unsigned int size);
 void test_pow(memory_t mem, unsigned int size);
 void test_crossentropy(memory_t mem, unsigned int size);
 void test_reduce_sum(memory_t mem, unsigned int size);
+void test_concat(memory_t mem, unsigned int size);
 
 int main(int argc, char **argv) {
     magmadnn_init();
@@ -25,6 +26,7 @@ int main(int argc, char **argv) {
     test_for_all_mem_types(test_pow, 15);
     test_for_all_mem_types(test_crossentropy, 10);
     test_for_all_mem_types(test_reduce_sum, 10);
+    test_for_all_mem_types(test_concat, 4);
 
     magmadnn_finalize();
 }
@@ -116,6 +118,26 @@ void test_reduce_sum(memory_t mem, unsigned int size) {
     for (unsigned int i = 0; i < size; i++) {
         assert( fequal(reduced.get(i), 1.0f) );
     }
+}
 
+void test_concat(memory_t mem, unsigned int size) {
+    printf("Testing %s concat...  ", get_memory_type_name(mem));
+
+    Tensor<float> *A = new Tensor<float> ({size, size/2, size*2}, {CONSTANT,{1.0f}}, mem);
+    Tensor<float> *B = new Tensor<float> ({size, size, size*2}, {CONSTANT,{2.0f}}, mem);
+    Tensor<float> *C = new Tensor<float> ({size, size*3/2, size*2});
+
+    math::concat(A, B, C, 1);
+    sync(C);
+    
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < size *3/2; j ++) {
+            for (int k = 0; k < size*2; k ++) {
+                if (j < size/2) assert(C->get({i,j,k}) == 1.0f);
+                else assert(C->get({i,j,k}) == 2.0f);
+            }
+        }
+    }
+        
     show_success();
 }

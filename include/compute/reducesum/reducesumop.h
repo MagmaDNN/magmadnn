@@ -3,19 +3,10 @@
 
 #include "compute/operation.h"
 #include "tensor/tensor.h"
+#include "math/reduce_sum.h"
 #include "compute/reducesum/reducesum_internal.h"
 
 namespace magmadnn {
-
-namespace internal {
-enum reduce_sum_op_t {
-	ELEM_REDUCE,
-	COL_REDUCE,
-	ROW_REDUCE,
-	TENSOR_REDUCE	/* Row Reduce for arbitrary tensors (TODO) */
-};
-}	// namespace internal
-
 namespace op {
 
 template <typename T>
@@ -38,10 +29,12 @@ protected:
 
 	Tensor<T> *ones;
 
+	#if defined(_HAS_CUDA_)
+	math::reduce_sum_cudnn_settings_t reduce_settings;
+	#endif
+
 	int axis;
 	bool copy;
-
-	internal::reduce_sum_op_t op_type;
 };
 
 template <typename T>

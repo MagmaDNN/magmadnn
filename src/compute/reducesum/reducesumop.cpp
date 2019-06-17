@@ -16,23 +16,19 @@ ReduceSumOp<T>::ReduceSumOp(Operation<T> *x, int axis, bool copy, bool needs_gra
 
     if (x_output_shape.size() == 1 || axis == -1) {
         /* x is a 1D vector. simply sum elements */
-        op_type = internal::ELEM_REDUCE;
         this->output_shape = {1};
     } else if (x_output_shape.size() == 2) {
         /* matrix reduction */
         if (axis == 0)  {
-            op_type = internal::COL_REDUCE;
             /* the number of cols */
             this->output_shape = {x_output_shape.at(1)};
             ones = new Tensor<T> ({x_output_shape.at(0)}, {ONE,{}}, this->mem_type);
         } else {
-            op_type = internal::ROW_REDUCE;
             /* the number of rows */
             this->output_shape = {x_output_shape.at(0)};
             ones = new Tensor<T> ({x_output_shape.at(1)}, {ONE,{}}, this->mem_type);
         }
     } else {
-        op_type = internal::TENSOR_REDUCE;
         this->output_shape = x_output_shape;
         std::fprintf(stderr, "ReduceSum not available for general tensors with more than 2 axes.\n");
     }
@@ -52,17 +48,11 @@ Tensor<T> *ReduceSumOp<T>::_eval(bool recompute) {
 
     if (!copy) { std::fprintf(stderr, "Non-Copy ReduceSum not supported.\n"); return this->output_tensor; }
 
-    switch (op_type) {
-        case internal::TENSOR_REDUCE:
-            internal::tensor_reducesum_full(x_tensor, axis, this->output_tensor); break;
-        case internal::COL_REDUCE:
-            internal::col_reducesum_full(x_tensor, ones, this->output_tensor); break;
-        case internal::ROW_REDUCE:
-            internal::row_reducesum_full(x_tensor, ones, this->output_tensor); break;
-        case internal::ELEM_REDUCE:
-            internal::reducesum_full(x_tensor, this->output_tensor); break;
+    if (mem_type == HOST) {
+        math::reduce_sum(x_tensor, axis, ones, this->output_tensor);
+    } else {
+        math::reduce_sum_device(x_tensor, axis, this->output_tensor, reduce_settings);
     }
-
     return this->output_tensor;
 }
 

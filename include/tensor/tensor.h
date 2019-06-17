@@ -210,6 +210,20 @@ public:
 	cudnnTensorDescriptor_t get_cudnn_tensor_descriptor() { return desc; }
 	#endif
 
+	/** changes shape of tensor to match dims
+	 * @param dims should have the same size as this->size 
+	 */
+	void reshape(const std::vector<unsigned int>& dims);
+
+	/** removes axes with length 1
+	 */
+	void squeeze();
+
+	/** adds a dimension with length 1 along axis dim
+	 * @param dim
+	 */
+	void unsqueeze(unsigned int dim = 0);
+
 private:
 	void init(std::vector<unsigned int>& shape, tensor_filler_t<T> filler, memory_t mem_type, device_t device_id);
 	unsigned int get_flattened_index(const std::vector<unsigned int>& idx) const;

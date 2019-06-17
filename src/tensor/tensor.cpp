@@ -196,6 +196,30 @@ unsigned int Tensor<T>::get_flattened_index(const std::vector<unsigned int>& idx
     return flattened_idx;
 }
 
+template <typename T>
+void Tensor<T>::reshape(const std::vector<unsigned int>& dims) {
+    long long dims_size = 1; 
+    for (unsigned int i = 0; i < dims.size(); i ++) dims_size *= dims[i];
+    assert(size == dims_size);
+    shape = dims;
+}
+
+template<typename T>
+void Tensor<T>::squeeze() {
+    std::vector<unsigned int> new_shape;
+    for (unsigned int i = 0; i < shape.size(); i ++) {
+        if (shape[i] > 1) new_shape.push_back(shape[i]);
+    }
+    if (new_shape.size() == 0) new_shape.push_back(1);
+    shape = new_shape;
+}
+
+template<typename T>
+void Tensor<T>::unsqueeze(unsigned int dim) {
+    assert(dim <= shape.size());
+    shape.insert(shape.begin() + dim, 1, 1);
+}
+
 #if defined(_HAS_CUDA_)
 template <typename T>
 void Tensor<T>::init_cudnn_descriptor() {

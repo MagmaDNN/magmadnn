@@ -15,7 +15,7 @@ using namespace magmadnn;
 
 Tensor<float> *read_mnist_images(const char *file_name, uint32_t &n_images, uint32_t &n_rows, uint32_t &n_cols);
 Tensor<float> *read_mnist_labels(const char *file_name, uint32_t &n_labels, uint32_t n_classes);
-void print_image(uint32_t image_idx, Tensor<float> *images, Tensor<float> *labels);
+void print_image(uint32_t image_idx, Tensor<float> *images, Tensor<float> *labels, uint32_t n_rows, uint32_t n_cols);
 
 int main(int argc, char **argv) {
     magmadnn_init();
@@ -43,7 +43,7 @@ int main(int argc, char **argv) {
     }
 
     if (argc == 2) {
-        print_image(std::atoi(argv[1]), images, labels);
+        print_image(std::atoi(argv[1]), images, labels, n_rows, n_cols);
     }
 
     model::nn_params_t params;
@@ -180,11 +180,9 @@ Tensor<float> *read_mnist_labels(const char *file_name, uint32_t &n_labels, uint
     return labels;
 }
 
-void print_image(uint32_t image_idx, Tensor<float> *images, Tensor<float> *labels) {
+void print_image(uint32_t image_idx, Tensor<float> *images, Tensor<float> *labels, uint32_t n_rows, uint32_t n_cols) {
     uint8_t label = 0;
     uint32_t n_classes = labels->get_shape(1);
-    uint32_t n_rows = images->get_shape(1);
-    uint32_t n_cols = images->get_shape(2);
 
     /* assign the label */
     for (uint32_t i = 0; i < n_classes; i++) {

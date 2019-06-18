@@ -17,6 +17,7 @@ void test_matmul(memory_t mem, unsigned int size);
 void test_pow(memory_t mem, unsigned int size);
 void test_crossentropy(memory_t mem, unsigned int size);
 void test_reduce_sum(memory_t mem, unsigned int size);
+void test_argmax(memory_t mem, unsigned int size);
 void test_concat(memory_t mem, unsigned int size);
 void test_tile(memory_t mem, unsigned int size);
 
@@ -27,6 +28,7 @@ int main(int argc, char **argv) {
     test_for_all_mem_types(test_pow, 15);
     test_for_all_mem_types(test_crossentropy, 10);
     test_for_all_mem_types(test_reduce_sum, 10);
+    test_for_all_mem_types(test_argmax, 10);
     test_for_all_mem_types(test_concat, 4);
     test_for_all_mem_types(test_tile, 4);
 
@@ -125,6 +127,26 @@ void test_reduce_sum(memory_t mem, unsigned int size) {
     show_success();
 }
 
+void test_argmax(memory_t mem, unsigned int size) {
+    printf("Testing %s argmax...   ", get_memory_type_name(mem));
+
+    Tensor<float> x ({size, size}, {IDENTITY,{}}, mem);
+    Tensor<float> out_0 ({size}, mem);
+    Tensor<float> out_1 ({size}, mem);
+    math::argmax(&x, 0, &out_0);
+    math::argmax(&x, 1, &out_1);
+    
+    sync(&out_0);
+    sync(&out_1);
+
+    for (unsigned int i = 0; i < size; i ++) {
+        assert( fequal(out_0.get(i), (float)i) );
+        assert( fequal(out_1.get(i), (float)i) );
+    }
+
+    show_success();
+}
+
 void test_concat(memory_t mem, unsigned int size) {
     printf("Testing %s concat...  ", get_memory_type_name(mem));
 
@@ -138,8 +160,8 @@ void test_concat(memory_t mem, unsigned int size) {
     for (unsigned int i = 0; i < size; i++) {
         for (unsigned int j = 0; j < size *3/2; j ++) {
             for (unsigned int k = 0; k < size*2; k ++) {
-                if (j < size/2) assert(C->get({i,j,k}) == 1.0f);
-                else assert(C->get({i,j,k}) == 2.0f);
+                if (j < size/2) assert(fequal(C->get({i,j,k}), 1.0f));
+                else assert( fequal(C->get({i,j,k}), 2.0f) );
             }
         }
     }

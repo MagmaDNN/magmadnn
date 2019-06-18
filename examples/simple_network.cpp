@@ -31,19 +31,19 @@ int main(int argc, char **argv) {
     if (images_host == NULL) {
         return 1;
     } else {
-        images = new Tensor<float> ({(unsigned int)n_images, (unsigned int)n_features}, {NONE, {}}, DEVICE);
-        images->copy_from(*images_host);
+        //images = new Tensor<float> ({(unsigned int)n_images, (unsigned int)n_features}, {NONE, {}}, DEVICE);
+        //images->copy_from(*images_host);
     }
 
     if (labels_host == NULL) {
         return 1;
     } else {
-        labels = new Tensor<float> (labels_host->get_shape(), {NONE, {}}, DEVICE);
-        labels->copy_from(*labels_host);
+        //labels = new Tensor<float> (labels_host->get_shape(), {NONE, {}}, DEVICE);
+        //labels->copy_from(*labels_host);
     }
 
     if (argc == 2) {
-        print_image(std::atoi(argv[1]), images, labels, n_rows, n_cols);
+        print_image(std::atoi(argv[1]), images_host, labels_host, n_rows, n_cols);
     }
 
     model::nn_params_t params;
@@ -66,12 +66,12 @@ int main(int argc, char **argv) {
     model::NeuralNetwork<float> model(layers, optimizer::CROSS_ENTROPY, optimizer::SGD, params);
 
     model::metric_t metrics;
-    model.fit(images, labels, metrics, true);
+    model.fit(images_host, labels_host, metrics, true);
 
     delete images_host;
-    delete images;
+    //delete images;
     delete labels_host;
-    delete labels;
+    //delete labels;
 
     magmadnn_finalize();
 

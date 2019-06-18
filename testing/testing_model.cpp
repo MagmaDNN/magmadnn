@@ -30,17 +30,17 @@ int main(int argc, char **argv) {
 
 void test_model_MLP(memory_t mem, unsigned int size) {
     unsigned int n_features = 6;
-    unsigned int n_classes = 5;
+    unsigned int n_classes = 10;
     unsigned int n_samples = 10;
     unsigned int batch_size = 2;
     model::metric_t metrics;
 
     printf("testing %s MLP...  ", get_memory_type_name(mem));
 
-    Tensor<float> x ({n_samples, n_features}, {CONSTANT, {1.0f}}, mem);
+    Tensor<float> x ({n_samples, n_features}, {CONSTANT, {0.5f}}, mem);
     auto var = op::var<float>("x", {batch_size, n_features}, {NONE, {}}, mem);
 
-    Tensor<float> y ({n_samples, n_classes}, {CONSTANT, {1.0f}}, mem);
+    Tensor<float> y ({n_samples, n_classes}, {IDENTITY, {}}, mem);
 
     auto input = layer::input<float>(var);
     auto fc1 = layer::fullyconnected<float>(input->out(), 10);

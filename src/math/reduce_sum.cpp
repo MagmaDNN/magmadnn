@@ -74,8 +74,10 @@ void reduce_sum(Tensor<T> *x, int axis, Tensor<T> *ones, Tensor<T> *out) {
             /* use gemv to compute row-sum or col-sum */
             if (axis == 0) {
                 /* call to external templated functions */
+                /* axis == 0 -- col sum */
                 internal::_gemv((T)1, true, x, ones, (T)0, out); // column reduce
             } else {
+                /* axis == 1 -- row sum */
                 internal::_gemv((T)1, false, x, ones, (T)0, out); // row reduce
             }
         } else {
@@ -99,19 +101,20 @@ void reduce_sum_device(Tensor<T> *x, int axis, Tensor<T> *out, reduce_sum_cudnn_
     /* call cudnn */
     T alpha = (T) 1;
     T beta = (T) 0;
+
     cudnnErrchk( cudnnReduceTensor(
-        ::magmadnn::internal::MAGMADNN_SETTINGS->cudnn_handle,
-        settings.descriptor,
+        ::magmadnn::internal::MAGMADNN_SETTINGS->cudnn_handle,  /* cudnn handle */
+        settings.descriptor,    /* reduce tensor descriptor */
         NULL,       /* indices ptr */
         0,          /* indices ptr size */
-        settings.workspace,
-        settings.workspace_size,
-        &alpha,
-        x->get_cudnn_tensor_descriptor(),
-        x->get_ptr(),
-        &beta, 
-        out->get_cudnn_tensor_descriptor(),
-        out->get_ptr()
+        settings.workspace,     /* ptr to workspace */
+        settings.workspace_size,    /* size of memory allocated to workspace ptr */
+        &alpha, /* alpha */
+        x->get_cudnn_tensor_descriptor(),   /* x -- descriptor */
+        x->get_ptr(),      /* x ptr */
+        &beta,      /* beta */
+        out->get_cudnn_tensor_descriptor(),    /* out -- descriptor */
+        out->get_ptr()                      /*out ptr */
     ) );
 }
 template void reduce_sum_device(Tensor<int> *x, int axis, Tensor<int> *out, reduce_sum_cudnn_settings_t settings);

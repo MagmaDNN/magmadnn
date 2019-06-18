@@ -21,6 +21,7 @@ void test_sumreduce(memory_t mem_type, unsigned int);
 void test_affine(memory_t mem_type, unsigned int size);
 void test_sigmoid(memory_t mem_type, unsigned int size);
 void test_tanh(memory_t mem_type, unsigned int size);
+void test_crossentropy(memory_t mem_type, unsigned int size);
 
 int main(int argc, char **argv) {
 	magmadnn_init();
@@ -36,6 +37,7 @@ int main(int argc, char **argv) {
 	test_for_all_mem_types(test_affine, 50);
 	test_for_all_mem_types(test_sigmoid, 50);
 	test_for_all_mem_types(test_tanh, 50);
+	test_for_all_mem_types(test_crossentropy, 10);
     
 	magmadnn_finalize();
     return 0;
@@ -265,6 +267,18 @@ void test_sumreduce(memory_t mem_type, unsigned int size) {
 		assert( fequal(row_sums->get(i), 6.0f) );
 	}
 
+	/* test the gradient computation */
+	Tensor<float> *grad = new Tensor<float> ({1,3}, {ONE,{}}, mem_type);
+	Tensor<float> *d_col_sums_wrt_x = col_sums_o->grad(NULL, v, grad);
+
+	sync(d_col_sums_wrt_x);
+
+	for (unsigned int i = 0; i < d_col_sums_wrt_x->get_shape(0); i++) {
+		for (unsigned int j = 0; j < d_col_sums_wrt_x->get_shape(1); j++) {
+			assert( fequal(d_col_sums_wrt_x->get({i,j}), 1.0f) );
+		}
+	}
+
 	show_success();
 }
 
@@ -360,6 +374,54 @@ void test_tanh(memory_t mem_type, unsigned int size) {
 	delete t0;
 	delete fin_op;
 	delete fin;
+
+	show_success();
+}
+
+void test_crossentropy(memory_t mem_type, unsigned int size) {
+	printf("Testing %s crossentropy...  ", get_memory_type_name(mem_type));
+
+	Tensor<double> *actual = new Tensor<double> ({3,3}, {ZERO,{}}, mem_type);
+	Tensor<double> *predicted = new Tensor<double> ({3,3}, {ZERO,{}}, mem_type);
+
+	double expected_loss = - (log(0.5) + log(0.5) + log(0.1));
+
+	/* 	0 0 1
+		0 0 1
+		1 0 0 */
+	actual->set({0,2}, 1.0);
+	actual->set({1,2}, 1.0);
+	actual->set({2,0}, 1.0);
+
+	/* 	0.1 0.4 0.5
+		0.2 0.3 0.5
+		0.1	0.3	0.6 */
+	predicted->set({0, 0}, 0.1);
+	predicted->set({0, 1}, 0.4);
+	predicted->set({0, 2}, 0.5);
+
+	predicted->set({1, 0}, 0.2);
+	predicted->set({1, 1}, 0.3);
+	predicted->set({1, 2}, 0.5);
+
+	predicted->set({2, 0}, 0.1);
+	predicted->set({2, 1}, 0.3);
+	predicted->set({2, 2}, 0.6);
+
+	sync(actual);
+	sync(predicted);
+
+	op::Operation<double> *actual_p = op::var("actual", actual);
+	op::Operation<double> *predicted_p = op::var("predicted", predicted);
+
+	op::Operation<double> *loss_p = op::crossentropy<double>(actual_p, predicted_p);
+	Tensor<double> *out = loss_p->eval();
+
+	sync(out);
+
+	double loss = out->get(0);
+
+	assert( fequal(loss, expected_loss) );
 
 	show_success();
 }

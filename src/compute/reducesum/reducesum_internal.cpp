@@ -5,201 +5,86 @@ namespace magmadnn {
 namespace internal {
 
 template <typename T>
-void tensor_reducesum_full(Tensor<T> *x, unsigned int axis, Tensor<T> *out) {
+void reduce_sum_grad(Tensor<T> *grad, int axis, Tensor<T> *out) {
+    /* the gradient of reduce sum, should repeat grad along the axis that was reduced.
+        Let a0, ... , an  be the shape of reduce_sum's input (also 'out'). Then
+        grad should be of shape a0, ... , 1, ... an, where 1 is at index='axis'. */
+    const std::vector<unsigned int>& grad_shape = grad->get_shape();
+    const std::vector<unsigned int>& out_shape = out->get_shape();
+    unsigned int n_grad_axes = grad_shape.size();
+    unsigned int n_out_axes = out_shape.size();
+    unsigned int out_size = out->get_size();
 
-    if (out->get_memory_type() == HOST) {
-        internal::debugf("general tensor reduce sum not yet implemented\n");
-    }
-    #if defined(_HAS_CUDA_)
-    else {
-        tensor_reducesum_full_device(x, axis, out);
-    }
-    #endif
+    assert( n_grad_axes == n_out_axes-1 || n_grad_axes == n_out_axes );
 
-}
-template void tensor_reducesum_full(Tensor<int> *x, unsigned int axis, Tensor<int> *out);
-template void tensor_reducesum_full(Tensor<float> *x, unsigned int axis, Tensor<float> *out);
-template void tensor_reducesum_full(Tensor<double> *x, unsigned int axis, Tensor<double> *out);
+    /* TODO -- modularize this into one single algorithm */
+    if (n_grad_axes == 1 && grad->get_size() == 1) {
+        /* grad is a scalar -- fill out with the value */
 
+        grad->get_memory_manager()->sync(); /* sync for managed memory */
+        T grad_scalar = grad->get(0);
 
-template <> void col_reducesum_full(Tensor<int> *x, Tensor<int> *ones, Tensor<int> *out) {
-    
-    unsigned int n_rows = x->get_shape(0);
-    unsigned int n_cols = x->get_shape(1);
-    unsigned int size = n_rows * n_cols;
-
-    for (unsigned int i = 0; i < n_cols; i++) out->set(i, 0);
-
-    for (unsigned int i = 0; i < size; i++) {
-        out->set(i % n_cols, out->get(i % n_cols) + x->get(i));
-    }
-}
-template <> void col_reducesum_full(Tensor<float> *x, Tensor<float> *ones, Tensor<float> *out) {
-    if (out->get_memory_type() == HOST) {
-        cblas_sgemv(CblasRowMajor, 
-                    CblasTrans, 
-                    x->get_shape(0), 
-                    x->get_shape(1), 
-                    (float) 1, 
-                    x->get_ptr(), 
-                    x->get_shape(1),
-                    ones->get_ptr(),
-                    1,
-                    (float) 0,
-                    out->get_ptr(),
-                    1);
-    }
-    #if defined(_HAS_CUDA_)
-    else {
-        /* gemv to col reduce */
-        magma_sgemv(MagmaNoTrans,
-                    x->get_shape(1),
-                    x->get_shape(0),
-                    (float) 1,
-                    x->get_ptr(),
-                    x->get_shape(1),
-                    ones->get_ptr(),
-                    1,
-                    (float) 0,
-                    out->get_ptr(),
-                    1);
-    }
-    #endif
-}
-template <> void col_reducesum_full(Tensor<double> *x, Tensor<double> *ones, Tensor<double> *out) {
-    if (out->get_memory_type() == HOST) {
-        cblas_dgemv(CblasRowMajor, 
-                    CblasTrans, 
-                    x->get_shape(0), 
-                    x->get_shape(1), 
-                    (float) 1, 
-                    x->get_ptr(), 
-                    x->get_shape(1),
-                    ones->get_ptr(),
-                    1,
-                    (float) 1,
-                    out->get_ptr(),
-                    1);
-    }
-    #if defined(_HAS_CUDA_)
-    else {
-        /* gemv to col reduce */
-        magma_dgemv(MagmaNoTrans,
-                    x->get_shape(1),
-                    x->get_shape(0),
-                    (float) 1,
-                    x->get_ptr(),
-                    x->get_shape(1),
-                    ones->get_ptr(),
-                    1,
-                    (float) 0,
-                    out->get_ptr(),
-                    1);
-    }
-    #endif
-}
-
-
-
-template <> void row_reducesum_full(Tensor<int> *x, Tensor<int> *ones, Tensor<int> *out) {
-    
-    unsigned int n_rows = x->get_shape(0);
-    unsigned int n_cols = x->get_shape(1);
-    unsigned int size = n_rows * n_cols;
-
-    for (unsigned int i = 0; i < n_rows; i++) out->set(i, 0);
-
-    for (unsigned int i = 0; i < size; i++) {
-        out->set(i / n_rows, out->get(i / n_rows) + x->get(i));
-    }
-}
-template <> void row_reducesum_full(Tensor<float> *x, Tensor<float> *ones, Tensor<float> *out) {
-    if (out->get_memory_type() == HOST) {
-        cblas_sgemv(CblasRowMajor,
-                    CblasNoTrans,
-                    x->get_shape(0),
-                    x->get_shape(1),
-                    (float)1,
-                    x->get_ptr(),
-                    x->get_shape(1),
-                    ones->get_ptr(),
-                    1,
-                    (float)0,
-                    out->get_ptr(),
-                    1);
-    }
-    #if defined(_HAS_CUDA_)
-    else {
-        magma_sgemv(MagmaTrans,
-                    x->get_shape(1),
-                    x->get_shape(0),
-                    (float)1,
-                    x->get_ptr(),
-                    x->get_shape(1),
-                    ones->get_ptr(),
-                    1,
-                    (float)0,
-                    out->get_ptr(),
-                    1);
-    }
-    #endif
-}
-template <> void row_reducesum_full(Tensor<double> *x, Tensor<double> *ones, Tensor<double> *out) {
-    if (out->get_memory_type() == HOST) {
-        cblas_dgemv(CblasRowMajor,
-                    CblasNoTrans,
-                    x->get_shape(0),
-                    x->get_shape(1),
-                    (float)1,
-                    x->get_ptr(),
-                    x->get_shape(1),
-                    ones->get_ptr(),
-                    1,
-                    (float)0,
-                    out->get_ptr(),
-                    1);
-    }
-    #if defined(_HAS_CUDA_)
-    else {
-        magma_dgemv(MagmaTrans,
-                    x->get_shape(1),
-                    x->get_shape(0),
-                    (float)1,
-                    x->get_ptr(),
-                    x->get_shape(1),
-                    ones->get_ptr(),
-                    1,
-                    (float)0,
-                    out->get_ptr(),
-                    1);
-    }
-    #endif
-}
-
-
-template <typename T>
-void reducesum_full(Tensor<T> *x, Tensor<T> *out) {
-
-    if (out->get_memory_type() == HOST) {
-        T *x_ptr = x->get_ptr();
-        T *out_ptr = out->get_ptr();
-        unsigned int size = out->get_size();
-
-        out_ptr[0] = (T) 0;
-        for (unsigned int i = 0; i < size; i++) {
-            out_ptr[0] += x_ptr[i];
+        for (unsigned int i = 0; i < out_size; i++) {
+            out->set(i, grad_scalar);
         }
-    }
-    #if defined(_HAS_CUDA_)
-    else {
-        reducesum_full_device(x, out);
-    }
-    #endif
 
+    } else if (n_grad_axes == 2 && grad_shape[0] == 1) {
+        /* grad gets repeated along each row of out */
+
+        unsigned int n_rows = out_shape[0];
+        unsigned int n_cols = out_shape[1];
+
+        assert( grad_shape[1] == n_cols );
+
+        grad->get_memory_manager()->sync(); /* sync for managed memory */
+
+        for (unsigned int i = 0; i < n_rows; i++) {
+            for (unsigned int j = 0; j < n_cols; j++) {
+                out->set(i*n_cols + j, grad->get(j));    /* out[i,j] = grad[:,j] */
+            }
+        }
+
+    } else if (n_grad_axes == 2 && grad_shape[1] == 1) {
+        /* grad gets repeated along each column of out */
+
+        unsigned int n_rows = out_shape[0];
+        unsigned int n_cols = out_shape[1];
+
+        assert( grad_shape[0] == n_rows );
+
+        grad->get_memory_manager()->sync(); /* sync for managed memory */
+
+        for (unsigned int i = 0; i < n_rows; i++) {
+            for (unsigned int j = 0; j < n_cols; j++) {
+                out->set(i*n_cols+j, grad->get(i));
+            }
+        }
+
+    } else {
+        /* use math::tile for the more general case */
+        grad->get_memory_manager()->sync();
+        math::tile(grad, out, out->get_shape(axis), axis);
+    }
 }
-template void reducesum_full(Tensor<int> *x, Tensor<int> *out);
-template void reducesum_full(Tensor<float> *x, Tensor<float> *out);
-template void reducesum_full(Tensor<double> *x, Tensor<double> *out);
+template void reduce_sum_grad(Tensor<int> *grad, int axis, Tensor<int> *out);
+template void reduce_sum_grad(Tensor<float> *grad, int axis, Tensor<float> *out);
+template void reduce_sum_grad(Tensor<double> *grad, int axis, Tensor<double> *out);
+
+
+#if defined(_HAS_CUDA_)
+template <typename T>
+void reduce_sum_grad_device(Tensor<T> *grad, int axis, Tensor<T> *out) {
+    /* the gradient of reduce sum, should repeat grad along the axis that was reduced.
+        Let a0, ... , an  be the shape of reduce_sum's input (also 'out'). Then
+        grad should be of shape a0, ... , 1, ... an, where 1 is at index='axis'. */
+
+    
+}
+template void reduce_sum_grad_device(Tensor<int> *grad, int axis, Tensor<int> *out);
+template void reduce_sum_grad_device(Tensor<float> *grad, int axis, Tensor<float> *out);
+template void reduce_sum_grad_device(Tensor<double> *grad, int axis, Tensor<double> *out);
+#endif
+
 
 }   // namespace op
 }   // namespace magmadnn

@@ -21,14 +21,14 @@ ReduceSumOp<T>::ReduceSumOp(Operation<T> *x, int axis, bool copy, bool needs_gra
         /* matrix reduction */
         if (axis == 0)  {
             /* the number of cols */
-            this->output_shape = {x_output_shape.at(1)};
+            this->output_shape = {1,x_output_shape.at(1)};
             ones = new Tensor<T> ({x_output_shape.at(0)}, {ONE,{}}, this->mem_type);
         } else {
             /* the number of rows */
-            this->output_shape = {x_output_shape.at(0)};
+            this->output_shape = {x_output_shape.at(0),1};
             ones = new Tensor<T> ({x_output_shape.at(1)}, {ONE,{}}, this->mem_type);
         }
-    } else {
+    } else if (this->mem_type == HOST) {
         this->output_shape = x_output_shape;
         std::fprintf(stderr, "ReduceSum not available for general tensors with more than 2 axes.\n");
     }
@@ -39,6 +39,70 @@ ReduceSumOp<T>::ReduceSumOp(Operation<T> *x, int axis, bool copy, bool needs_gra
     } else {
         std::fprintf(stderr, "Non-Copy ReduceSum not supported.\n");
     }
+
+    #if defined(_HAS_CUDA_)
+
+    /* create a temporary descriptor for x, since we do not have its tensor yet (it's an operation) and 
+        therefore cannot call get_cudnn_tensor_descriptor(). This allows us to get the
+        workspace size from CuDNN here in the constructor, rather than in eval. */
+    cudnnTensorDescriptor_t x_tmp_descriptor;
+    int x_n = 1, x_c = 1, x_h = 1, x_w = 1;
+    unsigned int x_axes = x->get_output_shape().size();
+
+    if (x_axes > 4 || x_axes == 0) {
+        fprintf(stderr, "Unsupported operation.\n");
+    }
+    if (x_axes == 4) {
+        x_w = x->get_output_shape(3);
+    }
+    if (x_axes >= 3) {
+        x_h = x->get_output_shape(2);
+    }
+    if (x_axes >= 2) {
+        x_c = x->get_output_shape(1);
+    }
+    if (x_axes >= 1) {
+        x_n = x->get_output_shape(0);
+    }
+
+    cudnnErrchk( cudnnCreateTensorDescriptor(&x_tmp_descriptor) );
+    cudnnErrchk( cudnnSetTensor4dDescriptor(x_tmp_descriptor,
+        CUDNN_TENSOR_NCHW,
+        ::magmadnn::internal::get_cudnn_data_type((T) 0),
+        x_n,
+        x_c,
+        x_h,
+        x_w) 
+    );
+
+    cudnnErrchk( cudnnCreateReduceTensorDescriptor(&reduce_settings.descriptor) );
+    cudnnErrchk( cudnnSetReduceTensorDescriptor(reduce_settings.descriptor, 
+        CUDNN_REDUCE_TENSOR_ADD, 
+        ::magmadnn::internal::get_cudnn_data_type((T)0), 
+        CUDNN_NOT_PROPAGATE_NAN, 
+        CUDNN_REDUCE_TENSOR_NO_INDICES,
+        CUDNN_32BIT_INDICES) 
+    );
+    cudnnErrchk( cudnnGetReductionWorkspaceSize(::magmadnn::internal::MAGMADNN_SETTINGS->cudnn_handle,
+        reduce_settings.descriptor, 
+        x_tmp_descriptor,
+        this->output_tensor->get_cudnn_tensor_descriptor(),
+        &reduce_settings.workspace_size)
+    );
+    cudaErrchk( cudaMalloc((void **)&reduce_settings.workspace, reduce_settings.workspace_size*sizeof(float)) );
+
+    cudnnErrchk( cudnnDestroyTensorDescriptor(x_tmp_descriptor) );
+    #endif
+}
+
+template <typename T>
+ReduceSumOp<T>::~ReduceSumOp() {
+    if (ones != NULL) delete ones;
+
+    #if defined(_HAS_CUDA_)
+    cudnnErrchk( cudnnDestroyReduceTensorDescriptor(reduce_settings.descriptor) );
+    cudaErrchk( cudaFree(reduce_settings.workspace) );
+    #endif
 }
 
 template <typename T>
@@ -48,11 +112,14 @@ Tensor<T> *ReduceSumOp<T>::_eval(bool recompute) {
 
     if (!copy) { std::fprintf(stderr, "Non-Copy ReduceSum not supported.\n"); return this->output_tensor; }
 
-    if (mem_type == HOST) {
+    if (this->mem_type == HOST) {
         math::reduce_sum(x_tensor, axis, ones, this->output_tensor);
-    } else {
-        math::reduce_sum_device(x_tensor, axis, this->output_tensor, reduce_settings);
     }
+    #if defined(_HAS_CUDA_) 
+    else {
+        math::reduce_sum_device(x_tensor, axis, this->output_tensor, this->reduce_settings);
+    }
+    #endif
     return this->output_tensor;
 }
 
@@ -66,7 +133,17 @@ Tensor<T> *ReduceSumOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tens
     /* reshape grad to output_shape */
     /* tile grad tile_scaling */
 
-    return grad;
+    Tensor<T> *out = this->_grad_cache[(uintptr_t)var];
+
+    if (out == NULL) {
+        /* the gradient output will have the same shape as this operations input */
+        out = new Tensor<T> (x->get_output_shape(), {NONE, {}}, this->mem_type);
+        this->_grad_cache[(uintptr_t)var] = out;
+    }
+
+    internal::reduce_sum_grad(grad, this->axis, out);
+
+    return out;
 }
 
 template class ReduceSumOp<int>;

@@ -5,6 +5,7 @@
 #include "tensor/tensor.h"
 #include "math/reduce_sum.h"
 #include "compute/reducesum/reducesum_internal.h"
+#include "utilities_internal.h"
 
 namespace magmadnn {
 namespace op {
@@ -14,9 +15,7 @@ class ReduceSumOp : public Operation<T> {
 public:
 	ReduceSumOp(Operation<T> *x, int axis, bool copy=true, bool needs_grad=true);
 
-	virtual ~ReduceSumOp() {
-		if (ones != NULL) delete ones;
-	}
+	virtual ~ReduceSumOp();
 
 	
 	std::string to_string() { return "ReduceSum( " + x->to_string() + " )"; }

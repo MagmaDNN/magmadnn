@@ -30,6 +30,8 @@ ProductOp<T>::ProductOp(T alpha, Operation<T> *a, Operation<T> *b, bool copy, bo
 
     if (copy) {
         this->output_tensor = new Tensor<T> (this->output_shape, {ONE, {}}, this->mem_type);
+    } else {
+        fprintf(stderr, "no copy product not defined\n");
     }
 }
 

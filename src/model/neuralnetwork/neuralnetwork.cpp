@@ -39,7 +39,7 @@ magmadnn_error_t NeuralNetwork<T>::fit(Tensor<T> *x, Tensor<T> *y, metric_t& met
     output_tensor = network_output->get_output_tensor();
 
     /* construct batches */
-    ground_truth = op::var<T>("y", {this->model_params.batch_size, y->get_shape(1)}, {NONE, {}}, y->get_memory_type());
+    ground_truth = op::var<T>("y", {this->model_params.batch_size, y->get_shape(1)}, {NONE, {}}, output_tensor->get_memory_type());
     y_batch = ground_truth->get_output_tensor();
     
     /* init the argmax tensor */
@@ -54,7 +54,7 @@ magmadnn_error_t NeuralNetwork<T>::fit(Tensor<T> *x, Tensor<T> *y, metric_t& met
 
     switch (this->loss_func) {
         case optimizer::CROSS_ENTROPY:
-            this->_obj = op::crossentropy(network_output, ground_truth); break;
+            this->_obj = op::crossentropy(ground_truth, network_output); break;
         case optimizer::MSE:
             std::fprintf(stderr, "MSE not yet implemented.\n"); 
             return (magmadnn_error_t) 2;

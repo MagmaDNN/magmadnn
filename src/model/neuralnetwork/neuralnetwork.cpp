@@ -65,7 +65,7 @@ magmadnn_error_t NeuralNetwork<T>::fit(Tensor<T> *x, Tensor<T> *y, metric_t& met
 
     switch (this->optimizer) {
         case optimizer::SGD:
-            optim = new optimizer::GradientDescent<T> (this->_obj, this->default_learning_rate); break;
+            optim = new optimizer::GradientDescent<T> (this->_obj, this->default_learning_rate / (double)this->model_params.batch_size); break;
         case optimizer::ADAM:
             std::fprintf(stderr, "Adam not yet implemented.\n");
             return (magmadnn_error_t) 2;

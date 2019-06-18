@@ -159,10 +159,10 @@ magmadnn_error_t MemoryManager<T>::copy_from_device(T *src, unsigned int begin_i
     switch (mem_type) {
         case HOST:
             // device --> host
-            err = cudaMemcpy(host_ptr, src+begin_idx, copy_size*sizeof(T), cudaMemcpyDeviceToHost);
+            err = cudaMemcpy(host_ptr, src+begin_idx, copy_size*sizeof(T), cudaMemcpyDeviceToHost); break;
         case DEVICE:
             // device --> device
-            err = cudaMemcpy(device_ptr, src+begin_idx, copy_size*sizeof(T), cudaMemcpyDeviceToDevice);
+            err = cudaMemcpy(device_ptr, src+begin_idx, copy_size*sizeof(T), cudaMemcpyDeviceToDevice); break;
         case MANAGED:
             // device --> managed
             err = cudaMemcpy(device_ptr, src+begin_idx, copy_size*sizeof(T), cudaMemcpyDeviceToDevice);
@@ -185,6 +185,7 @@ magmadnn_error_t MemoryManager<T>::copy_from_managed(T *host_src, T *device_src,
         case HOST:
             // managed --> host
 			std::copy(host_src+begin_idx, (host_src+begin_idx) + copy_size, host_ptr);
+            return (magmadnn_error_t) 0;
         case DEVICE:
             // managed --> device
             return cudaMemcpy(device_ptr, device_src+begin_idx, copy_size*sizeof(T), cudaMemcpyDeviceToDevice);

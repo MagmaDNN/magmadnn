@@ -6,6 +6,10 @@
 #include "utilities_internal.h"
 #include "math/crossentropy.h"
 #include "compute/crossentropy/crossentropy_internal.h"
+#include "compute/negative/negativeop.h"
+#include "compute/reducesum/reducesumop.h"
+#include "compute/product/productop.h"
+#include "compute/log/logop.h"
 
 namespace magmadnn {
 namespace op {
@@ -27,8 +31,16 @@ protected:
 	bool copy;
 };
 
+/**
+ * @tparam T 
+ * @param ground_truth 
+ * @param predicted 
+ * @param copy 
+ * @param needs_grad 
+ * @return Operation<T>* 
+ */
 template <typename T>
-CrossEntropyOp<T>* crossentropy(Operation<T> *x, Operation<T> *y, bool copy=true, bool needs_grad=true);
+Operation<T>* crossentropy(Operation<T> *ground_truth, Operation<T> *predicted, bool copy=true, bool needs_grad=true);
 
 } // namespace op
 } // namespace magmadnn

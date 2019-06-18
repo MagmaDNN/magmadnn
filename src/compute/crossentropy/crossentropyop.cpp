@@ -57,12 +57,12 @@ template class CrossEntropyOp<double>;
 
 
 template <typename T>
-CrossEntropyOp<T> *crossentropy(Operation<T> *x, Operation<T> *y, bool copy, bool needs_grad) {
-    return new CrossEntropyOp<T>(x, y, copy, needs_grad);
+Operation<T> *crossentropy(Operation<T> *ground_truth, Operation<T> *predicted, bool copy, bool needs_grad) {
+    return negative(reducesum(reducesum(product(ground_truth, log(predicted)), 1), 0));
 }
-template CrossEntropyOp<int> *crossentropy(Operation<int>*, Operation<int>*, bool, bool);
-template CrossEntropyOp<float> *crossentropy(Operation<float>*, Operation<float>*, bool, bool);
-template CrossEntropyOp<double> *crossentropy(Operation<double>*, Operation<double>*, bool, bool);
+template Operation<int> *crossentropy(Operation<int>*, Operation<int>*, bool, bool);
+template Operation<float> *crossentropy(Operation<float>*, Operation<float>*, bool, bool);
+template Operation<double> *crossentropy(Operation<double>*, Operation<double>*, bool, bool);
 
 
 }   // namespace op

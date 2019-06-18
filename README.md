@@ -72,10 +72,10 @@ For examples of what MagmaDNN code looks like see the [examples/ folder](https:/
 - [x] Tests for compute graph and tensor operations
 - [x] Link with BLAS/LAPACK (OpenBLAS?) and MAGMA
 - [x] Basic Layer classes (Dense, Activation, Flatten, CNN)
-- [ ] Model with forward/backward propagation
-- [ ] Tests for Model/Layer training
-- [ ] Optimizers
-- [ ] Tests for Optimizers
+- [x] Model with forward/backward propagation
+- [x] Tests for Model/Layer training
+- [x] Optimizers
+- [x] Tests for Optimizers
 - [ ] Parallel training (Multi-GPU)
 - [ ] Tests for parallel training
 - [x] Examples in Examples/ folder

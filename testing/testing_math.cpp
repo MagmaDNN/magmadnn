@@ -18,6 +18,7 @@ void test_pow(memory_t mem, unsigned int size);
 void test_crossentropy(memory_t mem, unsigned int size);
 void test_reduce_sum(memory_t mem, unsigned int size);
 void test_concat(memory_t mem, unsigned int size);
+void test_tile(memory_t mem, unsigned int size);
 
 int main(int argc, char **argv) {
     magmadnn_init();
@@ -27,6 +28,7 @@ int main(int argc, char **argv) {
     test_for_all_mem_types(test_crossentropy, 10);
     test_for_all_mem_types(test_reduce_sum, 10);
     test_for_all_mem_types(test_concat, 4);
+    test_for_all_mem_types(test_tile, 4);
 
     magmadnn_finalize();
 }
@@ -95,7 +97,7 @@ void test_reduce_sum(memory_t mem, unsigned int size) {
     printf("Testing %s reduce_sum...  ", get_memory_type_name(mem));
 
     Tensor<float> x ({size, size}, {IDENTITY,{}}, mem);
-    Tensor<float> reduced ({size}, {NONE,{}}, mem);
+    Tensor<float> reduced ({size}, {CONSTANT,{5.0f}}, mem);
 
     if (mem == HOST) {
         Tensor<float> ones ({size}, {ONE,{}}, mem);
@@ -104,10 +106,11 @@ void test_reduce_sum(memory_t mem, unsigned int size) {
     #if defined(_HAS_CUDA_) 
     else {
         math::reduce_sum_cudnn_settings_t settings;
+
         cudnnCreateReduceTensorDescriptor(&settings.descriptor);
         cudnnSetReduceTensorDescriptor(settings.descriptor, CUDNN_REDUCE_TENSOR_ADD, CUDNN_DATA_FLOAT, CUDNN_NOT_PROPAGATE_NAN, CUDNN_REDUCE_TENSOR_NO_INDICES, CUDNN_32BIT_INDICES);
         cudnnGetReductionWorkspaceSize(internal::MAGMADNN_SETTINGS->cudnn_handle, settings.descriptor, x.get_cudnn_tensor_descriptor(), reduced.get_cudnn_tensor_descriptor(), &settings.workspace_size);
-        settings.workspace = new float[settings.workspace_size];
+        cudaErrchk( cudaMalloc((void **)&settings.workspace, settings.workspace_size*sizeof(float)) );
         
         math::reduce_sum_device(&x, 1, &reduced, settings);
     }
@@ -118,6 +121,8 @@ void test_reduce_sum(memory_t mem, unsigned int size) {
     for (unsigned int i = 0; i < size; i++) {
         assert( fequal(reduced.get(i), 1.0f) );
     }
+
+    show_success();
 }
 
 void test_concat(memory_t mem, unsigned int size) {
@@ -130,11 +135,31 @@ void test_concat(memory_t mem, unsigned int size) {
     math::concat(A, B, C, 1);
     sync(C);
     
-    for (int i = 0; i < size; i++) {
-        for (int j = 0; j < size *3/2; j ++) {
-            for (int k = 0; k < size*2; k ++) {
+    for (unsigned int i = 0; i < size; i++) {
+        for (unsigned int j = 0; j < size *3/2; j ++) {
+            for (unsigned int k = 0; k < size*2; k ++) {
                 if (j < size/2) assert(C->get({i,j,k}) == 1.0f);
                 else assert(C->get({i,j,k}) == 2.0f);
+            }
+        }
+    }
+
+    show_success();
+}
+
+void test_tile(memory_t mem, unsigned int size) {
+    printf("Testing %s tile...  ", get_memory_type_name(mem));
+
+    Tensor<float> *D = new Tensor<float> ({size, 1, size*2}, {CONSTANT,{2.0f}}, mem);
+    Tensor<float> *E = new Tensor<float> ({size, size, size*2});
+
+    math::tile(D, E, size, 1);
+    sync(E);
+
+    for (unsigned int i = 0; i < size; i++) {
+        for (unsigned int j = 0; j < size; j ++) {
+            for (unsigned int k = 0; k < size*2; k ++) {
+                assert(E->get({i,j,k}) == 2.0f);
             }
         }
     }

@@ -17,3 +17,4 @@
 #include "math/argmax.h"
 #include "reduce_sum.h"
 #include "math/concat.h"
+#include "math/tile.h"

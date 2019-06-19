@@ -64,7 +64,6 @@ void softmax_grad(Tensor<T> *softmax, Tensor<T> *grad, Tensor<T> *out) {
         T *softmax_ptr = softmax->get_ptr();
         T *grad_ptr = grad->get_ptr();
         T *out_ptr = out->get_ptr();
-        unsigned int size = out->get_size();
         unsigned int n_rows = out->get_shape(0);
         unsigned int n_cols = out->get_shape(1);
         bool grad_is_scalar = T_IS_SCALAR(grad);

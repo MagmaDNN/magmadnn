@@ -28,7 +28,10 @@ int main(int argc, char **argv) {
     test_for_all_mem_types(test_pow, 15);
     test_for_all_mem_types(test_crossentropy, 10);
     test_for_all_mem_types(test_reduce_sum, 10);
-    test_for_all_mem_types(test_argmax, 10);
+    //test_for_all_mem_types(test_argmax, 10);
+
+    test_argmax(HOST, 10);
+
     test_for_all_mem_types(test_concat, 4);
     test_for_all_mem_types(test_tile, 4);
 

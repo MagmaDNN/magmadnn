@@ -28,17 +28,29 @@ Tensor<T> *LinearForwardOp<T>::_eval(bool recompute) {
 
 template <typename T>
 Tensor<T> *LinearForwardOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad) {
-    /* grad : GW^T */
+    /* wrt input : GW^T  --  wrt weights : X^TG */
     Tensor<T> *out = this->_grad_cache[(uintptr_t)var];
 
-    weights_tensor = weights->eval(false);
 
-    if (out == NULL) {
-        out = new Tensor<T> ({grad->get_shape(0), weights_tensor->get_shape(0)}, {NONE,{}}, this->mem_type);
-        this->_grad_cache[(uintptr_t)var] = out;
+    if (var == this->input) {
+        this->weights_tensor = this->weights->eval(false);
+
+        if (out == NULL) {
+            out = new Tensor<T> ({grad->get_shape(0), this->weights_tensor->get_shape(0)}, {NONE,{}}, this->mem_type);
+            this->_grad_cache[(uintptr_t)var] = out;
+        }
+
+        math::matmul((T)1, false, grad, true, this->weights_tensor, (T)0, out);
+    } else if (var == this->weights) {
+        this->input_tensor = this->input->eval(false);
+
+        if (out == NULL) {
+            out = new Tensor<T> ({this->input_tensor->get_shape(1), grad->get_shape(1)}, {NONE,{}}, this->mem_type);
+            this->_grad_cache[(uintptr_t)var] = out;
+        }
+
+        math::matmul((T)1, true, this->input_tensor, false, grad, (T)0, out);
     }
-
-    math::matmul((T)1, false, grad, true, weights_tensor, (T)0, out);
 
     return out;
 }

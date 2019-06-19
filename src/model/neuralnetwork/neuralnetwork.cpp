@@ -96,7 +96,7 @@ magmadnn_error_t NeuralNetwork<T>::fit(Tensor<T> *x, Tensor<T> *y, metric_t& met
     time(&start_time);
     for (unsigned int i = 0; i < n_iter; i++) {
         /* load next batch into x*/
-        if (cur_sample_idx + this->model_params.batch_size <= n_samples) {
+        if (cur_sample_idx + this->model_params.batch_size > n_samples) {
             cur_sample_idx = 0;
         }
         err = x_batch->copy_from(*x, cur_sample_idx*sample_size, this->model_params.batch_size * sample_size);

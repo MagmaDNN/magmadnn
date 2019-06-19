@@ -9,39 +9,58 @@
 #include <cstdio>
 #include <vector>
 #include <cstdint>
+
+/* we must include magmadnn as always */
 #include "magmadnn.h"
 
+/* tell the compiler we're using functions from the magmadnn namespace */
 using namespace magmadnn;
 
+/* these are used for reading in the MNIST data set -- found at http://yann.lecun.com/exdb/mnist/ */
 Tensor<float> *read_mnist_images(const char *file_name, uint32_t &n_images, uint32_t &n_rows, uint32_t &n_cols);
 Tensor<float> *read_mnist_labels(const char *file_name, uint32_t &n_labels, uint32_t n_classes);
 void print_image(uint32_t image_idx, Tensor<float> *images, Tensor<float> *labels, uint32_t n_rows, uint32_t n_cols);
 
+
+
 int main(int argc, char **argv) {
+    /* every magmadnn program must begin with magmadnn_init. This allows magmadnn to test the environment
+        and initialize some GPU data. */
     magmadnn_init();
 
+    /* here we declare our variables for the simulation */
     Tensor<float> *images_host, *labels_host;
     uint32_t n_images, n_rows, n_cols, n_labels, n_classes = 10, n_features;
 
-    images_host = read_mnist_images("/home/danielnichols/data/mnist/train-images-idx3-ubyte", n_images, n_rows, n_cols);
-    labels_host = read_mnist_labels("/home/danielnichols/data/mnist/train-labels-idx1-ubyte", n_labels, n_classes);
+    /* these functions read-in and return tensors holding the mnist data set
+        to use them, please change the string to the path to your local copy of the mnist dataset.
+        it can be downloaded from http://yann.lecun.com/exdb/mnist */
+    images_host = read_mnist_images("/path/to/data/mnist/train-images-idx3-ubyte", n_images, n_rows, n_cols);
+    labels_host = read_mnist_labels("/path/to/data/mnist/train-labels-idx1-ubyte", n_labels, n_classes);
 
     n_features = n_rows * n_cols;
 
+    /* exit on error */
     if (images_host == NULL || labels_host == NULL) {
         return 1;
     }
 
+    /* if you run this program with a number argument, it will print out that number sample on the command line */
     if (argc == 2) {
         print_image(std::atoi(argv[1]), images_host, labels_host, n_rows, n_cols);
     }
 
+    /* initialize our model parameters */
     model::nn_params_t params;
-    params.batch_size = 100;
-    params.n_epochs = 5;
+    params.batch_size = 100;    /* batch size: the number of samples to process in each mini-batch */
+    params.n_epochs = 5;    /* # of epochs: the number of passes over the entire training set */
 
+    /* INITIALIZING THE NETWORK */
+    /* create a variable (of type float) with size  (batch_size x n_features) 
+        This will serve as the input to our network. */
     auto x_batch = op::var<float>("x_batch", {params.batch_size, n_features}, {NONE,{}}, DEVICE);
 
+    /* initialize the layers in our network */
     auto input = layer::input(x_batch);
     auto fc1 = layer::fullyconnected(input->out(), n_rows*n_cols);
     auto act1 = layer::activation(fc1->out(), layer::SIGMOID);
@@ -50,18 +69,33 @@ int main(int argc, char **argv) {
     auto fc3 = layer::fullyconnected(act2->out(), n_classes);
     auto output = layer::output(fc3->out());
 
+    /* wrap each layer in a vector of layers to pass to the model */
     std::vector<layer::Layer<float> *> layers = {input, fc1, act1, fc2, act2, fc3, output};
 
+    /* this creates a Model for us. The model can train on our data and perform other typical operations
+        that a ML model can. 
+        layers: the previously created vector of layers containing our network
+        loss_func: use cross entropy as our loss function
+        optimizer: use stochastic gradient descent to optimize our network
+        params: the parameter struct created earlier with our network settings */
     model::NeuralNetwork<float> model(layers, optimizer::CROSS_ENTROPY, optimizer::SGD, params);
 
+    /* metric_t records the model metrics such as accuracy, loss, and training time */
     model::metric_t metrics;
+
+    /* fit will train our network using the given settings.
+        X: independent data
+        y: ground truth
+        metrics: metric struct to store run time metrics
+        verbose: whether to print training info during training or not */
     model.fit(images_host, labels_host, metrics, true);
 
+    /* clean up memory after training */
     delete images_host;
-    //delete images;
     delete labels_host;
-    //delete labels;
+    delete output;
 
+    /* every magmadnn program should call magmadnn_finalize before exiting */
     magmadnn_finalize();
 
     return 0;

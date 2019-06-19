@@ -212,13 +212,13 @@ void test_scalarproduct(memory_t mem_type, unsigned int size) {
 	show_success();
 }
 
-void test_softmax(memory_t mem, unsigned int size) {
-	printf("Testing %s softmax...  ", get_memory_type_name(mem));
+void test_softmax(memory_t mem_type, unsigned int size) {
+	printf("Testing %s softmax...  ", get_memory_type_name(mem_type));
 
 	float val = 1.0f;
 	float expected = 2.0f / (float) size;
 
-	op::Operation<float> *x = op::var<float> ("x", {size, size/2}, {CONSTANT, {val}}, mem);
+	op::Operation<float> *x = op::var<float> ("x", {size, size/2}, {CONSTANT, {val}}, mem_type);
 	op::Operation<float> *out = op::softmax(x);
 
 	Tensor<float> *output = out->eval();
@@ -229,6 +229,15 @@ void test_softmax(memory_t mem, unsigned int size) {
 		for (unsigned int j = 0; j < size/2; j++) {
 			assert( fequal(output->get({i,j}), expected) );
 		}
+	}
+
+	Tensor<float> *grad = new Tensor<float> ({size, size/2}, {ONE,{}}, mem_type);
+	Tensor<float> *d_softmax_wrt_x = out->grad(NULL, x, grad);
+	sync(grad);
+	sync(d_softmax_wrt_x);
+
+	for (unsigned int i = 0; i < d_softmax_wrt_x->get_size(); i ++) {
+		assert( fequal(d_softmax_wrt_x->get(i), 0.0f) );
 	}
 
 	show_success();
@@ -342,8 +351,14 @@ void test_sigmoid(memory_t mem_type, unsigned int size) {
 		assert( fabs(fin->get(i) - (-0.875)) < 1E-8 );
 	}
 
-	delete t0;
-	delete sig;
+	Tensor<float> *grad = new Tensor<float> ({size, size}, {ONE,{}}, mem_type);
+	Tensor<float> *d_sigmoid_wrt_x = sig->grad(NULL, v0, grad);
+	sync(grad);
+	sync(d_sigmoid_wrt_x);
+
+	for (unsigned int i = 0; i < d_sigmoid_wrt_x->get_size(); i ++) {
+		assert( fabs(d_sigmoid_wrt_x->get(i) - (-1.640625)) < 1E-8 );
+	}
 
 	show_success();
 }

@@ -20,7 +20,7 @@ void print_image(uint32_t image_idx, Tensor<float> *images, Tensor<float> *label
 int main(int argc, char **argv) {
     magmadnn_init();
 
-    Tensor<float> *images_host, *images, *labels_host, *labels;
+    Tensor<float> *images_host, *labels_host;
     uint32_t n_images, n_rows, n_cols, n_labels, n_classes = 10, n_features;
 
     images_host = read_mnist_images("/home/danielnichols/data/mnist/train-images-idx3-ubyte", n_images, n_rows, n_cols);
@@ -28,18 +28,8 @@ int main(int argc, char **argv) {
 
     n_features = n_rows * n_cols;
 
-    if (images_host == NULL) {
+    if (images_host == NULL || labels_host == NULL) {
         return 1;
-    } else {
-        //images = new Tensor<float> ({(unsigned int)n_images, (unsigned int)n_features}, {NONE, {}}, DEVICE);
-        //images->copy_from(*images_host);
-    }
-
-    if (labels_host == NULL) {
-        return 1;
-    } else {
-        //labels = new Tensor<float> (labels_host->get_shape(), {NONE, {}}, DEVICE);
-        //labels->copy_from(*labels_host);
     }
 
     if (argc == 2) {
@@ -77,6 +67,11 @@ int main(int argc, char **argv) {
     return 0;
 }
 
+
+
+
+#define FREAD_CHECK(res, nmemb) if((res) != (nmemb)) { fprintf(stderr, "fread fail.\n"); return NULL; }
+
 inline void endian_swap(uint32_t &val) {
     /* taken from https://stackoverflow.com/questions/13001183/how-to-read-little-endian-integers-from-file-in-c */
     val = (val >> 24) | ((val << 8) & 0xff0000) | ((val >> 8) & 0xff00) | (val << 24);
@@ -95,20 +90,19 @@ Tensor<float> *read_mnist_images(const char *file_name, uint32_t &n_images, uint
         return NULL;
     }
 
-    fread(magic, sizeof(char), 4, file);
-
+    FREAD_CHECK(fread(magic, sizeof(char), 4, file), 4);
     if (magic[2] != 0x08 || magic[3] != 0x03) {
         std::fprintf(stderr, "Bad file magic.\n");
         return NULL;
     }
 
-    fread(&n_images, sizeof(uint32_t), 1, file);
+    FREAD_CHECK(fread(&n_images, sizeof(uint32_t), 1, file), 1);
     endian_swap(n_images);
 
-    fread(&n_rows, sizeof(uint32_t), 1, file);
+    FREAD_CHECK(fread(&n_rows, sizeof(uint32_t), 1, file), 1);
     endian_swap(n_rows);
 
-    fread(&n_cols, sizeof(uint32_t), 1, file);
+    FREAD_CHECK(fread(&n_cols, sizeof(uint32_t), 1, file), 1);
     endian_swap(n_cols);
 
     printf("Preparing to read %u images with size %u x %u ...\n", n_images, n_rows, n_cols);
@@ -119,7 +113,7 @@ Tensor<float> *read_mnist_images(const char *file_name, uint32_t &n_images, uint
     data = new Tensor<float> ({n_images, n_rows, n_cols}, {NONE,{}}, HOST);
 
     for (uint32_t i = 0; i < n_images; i++) {
-        fread(bytes, sizeof(char), n_rows * n_cols, file);
+        FREAD_CHECK(fread(bytes, sizeof(char), n_rows * n_cols, file), n_rows*n_cols);
 
         for (uint32_t r = 0; r < n_rows; r++) {
             for (uint32_t c = 0; c < n_cols; c++) {
@@ -149,14 +143,14 @@ Tensor<float> *read_mnist_labels(const char *file_name, uint32_t &n_labels, uint
         return NULL;
     }
 
-    fread(magic, sizeof(char), 4, file);
+    FREAD_CHECK(fread(magic, sizeof(char), 4, file), 4);
 
     if (magic[2] != 0x08 || magic[3] != 0x01) {
         std::fprintf(stderr, "Bad file magic.\n");
         return NULL;
     }
 
-    fread(&n_labels, sizeof(uint32_t), 1, file);
+    FREAD_CHECK(fread(&n_labels, sizeof(uint32_t), 1, file), 1);
     endian_swap(n_labels);
 
     printf("Preparing to read %u labels with %u classes ...\n", n_labels, n_classes);
@@ -168,7 +162,7 @@ Tensor<float> *read_mnist_labels(const char *file_name, uint32_t &n_labels, uint
     printf("finished reading labels.\n");
 
     for (unsigned int i = 0; i < n_labels; i++) {
-        fread(&val, sizeof(char), 1, file);
+        FREAD_CHECK(fread(&val, sizeof(char), 1, file), 1);
 
         labels->set(i*n_classes + val, 1.0f);
     }
@@ -201,3 +195,5 @@ void print_image(uint32_t image_idx, Tensor<float> *images, Tensor<float> *label
         printf("\n");
     }
 }
+
+#undef FREAD_CHECK

@@ -81,7 +81,8 @@ void Tensor<T>::init(std::vector<unsigned int>& shape, tensor_filler_t<T> filler
 
 template <typename T>
 magmadnn_error_t Tensor<T>::copy_from(const Tensor<T>& src, unsigned int begin_idx, unsigned int size) {
-    assert( this->size >= (begin_idx + size) );
+    assert( this->size >= size );
+    assert( src.size >= (begin_idx + size) );
 
     return this->mem_manager->copy_from(*src.get_memory_manager(), begin_idx, size);
 }

@@ -15,6 +15,8 @@ void test_add(memory_t mem_type, unsigned int size);
 void test_sum(memory_t mem_type, unsigned int size);
 void test_matmul(memory_t mem_type, unsigned int size);
 void test_transpose(memory_t mem_type, unsigned int size);
+void test_log(memory_t mem_type, unsigned int size);
+void test_product(memory_t mem_type, unsigned int size);
 void test_scalarproduct(memory_t mem_type, unsigned int size);
 void test_softmax(memory_t mem_type, unsigned int size);
 void test_sumreduce(memory_t mem_type, unsigned int);
@@ -31,6 +33,8 @@ int main(int argc, char **argv) {
 	test_for_all_mem_types(test_sum, 6);
 	test_for_all_mem_types(test_matmul, 50);
 	test_for_all_mem_types(test_transpose, 100);
+	test_for_all_mem_types(test_log, 5);
+	test_for_all_mem_types(test_product, 50);
 	test_for_all_mem_types(test_scalarproduct, 10);
 	test_for_all_mem_types(test_softmax, 10);
 	test_for_all_mem_types(test_sumreduce, 10);
@@ -182,6 +186,81 @@ void test_transpose(memory_t mem, unsigned int size) {
 	show_success();
 }
 
+void test_log(memory_t mem_type, unsigned int size) {
+	printf("Testing %s log..   ", get_memory_type_name(mem_type));
+
+	Tensor<float> *t = new Tensor<float> ({2,3}, {ZERO, {}}, mem_type);
+	t->set({0,0}, 1.4f);
+	t->set({0,1}, 2.6f);
+	t->set({0,2}, 0.3f);
+	t->set({1,0}, 0.5f);
+	t->set({1,1}, 8.4f);
+	t->set({1,2}, 12.8f);
+
+	op::Operation<float> *x = op::var<float> ("x", t);
+	op::Operation<float> *out = op::log(x);	
+	
+	Tensor<float> *output = out->eval();
+
+	sync(output);
+
+	Tensor<float> *grad = new Tensor<float> ({2,3}, {ONE,{}}, mem_type);
+	grad->set({0,0}, 1.0f);
+	grad->set({0,1}, 2.0f);
+	grad->set({0,2}, 3.0f);
+	grad->set({1,0}, 4.0f);
+	grad->set({1,1}, 5.0f);
+	grad->set({1,2}, 6.0f);
+	Tensor<float> *d_log_wrt_x = out->grad(NULL, x, grad);
+	sync(grad);
+	sync(d_log_wrt_x);
+
+	show_success();
+}
+
+void test_product(memory_t mem_type, unsigned int size) {
+	float val0 = 4;
+	float val1 = 6;
+	float val2 = 9;
+	float total = val0 * val1 * val2;
+
+	printf("testing %s product...  ", get_memory_type_name(mem_type));
+
+	Tensor<float> *t0 = new Tensor<float> ({size, size}, {CONSTANT, {val0}}, mem_type);
+    Tensor<float> *t1 = new Tensor<float> ({size, size}, {CONSTANT, {val1}}, mem_type);
+	Tensor<float> *t2 = new Tensor<float> ({size, size}, {CONSTANT, {val2}}, mem_type);
+
+	op::Variable<float> *v0 = op::var("t0", t0);
+	op::Variable<float> *v1 = op::var("t1", t1);
+	op::Variable<float> *v2 = op::var("t2", t2);
+
+	op::Operation<float> *out = op::product(v0, op::product(v1, v2));
+
+	Tensor<float> *output = out->eval();
+
+	#if defined(_HAS_CUDA_)
+	if (mem_type == DEVICE || mem_type == CUDA_MANAGED) output->get_memory_manager()->sync();
+	if (mem_type == MANAGED) output->get_memory_manager()->sync(true);
+	#endif
+
+	for (int i = 0; i < (int)size; i++) {
+		for (int j = 0; j < (int)size; j++) {
+			assert( output->get({i,j}) == total );
+		}
+	}
+
+	Tensor<float> *grad = new Tensor<float> ({size,size}, {ONE,{}}, mem_type);
+	Tensor<float> *d_product_wrt_x = out->grad(NULL, v0, grad);
+	sync(grad);
+	sync(d_product_wrt_x);
+
+	for (int i = 0; i < d_product_wrt_x->get_size(); i ++) {
+		assert( fequal(d_product_wrt_x->get(i), 54.0f) );
+	}
+	
+	show_success();
+}
+
 void test_scalarproduct(memory_t mem_type, unsigned int size) {
 	float alpha = 1.5f;
 	float val = 50.0f;
@@ -215,30 +294,41 @@ void test_scalarproduct(memory_t mem_type, unsigned int size) {
 void test_softmax(memory_t mem_type, unsigned int size) {
 	printf("Testing %s softmax...  ", get_memory_type_name(mem_type));
 
-	float val = 1.0f;
-	float expected = 2.0f / (float) size;
+	float val1 = 0.09003057f;
+	float val2 = 0.24472848f;
+	float val3 = 0.66524094f;
 
-	op::Operation<float> *x = op::var<float> ("x", {size, size/2}, {CONSTANT, {val}}, mem_type);
+	Tensor<float> *t = new Tensor<float> ({2,3}, {ZERO, {}}, mem_type);
+	t->set({0,0}, 1.0f);
+	t->set({0,1}, 2.0f);
+	t->set({0,2}, 3.0f);
+	t->set({1,0}, 3.0f);
+	t->set({1,1}, 2.0f);
+	t->set({1,2}, 1.0f);
+
+	op::Operation<float> *x = op::var<float> ("x", t);
 	op::Operation<float> *out = op::softmax(x);
 
 	Tensor<float> *output = out->eval();
 
 	sync(output);
 
-	for (unsigned int i = 0; i < size; i++) {
-		for (unsigned int j = 0; j < size/2; j++) {
-			assert( fequal(output->get({i,j}), expected) );
-		}
+	for (unsigned int i = 0; i < 6; i++) {
+		if (i == 0 || i == 5) assert( output->get(i) - val1 < 1E-6 );
+		else if (i == 1 || i == 4) assert( output->get(i) - val2 < 1E-6 );
+		else assert( output->get(i) - val3 < 1E-6 );
 	}
 
-	Tensor<float> *grad = new Tensor<float> ({size, size/2}, {ONE,{}}, mem_type);
+	Tensor<float> *grad = new Tensor<float> ({2,3}, {ONE,{}}, mem_type);
+	grad->set({0,0}, 0.9f);
+	grad->set({0,1}, 0.3f);
+	grad->set({0,2}, -0.6f);
+	grad->set({1,0}, -0.9f);
+	grad->set({1,1}, 0.87f);
+	grad->set({1,2}, -0.1415f);
 	Tensor<float> *d_softmax_wrt_x = out->grad(NULL, x, grad);
 	sync(grad);
 	sync(d_softmax_wrt_x);
-
-	for (unsigned int i = 0; i < d_softmax_wrt_x->get_size(); i ++) {
-		assert( fequal(d_softmax_wrt_x->get(i), 0.0f) );
-	}
 
 	show_success();
 }

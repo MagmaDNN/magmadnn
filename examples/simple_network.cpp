@@ -23,8 +23,8 @@ int main(int argc, char **argv) {
     Tensor<float> *images_host, *images, *labels_host, *labels;
     uint32_t n_images, n_rows, n_cols, n_labels, n_classes = 10, n_features;
 
-    images_host = read_mnist_images("~/data/mnist/train-images-idx3-ubyte", n_images, n_rows, n_cols);
-    labels_host = read_mnist_labels("~/data/mnist/train-labels-idx1-ubyte", n_labels, n_classes);
+    images_host = read_mnist_images("/home/danielnichols/data/mnist/train-images-idx3-ubyte", n_images, n_rows, n_cols);
+    labels_host = read_mnist_labels("/home/danielnichols/data/mnist/train-labels-idx1-ubyte", n_labels, n_classes);
 
     n_features = n_rows * n_cols;
 
@@ -48,20 +48,19 @@ int main(int argc, char **argv) {
 
     model::nn_params_t params;
     params.batch_size = 100;
-    params.n_epochs = 2;
+    params.n_epochs = 5;
 
     auto x_batch = op::var<float>("x_batch", {params.batch_size, n_features}, {NONE,{}}, DEVICE);
 
     auto input = layer::input(x_batch);
-    auto fc1 = layer::fullyconnected(input->out(), 728);
+    auto fc1 = layer::fullyconnected(input->out(), n_rows*n_cols);
     auto act1 = layer::activation(fc1->out(), layer::SIGMOID);
-    auto fc2 = layer::fullyconnected(act1->out(), 256);
+    auto fc2 = layer::fullyconnected(act1->out(), 50);
     auto act2 = layer::activation(fc2->out(), layer::SIGMOID);
     auto fc3 = layer::fullyconnected(act2->out(), n_classes);
-    auto act3 = layer::activation(fc3->out(), layer::SIGMOID);
-    auto output = layer::output(act3->out());
+    auto output = layer::output(fc3->out());
 
-    std::vector<layer::Layer<float> *> layers = {input, fc1, act1, fc2, act2, fc3, act3, output};
+    std::vector<layer::Layer<float> *> layers = {input, fc1, act1, fc2, act2, fc3, output};
 
     model::NeuralNetwork<float> model(layers, optimizer::CROSS_ENTROPY, optimizer::SGD, params);
 

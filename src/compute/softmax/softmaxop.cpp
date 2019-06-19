@@ -71,14 +71,14 @@ Tensor<T> *SoftmaxOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor
 #if defined(_HAS_CUDA_)
 template <typename T>
 void SoftmaxOp<T>::init_settings() {
-    this->settings.handle = internal::MAGMADNN_SETTINGS->cudnn_handle;
+    this->settings.handle = ::magmadnn::internal::MAGMADNN_SETTINGS->cudnn_handle;
     this->settings.alg = CUDNN_SOFTMAX_ACCURATE;
     this->settings.mode = CUDNN_SOFTMAX_MODE_INSTANCE;
     
     this->settings.xdesc = this->input_tensor->get_cudnn_tensor_descriptor();
     this->settings.ydesc = this->output_tensor->get_cudnn_tensor_descriptor();
 
-    this->grad_settings.handle = internal::MAGMADNN_SETTINGS->cudnn_handle;
+    this->grad_settings.handle = ::magmadnn::internal::MAGMADNN_SETTINGS->cudnn_handle;
     this->grad_settings.alg = CUDNN_SOFTMAX_ACCURATE;
     this->grad_settings.mode = CUDNN_SOFTMAX_MODE_INSTANCE;
     this->grad_settings.ydesc = this->output_tensor->get_cudnn_tensor_descriptor();

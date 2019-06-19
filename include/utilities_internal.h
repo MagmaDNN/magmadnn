@@ -48,6 +48,8 @@ inline void cudnnAssert(cudnnStatus_t code, const char *file, int line, bool abo
 #define OP_IS_MATRIX(op_ptr) ((op_ptr)->get_output_shape().size() == 2)
 #define OP_IS_N_DIMENSIONAL(op_ptr, N) ((op_ptr)->get_output_shape().size() == N)
 
+#define T_IS_SAME_MEMORY_TYPE(x_ptr,y_ptr) ((x_ptr)->get_memory_type() == (y_ptr)->get_memory_type())
+
 
 namespace magmadnn {
 namespace internal {

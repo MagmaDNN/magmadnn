@@ -21,6 +21,12 @@ namespace op {
 template <typename T>
 class AddOp : public Operation<T> {
 public:
+	/** Creates an Add Operation, which adds two tensors together.
+	 * @param a a tensor
+	 * @param b a tensor
+	 * @param copy copy into new tensor
+	 * @param needs_grad if this needs a gradient
+	 */
 	AddOp(Operation<T>* a, Operation<T>* b, bool copy=true, bool needs_grad=true);
 
 	

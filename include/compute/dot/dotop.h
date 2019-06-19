@@ -18,9 +18,9 @@ namespace magmadnn {
 namespace op {
 
 /** Dot operation. 
- * @tparam T numeric
- * @param a 
- * @param b 
+ * @tparam T int float double
+ * @param a tensor
+ * @param b tensor
  * @param copy 
  * @param needs_grad 
  * @return Operation<T>* 

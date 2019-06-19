@@ -46,6 +46,22 @@ protected:
 	bool copy;
 };
 
+/** Divides tensor a by b. There are 3 cases:
+ * 
+ * 1. a and b share a shape: the element-wise division a/b is performed
+ * 
+ * 2. a is a scalar: a->get(0) / b is performed
+ * 
+ * 3. b is a scalar: a / b->get(0) is performed
+ * 
+ * If a and b do not have the same shape and neither are a scalar, then it is an error.
+ * @tparam T int float double
+ * @param a tensor
+ * @param b tensor
+ * @param copy 
+ * @param needs_grad 
+ * @return DivOp<T>* the result of the above cases calculated.
+ */
 template <typename T>
 DivOp<T>* div(Operation<T> *a, Operation<T> *b, bool copy, bool needs_grad);
 

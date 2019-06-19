@@ -15,9 +15,9 @@ namespace internal {
 
 /** Returns true if A, B, C are valid parameters to geadd_full.
  * @tparam T 
- * @param A 
- * @param B 
- * @param C 
+ * @param A a tensor
+ * @param B a tensor
+ * @param C a tensor
  * @return true 
  * @return false 
  */
@@ -26,25 +26,23 @@ bool geadd_check(Tensor<T> *A, Tensor<T> *B, Tensor<T> *C);
 
 /** Computes C = alpha*A + beta*B All tensors <i>must</i> have the same memory type and shape/size.
  * @tparam T int, float, or double
- * @param alpha 
- * @param A 
- * @param beta 
- * @param B 
- * @param C 
+ * @param alpha scaling value
+ * @param A a tensor
+ * @param beta scaling value
+ * @param B a tensor
+ * @param C a tensor
  */
 template <typename T>
 void geadd_full(T alpha, Tensor<T> *A, T beta, Tensor<T> *B, Tensor<T> *C);
 
 #if defined(_HAS_CUDA_)
-/** Computes C = alpha*A + beta*B on gpu.
- * @tparam T 
- * @param M 
- * @param N 
- * @param alpha 
- * @param A 
- * @param beta 
- * @param B 
- * @param C 
+/** Computes C=alpha*A + beta*B
+ * @tparam T int, float, double
+ * @param alpha scaling value
+ * @param A tensor
+ * @param beta scaling value
+ * @param B tensor
+ * @param C tensor
  */
 template <typename T>
 void geadd_full_device(T alpha, Tensor<T> *A, T beta, Tensor<T> *B, Tensor<T> *C);

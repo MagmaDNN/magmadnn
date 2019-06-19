@@ -16,7 +16,7 @@ MagmaDNN uses `make` as its build system, so it must be installed on your system
 
 If compiling with GPU capabilities, then CUDA and likewise nvcc must be installed and in the proper PATHs. MagmaDNN has only been tested on Ubuntu (>16) and MacOS using CUDA (>9.0), however it is likely to work on most *nix based systems with a recent CUDA install. 
 
-MagmaDNN makes heavy use of BLAS libraries. For CPU only code a C BLAS library must be installed (such as [openblas](https://www.openblas.net/), [atlas](http://math-atlas.sourceforge.net/), intel mkl, etc...). If using the GPU, then [Magma](http://icl.cs.utk.edu/magma/) (>2.5.0) must be installed.
+MagmaDNN makes heavy use of BLAS libraries. For CPU only code a C BLAS library must be installed (such as [openblas](https://www.openblas.net/), [atlas](http://math-atlas.sourceforge.net/), intel mkl, etc...). If using the GPU, then [Magma](http://icl.cs.utk.edu/magma/) (>=2.5.0) and [CuDNN](https://developer.nvidia.com/cudnn) (>=7) must be installed.
 
 ##### Download
 First get the repository on your computer with
@@ -55,6 +55,8 @@ cd testing
 sh run_tests.sh
 ```
 
+If you're getting failed testers, then there is something wrong with your installation. See the [troubleshooting section](https://github.com/MagmaDNN/magmadnn/tree/master/docs/troubleshooting.md) for more help.
+
 ### Examples
 -----------
 For examples of what MagmaDNN code looks like see the [examples/ folder](https://github.com/MagmaDNN/magmadnn/tree/master/examples). If MagmaDNN is downloaded and installed, then the examples can be made and run with `make examples`.
@@ -76,7 +78,7 @@ For examples of what MagmaDNN code looks like see the [examples/ folder](https:/
 - [x] Tests for Model/Layer training
 - [x] Optimizers
 - [x] Tests for Optimizers
-- [ ] Parallel training (Multi-GPU)
+- [x] Parallel training (Multi-GPU)
 - [ ] Tests for parallel training
 - [x] Examples in Examples/ folder
 - [ ] Tutorial / Presentation Slides
@@ -98,3 +100,4 @@ For examples of what MagmaDNN code looks like see the [examples/ folder](https:/
 
 
 _author:_ Daniel Nichols
+_co-author:_ Sedrick Keh

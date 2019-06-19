@@ -11,16 +11,18 @@ NVCC ?= nvcc
 CUDADIR ?= /usr/local/cuda
 MAGMADIR ?= /usr/local/magma
 BLASDIR ?= /usr/local/openblas
+BLASINC ?= $(BLASDIR)/include
+BLASLIB_PATH ?= $(BLASDIR)/lib
 BLASLIB ?= openblas
 
 # where to install magmadnn (make must have sudo access if prefix is root privileged)
 prefix ?= /usr/local/magmadnn
 
 # headers needed for library compilation
-INC := -I./include -I$(BLASDIR)/include
+INC := -I./include -I$(BLASINC)
 
 # libs to link with
-LIBDIRS := -L$(BLASDIR)/lib
+LIBDIRS := -L$(BLASLIB_PATH)
 LIBS = -l$(BLASLIB)
 
 # use nvcc to determine if we should compile for gpu or not

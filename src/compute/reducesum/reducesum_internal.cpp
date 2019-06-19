@@ -16,74 +16,64 @@ void reduce_sum_grad(Tensor<T> *grad, int axis, Tensor<T> *out) {
     unsigned int out_size = out->get_size();
 
     assert( n_grad_axes == n_out_axes-1 || n_grad_axes == n_out_axes );
+    assert( T_IS_SAME_MEMORY_TYPE(grad, out) );
 
-    /* TODO -- modularize this into one single algorithm */
-    if (n_grad_axes == 1 && grad->get_size() == 1) {
-        /* grad is a scalar -- fill out with the value */
+    if (out->get_memory_type() == HOST) {
+        T *grad_ptr = grad->get_ptr();
+        T *out_ptr = out->get_ptr();
 
-        grad->get_memory_manager()->sync(); /* sync for managed memory */
-        T grad_scalar = grad->get(0);
+        /* TODO -- modularize this into one single algorithm */
+        if (n_grad_axes == 1 && grad->get_size() == 1) {
+            /* grad is a scalar -- fill out with the value */
 
-        for (unsigned int i = 0; i < out_size; i++) {
-            out->set(i, grad_scalar);
-        }
-
-    } else if (n_grad_axes == 2 && grad_shape[0] == 1) {
-        /* grad gets repeated along each row of out */
-
-        unsigned int n_rows = out_shape[0];
-        unsigned int n_cols = out_shape[1];
-
-        assert( grad_shape[1] == n_cols );
-
-        grad->get_memory_manager()->sync(); /* sync for managed memory */
-
-        for (unsigned int i = 0; i < n_rows; i++) {
-            for (unsigned int j = 0; j < n_cols; j++) {
-                out->set(i*n_cols + j, grad->get(j));    /* out[i,j] = grad[:,j] */
+            for (unsigned int i = 0; i < out_size; i++) {
+                out_ptr[i] = grad_ptr[0];
             }
-        }
 
-    } else if (n_grad_axes == 2 && grad_shape[1] == 1) {
-        /* grad gets repeated along each column of out */
+        } else if (n_grad_axes == 2 && grad_shape[0] == 1) {
+            /* grad gets repeated along each row of out */
 
-        unsigned int n_rows = out_shape[0];
-        unsigned int n_cols = out_shape[1];
+            unsigned int n_rows = out_shape[0];
+            unsigned int n_cols = out_shape[1];
 
-        assert( grad_shape[0] == n_rows );
+            assert( grad_shape[1] == n_cols );
 
-        grad->get_memory_manager()->sync(); /* sync for managed memory */
-
-        for (unsigned int i = 0; i < n_rows; i++) {
-            for (unsigned int j = 0; j < n_cols; j++) {
-                out->set(i*n_cols+j, grad->get(i));
+            for (unsigned int i = 0; i < n_rows; i++) {
+                for (unsigned int j = 0; j < n_cols; j++) {
+                    out_ptr[i*n_cols + j] = grad_ptr[j];    /* out[i,j] = grad[:,j] */
+                }
             }
-        }
 
-    } else {
-        /* use math::tile for the more general case */
-        grad->get_memory_manager()->sync();
-        math::tile(grad, out, out->get_shape(axis), axis);
+        } else if (n_grad_axes == 2 && grad_shape[1] == 1) {
+            /* grad gets repeated along each column of out */
+
+            unsigned int n_rows = out_shape[0];
+            unsigned int n_cols = out_shape[1];
+
+            assert( grad_shape[0] == n_rows );
+
+
+            for (unsigned int i = 0; i < n_rows; i++) {
+                for (unsigned int j = 0; j < n_cols; j++) {
+                    out_ptr[i*n_cols + j] = grad_ptr[i];
+                }
+            }
+
+        } else {
+            /* use math::tile for the more general case */
+            math::tile(grad, out, out->get_shape(axis), axis);
+        }
     }
+    #if defined(_HAS_CUDA_)
+    else {
+        reduce_sum_grad_device(grad, axis, out);
+    }
+    #endif
 }
 template void reduce_sum_grad(Tensor<int> *grad, int axis, Tensor<int> *out);
 template void reduce_sum_grad(Tensor<float> *grad, int axis, Tensor<float> *out);
 template void reduce_sum_grad(Tensor<double> *grad, int axis, Tensor<double> *out);
 
-
-#if defined(_HAS_CUDA_)
-template <typename T>
-void reduce_sum_grad_device(Tensor<T> *grad, int axis, Tensor<T> *out) {
-    /* the gradient of reduce sum, should repeat grad along the axis that was reduced.
-        Let a0, ... , an  be the shape of reduce_sum's input (also 'out'). Then
-        grad should be of shape a0, ... , 1, ... an, where 1 is at index='axis'. */
-
-    
-}
-template void reduce_sum_grad_device(Tensor<int> *grad, int axis, Tensor<int> *out);
-template void reduce_sum_grad_device(Tensor<float> *grad, int axis, Tensor<float> *out);
-template void reduce_sum_grad_device(Tensor<double> *grad, int axis, Tensor<double> *out);
-#endif
 
 
 }   // namespace op

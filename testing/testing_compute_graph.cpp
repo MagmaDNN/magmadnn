@@ -243,8 +243,8 @@ void test_product(memory_t mem_type, unsigned int size) {
 	if (mem_type == MANAGED) output->get_memory_manager()->sync(true);
 	#endif
 
-	for (int i = 0; i < (int)size; i++) {
-		for (int j = 0; j < (int)size; j++) {
+	for (unsigned int i = 0; i < size; i++) {
+		for (unsigned int j = 0; j < size; j++) {
 			assert( output->get({i,j}) == total );
 		}
 	}
@@ -254,7 +254,7 @@ void test_product(memory_t mem_type, unsigned int size) {
 	sync(grad);
 	sync(d_product_wrt_x);
 
-	for (int i = 0; i < d_product_wrt_x->get_size(); i ++) {
+	for (unsigned int i = 0; i < d_product_wrt_x->get_size(); i ++) {
 		assert( fequal(d_product_wrt_x->get(i), 54.0f) );
 	}
 	

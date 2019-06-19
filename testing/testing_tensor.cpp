@@ -100,17 +100,23 @@ void test_copy(memory_t mem, bool verbose) {
 	Tensor<float> *t_new = new Tensor<float> ({x_size_new, y_size_new, z_size_new}, mem);
 
     // test
-    for (int i = 0; i < (int)x_size; i++)
-        for (int j = 0; j < (int)y_size; j++)
-            for (int k = 0; k < (int)z_size; k++)
+    for (unsigned int i = 0; i < x_size; i++) {
+        for (unsigned int j = 0; j < y_size; j++) {
+            for (unsigned int k = 0; k < z_size; k++) {
                 t->set({i,j,k}, i*j*k);
+			}
+		}
+	}
 
 	t_new -> copy_from(*t, {x_size_new, y_size_new, z_size_new});
 
-    for (int i = 0; i < (int)x_size_new; i++) 
-        for (int j = 0; j < (int)y_size_new; j++) 
-            for (int k = 0; k < (int)z_size_new; k++) 
+    for (unsigned int i = 0; i < x_size_new; i++) {
+        for (unsigned int j = 0; j < y_size_new; j++) { 
+            for (unsigned int k = 0; k < z_size_new; k++) { 
 				assert( t_new->get({i,j,k}) == i*j*k );
+			}
+		}
+	}
 
     delete t;
 

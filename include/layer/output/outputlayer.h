@@ -19,7 +19,7 @@ template <typename T>
 class OutputLayer : public Layer<T> {
 public:
     OutputLayer(op::Operation<T> *input);
-    ~OutputLayer();
+    virtual ~OutputLayer();
 
     virtual std::vector<op::Operation<T> *> get_weights();
 

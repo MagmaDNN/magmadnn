@@ -1,5 +1,7 @@
 #pragma once
 
+#include "compute/op_utilities.h"
+
 #include "add/addop.h"
 #include "sum/sumop.h"
 

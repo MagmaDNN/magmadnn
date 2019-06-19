@@ -10,6 +10,7 @@
 
 #include <cmath>
 #include <ctime>
+#include "compute/op_utilities.h"
 #include "model/model.h"
 #include "layer/layers.h"
 #include "optimizer/optimizers.h"

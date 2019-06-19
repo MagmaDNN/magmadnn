@@ -16,7 +16,7 @@
 #include <deque>
 
 #if defined(_HAS_CUDA_)
-#include "cudnn_v7.h"
+#include "cudnn.h"
 #include <cuda.h>
 #include <cuda_runtime_api.h>
 

@@ -15,7 +15,7 @@
 
 #if defined(_HAS_CUDA_)
 #include "magma.h"
-#include "cudnn_v7.h"
+#include "cudnn.h"
 #endif
 
 namespace magmadnn {

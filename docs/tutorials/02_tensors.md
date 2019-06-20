@@ -14,12 +14,12 @@ Tensor<float> example_tensor ({10,5});
 The above creates a 10x5 tensor called `example_tensor`. The type inside the angle brackets dictates which precision is used. Tensors support `int`, `float`, and `double` precisions. The constructor for tensors allows for more customization. The full constructor is defined
 
 ```c++
-Tensor<T>::Tensor(
+::magmadnn::Tensor<T>::Tensor(
     std::vector<unsigned int> shape,    /* vector of integer indices representing the shape */
     ::magmadnn::tensor_filler_t filler=DEFAULT_TENSOR_FILLER,   /* method to fill the tensor */
     ::magmadnn::memory_t memory_type=HOST,  /* what type of memory will this data be stored in */
     ::magmadnn::device_t device_id=0    /* which device will be used to calculate on this data */
-    );
+);
 ```
 
 `tensor_filler_t` is a struct that defines how to initialize the data inside the tensor. There are several available options:
@@ -61,3 +61,47 @@ y.get_memory_manager()->sync(); /* synchronize memory -- sync also takes an opti
 ```
 
 #### Getting/Setting Values
+Tensors can be indexed in a typical manner using the get/set methods. Tensors are __0 indexed__.
+
+```c++
+Tensor<float> x ({5, 5}, {IDENTITY,{}});
+
+val = x.get({2,1}); /* get the element at (2,1) */
+x.set({3,3}, 0.0f); /* set the element at (3,3) to 0 */
+
+/* flattened indices */
+val = x.get(12);    /* get the element at flattened index 12 */
+x.set(12, val);     /* set the element at flattened index 12 to val */
+```
+
+_caution:_ Consider the following bit of code.
+
+```c++
+Tensor<float> x ({20,20}, {UNIFORM,{0.0f, 1.0f}}, DEVICE);
+
+float sum = 0.0f;
+for (unsigned int i = 0; i < 20; i++) {
+    for (unsigned int j = 0; j < 20; j++) {
+        sum += x.get({i,j});
+    }
+}
+std::printf("sum = %.5g\n", sum);
+```
+
+This loop will running significantly slower than expected. It is not advised to get/set elements of device memory individually. Prefer creating a _HOST_ tensor, setting its values, and copying into the device tensor as shown below. This or you could use a custom CUDA kernel to set the values, however, this is also not advisable.
+
+```c++
+/* faster way to set device tensor */
+Tensor<float> x ({20,20}, {UNIFORM, {0.0f, 1.0f}}, DEVICE);
+Tensor<float> x_cpu (x.get_shape(), {NONE, {}}, HOST);
+
+x_cpu.copy_from(x); /* copies x into x_cpu */
+
+float sum = 0.0f;
+for (unsigned int i = 0; i < 20; i++) {
+    for (unsigned int j = 0; j < 20; j++) {
+        sum += x_cpu.get({i,j});
+    }
+}
+std::printf("sum = %.5g\n", sum);
+```

@@ -45,3 +45,4 @@ The TODO section for this project is broken into course and fine grained tasks.
 - [ ] Revise memory system with compute graph and tensors. Check with gdb. Possibly replace operation references with smart pointers.
 - [ ] remove unused operation _internal files.
 - [ ] check and fix speed of get/set with vector access
+- [ ] tensor axis iterators

@@ -50,3 +50,31 @@ In order to use MagmaDNN, you must begin your code with `magmadnn_init` and end 
 
 #### Compiling
 The MagmaDNN compilation is similar to that of any other c++ code. You must include the MagmaDNN headers using `-I` and link to the lib files using `-l` and `-L`.
+
+On the CPU:
+```sh
+g++ -O3 -o hello_world -I/path/to/blas/include -I/path/to/magmadnn/include hello_world.cpp -L/path/to/blas/lib -L/path/to/magmadnn/lib -lopenblas -lmagmadnn
+```
+
+On the GPU:
+```sh
+g++ -O3 -o hello_world -I/path/to/blas/include -I/path/to/magma/include -I/path/to/magmadnn/include hello_world.cpp -L/path/to/magma/lib -L/path/to/blas/lib -L/path/to/magmadnn/lib -lopenblas -lcudart -lcudnn -lmagma -lmagmadnn
+```
+
+or a more general makefile
+
+```makefile
+CXX = g++
+INC = -I/path/to/blas/include -I/path/to/magma/include -I/path/to/magmadnn/include
+FLAGS = -O3 $(INC)
+LIBS = -L/path/to/magma/lib -L/path/to/blas/lib -L/path/to/magmadnn/lib -lopenblas -lcudart -lcudnn -lmagma -lmagmadnn
+TARGETS = hello_world
+
+all: $(TARGETS)
+
+hello_world: hello_world.cpp
+    $(CXX) $(FLAGS) -o $@ $< $(LIBS)
+
+clean:
+    rm $(TARGETS)
+```

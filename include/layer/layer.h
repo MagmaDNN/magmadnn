@@ -60,6 +60,17 @@ public:
 		return output_shape[i];
 	}
 
+	/** Set the name of this layer.
+	 * @param name name to assign to this layer
+	 */
+	void set_name(std::string name) { this->name = name; }
+
+	/** Returns the name of this layer. Defaults to the layer type if not set
+	 * on its own.
+	 * @return std::string the name of this layer.
+	 */
+	std::string get_name() const { return this->name; }
+
 protected:
 	Layer(std::vector<unsigned int> input_shape, op::Operation<T> *input) : 
 		input_shape(input_shape), input(input) {}

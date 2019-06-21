@@ -22,9 +22,10 @@ SigmoidOp<T>::SigmoidOp(Operation<T> *x, bool copy, bool fast) :
        evaluating a compute tree. */
     if (copy) {
         this->output_tensor = new Tensor<T> (this->output_shape, {NONE,{}}, this->mem_type);
+    } else {
+        fprintf(stderr, "in place sigmoid not yet supported\n");
     }
 
-    this->_grad_cache[(uintptr_t)x] = NULL;
 }
 
 template <typename T>
@@ -60,7 +61,7 @@ template class SigmoidOp<double>;
 
 template <typename T>
 SigmoidOp<T>* sigmoid(Operation<T> *x, bool copy, bool fast) {
-    return new SigmoidOp<T> (x, fast, copy);
+    return new SigmoidOp<T> (x, copy, fast);
 }
 template SigmoidOp<int>* sigmoid(Operation<int> *x, bool copy, bool fast);
 template SigmoidOp<float>* sigmoid(Operation<float> *x, bool copy, bool fast);

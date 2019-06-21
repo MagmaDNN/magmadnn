@@ -19,24 +19,65 @@ ReluOp<T>::ReluOp(Operation<T> *x, bool copy, bool needs_grad)
 
     if (copy) {
         this->output_tensor = new Tensor<T> (this->output_shape, this->mem_type);
+    } else {
+        fprintf(stderr, "inplace relu not defined\n");
     }
+
+    #if defined(_HAS_CUDA_)
+    cudnnErrchk( cudnnCreateActivationDescriptor(&cudnn_settings.descriptor) );
+    cudnnErrchk( cudnnSetActivationDescriptor(cudnn_settings.descriptor, CUDNN_ACTIVATION_RELU, CUDNN_NOT_PROPAGATE_NAN, 1.0) );
+    #endif
+}
+
+template <typename T>
+ReluOp<T>::~ReluOp() {
+    #if defined(_HAS_CUDA_)
+    cudnnErrchk( cudnnDestroyActivationDescriptor(cudnn_settings.descriptor) );
+    #endif
 }
 
 template <typename T>
 Tensor<T>* ReluOp<T>::_eval(bool recompute) {
 
-    x_tensor = x->eval();
+    x_tensor = x->eval(recompute);
     
-    if (!copy) this->output_tensor = x_tensor;
+    this->output_tensor = x_tensor;
 
-    internal::relu_full(x_tensor, this->output_tensor);
+    //internal::relu_full(x_tensor, this->output_tensor);
+    if (this->mem_type == HOST) {
+        math::relu(x_tensor, this->output_tensor);
+    }
+    #if defined(_HAS_CUDA_)
+    else {
+        math::relu_device(x_tensor, this->output_tensor, this->cudnn_settings);
+    }
+    #endif
+
 
     return this->output_tensor;
 }
 
 template <typename T>
 Tensor<T> *ReluOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad) {
-    return NULL;
+    
+    Tensor<T> *out = this->_grad_cache[(uintptr_t)var];
+
+    if (out == NULL) {
+        out = new Tensor<T> (this->output_shape, {NONE,{}}, this->mem_type);
+        this->_grad_cache[(uintptr_t)var] = out;
+    }
+
+    x_tensor = x->eval(false);
+    if (this->mem_type == HOST) {
+        math::relu_grad(this->x_tensor, this->output_tensor, grad, out);
+    }
+    #if defined(_HAS_CUDA_)
+    else {
+        math::relu_grad_device(x_tensor, this->output_tensor, grad, out, this->cudnn_settings);
+    }
+    #endif
+
+    return out;
 }
  
 template class ReluOp<int>;

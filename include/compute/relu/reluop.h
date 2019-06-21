@@ -8,6 +8,7 @@
  */
 #pragma once
 #include "compute/operation.h"
+#include "math/relu.h"
 #include "compute/relu/relu_internal.h"
 #include "tensor/tensor.h"
 
@@ -18,6 +19,7 @@ template <typename T>
 class ReluOp : public Operation<T> {
 public:
     ReluOp(Operation<T> *x, bool copy=true, bool needs_grad=true);
+    virtual ~ReluOp();
 
     std::string to_string() { return "RELU( " + x->to_string() + " )"; }
 
@@ -27,6 +29,10 @@ protected:
 
     Operation<T> *x;
     Tensor<T> *x_tensor;
+
+    #if defined(_HAS_CUDA_)
+    ::magmadnn::math::relu_cudnn_settings_t cudnn_settings;
+    #endif
 
     bool copy;
 };

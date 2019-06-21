@@ -49,7 +49,7 @@ protected:
  * @return SigmoidOp<T>* 
  */
 template <typename T>
-SigmoidOp<T>* sigmoid(Operation<T> *x, bool copy=true, bool fast=true);
+SigmoidOp<T>* sigmoid(Operation<T> *x, bool copy=true, bool fast=false);
 
 }   // namespace op
 }   // namespace magmadnn

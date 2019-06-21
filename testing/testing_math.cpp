@@ -15,6 +15,7 @@ using namespace magmadnn;
 
 void test_matmul(memory_t mem, unsigned int size);
 void test_pow(memory_t mem, unsigned int size);
+void test_relu(memory_t mem, unsigned int size);
 void test_crossentropy(memory_t mem, unsigned int size);
 void test_reduce_sum(memory_t mem, unsigned int size);
 void test_argmax(memory_t mem, unsigned int size);
@@ -26,6 +27,7 @@ int main(int argc, char **argv) {
 
     test_for_all_mem_types(test_matmul, 50);
     test_for_all_mem_types(test_pow, 15);
+    test_for_all_mem_types(test_relu, 50);
     test_for_all_mem_types(test_crossentropy, 10);
     test_for_all_mem_types(test_reduce_sum, 10);
     //test_for_all_mem_types(test_argmax, 10);
@@ -77,6 +79,20 @@ void test_pow(memory_t mem, unsigned int size) {
     for (unsigned int i = 0; i < size*size; i++) {
         assert( fequal(out->get(i), 3.0f*3.0f*3.0f) );
     }
+
+    show_success();
+}
+
+void test_relu(memory_t mem, unsigned int size) {
+    printf("Testing %s relu...  ", get_memory_type_name(mem));
+
+    Tensor<float> *x = new Tensor<float> ({size}, {UNIFORM, {-1.0f, 1.0f}}, mem);
+    Tensor<float> *relu_out = new Tensor<float> ({size}, {NONE,{}}, mem);
+
+    
+
+    delete x;
+    delete relu_out;
 
     show_success();
 }

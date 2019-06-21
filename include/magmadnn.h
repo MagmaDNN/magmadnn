@@ -10,6 +10,11 @@
 
 /* include all magmadnn header files */
 
+#if defined(USE_GPU)
+#define _HAS_CUDA_
+#endif
+
+
 #include "types.h"
 #include "init_finalize.h"
 #include "utilities_internal.h"

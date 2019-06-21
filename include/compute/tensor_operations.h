@@ -10,6 +10,7 @@
 #include "dot/dotop.h"
 
 #include "sigmoid/sigmoidop.h"
+#include "relu/reluop.h"
 #include "tanh/tanhop.h"
 #include "log/logop.h"
 

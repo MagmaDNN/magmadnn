@@ -88,11 +88,56 @@ void test_relu(memory_t mem, unsigned int size) {
 
     Tensor<float> *x = new Tensor<float> ({size}, {UNIFORM, {-1.0f, 1.0f}}, mem);
     Tensor<float> *relu_out = new Tensor<float> ({size}, {NONE,{}}, mem);
+    Tensor<float> *grad = new Tensor<float> ({size}, {UNIFORM, {0.0f, 1.0f}}, mem);
+    Tensor<float> *relu_grad = new Tensor<float> ({size}, {NONE, {}}, mem);
 
+    if (mem == HOST) {
+        math::relu(x, relu_out);
+    }
+    #if defined(_HAS_CUDA_)
+    else {
+        math::relu_cudnn_settings_t settings;
+        cudnnErrchk( cudnnCreateActivationDescriptor(&settings.descriptor) );
+        cudnnErrchk( cudnnSetActivationDescriptor(settings.descriptor, CUDNN_ACTIVATION_RELU, CUDNN_NOT_PROPAGATE_NAN, 1.0) );
+        math::relu_device(x, relu_out, settings);
+        cudnnErrchk( cudnnDestroyActivationDescriptor(settings.descriptor) );
+    }
+    #endif
     
+    sync(relu_out);
+
+    float x_val;
+    for (unsigned int i = 0; i < size; i++) {
+        x_val = x->get(i);
+        assert( fequal(relu_out->get(i), (x_val > 0) ? x_val : 0.0f) );
+    }
+
+
+    if (mem == HOST) {
+        math::relu_grad(x, relu_out, grad, relu_grad);
+    }
+    #if defined(_HAS_CUDA_)
+    else {
+        math::relu_cudnn_settings_t settings;
+        cudnnErrchk( cudnnCreateActivationDescriptor(&settings.descriptor) );
+        cudnnErrchk( cudnnSetActivationDescriptor(settings.descriptor, CUDNN_ACTIVATION_RELU, CUDNN_NOT_PROPAGATE_NAN, 1.0) );
+        math::relu_grad_device(x, relu_out, grad, relu_grad, settings);
+        cudnnErrchk( cudnnDestroyActivationDescriptor(settings.descriptor) );
+    }
+    #endif
+
+    sync(relu_grad);
+
+    for (unsigned int i = 0; i < size; i++) {
+        x_val = x->get(i);
+        assert( fequal(relu_grad->get(i), (x_val > 0) ? grad->get(i) : 0.0f) );
+    }
+
 
     delete x;
     delete relu_out;
+    delete grad;
+    delete relu_grad;
 
     show_success();
 }

@@ -23,6 +23,8 @@ public:
 
     virtual void minimize(const std::vector<op::Operation<T> *>& wrt);
 
+    void set_learning_rate(T learning_rate) { this->learning_rate = learning_rate; }
+
 protected:
     virtual void update(op::Operation<T> *var, Tensor<T> *grad);
 

@@ -18,7 +18,8 @@ namespace layer {
 enum activation_t {
     SIGMOID,
     TANH,
-    RELU
+    RELU,
+    SOFTMAX
 };
 
 template <typename T>

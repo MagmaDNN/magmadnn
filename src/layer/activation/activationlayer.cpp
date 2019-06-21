@@ -36,13 +36,15 @@ void ActivationLayer<T>::init() {
     
     switch (this->activation_func) {
         case SIGMOID:
-            this->output = op::sigmoid(this->input, false); break;
+            this->output = op::sigmoid(this->input); break;
         case TANH:
-            this->output = op::tanh(this->input, false); break;
+            this->output = op::tanh(this->input); break;
         case RELU:
-            fprintf(stderr, "RELU not implemented yet.\n");
+            this->output = op::relu(this->input); break;
+        case SOFTMAX:
+            this->output = op::softmax(this->input); break;
         default:
-            this->output = op::sigmoid(this->input, false); break;
+            this->output = op::sigmoid(this->input); break;
     }
 }
 

@@ -32,7 +32,7 @@ template <typename T>
 void OutputLayer<T>::init() {
     this->name = "OutputLayer";
 
-    this->output = op::softmax(this->input);
+    this->output = this->input;
 }
 template class OutputLayer <int>;
 template class OutputLayer <float>;

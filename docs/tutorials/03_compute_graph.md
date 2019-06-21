@@ -45,5 +45,5 @@ It is important to clear the compute graph from memory, which can be done simply
 delete out; /* clears the compute graph from memory */
 ```
 
-To see more supported operations and their respective documentation please build the docs as shown in [tutorial 00](docs/tutorials/00_installing.md).
+To see more supported operations and their respective documentation please build the docs as shown in [tutorial 00](/docs/tutorials/00_installing.md).
 

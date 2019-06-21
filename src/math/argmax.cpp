@@ -35,13 +35,13 @@ void argmax(Tensor<T> *x, int axis, Tensor<T> *out) {
             
             for (unsigned int i = 0; i < x_shape[(axis==0) ? 0 : 1]; i++) {
 
-                if (axis == 0)  max = x_ptr[i * x_shape[0] + 0];
-                else            max = x_ptr[0*x_shape[0] + i];
+                if (axis == 0)  max = x_ptr[i * x_shape[1]];    /* first element of row i */
+                else            max = x_ptr[i]; /* first element of column i */
 
-                arg_max = (T)0;
+                arg_max = static_cast<T>(0);
                 for (unsigned int j = 1; j < x_shape[(axis==0) ? 1 : 0]; j++) {
-                    if (axis == 0)  val = x_ptr[i * x_shape[0] + j];    // x[i,j]
-                    else            val = x_ptr[j * x_shape[0] + i];    // x[j,i]
+                    if (axis == 0)  val = x_ptr[i * x_shape[1] + j];    // x[i,j]
+                    else            val = x_ptr[j * x_shape[1] + i];    // x[j,i]
                     
                     if (val > max) {
                         arg_max = (T) j;

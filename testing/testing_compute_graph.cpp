@@ -431,7 +431,7 @@ void test_sigmoid(memory_t mem_type, unsigned int size) {
 
 	auto v0 = op::var("t0", t0);
 
-	auto sig = op::sigmoid(v0);
+	auto sig = op::sigmoid(v0, true, true);
 
 	auto fin = sig->eval();
 

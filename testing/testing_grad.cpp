@@ -77,7 +77,7 @@ void test_full_grad(memory_t mem, unsigned int size) {
 
     op::Operation<float> *one = op::scalar<float> ("1.0", 1.0f, mem);
     op::Operation<float> *x = op::var<float> ("x", {size, size}, {CONSTANT, {val}}, mem);
-    op::Operation<float> *expr = op::sigmoid( op::add(one, op::negative(x)) );
+    op::Operation<float> *expr = op::sigmoid( op::add(one, op::negative(x)), true, true );
 
     Tensor<float> *forward = expr->eval();
 

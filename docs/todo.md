@@ -46,3 +46,4 @@ The TODO section for this project is broken into course and fine grained tasks.
 - [ ] remove unused operation _internal files.
 - [ ] check and fix speed of get/set with vector access
 - [ ] tensor axis iterators
+- [ ] CPU only convolution

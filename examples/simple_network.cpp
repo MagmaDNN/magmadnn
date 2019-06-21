@@ -35,8 +35,8 @@ int main(int argc, char **argv) {
     /* these functions read-in and return tensors holding the mnist data set
         to use them, please change the string to the path to your local copy of the mnist dataset.
         it can be downloaded from http://yann.lecun.com/exdb/mnist */
-    images_host = read_mnist_images("/path/to/data/mnist/train-images-idx3-ubyte", n_images, n_rows, n_cols);
-    labels_host = read_mnist_labels("/path/to/data/mnist/train-labels-idx1-ubyte", n_labels, n_classes);
+    images_host = read_mnist_images("/home/danielnichols/data/mnist/train-images-idx3-ubyte", n_images, n_rows, n_cols);
+    labels_host = read_mnist_labels("/home/danielnichols/data/mnist/train-labels-idx1-ubyte", n_labels, n_classes);
 
     n_features = n_rows * n_cols;
 
@@ -52,7 +52,7 @@ int main(int argc, char **argv) {
 
     /* initialize our model parameters */
     model::nn_params_t params;
-    params.batch_size = 100;    /* batch size: the number of samples to process in each mini-batch */
+    params.batch_size = 32;    /* batch size: the number of samples to process in each mini-batch */
     params.n_epochs = 5;    /* # of epochs: the number of passes over the entire training set */
 
     /* INITIALIZING THE NETWORK */
@@ -62,15 +62,19 @@ int main(int argc, char **argv) {
 
     /* initialize the layers in our network */
     auto input = layer::input(x_batch);
-    auto fc1 = layer::fullyconnected(input->out(), n_rows*n_cols);
-    auto act1 = layer::activation(fc1->out(), layer::SIGMOID);
-    auto fc2 = layer::fullyconnected(act1->out(), 50);
+    auto fc1 = layer::fullyconnected(input->out(), 512);
+    auto act1 = layer::activation(fc1->out(), layer::RELU);
+
+    auto fc2 = layer::fullyconnected(act1->out(), 256);
     auto act2 = layer::activation(fc2->out(), layer::SIGMOID);
+
     auto fc3 = layer::fullyconnected(act2->out(), n_classes);
-    auto output = layer::output(fc3->out());
+    auto act3 = layer::activation(fc3->out(), layer::SOFTMAX);
+
+    auto output = layer::output(act3->out());
 
     /* wrap each layer in a vector of layers to pass to the model */
-    std::vector<layer::Layer<float> *> layers = {input, fc1, act1, fc2, act2, fc3, output};
+    std::vector<layer::Layer<float> *> layers = {input, fc1, act1, fc2, act2, fc3, act3, output};
 
     /* this creates a Model for us. The model can train on our data and perform other typical operations
         that a ML model can. 

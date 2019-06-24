@@ -18,6 +18,7 @@
 #if defined(_HAS_CUDA_)
 #include "cudnn.h"
 #include <cuda.h>
+#include <curand.h>
 #include <cuda_runtime_api.h>
 
 #define cudaErrchk(ans) { cudaAssert((ans), __FILE__, __LINE__); }
@@ -35,6 +36,14 @@ inline void cudnnAssert(cudnnStatus_t code, const char *file, int line, bool abo
         if (abort) exit(code);
     }
 }
+
+#define curandErrchk(ans) { curandAssert((ans), __FILE__, __LINE__); }
+inline void curandAssert(curandStatus_t code, const char *file, int line, bool abort=true) {
+    if (code != CURAND_STATUS_SUCCESS) {
+        fprintf(stderr, "CuRandAssert: %d %s %d\n", code, file, line);
+    }
+}
+
 #endif
 
 

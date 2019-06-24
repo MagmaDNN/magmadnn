@@ -40,7 +40,7 @@ void GradientDescent<T>::update(op::Operation<T> *var, Tensor<T> *grad) {
 
     var_tensor = var->eval(false);
 
-    internal::gradientdescent_update_internal(var_tensor, grad, this->learning_rate);
+    math::add_in_place(-this->learning_rate, grad, static_cast<T>(1), var_tensor);
 }
 
 template class GradientDescent<int>;

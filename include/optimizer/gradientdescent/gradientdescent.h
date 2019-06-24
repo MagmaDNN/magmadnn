@@ -11,6 +11,7 @@
 #include "optimizer/optimizer.h"
 #include "compute/gradtable.h"
 #include "compute/gradients.h"
+#include "math/add.h"
 #include "optimizer/gradientdescent/gradientdescent_internal.h"
 
 namespace magmadnn {

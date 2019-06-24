@@ -21,7 +21,7 @@ FullyConnectedLayer<T>::FullyConnectedLayer(op::Operation<T> *input, unsigned in
 template <typename T>
 FullyConnectedLayer<T>::~FullyConnectedLayer() {
     delete weights_tensor;
-    delete bias_tensor;
+    if (use_bias) delete bias_tensor;
 }
 
 template <typename T>
@@ -45,8 +45,10 @@ void FullyConnectedLayer<T>::init() {
     this->weights = op::var("__"+this->name+"_layer_weights", this->weights_tensor);
 
     /* create bias tensor */
-    this->bias_tensor = new Tensor<T> ({this->input->get_output_shape(1)}, {ZERO, {}}, this->input->get_memory_type());
-    this->bias = op::var("__"+this->name+"_layer_bias", this->bias_tensor);
+    if (use_bias) {
+        this->bias_tensor = new Tensor<T> ({this->input->get_output_shape(0)}, {ZERO, {}}, this->input->get_memory_type());
+        this->bias = op::var("__"+this->name+"_layer_bias", this->bias_tensor);
+    }
 
     /*  output = (weights) * (input) + (bias) 
         this creates a new tensor and puts it into a new var, which is stored in output. */

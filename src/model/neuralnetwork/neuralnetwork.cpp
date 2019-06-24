@@ -88,6 +88,8 @@ magmadnn_error_t NeuralNetwork<T>::fit(Tensor<T> *x, Tensor<T> *y, metric_t& met
     unsigned int sample_size = x->get_size() / x->get_shape(0); /* the size of each sample */
     unsigned int ground_truth_sample_size = y->get_size() / y->get_shape(0);
     unsigned int n_iter = this->model_params.n_epochs * (n_samples / this->model_params.batch_size);
+    unsigned int n_iterations_per_epoch = n_samples / this->model_params.batch_size;
+    unsigned int cur_epoch = 0;
     unsigned int cur_sample_idx = 0;
     Tensor<T> *loss_tensor;
 
@@ -130,11 +132,12 @@ magmadnn_error_t NeuralNetwork<T>::fit(Tensor<T> *x, Tensor<T> *y, metric_t& met
         loss = loss_tensor->get(0);
         avg_loss = ((i) * avg_loss + loss) / (i+1);
 
-        if (verbose && i % 10 == 0) {
-            printf("Training iteration (%u/%u): accuracy=%.4g loss=%.4g time=%.4g\n",
-                i,
-                n_iter, 
-                n_correct/((double)i*this->model_params.batch_size), 
+        if (verbose && (i+1) % n_iterations_per_epoch == 0) {
+            cur_epoch++;
+            printf("Epoch (%u/%u): accuracy=%.4g loss=%.4g time=%.4g\n",
+                cur_epoch,
+                this->model_params.n_epochs,
+                n_correct/((double)i*this->model_params.batch_size),
                 avg_loss, 
                 (double)time(NULL)-start_time);
         }
@@ -142,10 +145,16 @@ magmadnn_error_t NeuralNetwork<T>::fit(Tensor<T> *x, Tensor<T> *y, metric_t& met
     time(&end_time);
 
     /* update metrics */
-    metric_out.accuracy = ((double)n_correct) / ((double) n_samples * n_iter);
+    metric_out.accuracy = ((double)n_correct) / ((double)this->model_params.batch_size * n_iter);
     metric_out.loss = avg_loss;
     metric_out.training_time = (double) (end_time - start_time);
 
+    if (verbose) {
+        printf("Final Training Metrics: accuracy=%.4g loss=%.4g time=%.4g\n",
+            metric_out.accuracy,
+            metric_out.loss,
+            metric_out.training_time);
+    }
 
     /* free up any memory we used here */
     delete predicted;

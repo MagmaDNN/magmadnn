@@ -89,7 +89,7 @@ ReduceSumOp<T>::ReduceSumOp(Operation<T> *x, int axis, bool copy, bool needs_gra
         this->output_tensor->get_cudnn_tensor_descriptor(),
         &reduce_settings.workspace_size)
     );
-    cudaErrchk( cudaMalloc((void **)&reduce_settings.workspace, reduce_settings.workspace_size*sizeof(float)) );
+    cudaErrchk( cudaMalloc((void **)&reduce_settings.workspace, reduce_settings.workspace_size*sizeof(T)) );
 
     cudnnErrchk( cudnnDestroyTensorDescriptor(x_tmp_descriptor) );
     #endif

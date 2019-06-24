@@ -21,7 +21,7 @@ void relu(Tensor<T> *x, Tensor<T> *out) {
         unsigned int size = out->get_size();
 
         for (unsigned int i = 0; i < size; i++) {
-            out_ptr[i] = (x_ptr[i] > (T)0) ? x_ptr[i] : (T)0;
+            out_ptr[i] = (x_ptr[i] > static_cast<T>(0)) ? x_ptr[i] : static_cast<T>(0);
         }
     }
     #if defined(_HAS_CUDA_)

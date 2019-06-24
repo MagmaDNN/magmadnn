@@ -19,6 +19,7 @@ void test_relu(memory_t mem, unsigned int size);
 void test_crossentropy(memory_t mem, unsigned int size);
 void test_reduce_sum(memory_t mem, unsigned int size);
 void test_argmax(memory_t mem, unsigned int size);
+void test_bias_add(memory_t mem, unsigned int size);
 void test_concat(memory_t mem, unsigned int size);
 void test_tile(memory_t mem, unsigned int size);
 
@@ -34,6 +35,7 @@ int main(int argc, char **argv) {
 
     test_argmax(HOST, 10);
 
+    test_for_all_mem_types(test_bias_add, 15);
     test_for_all_mem_types(test_concat, 4);
     test_for_all_mem_types(test_tile, 4);
 
@@ -206,6 +208,27 @@ void test_argmax(memory_t mem, unsigned int size) {
     for (unsigned int i = 0; i < size; i ++) {
         assert( fequal(out_0.get(i), (float)i) );
         assert( fequal(out_1.get(i), (float)i) );
+    }
+
+    show_success();
+}
+
+void test_bias_add(memory_t mem, unsigned int size) {
+    printf("Testing %s bias_add...  ", get_memory_type_name(mem));
+
+    float x_val = 5.0f, bias_val = -2.0f;
+    Tensor<float> x ({size, size/2}, {CONSTANT, {x_val}}, mem);
+    Tensor<float> bias ({size}, {CONSTANT, {bias_val}}, mem);
+    Tensor<float> out ({size, size/2}, {NONE, {}}, mem);
+
+    math::bias_add(&x, &bias, &out);
+
+    sync(&out);
+
+    for (unsigned int i = 0; i < out.get_shape(0); i++) {
+        for (unsigned int j = 0; j < out.get_shape(1); j++) {
+            assert( fequal(out.get({i,j}), x_val+bias_val) );
+        }
     }
 
     show_success();

@@ -32,9 +32,16 @@ void fill_uniform(MemoryManager<T> &m, const std::vector<T>& params) {
 
         #if defined(_HAS_CUDA_)
         case DEVICE:
-            // TODO replace with kernel call
-            for (unsigned int i = 0; i < m.get_size(); i++)
-                m.set(i, uniform_distribution(random_generator));
+            {
+                MemoryManager<T> host_mem (m.get_size(), HOST, 0);
+                T *host_ptr = host_mem.get_ptr();
+
+                for (unsigned int i = 0; i < m.get_size(); i++) {
+                    host_ptr[i] = uniform_distribution(random_generator);
+                }
+
+                m.copy_from(host_mem);
+            }
             break;
         case MANAGED:
             for (unsigned int i = 0; i < m.get_size(); i++)
@@ -69,8 +76,16 @@ template <> void fill_uniform(MemoryManager<int>& m, const std::vector<int>& par
         #if defined(_HAS_CUDA_)
         case DEVICE:
             // TODO replace with kernel call
-            for (unsigned int i = 0; i < m.get_size(); i++)
-                m.set(i, uniform_distribution(random_generator));
+            {
+                MemoryManager<int> host_mem (m.get_size(), HOST, 0);
+                int *host_ptr = host_mem.get_ptr();
+
+                for (unsigned int i = 0; i < m.get_size(); i++) {
+                    host_ptr[i] = uniform_distribution(random_generator);
+                }
+
+                m.copy_from(host_mem);
+            }
             break;
         case MANAGED:
             for (unsigned int i = 0; i < m.get_size(); i++)

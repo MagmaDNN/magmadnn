@@ -10,10 +10,12 @@
 
 #include <vector>
 #include <random>
+#include "utilities_internal.h"
 #include "memory/memorymanager.h"
 
 #if defined(_HAS_CUDA_)
 #include <cuda.h>
+#include <curand.h>
 #endif
 
 namespace magmadnn {

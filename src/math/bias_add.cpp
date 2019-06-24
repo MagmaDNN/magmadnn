@@ -40,6 +40,8 @@ template void bias_add(Tensor<int> *x, Tensor<int> *bias, Tensor<int> *out);
 template void bias_add(Tensor<float> *x, Tensor<float> *bias, Tensor<float> *out);
 template void bias_add(Tensor<double> *x, Tensor<double> *bias, Tensor<double> *out);
 
+#if defined(_USE_CUDNN_BIAS_)
+/* temporarily undefined this until cudnn works */
 
 #if defined(_HAS_CUDA_)
 template <typename T>
@@ -49,6 +51,13 @@ void bias_add_device(Tensor<T> *x, Tensor<T> *bias, Tensor<T> *out) {
         /* x is not out, so copy x into out since cudnnAddTensor is in-place */
         out->copy_from(*x);
     }
+
+    cudnnDataType_t dat;
+    int n, c, h, w, n_s, c_s, h_s, w_s;
+    cudnnErrchk( cudnnGetTensor4dDescriptor(bias->get_cudnn_tensor_descriptor(), &dat, &n, &c, &h, &w, &n_s, &c_s, &h_s, &w_s) );
+    printf("bias: %d %d %d %d %d %d %d %d\n", n, c, h, w, n_s, c_s, h_s, w_s);
+    cudnnErrchk( cudnnGetTensor4dDescriptor(out->get_cudnn_tensor_descriptor(), &dat, &n, &c, &h, &w, &n_s, &c_s, &h_s, &w_s) );
+    printf("out: %d %d %d %d %d %d %d %d\n", n, c, h, w, n_s, c_s, h_s, w_s);
 
     T alpha = static_cast<T>(1), beta = static_cast<T>(1);
     cudnnErrchk( cudnnAddTensor(
@@ -61,6 +70,7 @@ void bias_add_device(Tensor<T> *x, Tensor<T> *bias, Tensor<T> *out) {
         out->get_ptr())
     );
 }
+#endif
 #endif
 
 }

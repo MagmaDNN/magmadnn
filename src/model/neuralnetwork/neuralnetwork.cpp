@@ -82,7 +82,7 @@ magmadnn_error_t NeuralNetwork<T>::fit(Tensor<T> *x, Tensor<T> *y, metric_t& met
     */
 
     magmadnn_error_t err = (magmadnn_error_t) 0;
-    double loss = 0.0;
+    double loss = 0.0, avg_loss = 0.0;
     time_t start_time, end_time;
     unsigned int n_samples = y->get_shape(0);
     unsigned int sample_size = x->get_size() / x->get_shape(0); /* the size of each sample */
@@ -128,13 +128,14 @@ magmadnn_error_t NeuralNetwork<T>::fit(Tensor<T> *x, Tensor<T> *y, metric_t& met
         loss_tensor = this->_obj->eval(false);
         loss_tensor->get_memory_manager()->sync();
         loss = loss_tensor->get(0);
+        avg_loss = ((i) * avg_loss + loss) / (i+1);
 
         if (verbose && i % 10 == 0) {
             printf("Training iteration (%u/%u): accuracy=%.4g loss=%.4g time=%.4g\n",
                 i,
                 n_iter, 
                 n_correct/((double)i*this->model_params.batch_size), 
-                loss, 
+                avg_loss, 
                 (double)time(NULL)-start_time);
         }
     }
@@ -142,7 +143,7 @@ magmadnn_error_t NeuralNetwork<T>::fit(Tensor<T> *x, Tensor<T> *y, metric_t& met
 
     /* update metrics */
     metric_out.accuracy = ((double)n_correct) / ((double) n_samples * n_iter);
-    metric_out.loss = loss;
+    metric_out.loss = avg_loss;
     metric_out.training_time = (double) (end_time - start_time);
 
 

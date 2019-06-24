@@ -40,11 +40,12 @@ void FullyConnectedLayer<T>::init() {
     /* input is   n_batches x n_classes */
 
     /* create weight tensor */
-    this->weights_tensor = new Tensor<T> ({this->input->get_output_shape(1), this->hidden_units}, {GLOROT, {(T)0.0, (T)0.5}}, this->input->get_memory_type());
+    T bound = static_cast<T>( sqrt(2.0 / this->input->get_output_shape(1)) );
+    this->weights_tensor = new Tensor<T> ({this->input->get_output_shape(1), this->hidden_units}, {UNIFORM, {-bound, bound}}, this->input->get_memory_type());
     this->weights = op::var("__"+this->name+"_layer_weights", this->weights_tensor);
 
     /* create bias tensor */
-    this->bias_tensor = new Tensor<T> ({this->input->get_output_shape(1)}, {GLOROT, {(T)0.0, (T)0.5}}, this->input->get_memory_type());
+    this->bias_tensor = new Tensor<T> ({this->input->get_output_shape(1)}, {ZERO, {}}, this->input->get_memory_type());
     this->bias = op::var("__"+this->name+"_layer_bias", this->bias_tensor);
 
     /*  output = (weights) * (input) + (bias) 

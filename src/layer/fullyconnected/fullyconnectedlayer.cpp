@@ -26,7 +26,11 @@ FullyConnectedLayer<T>::~FullyConnectedLayer() {
 
 template <typename T>
 std::vector<op::Operation<T> *> FullyConnectedLayer<T>::get_weights() {
-    return {this->weights};
+    if (use_bias) {
+        return {weights, bias};
+    } else {
+        return {weights};
+    }
 }
 
 template <typename T>
@@ -40,7 +44,7 @@ void FullyConnectedLayer<T>::init() {
     this->weights = op::var("__"+this->name+"_layer_weights", this->weights_tensor);
 
     /* create bias tensor */
-    this->bias_tensor = new Tensor<T> ({1, this->hidden_units}, {GLOROT, {(T)0.0, (T)0.5}}, this->input->get_memory_type());
+    this->bias_tensor = new Tensor<T> ({this->input->get_output_shape(1)}, {GLOROT, {(T)0.0, (T)0.5}}, this->input->get_memory_type());
     this->bias = op::var("__"+this->name+"_layer_bias", this->bias_tensor);
 
     /*  output = (weights) * (input) + (bias) 
@@ -48,7 +52,11 @@ void FullyConnectedLayer<T>::init() {
     //this->output = op::matmul(this->input, this->weights);
 
     /* ROW-WISE add bias */
-    this->output = op::linearforward(this->input, this->weights);
+    if (use_bias) {
+        this->output = op::linearforward(this->input, this->weights, this->bias);
+    } else {
+        this->output = op::linearforward(this->input, this->weights);
+    }
 }
 template class FullyConnectedLayer <int>;
 template class FullyConnectedLayer <float>;

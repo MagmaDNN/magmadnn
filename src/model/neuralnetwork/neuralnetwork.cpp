@@ -170,7 +170,9 @@ Tensor<T> *NeuralNetwork<T>::predict(Tensor<T> *sample) {
 
     Tensor<T> *input_tensor = this->layers.front()->out()->get_output_tensor();
 
-    input_tensor->copy_from(*sample);
+    input_tensor->copy_from(*sample, 0, sample->get_size());
+
+    /* TODO only return the first row of output tensor */
 
     /* Forward propagate -- get the output tensor */
     return this->layers.back()->out()->eval(true);
@@ -179,29 +181,23 @@ Tensor<T> *NeuralNetwork<T>::predict(Tensor<T> *sample) {
 template <typename T>
 unsigned int NeuralNetwork<T>::predict_class(Tensor<T> *sample) {
 
+    assert( T_IS_VECTOR(sample) );
+
     Tensor<T> *input_tensor = this->layers.front()->out()->get_output_tensor();
 
-    input_tensor->copy_from(*sample);
+    input_tensor->copy_from(*sample, 0, sample->get_size());
 
     this->layers.back()->out()->eval(true);
 
     Tensor<T> *output_tensor = this->layers.back()->out()->get_output_tensor();
-    output_tensor->get_memory_manager()->sync();
+    Tensor<T> output_tensor_host (output_tensor->get_shape(), {NONE,{}}, HOST);
+    Tensor<T> argmax_tensor ({output_tensor->get_shape(0)}, {NONE,{}}, HOST);
 
-    /* TODO -- define argmax in magmadnn::math */
-    T val;
-    T max = output_tensor->get(0);
-    unsigned int arg_max = 0;
+    output_tensor_host.copy_from(*output_tensor);
     
-    for (unsigned int i = 1; i < output_tensor->get_size(); i++) {
-        val = output_tensor->get(i);
-        if (val > max) {
-            max = val;
-            arg_max = i;
-        }
-    }
+    math::argmax(&output_tensor_host, 0, &argmax_tensor);
 
-    return arg_max;
+    return argmax_tensor.get(0);
 }
 
 template class NeuralNetwork<int>;

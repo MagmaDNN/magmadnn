@@ -19,9 +19,12 @@ template <typename T>
 class FullyConnectedLayer : public Layer<T> {
 public:
     FullyConnectedLayer(op::Operation<T> *input, unsigned int hidden_units, bool use_bias=true);
-    ~FullyConnectedLayer();
+    virtual ~FullyConnectedLayer();
 
     virtual std::vector<op::Operation<T> *> get_weights();
+
+    op::Operation<T> *get_weight() { return weights; }
+    op::Operation<T> *get_bias() { return bias; }
 
 protected:
     void init();

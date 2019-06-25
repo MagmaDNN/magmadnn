@@ -59,24 +59,73 @@ void test_input(memory_t mem, unsigned int size) {
 }
 
 void test_fullyconnected(memory_t mem, unsigned int size) {
-    unsigned int hidden_units = 25;
+    unsigned int batch_size = size;
+    unsigned int n_features = size + 2;
+    unsigned int hidden_units = size*3/4;
 
     printf("testing %s fullyconnected...  ", get_memory_type_name(mem));
 
-    Tensor<float> *data_tensor = new Tensor<float> ({size, size}, {IDENTITY, {}}, mem);
-    op::Variable<float> *data = op::var("data", data_tensor);
+    op::Operation<double> *input = op::var<double>("input", {batch_size, n_features}, {UNIFORM, {-1.0f, 1.0f}}, mem);
+    Tensor<double> *input_tensor = input->get_output_tensor();
 
-    layer::FullyConnectedLayer<float> *fc = layer::fullyconnected(data, hidden_units, false);
+    layer::FullyConnectedLayer<double> *fc = layer::fullyconnected(input, hidden_units, true);
+    op::Operation<double> *out = fc->out();
 
-    op::Operation<float> *output = fc->out();
-    Tensor<float> *output_tensor = output->eval();
-    sync(output_tensor);
+    Tensor<double> *out_tensor = out->eval();
 
-    assert( output_tensor->get_shape().size() == 2 );
-    assert( output_tensor->get_shape(0) == size );
-    assert( output_tensor->get_shape(1) == hidden_units );
+    Tensor<double> *weight_tensor = fc->get_weight()->get_output_tensor();
+    Tensor<double> *bias_tensor = fc->get_bias()->get_output_tensor();
+    Tensor<double> predicted_output ({batch_size, hidden_units}, {NONE,{}}, mem);
 
-    delete data_tensor;
+    assert( out_tensor->get_shape().size() == 2 );
+    assert( out_tensor->get_shape(0) == batch_size );
+    assert( out_tensor->get_shape(1) == hidden_units );
+
+
+    /* calculate the predicted output and compare it to the actual */
+    math::matmul(1.0, false, input_tensor, false, weight_tensor, 0.0, &predicted_output);
+    math::bias_add(&predicted_output, bias_tensor, &predicted_output);
+
+    sync(out_tensor);
+    sync(&predicted_output);
+
+    /* assert predicted output and out are the same */
+    for (unsigned int i = 0; i < batch_size; i++) {
+        for (unsigned int j = 0; j < hidden_units; j++) {
+            assert( fequal(predicted_output.get({i,j}), out_tensor->get({i,j})) );
+        }
+    }
+
+    /* CHECK THE GRADIENT OF THIS LAYER */
+    Tensor<double> grad ({batch_size, hidden_units}, {UNIFORM, {-1.0f, 1.0f}}, mem);
+    
+    Tensor<double> *grad_wrt_weight = out->grad(NULL, fc->get_weight(), &grad);
+    Tensor<double> *grad_wrt_bias = out->grad(NULL, fc->get_bias(), &grad);
+    Tensor<double> predicted_grad_wrt_weight ({n_features, hidden_units}, {NONE,{}}, mem);
+
+    math::matmul(1.0, true, input_tensor, false, &grad, 0.0, &predicted_grad_wrt_weight);
+
+    sync(grad_wrt_bias);
+    sync(grad_wrt_weight);
+    sync(&predicted_grad_wrt_weight);
+
+    /* grad_wrt_weight should be X^T . G */
+    for (unsigned int i = 0; i < n_features; i++) {
+        for (unsigned int j = 0; j < hidden_units; j++) {
+            assert( fequal(grad_wrt_weight->get({i,j}), predicted_grad_wrt_weight.get({i,j})) );
+        }
+    }
+    /* grad_wrt_bias should be row sums of grad */
+    for (unsigned int i = 0; i < batch_size; i++) {
+        double row_sum = 0.0;
+        for (unsigned int j = 0; j < hidden_units; j++) {
+            row_sum += grad.get({i, j});
+        }
+        assert( fabs(row_sum - grad_wrt_bias->get(i)) <= 1E-8 );
+    }
+
+    delete fc;
+
     show_success();
 }
 

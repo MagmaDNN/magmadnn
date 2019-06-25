@@ -102,7 +102,6 @@ Tensor<T> *LinearForwardOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, 
 template <typename T>
 void LinearForwardOp<T>::init_bias_settings() {
     if (this->mem_type == HOST) {
-        //bias_ones = new Tensor<T> (bias->get_output_shape(), {ONE, {}}, this->mem_type);
         bias_ones = new Tensor<T> ({this->output_shape[1]}, {ONE, {}}, this->mem_type);
     }
     #if defined(_HAS_CUDA_)

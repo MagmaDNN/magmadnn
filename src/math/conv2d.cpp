@@ -31,16 +31,9 @@ template void conv2d(Tensor<double> *x, Tensor<double> *w, Tensor<double> *out);
 
 #if defined(_HAS_CUDA_)
 
-struct conv2d_cudnn_settings {
-    cudnnConvolutionDescriptor_t conv_desc;
-    cudnnConvolutionFwdAlgo_t algo;
-    cudnnFilterDescriptor_t filter_desc;
-    void *workspace;
-    unsigned int workspace_size;
-};
-
 template <typename T>
 void conv2d_device(Tensor<T> *x, Tensor<T> *w, Tensor<T> *out, conv2d_cudnn_settings settings) {
+    T alpha = static_cast<T>(1), beta = static_cast<T>(0);
     cudnnErrchk( cudnnConvolutionForward(
         ::magmadnn::internal::MAGMADNN_SETTINGS->cudnn_handle,
         &alpha,

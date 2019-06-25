@@ -216,9 +216,8 @@ void test_argmax(memory_t mem, unsigned int size) {
 void test_bias_add(memory_t mem, unsigned int size) {
     printf("Testing %s bias_add...  ", get_memory_type_name(mem));
 
-    float x_val = 5.0f, bias_val = -2.0f;
-    Tensor<float> x ({size, size/2}, {CONSTANT, {x_val}}, mem);
-    Tensor<float> bias ({size}, {CONSTANT, {bias_val}}, mem);
+    Tensor<float> x ({size, size/2}, {UNIFORM, {-1.0f, 1.0f}}, mem);
+    Tensor<float> bias ({size}, {UNIFORM, {0.0f, 1.0f}}, mem);
     Tensor<float> out ({size, size/2}, {NONE, {}}, mem);
 
     math::bias_add(&x, &bias, &out);
@@ -227,7 +226,7 @@ void test_bias_add(memory_t mem, unsigned int size) {
 
     for (unsigned int i = 0; i < out.get_shape(0); i++) {
         for (unsigned int j = 0; j < out.get_shape(1); j++) {
-            assert( fequal(out.get({i,j}), x_val+bias_val) );
+            assert( fequal(out.get({i,j}), x.get({i,j}) + bias.get({i})) );
         }
     }
 

@@ -24,6 +24,7 @@ void print_image(uint32_t image_idx, Tensor<float> *images, Tensor<float> *label
 void show_sample(Tensor<float> *images, Tensor<float> *labels, uint32_t n_rows, uint32_t n_cols);
 void train(model::NeuralNetwork<float> &model, Tensor<float> *images, Tensor<float> *labels);
 void predict(model::NeuralNetwork<float> &model, Tensor<float> *images, Tensor<float> *labels, uint32_t n_rows, uint32_t n_cols);
+void test(model::NeuralNetwork<float> &model, Tensor<float> *images, Tensor<float> *labels, uint32_t n_rows, uint32_t n_cols, uint32_t n_classes);
 
 
 int main(int argc, char **argv) {
@@ -86,6 +87,7 @@ int main(int argc, char **argv) {
         std::cout << "\t 0. Show Sample\n";
         std::cout << "\t 1. Train\n";
         std::cout << "\t 2. Predict\n";
+        std::cout << "\t 3. Test\n";
         
         std::cout << "your option:  ";
         std::cin >> input;
@@ -96,6 +98,7 @@ int main(int argc, char **argv) {
             case 0: show_sample(images_host, labels_host, n_rows, n_cols); break;
             case 1: train(model, images_host, labels_host); break;
             case 2: predict(model, images_host, labels_host, n_rows, n_cols); break;
+            case 3: test(model, images_host, labels_host, n_rows, n_cols, n_classes); break;
             default:
                 std::cout << "Invalid Option. Try again.\n"; break;
         }
@@ -158,6 +161,40 @@ void predict(model::NeuralNetwork<float> &model, Tensor<float> *images, Tensor<f
 
     std::cout << "predicted class = " << predicted_class << "\n";
     print_image(image_index, images, labels, n_rows, n_cols);
+}
+
+void test(model::NeuralNetwork<float> &model, Tensor<float> *images, Tensor<float> *labels, uint32_t n_rows, uint32_t n_cols, uint32_t n_classes) {
+    uint32_t predicted_class, actual_class, total_correct;
+
+    Tensor<float> sample ({n_rows * n_cols}, {NONE,{}}, images->get_memory_type());
+
+    total_correct = 0;
+
+    std::cout << "Incorrect indices:  ";
+    for (uint32_t i = 0; i < images->get_shape(0); i++) { 
+        sample.copy_from(*images, i * sample.get_size(), sample.get_size());
+
+        predicted_class = model.predict_class(&sample);
+
+        actual_class = n_classes + 1;
+        for (uint32_t j = 0; j < n_classes; j++) {
+
+            if (std::fabs(labels->get(i*n_classes + j) - 1.0f) <= 1E-8) {
+                actual_class = j;
+                break;
+            }
+        }
+
+        if (actual_class == predicted_class) {
+            total_correct++;
+        } else {
+            std::cout << i << " ";
+        }
+
+    }
+    std::cout << "\n";
+
+    std::cout << total_correct << "/" << images->get_shape(0) << " images correct.\n";
 }
 
 

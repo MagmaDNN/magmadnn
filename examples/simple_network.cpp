@@ -66,7 +66,7 @@ int main(int argc, char **argv) {
     auto act1 = layer::activation(fc1->out(), layer::RELU);
 
     auto fc2 = layer::fullyconnected(act1->out(), 256);
-    auto act2 = layer::activation(fc2->out(), layer::SIGMOID);
+    auto act2 = layer::activation(fc2->out(), layer::RELU);
 
     auto fc3 = layer::fullyconnected(act2->out(), n_classes);
     auto act3 = layer::activation(fc3->out(), layer::SOFTMAX);

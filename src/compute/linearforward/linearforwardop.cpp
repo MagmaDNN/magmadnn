@@ -105,39 +105,40 @@ void LinearForwardOp<T>::init_bias_settings() {
         bias_ones = new Tensor<T> ({this->output_shape[1]}, {ONE, {}}, this->mem_type);
     }
     #if defined(_HAS_CUDA_)
+    else {
+        /* create a temporary descriptor for grad, since we do not have its tensor yet and 
+            therefore cannot call get_cudnn_tensor_descriptor(). This allows us to get the
+            workspace size from CuDNN here in the constructor, rather than in eval. */
+        cudnnTensorDescriptor_t grad_tmp_descriptor;
 
-    /* create a temporary descriptor for grad, since we do not have its tensor yet and 
-        therefore cannot call get_cudnn_tensor_descriptor(). This allows us to get the
-        workspace size from CuDNN here in the constructor, rather than in eval. */
-    cudnnTensorDescriptor_t grad_tmp_descriptor;
+        cudnnErrchk( cudnnCreateTensorDescriptor(&grad_tmp_descriptor) );
+        cudnnErrchk( cudnnSetTensor4dDescriptor(grad_tmp_descriptor,
+            CUDNN_TENSOR_NCHW,
+            ::magmadnn::internal::get_cudnn_data_type((T) 0),
+            input->get_output_shape(0),
+            weights->get_output_shape(1),
+            1,
+            1) 
+        );
 
-    cudnnErrchk( cudnnCreateTensorDescriptor(&grad_tmp_descriptor) );
-    cudnnErrchk( cudnnSetTensor4dDescriptor(grad_tmp_descriptor,
-        CUDNN_TENSOR_NCHW,
-        ::magmadnn::internal::get_cudnn_data_type((T) 0),
-        input->get_output_shape(0),
-        weights->get_output_shape(1),
-        1,
-        1) 
-    );
+        cudnnErrchk( cudnnCreateReduceTensorDescriptor(&bias_reduce_settings.descriptor) );
+        cudnnErrchk( cudnnSetReduceTensorDescriptor(bias_reduce_settings.descriptor, 
+            CUDNN_REDUCE_TENSOR_ADD, 
+            ::magmadnn::internal::get_cudnn_data_type(static_cast<T>(0)), 
+            CUDNN_NOT_PROPAGATE_NAN, 
+            CUDNN_REDUCE_TENSOR_NO_INDICES,
+            CUDNN_32BIT_INDICES) 
+        );
+        cudnnErrchk( cudnnGetReductionWorkspaceSize(::magmadnn::internal::MAGMADNN_SETTINGS->cudnn_handle,
+            bias_reduce_settings.descriptor, 
+            grad_tmp_descriptor,
+            this->output_tensor->get_cudnn_tensor_descriptor(),
+            &bias_reduce_settings.workspace_size)
+        );
+        cudaErrchk( cudaMalloc((void **)&bias_reduce_settings.workspace, bias_reduce_settings.workspace_size*sizeof(T)) );
 
-    cudnnErrchk( cudnnCreateReduceTensorDescriptor(&bias_reduce_settings.descriptor) );
-    cudnnErrchk( cudnnSetReduceTensorDescriptor(bias_reduce_settings.descriptor, 
-        CUDNN_REDUCE_TENSOR_ADD, 
-        ::magmadnn::internal::get_cudnn_data_type(static_cast<T>(0)), 
-        CUDNN_NOT_PROPAGATE_NAN, 
-        CUDNN_REDUCE_TENSOR_NO_INDICES,
-        CUDNN_32BIT_INDICES) 
-    );
-    cudnnErrchk( cudnnGetReductionWorkspaceSize(::magmadnn::internal::MAGMADNN_SETTINGS->cudnn_handle,
-        bias_reduce_settings.descriptor, 
-        grad_tmp_descriptor,
-        this->output_tensor->get_cudnn_tensor_descriptor(),
-        &bias_reduce_settings.workspace_size)
-    );
-    cudaErrchk( cudaMalloc((void **)&bias_reduce_settings.workspace, bias_reduce_settings.workspace_size*sizeof(T)) );
-
-    cudnnErrchk( cudnnDestroyTensorDescriptor(grad_tmp_descriptor) );
+        cudnnErrchk( cudnnDestroyTensorDescriptor(grad_tmp_descriptor) );
+    }
     #endif
 }
 

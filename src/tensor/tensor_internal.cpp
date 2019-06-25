@@ -21,13 +21,13 @@ void fill_memory(MemoryManager<T> &m, tensor_filler_t<T> filler) {
         case CONSTANT:
             fill_constant(m, filler.values); break;
         case ZERO:
-            fill_constant(m, {(T)0}); break;
+            fill_constant(m, {static_cast<T>(0)}); break;
         case ONE:
-            fill_constant(m, {(T)1}); break;
+            fill_constant(m, {static_cast<T>(1)}); break;
         case DIAGONAL:
             fill_diagonal(m, filler.values); break;
         case IDENTITY:
-            fill_diagonal(m, {(T)1}); break;
+            fill_diagonal(m, {static_cast<T>(1)}); break;
         case NONE: break;
     }
 }

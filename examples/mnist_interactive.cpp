@@ -281,7 +281,7 @@ void print_image(uint32_t image_idx, Tensor<float> *images, Tensor<float> *label
 
     for (unsigned int r = 0; r < n_rows; r++) {
         for (unsigned int c = 0; c < n_cols; c++) {
-            printf("%03u ", (uint8_t) ((images->get(image_idx*n_rows*n_cols + r*n_cols + c)+1.0f)*128.0f) );
+            printf("%3u ", (uint8_t) ((images->get(image_idx*n_rows*n_cols + r*n_cols + c)+1.0f)*128.0f) );
         }
         printf("\n");
     }

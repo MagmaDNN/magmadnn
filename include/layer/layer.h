@@ -46,7 +46,7 @@ public:
 	 * @param i axis
 	 * @return std::vector<unsigned int> 
 	 */
-	std::vector<unsigned int> get_input_shape(unsigned int i) const {
+	unsigned int get_input_shape(unsigned int i) const {
 		assert( i < input_shape.size() );
 		return input_shape[i];
 	}
@@ -55,7 +55,7 @@ public:
 	 * @param i axis
 	 * @return std::vector<unsigned int> 
 	 */
-	std::vector<unsigned int> get_output_shape(unsigned int i) const {
+	unsigned int get_output_shape(unsigned int i) const {
 		assert( i < output_shape.size() );
 		return output_shape[i];
 	}

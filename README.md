@@ -5,7 +5,6 @@ A neural network library in c++ aimed at providing a simple, modularized framewo
 ===== VERSION 0.1.0 =====
 - Currently magmadnn provides a dynamic memory manager, tensor wrapper for the memory manager, and a set of math operations for the tensor.
 - As of 0.1.0 it now has support for a full compute graph, gradient computation, forward/backward propagation, and basic NN Layers.
-- More is coming...
 
 
 ### Tutorials

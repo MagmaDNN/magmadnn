@@ -8,6 +8,10 @@ A neural network library in c++ aimed at providing a simple, modularized framewo
 - More is coming...
 
 
+### Tutorials
+-------------
+There are several tutorials in [docs/tutorials](/docs/tutorials). These give an introduction into installing and using the library.
+
 ### Download and Installation
 -----------------------------
 

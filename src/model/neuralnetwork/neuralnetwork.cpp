@@ -67,6 +67,50 @@ NeuralNetwork<T>::NeuralNetwork(std::vector<layer::Layer<T> *> layers, optimizer
 }
 
 template <typename T>
+NeuralNetwork<T>::NeuralNetwork(std::vector<layer::Layer<T> *> layers, optimizer::loss_t loss_func, optimizer::Optimizer<T> *optim, nn_params_t params)
+: Model<T>::Model(), layers(layers), loss_func(loss_func), model_params(params), optim(optim) {
+    this->_name = "NeuralNetworkModel";
+
+    typename std::vector<layer::Layer<T> *>::iterator vit;
+    typename std::vector<op::Operation<T> *>::iterator it;
+    std::vector<op::Operation<T> *> tmp_vars;
+
+    /* copy the weights from each layer into _vars */
+    for (vit = layers.begin(); vit != layers.end(); vit++) {
+        tmp_vars = (*vit)->get_weights();
+        this->_vars.insert(this->_vars.end(), tmp_vars.begin(), tmp_vars.end());
+    }
+
+    /* get pointers to network back and front operations */
+    this->network_input_op_ptr = layers.front()->out();
+    this->network_output_op_ptr = layers.back()->out();
+
+    /* get pointers to network back and front tensors */
+    this->network_input_tensor_ptr = this->network_input_op_ptr->get_output_tensor();
+    this->network_output_tensor_ptr = this->network_output_op_ptr->get_output_tensor();
+
+    /* init ground truth pointers */
+    this->ground_truth_op_ptr = op::var<T>(
+        this->_name + "::ground_truth", 
+        {params.batch_size, network_output_tensor_ptr->get_shape().back()},
+        {NONE, {}}, 
+        network_output_tensor_ptr->get_memory_type()
+    );
+    this->ground_truth_tensor_ptr = this->ground_truth_op_ptr->get_output_tensor();
+
+    /* init loss function -- _obj */
+    switch (loss_func) {
+        case optimizer::CROSS_ENTROPY:
+            this->_obj = op::crossentropy(this->ground_truth_op_ptr, this->network_output_op_ptr); break;
+        case optimizer::MSE:
+            std::fprintf(stderr, "MSE loss not yet implemented.\n"); break;
+        default:
+            std::fprintf(stderr, "Unknown loss function.\n"); break;
+    }
+    this->_obj_tensor_ptr = this->_obj->get_output_tensor();
+}
+
+template <typename T>
 NeuralNetwork<T>::~NeuralNetwork() {
     delete optim;
 }

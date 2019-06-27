@@ -36,6 +36,14 @@ public:
      */
     NeuralNetwork(std::vector<layer::Layer<T> *> layers, optimizer::loss_t loss_func, optimizer::optimizer_t optimizer, nn_params_t params);
 
+    /** Constructs a neural network. Allows you to supply custom optimizer.
+     * @param layers a vector of the layers comprising the network.
+     * @param loss_func a loss_t enumerant describing the loss function to use at the end of the network.
+     * @param optim Optimizer<T> that will be used to optimize the network
+     * @param params a set of neural network parameters.
+     */
+    NeuralNetwork(std::vector<layer::Layer<T> *> layers, optimizer::loss_t loss_func, optimizer::Optimizer<T> *optim, nn_params_t params);
+
     virtual ~NeuralNetwork();
 
     /** Trains this neural network using x and y. The batch size and epochs are used from the model parameters given during

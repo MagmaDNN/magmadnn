@@ -63,13 +63,13 @@ int main(int argc, char **argv) {
 
     /* initialize the layers in our network */
     auto input = layer::input(x_batch);
-    auto fc1 = layer::fullyconnected(input->out(), 512);
+    auto fc1 = layer::fullyconnected(input->out(), 784, false);
     auto act1 = layer::activation(fc1->out(), layer::RELU);
 
-    auto fc2 = layer::fullyconnected(act1->out(), 256);
+    auto fc2 = layer::fullyconnected(act1->out(), 500, false);
     auto act2 = layer::activation(fc2->out(), layer::RELU);
 
-    auto fc3 = layer::fullyconnected(act2->out(), n_classes);
+    auto fc3 = layer::fullyconnected(act2->out(), n_classes, false);
     auto act3 = layer::activation(fc3->out(), layer::SOFTMAX);
 
     auto output = layer::output(act3->out());

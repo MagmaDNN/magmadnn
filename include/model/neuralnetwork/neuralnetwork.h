@@ -22,6 +22,7 @@ namespace model {
 struct nn_params_t {
     unsigned int n_epochs;  /**<n_epochs number of epochs to train for */
     unsigned int batch_size;    /**<batch_size the size of the batch */
+    double learning_rate;   /**<initial learning rate */
 };
 
 template <typename T>
@@ -34,6 +35,8 @@ public:
      * @param params a set of neural network parameters.
      */
     NeuralNetwork(std::vector<layer::Layer<T> *> layers, optimizer::loss_t loss_func, optimizer::optimizer_t optimizer, nn_params_t params);
+
+    virtual ~NeuralNetwork();
 
     /** Trains this neural network using x and y. The batch size and epochs are used from the model parameters given during
      * construction. If verbose, then training info is printed periodically.
@@ -53,9 +56,19 @@ protected:
     optimizer::optimizer_t optimizer;
     nn_params_t model_params;
 
-    T default_learning_rate = (T) 0.05;
-    std::vector<op::Operation<T> *> _vars;
-    op::Operation<T> *_obj;
+    /* network inputs/output */
+    op::Operation<T> *network_input_op_ptr, *network_output_op_ptr;
+    Tensor<T> *network_input_tensor_ptr, *network_output_tensor_ptr;
+
+    /* ground truth */
+    op::Operation<T> *ground_truth_op_ptr;
+    Tensor<T> *ground_truth_tensor_ptr;
+
+    T default_learning_rate = (T) 0.05;     /* assumed learning rate if one is not given */
+    std::vector<op::Operation<T> *> _vars;  /* network weights */
+    op::Operation<T> *_obj;             /* objective function to optimize -- i.e. the loss function */
+    Tensor<T> *_obj_tensor_ptr;         /* pointer to objective function's tensor */
+    optimizer::Optimizer<T> *optim;     /* network optimizer */
 };
 
 }   // namespace model

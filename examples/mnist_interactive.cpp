@@ -8,6 +8,7 @@
  */
 #include <cstdio>
 #include <vector>
+#include <limits>
 #include <cstdint>
 #include <iostream>
 #include <iomanip>
@@ -92,6 +93,14 @@ int main(int argc, char **argv) {
         std::cout << "your option:  ";
         std::cin >> input;
         std::cout << "\n";
+
+        /* handle bad input */
+        if (std::cin.fail()) {
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+            input = std::numeric_limits<int64_t>::max();
+        }
 
         switch (input) {
             case -1: break;

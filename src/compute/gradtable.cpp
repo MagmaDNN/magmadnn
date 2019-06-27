@@ -24,7 +24,7 @@ unsigned int GradTable<T>::get_size() {
 
 template <typename T>
 Tensor<T>* GradTable<T>::get(Operation<T> *var) {
-    tmp_map_iterator = _table.find((uintptr_t) var);
+    tmp_map_iterator = _table.find(var);
 
     // return NULL if not found
     if (tmp_map_iterator == _table.end()) {
@@ -38,7 +38,7 @@ template <typename T>
 void GradTable<T>::set(Operation<T> *var, Tensor<T> *grad) {
     if (var == NULL) return;
 
-    _table[(uintptr_t) var] = grad;
+    _table[var] = grad;
     
 }
 

@@ -49,8 +49,8 @@ public:
     void clear();
 
 protected:
-    std::map<uintptr_t, Tensor<T>* > _table;   // the underlying table to store data
-    typename std::map<uintptr_t, Tensor<T>* >::iterator tmp_map_iterator;
+    std::map<Operation<T> *, Tensor<T>* > _table;   // the underlying table to store data
+    typename std::map<Operation<T> *, Tensor<T> *>::iterator tmp_map_iterator;
 
 };
 

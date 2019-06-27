@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['magmadnn',['Magmadnn',['../index.html',1,'']]],
   ['magmadnn_2eh',['magmadnn.h',['../magmadnn_8h.html',1,'']]],
   ['magmadnn_5ffinalize',['magmadnn_finalize',['../init__finalize_8cpp.html#a634f3115623b18911d04b54b107a5f76',1,'magmadnn']]],
   ['magmadnn_5finit',['magmadnn_init',['../init__finalize_8cpp.html#ad319d13ae2214087c77ce844dd675970',1,'magmadnn']]],

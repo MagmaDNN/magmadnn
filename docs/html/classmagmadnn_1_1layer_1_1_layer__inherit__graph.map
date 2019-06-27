@@ -1,0 +1,6 @@
+<map id="magmadnn::layer::Layer&lt; T &gt;" name="magmadnn::layer::Layer&lt; T &gt;">
+<area shape="rect" id="node2" href="$classmagmadnn_1_1layer_1_1_activation_layer.html" title="magmadnn::layer::Activation\lLayer\&lt; T \&gt;" alt="" coords="271,5,459,47"/>
+<area shape="rect" id="node3" href="$classmagmadnn_1_1layer_1_1_fully_connected_layer.html" title="magmadnn::layer::FullyConnected\lLayer\&lt; T \&gt;" alt="" coords="254,71,475,112"/>
+<area shape="rect" id="node4" href="$classmagmadnn_1_1layer_1_1_input_layer.html" title="magmadnn::layer::InputLayer\&lt; T \&gt;" alt="" coords="253,137,476,163"/>
+<area shape="rect" id="node5" href="$classmagmadnn_1_1layer_1_1_output_layer.html" title="magmadnn::layer::OutputLayer\&lt; T \&gt;" alt="" coords="248,187,481,214"/>
+</map>

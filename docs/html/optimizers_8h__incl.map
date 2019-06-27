@@ -1,0 +1,20 @@
+<map id="include/optimizer/optimizers.h" name="include/optimizer/optimizers.h">
+<area shape="rect" id="node2" href="$optimizer_8h.html" title="optimizer/optimizer.h" alt="" coords="1417,333,1560,360"/>
+<area shape="rect" id="node23" href="$gradientdescent_8h.html" title="optimizer/gradientdescent\l/gradientdescent.h" alt="" coords="1013,80,1183,121"/>
+<area shape="rect" id="node5" href="$operation_8h.html" title="compute/operation.h" alt="" coords="1100,408,1240,435"/>
+<area shape="rect" id="node7" href="$tensor_8h.html" title="tensor/tensor.h" alt="" coords="826,483,935,509"/>
+<area shape="rect" id="node8" href="$types_8h.html" title="types.h" alt="" coords="1240,781,1305,808"/>
+<area shape="rect" id="node9" href="$memorymanager_8h.html" title="memory/memorymanager.h" alt="" coords="918,707,1099,733"/>
+<area shape="rect" id="node14" href="$tensor__internal_8h.html" title="tensor_internal.h" alt="" coords="821,557,940,584"/>
+<area shape="rect" id="node17" href="$utilities__internal_8h.html" title="utilities_internal.h" alt="" coords="442,707,565,733"/>
+<area shape="rect" id="node15" href="$fill__internal_8h.html" title="fill_internal.h" alt="" coords="825,632,920,659"/>
+<area shape="rect" id="node24" href="$gradtable_8h.html" title="compute/gradtable.h" alt="" coords="1091,259,1231,285"/>
+<area shape="rect" id="node26" href="$gradients_8h.html" title="compute/gradients.h" alt="" coords="780,177,920,203"/>
+<area shape="rect" id="node32" href="$add_8h.html" title="math/add.h" alt="" coords="5,259,92,285"/>
+<area shape="rect" id="node33" href="$gradientdescent__internal_8h.html" title="optimizer/gradientdescent\l/gradientdescent_internal.h" alt="" coords="945,169,1123,211"/>
+<area shape="rect" id="node25" href="$variable_8h.html" title="compute/variable.h" alt="" coords="1049,333,1181,360"/>
+<area shape="rect" id="node27" href="$addop_8h.html" title="compute/add/addop.h" alt="" coords="777,333,923,360"/>
+<area shape="rect" id="node30" href="$sumop_8h.html" title="compute/sum/sumop.h" alt="" coords="406,333,561,360"/>
+<area shape="rect" id="node28" href="$geadd__internal_8h.html" title="geadd_internal.h" alt="" coords="654,408,771,435"/>
+<area shape="rect" id="node31" href="$sum__internal_8h.html" title="compute/sum/sum_internal.h" alt="" coords="388,408,579,435"/>
+</map>

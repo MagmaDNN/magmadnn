@@ -1,0 +1,9 @@
+<map id="include/optimizer/optimizer.h" name="include/optimizer/optimizer.h">
+<area shape="rect" id="node4" href="$operation_8h.html" title="compute/operation.h" alt="" coords="370,80,510,107"/>
+<area shape="rect" id="node6" href="$tensor_8h.html" title="tensor/tensor.h" alt="" coords="384,155,493,181"/>
+<area shape="rect" id="node7" href="$types_8h.html" title="types.h" alt="" coords="45,453,110,480"/>
+<area shape="rect" id="node8" href="$memorymanager_8h.html" title="memory/memorymanager.h" alt="" coords="300,379,481,405"/>
+<area shape="rect" id="node13" href="$tensor__internal_8h.html" title="tensor_internal.h" alt="" coords="429,229,547,256"/>
+<area shape="rect" id="node16" href="$utilities__internal_8h.html" title="utilities_internal.h" alt="" coords="715,379,837,405"/>
+<area shape="rect" id="node14" href="$fill__internal_8h.html" title="fill_internal.h" alt="" coords="517,304,611,331"/>
+</map>

@@ -1,0 +1,24 @@
+<map id="magmadnn::op::Operation::_grad" name="magmadnn::op::Operation::_grad">
+<area shape="rect" id="node2" href="$classmagmadnn_1_1op_1_1_operation.html#a006bfa4330f7e85952fdd90377ed1a6c" title="magmadnn::op::Operation\l::grad" alt="" coords="225,600,397,641"/>
+<area shape="rect" id="node10" href="$classmagmadnn_1_1op_1_1_operation.html#a76918f4aed30a52692c7e68b3086c661" title="magmadnn::op::Operation\l::get_name" alt="" coords="465,5,637,47"/>
+<area shape="rect" id="node3" href="$classmagmadnn_1_1op_1_1_add_op.html#a774f756ab88f279cf8725ffb0e6a8a33" title="magmadnn::op::AddOp\l::to_string" alt="" coords="724,571,880,612"/>
+<area shape="rect" id="node4" href="$classmagmadnn_1_1op_1_1_conv2_d_forward_op.html#ac64d1cc25e056606042c5770cd0eeea7" title="magmadnn::op::Conv2DForward\lOp::to_string" alt="" coords="445,188,656,229"/>
+<area shape="rect" id="node5" href="$classmagmadnn_1_1op_1_1_cross_entropy_op.html#ac6214be015e950e9ff5c024dabe0e2ff" title="magmadnn::op::CrossEntropy\lOp::to_string" alt="" coords="704,1119,900,1160"/>
+<area shape="rect" id="node6" href="$classmagmadnn_1_1op_1_1_linear_forward_op.html#ac3d3c2b1ca1ff507b3710c8887c77f8f" title="magmadnn::op::LinearForward\lOp::to_string" alt="" coords="451,305,650,347"/>
+<area shape="rect" id="node7" href="$classmagmadnn_1_1op_1_1_log_op.html#a5974dcc51e69cd40a8b8407901430b25" title="magmadnn::op::LogOp\l::to_string" alt="" coords="473,371,628,412"/>
+<area shape="rect" id="node8" href="$classmagmadnn_1_1op_1_1_matmul_op.html#a33b08a6b34c15c78aabff0afcba8fbed" title="magmadnn::op::MatmulOp\l::to_string" alt="" coords="463,436,639,477"/>
+<area shape="rect" id="node9" href="$classmagmadnn_1_1op_1_1_negative_op.html#a7dd928c922074c901a6eae41e1ea750d" title="magmadnn::op::NegativeOp\l::to_string" alt="" coords="458,501,643,543"/>
+<area shape="rect" id="node11" href="$classmagmadnn_1_1op_1_1_pow_op.html#a9599cc910fe98c73ec6a754d3e50018c" title="magmadnn::op::PowOp\l::to_string" alt="" coords="471,567,630,608"/>
+<area shape="rect" id="node12" href="$classmagmadnn_1_1op_1_1_reduce_sum_op.html#a5bcc1e415c5a6792da86d2d57b83d3bc" title="magmadnn::op::ReduceSumOp\l::to_string" alt="" coords="448,632,653,673"/>
+<area shape="rect" id="node13" href="$classmagmadnn_1_1op_1_1_relu_op.html#a4b7eb5c3c98b8072774e5d7478c48bbf" title="magmadnn::op::ReluOp\l::to_string" alt="" coords="471,697,631,739"/>
+<area shape="rect" id="node14" href="$classmagmadnn_1_1op_1_1_sigmoid_op.html#aa446f127ee6f3d9819c23fe5cede2068" title="magmadnn::op::SigmoidOp\l::to_string" alt="" coords="461,763,641,804"/>
+<area shape="rect" id="node15" href="$classmagmadnn_1_1op_1_1_softmax_op.html#a5796dd0c958b47f716f54f19ba27de33" title="magmadnn::op::SoftmaxOp\l::to_string" alt="" coords="459,828,642,869"/>
+<area shape="rect" id="node16" href="$classmagmadnn_1_1op_1_1_tanh_op.html#aea662e8521c41d51d7f4ec28511f23b3" title="magmadnn::op::TanhOp\l::to_string" alt="" coords="721,93,883,135"/>
+<area shape="rect" id="node17" href="$classmagmadnn_1_1op_1_1_transpose_op.html#a7a045fa8cbfd1c218f000fd19e1c998d" title="magmadnn::op::TransposeOp\l::to_string" alt="" coords="453,959,648,1000"/>
+<area shape="rect" id="node18" href="$classmagmadnn_1_1op_1_1_variable.html#ab5602154fc1bb9115802d01a57d53e3c" title="magmadnn::op::Variable\l::get_name" alt="" coords="469,1024,632,1065"/>
+<area shape="rect" id="node19" href="$classmagmadnn_1_1op_1_1_add_op.html#a4ce8d7579245b94dabac42cc125b3bd6" title="magmadnn::op::AddOp\l::_grad" alt="" coords="473,893,629,935"/>
+<area shape="rect" id="node20" href="$classmagmadnn_1_1op_1_1_cross_entropy_op.html#a9168f98d57a38f3d6973243c48af9089" title="magmadnn::op::CrossEntropy\lOp::_grad" alt="" coords="453,1089,649,1131"/>
+<area shape="rect" id="node21" href="$classmagmadnn_1_1op_1_1_div_op.html#af050eb4d1c2df958d7f1609d8ae2ca49" title="magmadnn::op::DivOp\l::_grad" alt="" coords="474,1207,627,1248"/>
+<area shape="rect" id="node22" href="$classmagmadnn_1_1op_1_1_scalar_product_op.html#a2aed38289b4defb2ba3c8253717d447a" title="magmadnn::op::ScalarProduct\lOp::_grad" alt="" coords="451,1272,650,1313"/>
+<area shape="rect" id="node23" href="$classmagmadnn_1_1op_1_1_tanh_op.html#a54c9210da12cebe07c1243651369de6d" title="magmadnn::op::TanhOp\l::_grad" alt="" coords="469,123,632,164"/>
+</map>

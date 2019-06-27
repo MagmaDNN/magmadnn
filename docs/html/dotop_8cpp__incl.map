@@ -1,0 +1,22 @@
+<map id="src/compute/dot/dotop.cpp" name="src/compute/dot/dotop.cpp">
+<area shape="rect" id="node2" href="$dotop_8h.html" title="compute/dot/dotop.h" alt="" coords="700,80,841,107"/>
+<area shape="rect" id="node4" href="$operation_8h.html" title="compute/operation.h" alt="" coords="899,326,1039,353"/>
+<area shape="rect" id="node23" href="$matmulop_8h.html" title="compute/matmul/matmulop.h" alt="" coords="559,155,750,181"/>
+<area shape="rect" id="node32" href="$productop_8h.html" title="compute/product/productop.h" alt="" coords="1171,155,1362,181"/>
+<area shape="rect" id="node34" href="$scalarproductop_8h_source.html" title="compute/scalarproduct\l/scalarproductop.h" alt="" coords="935,229,1089,271"/>
+<area shape="rect" id="node7" href="$tensor_8h.html" title="tensor/tensor.h" alt="" coords="704,408,813,435"/>
+<area shape="rect" id="node9" href="$types_8h.html" title="types.h" alt="" coords="459,707,525,733"/>
+<area shape="rect" id="node10" href="$memorymanager_8h.html" title="memory/memorymanager.h" alt="" coords="219,632,400,659"/>
+<area shape="rect" id="node15" href="$tensor__internal_8h.html" title="tensor_internal.h" alt="" coords="422,483,541,509"/>
+<area shape="rect" id="node18" href="$utilities__internal_8h.html" title="utilities_internal.h" alt="" coords="704,632,827,659"/>
+<area shape="rect" id="node16" href="$fill__internal_8h.html" title="fill_internal.h" alt="" coords="449,557,543,584"/>
+<area shape="rect" id="node24" href="$variable_8h.html" title="compute/variable.h" alt="" coords="1114,237,1246,263"/>
+<area shape="rect" id="node25" href="$transposeop_8h_source.html" title="compute/transpose/transposeop.h" alt="" coords="329,237,548,263"/>
+<area shape="rect" id="node27" href="$matmul_8h.html" title="math/matmul.h" alt="" coords="237,326,347,353"/>
+<area shape="rect" id="node29" href="$dot_8h.html" title="math/dot.h" alt="" coords="573,237,657,263"/>
+<area shape="rect" id="node31" href="$gemm__internal_8h.html" title="gemm_internal.h" alt="" coords="94,326,213,353"/>
+<area shape="rect" id="node26" href="$transpose__internal_8h_source.html" title="compute/transpose/transpose\l_internal.h" alt="" coords="421,319,616,360"/>
+<area shape="rect" id="node30" href="$scalar__tensor__product_8h.html" title="math/scalar_tensor\l_product.h" alt="" coords="691,319,824,360"/>
+<area shape="rect" id="node33" href="$product__internal_8h.html" title="compute/product/product\l_internal.h" alt="" coords="1270,229,1437,271"/>
+<area shape="rect" id="node35" href="$scalarproduct__internal_8h_source.html" title="compute/scalarproduct\l/scalarproduct_internal.h" alt="" coords="1063,319,1227,360"/>
+</map>

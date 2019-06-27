@@ -1,0 +1,6 @@
+<map id="magmadnn::op::scalar" name="magmadnn::op::scalar">
+<area shape="rect" id="node2" href="$classmagmadnn_1_1op_1_1_variable.html#ab5602154fc1bb9115802d01a57d53e3c" title="magmadnn::op::Variable\l::get_name" alt="" coords="222,5,385,47"/>
+<area shape="rect" id="node3" href="$classmagmadnn_1_1op_1_1_scalar_product_op.html#a852235e33e2d0224507b8847abd10b34" title="magmadnn::op::ScalarProduct\lOp::_eval" alt="" coords="204,71,403,112"/>
+<area shape="rect" id="node4" href="$classmagmadnn_1_1op_1_1_scalar_product_op.html#a2aed38289b4defb2ba3c8253717d447a" title="magmadnn::op::ScalarProduct\lOp::_grad" alt="" coords="204,136,403,177"/>
+<area shape="rect" id="node5" href="$classmagmadnn_1_1op_1_1_scalar_product_op.html#a67bebb4ea02bfdfe7e8006f559f4e677" title="magmadnn::op::ScalarProduct\lOp::to_string" alt="" coords="204,201,403,243"/>
+</map>

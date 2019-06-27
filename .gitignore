@@ -47,5 +47,5 @@ testing/bin/*
 examples/bin/*
 
 # doxygen folders
-docs/html/*
+# docs/html/*
 docs/latex/*

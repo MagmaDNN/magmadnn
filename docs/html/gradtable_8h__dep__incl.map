@@ -1,0 +1,12 @@
+<map id="include/compute/gradtable.h" name="include/compute/gradtable.h">
+<area shape="rect" id="node2" href="$gradtable_8cpp.html" title="src/compute/gradtable.cpp" alt="" coords="5,80,181,107"/>
+<area shape="rect" id="node3" href="$gradients_8h.html" title="include/compute/gradients.h" alt="" coords="206,80,391,107"/>
+<area shape="rect" id="node6" href="$gradientdescent_8h.html" title="include/optimizer/gradientdescent\l/gradientdescent.h" alt="" coords="332,155,548,196"/>
+<area shape="rect" id="node4" href="$gradients_8cpp.html" title="src/compute/gradients.cpp" alt="" coords="81,162,257,189"/>
+<area shape="rect" id="node5" href="$magmadnn_8h.html" title="include/magmadnn.h" alt="" coords="359,512,502,539"/>
+<area shape="rect" id="node7" href="$gradientdescent_8cpp.html" title="src/optimizer/gradientdescent\l/gradientdescent.cpp" alt="" coords="333,244,526,285"/>
+<area shape="rect" id="node8" href="$optimizers_8h.html" title="include/optimizer/optimizers.h" alt="" coords="551,251,745,278"/>
+<area shape="rect" id="node9" href="$neuralnetwork_8h.html" title="include/model/neuralnetwork\l/neuralnetwork.h" alt="" coords="555,333,741,375"/>
+<area shape="rect" id="node10" href="$neuralnetwork_8cpp.html" title="src/model/neuralnetwork\l/neuralnetwork.cpp" alt="" coords="469,423,633,464"/>
+<area shape="rect" id="node11" href="$models_8h.html" title="include/model/models.h" alt="" coords="657,430,815,457"/>
+</map>

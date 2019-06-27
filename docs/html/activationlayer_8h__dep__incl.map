@@ -1,0 +1,8 @@
+<map id="include/layer/activation/activationlayer.h" name="include/layer/activation/activationlayer.h">
+<area shape="rect" id="node2" href="$activationlayer_8cpp.html" title="src/layer/activation\l/activationlayer.cpp" alt="" coords="5,95,140,136"/>
+<area shape="rect" id="node3" href="$layers_8h.html" title="include/layer/layers.h" alt="" coords="164,102,309,129"/>
+<area shape="rect" id="node4" href="$magmadnn_8h.html" title="include/magmadnn.h" alt="" coords="252,363,395,389"/>
+<area shape="rect" id="node5" href="$neuralnetwork_8h.html" title="include/model/neuralnetwork\l/neuralnetwork.h" alt="" coords="209,184,395,225"/>
+<area shape="rect" id="node6" href="$neuralnetwork_8cpp.html" title="src/model/neuralnetwork\l/neuralnetwork.cpp" alt="" coords="209,273,373,315"/>
+<area shape="rect" id="node7" href="$models_8h.html" title="include/model/models.h" alt="" coords="397,281,556,307"/>
+</map>

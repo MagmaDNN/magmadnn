@@ -1,0 +1,5 @@
+<map id="magmadnn::Tensor::get_device_id" name="magmadnn::Tensor::get_device_id">
+<area shape="rect" id="node2" href="$classmagmadnn_1_1_tensor.html#a0f8d0a0741fade84db25a48f790f284c" title="magmadnn::Tensor::reshape" alt="" coords="222,5,410,32"/>
+<area shape="rect" id="node3" href="$classmagmadnn_1_1_tensor.html#ac4642f779a98673edf2f5213dc145324" title="magmadnn::Tensor::squeeze" alt="" coords="221,56,411,83"/>
+<area shape="rect" id="node4" href="$classmagmadnn_1_1_tensor.html#aca1ad4f8fc61d20de96af9fd1d2c43e4" title="magmadnn::Tensor::unsqueeze" alt="" coords="213,107,419,133"/>
+</map>

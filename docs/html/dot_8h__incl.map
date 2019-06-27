@@ -1,0 +1,10 @@
+<map id="include/math/dot.h" name="include/math/dot.h">
+<area shape="rect" id="node2" href="$tensor_8h.html" title="tensor/tensor.h" alt="" coords="207,169,316,196"/>
+<area shape="rect" id="node19" href="$matmul_8h.html" title="math/matmul.h" alt="" coords="352,87,461,114"/>
+<area shape="rect" id="node21" href="$scalar__tensor__product_8h.html" title="math/scalar_tensor\l_product.h" alt="" coords="195,80,328,121"/>
+<area shape="rect" id="node4" href="$types_8h.html" title="types.h" alt="" coords="43,468,109,495"/>
+<area shape="rect" id="node5" href="$memorymanager_8h.html" title="memory/memorymanager.h" alt="" coords="224,393,405,420"/>
+<area shape="rect" id="node10" href="$tensor__internal_8h.html" title="tensor_internal.h" alt="" coords="299,244,418,271"/>
+<area shape="rect" id="node13" href="$utilities__internal_8h.html" title="utilities_internal.h" alt="" coords="697,393,820,420"/>
+<area shape="rect" id="node11" href="$fill__internal_8h.html" title="fill_internal.h" alt="" coords="515,319,610,345"/>
+</map>

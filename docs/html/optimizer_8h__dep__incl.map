@@ -1,0 +1,10 @@
+<map id="include/optimizer/optimizer.h" name="include/optimizer/optimizer.h">
+<area shape="rect" id="node2" href="$optimizers_8h.html" title="include/optimizer/optimizers.h" alt="" coords="229,177,423,203"/>
+<area shape="rect" id="node7" href="$model_8h.html" title="include/model/model.h" alt="" coords="53,177,205,203"/>
+<area shape="rect" id="node8" href="$gradientdescent_8h.html" title="include/optimizer/gradientdescent\l/gradientdescent.h" alt="" coords="290,80,506,121"/>
+<area shape="rect" id="node3" href="$magmadnn_8h.html" title="include/magmadnn.h" alt="" coords="165,437,308,464"/>
+<area shape="rect" id="node4" href="$neuralnetwork_8h.html" title="include/model/neuralnetwork\l/neuralnetwork.h" alt="" coords="155,259,342,300"/>
+<area shape="rect" id="node5" href="$neuralnetwork_8cpp.html" title="src/model/neuralnetwork\l/neuralnetwork.cpp" alt="" coords="188,348,352,389"/>
+<area shape="rect" id="node6" href="$models_8h.html" title="include/model/models.h" alt="" coords="5,355,164,382"/>
+<area shape="rect" id="node9" href="$gradientdescent_8cpp.html" title="src/optimizer/gradientdescent\l/gradientdescent.cpp" alt="" coords="448,169,641,211"/>
+</map>

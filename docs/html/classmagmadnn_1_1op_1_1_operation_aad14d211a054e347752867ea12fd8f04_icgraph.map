@@ -1,0 +1,9 @@
+<map id="magmadnn::op::Operation::eval" name="magmadnn::op::Operation::eval">
+<area shape="rect" id="node2" href="$classmagmadnn_1_1op_1_1_matmul_op.html#a9afbaad88fa46e4ae239f223fdf563ca" title="magmadnn::op::MatmulOp\l::_eval" alt="" coords="227,5,403,47"/>
+<area shape="rect" id="node4" href="$classmagmadnn_1_1op_1_1_relu_op.html#a5048e5a39ecdab42622f4c9db14a0f02" title="magmadnn::op::ReluOp\l::_eval" alt="" coords="235,71,395,112"/>
+<area shape="rect" id="node6" href="$classmagmadnn_1_1op_1_1_sigmoid_op.html#a90036d4684540f254c16ba48a9829530" title="magmadnn::op::SigmoidOp\l::_eval" alt="" coords="225,136,405,177"/>
+<area shape="rect" id="node8" href="$classmagmadnn_1_1op_1_1_sum_op.html#a4b1d059e9f88a8228777def2e12fea58" title="magmadnn::op::SumOp\l::_eval" alt="" coords="235,201,395,243"/>
+<area shape="rect" id="node3" href="$classmagmadnn_1_1op_1_1_matmul_op.html#a33b08a6b34c15c78aabff0afcba8fbed" title="magmadnn::op::MatmulOp\l::to_string" alt="" coords="455,5,631,47"/>
+<area shape="rect" id="node5" href="$classmagmadnn_1_1op_1_1_relu_op.html#a4b7eb5c3c98b8072774e5d7478c48bbf" title="magmadnn::op::ReluOp\l::to_string" alt="" coords="463,71,623,112"/>
+<area shape="rect" id="node7" href="$classmagmadnn_1_1op_1_1_sigmoid_op.html#aa446f127ee6f3d9819c23fe5cede2068" title="magmadnn::op::SigmoidOp\l::to_string" alt="" coords="453,136,633,177"/>
+</map>

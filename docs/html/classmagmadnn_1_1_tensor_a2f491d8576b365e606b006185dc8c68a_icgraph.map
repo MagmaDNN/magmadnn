@@ -1,0 +1,8 @@
+<map id="magmadnn::Tensor::get_shape" name="magmadnn::Tensor::get_shape">
+<area shape="rect" id="node2" href="$geadd__internal_8cpp.html#a83f1a1489f2ecc138a1e28735320931a" title="magmadnn::internal\l::geadd_check" alt="" coords="247,29,383,71"/>
+<area shape="rect" id="node3" href="$gemm__internal_8cpp.html#ad38a7779361172aff29e753612383b1c" title="magmadnn::internal\l::gemm_check" alt="" coords="247,119,383,160"/>
+<area shape="rect" id="node4" href="$classmagmadnn_1_1op_1_1_product_op.html#abbb9e163da7fbd70dd6302ee99214eae" title="magmadnn::op::ProductOp\l::_grad" alt="" coords="225,184,404,225"/>
+<area shape="rect" id="node5" href="$classmagmadnn_1_1op_1_1_transpose_op.html#a7ee2749892e77ef7e298bff89f662b11" title="magmadnn::op::TransposeOp\l::_grad" alt="" coords="217,249,412,291"/>
+<area shape="rect" id="node7" href="$classmagmadnn_1_1_tensor.html#a790015352e26891ef4f97d6e2ee313ce" title="magmadnn::Tensor::copy_from" alt="" coords="213,315,416,342"/>
+<area shape="rect" id="node6" href="$classmagmadnn_1_1op_1_1_transpose_op.html#a7a045fa8cbfd1c218f000fd19e1c998d" title="magmadnn::op::TransposeOp\l::to_string" alt="" coords="464,249,659,291"/>
+</map>

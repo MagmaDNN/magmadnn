@@ -13,11 +13,11 @@ auto expr = op::add(op::pow(x,2), c);
 
 /* create our optimizer */
 double learning_rate = 0.05;
-optimizer::GradientDescent<double> optim (expr, learning_rate);
+optimizer::GradientDescent<double> optim (learning_rate);
 
 unsigned int n_iter = 100;
 for (unsigned int i = 0; i < n_iter; i++) {
-    optim.minimize({x});
+    optim.minimize(expr, {x});
 }
 ```
 

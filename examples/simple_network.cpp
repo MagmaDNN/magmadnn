@@ -54,6 +54,7 @@ int main(int argc, char **argv) {
     model::nn_params_t params;
     params.batch_size = 32;    /* batch size: the number of samples to process in each mini-batch */
     params.n_epochs = 5;    /* # of epochs: the number of passes over the entire training set */
+    params.learning_rate = 0.05;
 
     /* INITIALIZING THE NETWORK */
     /* create a variable (of type float) with size  (batch_size x n_features) 

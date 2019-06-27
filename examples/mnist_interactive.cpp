@@ -59,7 +59,8 @@ int main(int argc, char **argv) {
 
     model::nn_params_t params;
     params.batch_size = 32;    
-    params.n_epochs = 5;
+    params.n_epochs = 10;
+    params.learning_rate = 0.05;
 
     auto x_batch = op::var<float>("x_batch", {params.batch_size, n_features}, {NONE,{}}, (use_gpu) ? DEVICE : HOST);
 

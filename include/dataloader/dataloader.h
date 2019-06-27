@@ -28,7 +28,10 @@ public:
     }
     virtual void next(Tensor<T> *x_batch, Tensor<T> *y_batch) = 0;
     virtual unsigned int get_batch_size() const {return batch_size;}
-    virtual void set_batch_size(unsigned int size) {batch_size = size;}
+    virtual void set_batch_size(unsigned int size) {
+        batch_size = size;
+        num_batches = unsigned(x->get_shape(0) / batch_size);
+    }
     virtual unsigned int get_num_batches() const {return num_batches;}
 
 protected:

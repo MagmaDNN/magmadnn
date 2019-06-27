@@ -114,13 +114,13 @@ void test_optimize(memory_t mem, unsigned int size) {
     op::Operation<double> *c = op::var<double> ("c", {size}, {CONSTANT, {c_val}}, mem);
     op::Operation<double> *expr = op::add(op::pow(x,2), c);
 
-    optimizer::GradientDescent<double> optim (expr, 0.2f);
+    optimizer::GradientDescent<double> optim (0.2f);
 
     
     for (unsigned int i = 0; i < n_iter; i++) {
         expr->eval(true);
 
-        optim.minimize({x});
+        optim.minimize(expr, {x});
     }
 
     Tensor<double> *x_tensor = x->get_output_tensor();

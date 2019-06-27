@@ -20,11 +20,12 @@ namespace optimizer {
 template <typename T>
 class GradientDescent : public Optimizer<T> {
 public:
-    GradientDescent(op::Operation<T> *_obj_func, T learning_rate);
+    GradientDescent(T learning_rate);
 
-    virtual void minimize(const std::vector<op::Operation<T> *>& wrt);
+    virtual void minimize(op::Operation<T> *obj_func, const std::vector<op::Operation<T> *>& wrt);
 
     void set_learning_rate(T learning_rate) { this->learning_rate = learning_rate; }
+    T get_learning_rate() { return this->learning_rate; }
 
 protected:
     virtual void update(op::Operation<T> *var, Tensor<T> *grad);

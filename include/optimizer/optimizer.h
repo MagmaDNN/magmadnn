@@ -18,10 +18,12 @@ namespace optimizer {
 template <typename T>
 class Optimizer {
 public:
-    Optimizer(op::Operation<T> *_obj_func) : _obj_func(_obj_func) {}
+    Optimizer() {}
+
+    virtual ~Optimizer() {}
 
 
-    virtual void minimize(const std::vector<op::Operation<T> *>& wrt) = 0;
+    virtual void minimize(op::Operation<T> *obj_func, const std::vector<op::Operation<T> *>& wrt) = 0;
 
     virtual std::string get_name() { return _name; }
 

@@ -12,14 +12,16 @@ namespace magmadnn {
 namespace optimizer {
 
 template <typename T>
-GradientDescent<T>::GradientDescent(op::Operation<T> *_obj_func, T learning_rate) : Optimizer<T>::Optimizer(_obj_func), learning_rate(learning_rate) {
+GradientDescent<T>::GradientDescent(T learning_rate) : Optimizer<T>::Optimizer(), learning_rate(learning_rate) {
     /* set the name of this Optimizer */
     this->_name = "GradientDescentOptimizer";
 }
 
 template <typename T>
-void GradientDescent<T>::minimize(const std::vector<op::Operation<T> *>& wrt) {
+void GradientDescent<T>::minimize(op::Operation<T> *obj_func, const std::vector<op::Operation<T> *>& wrt) {
     typename std::vector<op::Operation<T> *>::const_iterator vit;
+
+    this->_obj_func = obj_func;
 
     /* evaluate if need be */
     this->_obj_func->eval(false);

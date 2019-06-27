@@ -14,6 +14,7 @@ Neural Network models take four parameters on creation: a vector of layers, loss
 model::nn_params_t params;
 params.batch_size = 100;    /* batch size: the number of samples to process in each mini-batch */
 params.n_epochs = 5;    /* # of epochs: the number of passes over the entire training set */
+params.learning_rate = 0.05;    /* learning rate of model */
 
 auto input = layer::input(x_batch);
 auto fc = layer::input(input->out(), 10);

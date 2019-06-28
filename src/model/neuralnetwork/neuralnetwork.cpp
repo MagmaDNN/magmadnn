@@ -139,70 +139,59 @@ magmadnn_error_t NeuralNetwork<T>::fit(Tensor<T> *x, Tensor<T> *y, metric_t& met
 
     time_t start_time, end_time;
     magmadnn_error_t err                    = (magmadnn_error_t) 0;
-    double loss                             = 0.0;
-    double avg_loss                         = 0.0;
+    double cumulative_loss                  = 0.0;
     unsigned int n_samples                  = y->get_shape(0);
-    unsigned int sample_size                = x->get_size() / x->get_shape(0); /* the size of each sample */
-    unsigned int ground_truth_sample_size   = y->get_size() / y->get_shape(0);
-    unsigned int n_iter                     = this->model_params.n_epochs * (n_samples / this->model_params.batch_size);
-    unsigned int n_iterations_per_epoch     = n_samples / this->model_params.batch_size;
-    unsigned int cur_epoch                  = 0;
-    unsigned int cur_sample_idx             = 0;
-
+    unsigned int n_correct                  = 0;
 
     /* main training routine */
-    int n_correct = 0;
     time(&start_time);
-    for (unsigned int i = 0; i < n_iter; i++) {
-        /* load next batch into x*/
-        if (cur_sample_idx + this->model_params.batch_size > n_samples) {
-            cur_sample_idx = 0;
-        }
-        err = this->network_input_tensor_ptr->copy_from(*x, cur_sample_idx*sample_size, this->model_params.batch_size * sample_size);
-        this->ground_truth_tensor_ptr->copy_from(*y, cur_sample_idx * ground_truth_sample_size, this->model_params.batch_size * ground_truth_sample_size);
+    dataloader::LinearLoader<T> *dataloader = new dataloader::LinearLoader<T>(x, y, this->model_params.batch_size);
+    for (unsigned int i = 0; i < this->model_params.n_epochs; i ++) {
+        for (unsigned int j = 0; j < dataloader->get_num_batches(); j ++) {
+            /* load next batch into x and y */
+            dataloader->next(this->network_input_tensor_ptr, this->ground_truth_tensor_ptr);
 
-        cur_sample_idx += this->model_params.batch_size;
+            /* forward pass */
+            this->_obj->eval(true);     /* forces evaluation */
 
-        /* forward pass */
-        this->_obj->eval(true);     /* forces evaluation */
+            /* minimize using gradients */
+            this->optim->minimize(this->_obj, this->_vars);
 
-        /* minimize using gradients */
-        this->optim->minimize(this->_obj, this->_vars);
+            /* get the argmax of the networks output (on CPU) */
+            host_network_output_tensor_ptr->copy_from(*this->network_output_tensor_ptr);
+            math::argmax(host_network_output_tensor_ptr, 0, predicted);
 
-        /* get the argmax of the networks output (on CPU) */
-        host_network_output_tensor_ptr->copy_from(*this->network_output_tensor_ptr);
-        math::argmax(host_network_output_tensor_ptr, 0, predicted);
+            /* get the argmax of the ground truth (on CPU) */
+            host_ground_truth_tensor_ptr->copy_from(*this->ground_truth_tensor_ptr);
+            math::argmax(host_ground_truth_tensor_ptr, 0, actual);
 
-        /* get the argmax of the ground truth (on CPU) */
-        host_ground_truth_tensor_ptr->copy_from(*this->ground_truth_tensor_ptr);
-        math::argmax(host_ground_truth_tensor_ptr, 0, actual);
-
-        for (unsigned int j = 0; j < this->model_params.batch_size; j++) {
-            if (std::fabs(predicted->get(j) - actual->get(j)) <= 1E-8) {
-                n_correct++;
+            /* update the accuracy and loss */
+            for (unsigned int j = 0; j < this->model_params.batch_size; j++) {
+                if (std::fabs(predicted->get(j) - actual->get(j)) <= 1E-8) {
+                    n_correct++;
+                }
             }
+            this->_obj_tensor_ptr->get_memory_manager()->sync();
+            cumulative_loss += this->_obj_tensor_ptr->get(0);
         }
 
-        /* get the loss from the loss func (_obj) */
-        this->_obj_tensor_ptr->get_memory_manager()->sync();
-        loss = this->_obj_tensor_ptr->get(0);
-        avg_loss = ((i) * avg_loss + loss) / (i+1); /* running avg */
-
-        if (verbose && (i+1) % n_iterations_per_epoch == 0) {
-            cur_epoch++;
+        if (verbose) {
             printf("Epoch (%u/%u): accuracy=%.4g loss=%.4g time=%.4g\n",
-                cur_epoch,
-                this->model_params.n_epochs,
-                n_correct/((double)i*this->model_params.batch_size),
-                avg_loss, 
-                (double)time(NULL)-start_time);
+                    i,
+                    this->model_params.n_epochs,
+                    n_correct/((double)(i+1)*n_samples),
+                    cumulative_loss/((double)(i+1)*dataloader->get_num_batches()), 
+                    (double)time(NULL)-start_time);
         }
+
+        /* resets dataloader for next epoch */
+        dataloader->reset();
     }
     time(&end_time);
 
     /* update metrics */
-    metric_out.accuracy = ((double)n_correct) / ((double)this->model_params.batch_size * n_iter);
-    metric_out.loss = avg_loss;
+    metric_out.accuracy = ((double)n_correct) / ((double)this->model_params.n_epochs * n_samples);
+    metric_out.loss = ((double)cumulative_loss) / ((double)this->model_params.n_epochs * dataloader->get_num_batches());
     metric_out.training_time = (double) (end_time - start_time);
 
     if (verbose) {
@@ -217,6 +206,7 @@ magmadnn_error_t NeuralNetwork<T>::fit(Tensor<T> *x, Tensor<T> *y, metric_t& met
     delete actual;
     delete host_network_output_tensor_ptr;
     delete host_ground_truth_tensor_ptr;
+    delete dataloader;
 
     return err;
 }

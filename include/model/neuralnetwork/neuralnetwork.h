@@ -15,6 +15,7 @@
 #include "layer/layers.h"
 #include "optimizer/optimizers.h"
 #include "math/argmax.h"
+#include "dataloader/dataloaders.h"
 
 namespace magmadnn {
 namespace model {

@@ -19,6 +19,8 @@ public:
     
     virtual void next(Tensor<T> *x_batch, Tensor<T> *y_batch);
 
+    virtual void reset();
+    
 private:
     unsigned int curr_index;
 };

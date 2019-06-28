@@ -26,6 +26,8 @@ public:
         }
     }
     virtual void next(Tensor<T> *x_batch, Tensor<T> *y_batch) = 0;
+    virtual void reset() = 0;
+
     virtual unsigned int get_batch_size() const {return batch_size;}
     virtual void set_batch_size(unsigned int size) {
         batch_size = size;

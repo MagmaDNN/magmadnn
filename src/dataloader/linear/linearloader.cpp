@@ -26,6 +26,11 @@ void LinearLoader<T>::next(Tensor<T> *x_batch, Tensor<T> *y_batch) {
     curr_index ++;
 }
 
+template <typename T>
+void LinearLoader<T>::reset() {
+    curr_index = 0;
+}
+
 template class LinearLoader<int>;
 template class LinearLoader<float>;
 template class LinearLoader<double>;

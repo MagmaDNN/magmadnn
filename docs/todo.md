@@ -22,11 +22,12 @@ The TODO section for this project is broken into course and fine grained tasks.
 - [x] Parallel training (Multi-GPU)
 - [ ] Tests for parallel training
 - [x] Examples in Examples/ folder
-- [ ] Tutorial / Presentation Slides
+- [x] Tutorial / Presentation Slides
 - [x] Automatic or numerical gradient computations
 - [x] Test gradient computations
 - [x] I/O methods for Tensors
 - [ ] Tests for tensor I/O
+- [x] Batch Loaders
 - [ ] Preprocessing methods (PCA, LDA, encoding)
 - [ ] Tests for preprocessing methods
 - [ ] Implement RNN
@@ -34,16 +35,19 @@ The TODO section for this project is broken into course and fine grained tasks.
 - [ ] Compute graph optimizers/minimizers
 - [ ] Hyperparameter Optimization tools
 - [ ] Tests for hyperparameter optimization tools
-- [ ] Package/Install configuration
+- [ ] Package/Install configuration (deb packages, etc...)
 - [ ] Tune compilation and runtime parameters to hardware
 - [ ] Test on different hardwares (intel, amd, nvidia)
 - [ ] OpenCL support (possibly? perhaps with different BLAS)
+- [ ] AMD support (work with Frontier)
 
 ### Fine Task List:
 -----------------------------------
-- [ ] Ensure CPU and GPU training results are the same.
+- [x] Ensure CPU and GPU training results are the same.
 - [ ] Revise memory system with compute graph and tensors. Check with gdb. Possibly replace operation references with smart pointers.
 - [ ] remove unused operation _internal files.
-- [ ] check and fix speed of get/set with vector access
+- [x] check and fix speed of get/set with vector access
 - [ ] tensor axis iterators
 - [ ] CPU only convolution
+- [ ] Fast ReduceSum
+- [ ] Scalar Network output bug (CuDNN reduce sum issue)

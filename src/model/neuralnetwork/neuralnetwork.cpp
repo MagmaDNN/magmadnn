@@ -145,11 +145,11 @@ magmadnn_error_t NeuralNetwork<T>::fit(Tensor<T> *x, Tensor<T> *y, metric_t& met
 
     /* main training routine */
     time(&start_time);
-    dataloader::LinearLoader<T> *dataloader = new dataloader::LinearLoader<T>(x, y, this->model_params.batch_size);
+    dataloader::LinearLoader<T> dataloader(x, y, this->model_params.batch_size);
     for (unsigned int i = 0; i < this->model_params.n_epochs; i ++) {
-        for (unsigned int j = 0; j < dataloader->get_num_batches(); j ++) {
+        for (unsigned int j = 0; j < dataloader.get_num_batches(); j ++) {
             /* load next batch into x and y */
-            dataloader->next(this->network_input_tensor_ptr, this->ground_truth_tensor_ptr);
+            dataloader.next(this->network_input_tensor_ptr, this->ground_truth_tensor_ptr);
 
             /* forward pass */
             this->_obj->eval(true);     /* forces evaluation */
@@ -180,18 +180,18 @@ magmadnn_error_t NeuralNetwork<T>::fit(Tensor<T> *x, Tensor<T> *y, metric_t& met
                     i,
                     this->model_params.n_epochs,
                     n_correct/((double)(i+1)*n_samples),
-                    cumulative_loss/((double)(i+1)*dataloader->get_num_batches()), 
+                    cumulative_loss/((double)(i+1)*dataloader.get_num_batches()), 
                     (double)time(NULL)-start_time);
         }
 
         /* resets dataloader for next epoch */
-        dataloader->reset();
+        dataloader.reset();
     }
     time(&end_time);
 
     /* update metrics */
     metric_out.accuracy = ((double)n_correct) / ((double)this->model_params.n_epochs * n_samples);
-    metric_out.loss = ((double)cumulative_loss) / ((double)this->model_params.n_epochs * dataloader->get_num_batches());
+    metric_out.loss = ((double)cumulative_loss) / ((double)this->model_params.n_epochs * dataloader.get_num_batches());
     metric_out.training_time = (double) (end_time - start_time);
 
     if (verbose) {
@@ -206,7 +206,6 @@ magmadnn_error_t NeuralNetwork<T>::fit(Tensor<T> *x, Tensor<T> *y, metric_t& met
     delete actual;
     delete host_network_output_tensor_ptr;
     delete host_ground_truth_tensor_ptr;
-    delete dataloader;
 
     return err;
 }

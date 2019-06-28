@@ -328,7 +328,13 @@ void print_image(uint32_t image_idx, Tensor<float> *images, Tensor<float> *label
 
     for (unsigned int r = 0; r < n_rows; r++) {
         for (unsigned int c = 0; c < n_cols; c++) {
-            printf("%3u ", (uint8_t) ((images->get(image_idx*n_rows*n_cols + r*n_cols + c)+1.0f)*128.0f) );
+
+            float val = images->get(image_idx*n_rows*n_cols + r*n_cols + c);
+
+            /* get color */
+            int code_id = static_cast<int>(static_cast<float>(255-232)*((-val + 1.0f)/2.0f) + 232);
+
+            printf("\x1B[48;5;255m%s\x1B[38;5;%dm%3u \x1B[0m", (code_id != 255) ? "\x1B[1m":"", code_id, (uint8_t) ((val+1.0f)*128.0f) );
         }
         printf("\n");
     }

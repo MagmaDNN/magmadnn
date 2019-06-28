@@ -17,7 +17,7 @@ var searchData=
   ['softmax_2eh',['softmax.h',['../softmax_8h.html',1,'']]],
   ['softmaxop',['SoftmaxOp',['../classmagmadnn_1_1op_1_1_softmax_op.html',1,'magmadnn::op']]],
   ['squeeze',['squeeze',['../classmagmadnn_1_1_tensor.html#ac4642f779a98673edf2f5213dc145324',1,'magmadnn::Tensor']]],
-  ['sum_5ffull',['sum_full',['../sum__internal_8cpp.html#a97378d2e781154b2c11db036ce9edcb8',1,'magmadnn::internal']]],
+  ['sum_5ffull',['sum_full',['../sum__internal_8cpp.html#af78d829272b9db1038ddcc6fcccf6a8f',1,'magmadnn::internal']]],
   ['sum_5finternal_2ecpp',['sum_internal.cpp',['../sum__internal_8cpp.html',1,'']]],
   ['sum_5finternal_2eh',['sum_internal.h',['../sum__internal_8h.html',1,'']]],
   ['sumop',['SumOp',['../classmagmadnn_1_1op_1_1_sum_op.html',1,'magmadnn::op']]],

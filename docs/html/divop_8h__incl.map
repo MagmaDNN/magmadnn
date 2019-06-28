@@ -1,10 +1,24 @@
 <map id="include/compute/div/divop.h" name="include/compute/div/divop.h">
-<area shape="rect" id="node2" href="$operation_8h.html" title="compute/operation.h" alt="" coords="83,95,223,121"/>
-<area shape="rect" id="node5" href="$tensor_8h.html" title="tensor/tensor.h" alt="" coords="207,169,316,196"/>
-<area shape="rect" id="node22" href="$div__internal_8h_source.html" title="compute/div/div_internal.h" alt="" coords="299,95,474,121"/>
-<area shape="rect" id="node7" href="$types_8h.html" title="types.h" alt="" coords="43,468,109,495"/>
-<area shape="rect" id="node8" href="$memorymanager_8h.html" title="memory/memorymanager.h" alt="" coords="224,393,405,420"/>
-<area shape="rect" id="node13" href="$tensor__internal_8h.html" title="tensor_internal.h" alt="" coords="299,244,418,271"/>
-<area shape="rect" id="node16" href="$utilities__internal_8h.html" title="utilities_internal.h" alt="" coords="697,393,820,420"/>
-<area shape="rect" id="node14" href="$fill__internal_8h.html" title="fill_internal.h" alt="" coords="515,319,610,345"/>
+<area shape="rect" id="node1" title=" " alt="" coords="210,6,349,47"/>
+<area shape="rect" id="node2" href="$operation_8h.html" title=" " alt="" coords="99,96,243,123"/>
+<area shape="rect" id="node5" href="$tensor_8h.html" title=" " alt="" coords="225,171,335,197"/>
+<area shape="rect" id="node22" href="$div__internal_8h_source.html" title=" " alt="" coords="318,96,495,123"/>
+<area shape="rect" id="node3" title=" " alt="" coords="70,171,124,197"/>
+<area shape="rect" id="node4" title=" " alt="" coords="149,171,197,197"/>
+<area shape="rect" id="node6" title=" " alt="" coords="117,544,176,571"/>
+<area shape="rect" id="node7" href="$types_8h.html" title=" " alt="" coords="43,469,108,496"/>
+<area shape="rect" id="node8" href="$memorymanager_8h.html" title=" " alt="" coords="225,395,409,421"/>
+<area shape="rect" id="node13" href="$tensor__internal_8h.html" title=" " alt="" coords="318,245,439,272"/>
+<area shape="rect" id="node16" href="$utilities__internal_8h.html" title=" " alt="" coords="699,395,824,421"/>
+<area shape="rect" id="node9" title=" " alt="" coords="184,469,261,496"/>
+<area shape="rect" id="node10" title=" " alt="" coords="285,469,349,496"/>
+<area shape="rect" id="node11" title=" " alt="" coords="373,469,435,496"/>
+<area shape="rect" id="node12" title=" " alt="" coords="459,469,528,496"/>
+<area shape="rect" id="node14" href="$fill__internal_8h.html" title=" " alt="" coords="517,320,613,347"/>
+<area shape="rect" id="node15" title=" " alt="" coords="603,395,669,421"/>
+<area shape="rect" id="node17" title=" " alt="" coords="654,469,711,496"/>
+<area shape="rect" id="node18" title=" " alt="" coords="735,469,800,496"/>
+<area shape="rect" id="node19" title=" " alt="" coords="825,469,884,496"/>
+<area shape="rect" id="node20" title=" " alt="" coords="909,469,949,496"/>
+<area shape="rect" id="node21" title=" " alt="" coords="973,469,1032,496"/>
 </map>

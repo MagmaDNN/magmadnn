@@ -1,8 +1,9 @@
 <map id="include/layer/input/inputlayer.h" name="include/layer/input/inputlayer.h">
-<area shape="rect" id="node2" href="$inputlayer_8cpp.html" title="src/layer/input/inputlayer.cpp" alt="" coords="5,95,195,121"/>
-<area shape="rect" id="node3" href="$layers_8h.html" title="include/layer/layers.h" alt="" coords="219,95,365,121"/>
-<area shape="rect" id="node4" href="$magmadnn_8h.html" title="include/magmadnn.h" alt="" coords="307,348,450,375"/>
-<area shape="rect" id="node5" href="$neuralnetwork_8h.html" title="include/model/neuralnetwork\l/neuralnetwork.h" alt="" coords="264,169,451,211"/>
-<area shape="rect" id="node6" href="$neuralnetwork_8cpp.html" title="src/model/neuralnetwork\l/neuralnetwork.cpp" alt="" coords="265,259,429,300"/>
-<area shape="rect" id="node7" href="$models_8h.html" title="include/model/models.h" alt="" coords="453,266,611,293"/>
+<area shape="rect" id="node1" title=" " alt="" coords="133,6,261,47"/>
+<area shape="rect" id="node2" href="$inputlayer_8cpp.html" title=" " alt="" coords="5,96,197,123"/>
+<area shape="rect" id="node3" href="$layers_8h.html" title=" " alt="" coords="221,96,368,123"/>
+<area shape="rect" id="node4" href="$magmadnn_8h.html" title=" " alt="" coords="310,352,455,379"/>
+<area shape="rect" id="node5" href="$neuralnetwork_8h.html" title=" " alt="" coords="265,171,457,213"/>
+<area shape="rect" id="node6" href="$neuralnetwork_8cpp.html" title=" " alt="" coords="266,262,432,303"/>
+<area shape="rect" id="node7" href="$models_8h.html" title=" " alt="" coords="457,269,620,296"/>
 </map>

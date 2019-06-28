@@ -1,7 +1,7 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classmagmadnn_1_1layer_1_1_layer.html" title="magmadnn::layer::Layer\&lt; T \&gt;" alt="" coords="5,107,200,134"/>
-<area shape="rect" id="node2" href="$classmagmadnn_1_1layer_1_1_activation_layer.html" title="magmadnn::layer::Activation\lLayer\&lt; T \&gt;" alt="" coords="271,5,459,47"/>
-<area shape="rect" id="node3" href="$classmagmadnn_1_1layer_1_1_fully_connected_layer.html" title="magmadnn::layer::FullyConnected\lLayer\&lt; T \&gt;" alt="" coords="254,71,475,112"/>
-<area shape="rect" id="node4" href="$classmagmadnn_1_1layer_1_1_input_layer.html" title="magmadnn::layer::InputLayer\&lt; T \&gt;" alt="" coords="253,137,476,163"/>
-<area shape="rect" id="node5" href="$classmagmadnn_1_1layer_1_1_output_layer.html" title="magmadnn::layer::OutputLayer\&lt; T \&gt;" alt="" coords="248,187,481,214"/>
+<area shape="rect" id="node1" href="$classmagmadnn_1_1layer_1_1_layer.html" title=" " alt="" coords="5,107,203,133"/>
+<area shape="rect" id="node2" href="$classmagmadnn_1_1layer_1_1_activation_layer.html" title=" " alt="" coords="274,5,465,46"/>
+<area shape="rect" id="node3" href="$classmagmadnn_1_1layer_1_1_fully_connected_layer.html" title=" " alt="" coords="257,70,482,111"/>
+<area shape="rect" id="node4" href="$classmagmadnn_1_1layer_1_1_input_layer.html" title=" " alt="" coords="256,136,483,163"/>
+<area shape="rect" id="node5" href="$classmagmadnn_1_1layer_1_1_output_layer.html" title=" " alt="" coords="251,187,488,213"/>
 </map>

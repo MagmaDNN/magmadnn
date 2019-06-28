@@ -1,21 +1,22 @@
 <map id="magmadnn::op::Operation&lt; T &gt;" name="magmadnn::op::Operation&lt; T &gt;">
-<area shape="rect" id="node2" href="$classmagmadnn_1_1op_1_1_add_op.html" title="magmadnn::op::AddOp\&lt; T \&gt;" alt="" coords="282,5,470,32"/>
-<area shape="rect" id="node3" href="$classmagmadnn_1_1op_1_1_conv2_d_forward_op.html" title="magmadnn::op::Conv2DForward\lOp\&lt; T \&gt;" alt="" coords="271,57,481,98"/>
-<area shape="rect" id="node4" href="$classmagmadnn_1_1op_1_1_cross_entropy_op.html" title="magmadnn::op::CrossEntropy\lOp\&lt; T \&gt;" alt="" coords="278,122,474,163"/>
-<area shape="rect" id="node5" href="$classmagmadnn_1_1op_1_1_div_op.html" title="magmadnn::op::DivOp\&lt; T \&gt;" alt="" coords="283,188,469,215"/>
-<area shape="rect" id="node6" href="$classmagmadnn_1_1op_1_1_linear_forward_op.html" title="magmadnn::op::LinearForward\lOp\&lt; T \&gt;" alt="" coords="277,239,475,281"/>
-<area shape="rect" id="node7" href="$classmagmadnn_1_1op_1_1_log_op.html" title="magmadnn::op::LogOp\&lt; T \&gt;" alt="" coords="283,305,469,332"/>
-<area shape="rect" id="node8" href="$classmagmadnn_1_1op_1_1_matmul_op.html" title="magmadnn::op::MatmulOp\&lt; T \&gt;" alt="" coords="272,356,480,383"/>
-<area shape="rect" id="node9" href="$classmagmadnn_1_1op_1_1_negative_op.html" title="magmadnn::op::NegativeOp\&lt; T \&gt;" alt="" coords="267,407,485,433"/>
-<area shape="rect" id="node10" href="$classmagmadnn_1_1op_1_1_pow_op.html" title="magmadnn::op::PowOp\&lt; T \&gt;" alt="" coords="281,457,471,484"/>
-<area shape="rect" id="node11" href="$classmagmadnn_1_1op_1_1_product_op.html" title="magmadnn::op::ProductOp\&lt; T \&gt;" alt="" coords="271,508,481,535"/>
-<area shape="rect" id="node12" href="$classmagmadnn_1_1op_1_1_reduce_sum_op.html" title="magmadnn::op::ReduceSumOp\&lt; T \&gt;" alt="" coords="257,559,495,585"/>
-<area shape="rect" id="node13" href="$classmagmadnn_1_1op_1_1_relu_op.html" title="magmadnn::op::ReluOp\&lt; T \&gt;" alt="" coords="280,609,472,636"/>
-<area shape="rect" id="node14" href="$classmagmadnn_1_1op_1_1_scalar_product_op.html" title="magmadnn::op::ScalarProduct\lOp\&lt; T \&gt;" alt="" coords="277,661,475,702"/>
-<area shape="rect" id="node15" href="$classmagmadnn_1_1op_1_1_sigmoid_op.html" title="magmadnn::op::SigmoidOp\&lt; T \&gt;" alt="" coords="270,727,482,753"/>
-<area shape="rect" id="node16" href="$classmagmadnn_1_1op_1_1_softmax_op.html" title="magmadnn::op::SoftmaxOp\&lt; T \&gt;" alt="" coords="269,777,483,804"/>
-<area shape="rect" id="node17" href="$classmagmadnn_1_1op_1_1_sum_op.html" title="magmadnn::op::SumOp\&lt; T \&gt;" alt="" coords="280,828,472,855"/>
-<area shape="rect" id="node18" href="$classmagmadnn_1_1op_1_1_tanh_op.html" title="magmadnn::op::TanhOp\&lt; T \&gt;" alt="" coords="279,879,473,905"/>
-<area shape="rect" id="node19" href="$classmagmadnn_1_1op_1_1_transpose_op.html" title="magmadnn::op::TransposeOp\&lt; T \&gt;" alt="" coords="263,929,489,956"/>
-<area shape="rect" id="node20" href="$classmagmadnn_1_1op_1_1_variable.html" title="magmadnn::op::Variable\&lt; T \&gt;" alt="" coords="279,980,473,1007"/>
+<area shape="rect" id="node1" title=" " alt="" coords="5,508,213,535"/>
+<area shape="rect" id="node2" href="$classmagmadnn_1_1op_1_1_add_op.html" title=" " alt="" coords="286,5,477,32"/>
+<area shape="rect" id="node3" href="$classmagmadnn_1_1op_1_1_conv2_d_forward_op.html" title=" " alt="" coords="273,57,489,98"/>
+<area shape="rect" id="node4" href="$classmagmadnn_1_1op_1_1_cross_entropy_op.html" title=" " alt="" coords="282,122,481,163"/>
+<area shape="rect" id="node5" href="$classmagmadnn_1_1op_1_1_div_op.html" title=" " alt="" coords="288,188,475,215"/>
+<area shape="rect" id="node6" href="$classmagmadnn_1_1op_1_1_linear_forward_op.html" title=" " alt="" coords="279,239,483,281"/>
+<area shape="rect" id="node7" href="$classmagmadnn_1_1op_1_1_log_op.html" title=" " alt="" coords="287,305,476,332"/>
+<area shape="rect" id="node8" href="$classmagmadnn_1_1op_1_1_matmul_op.html" title=" " alt="" coords="276,356,487,383"/>
+<area shape="rect" id="node9" href="$classmagmadnn_1_1op_1_1_negative_op.html" title=" " alt="" coords="271,407,491,433"/>
+<area shape="rect" id="node10" href="$classmagmadnn_1_1op_1_1_pow_op.html" title=" " alt="" coords="285,457,478,484"/>
+<area shape="rect" id="node11" href="$classmagmadnn_1_1op_1_1_product_op.html" title=" " alt="" coords="275,508,488,535"/>
+<area shape="rect" id="node12" href="$classmagmadnn_1_1op_1_1_reduce_sum_op.html" title=" " alt="" coords="261,559,501,585"/>
+<area shape="rect" id="node13" href="$classmagmadnn_1_1op_1_1_relu_op.html" title=" " alt="" coords="284,609,479,636"/>
+<area shape="rect" id="node14" href="$classmagmadnn_1_1op_1_1_scalar_product_op.html" title=" " alt="" coords="280,661,483,702"/>
+<area shape="rect" id="node15" href="$classmagmadnn_1_1op_1_1_sigmoid_op.html" title=" " alt="" coords="273,727,489,753"/>
+<area shape="rect" id="node16" href="$classmagmadnn_1_1op_1_1_softmax_op.html" title=" " alt="" coords="273,777,489,804"/>
+<area shape="rect" id="node17" href="$classmagmadnn_1_1op_1_1_sum_op.html" title=" " alt="" coords="284,828,479,855"/>
+<area shape="rect" id="node18" href="$classmagmadnn_1_1op_1_1_tanh_op.html" title=" " alt="" coords="283,879,480,905"/>
+<area shape="rect" id="node19" href="$classmagmadnn_1_1op_1_1_transpose_op.html" title=" " alt="" coords="266,929,497,956"/>
+<area shape="rect" id="node20" href="$classmagmadnn_1_1op_1_1_variable.html" title=" " alt="" coords="282,980,481,1007"/>
 </map>

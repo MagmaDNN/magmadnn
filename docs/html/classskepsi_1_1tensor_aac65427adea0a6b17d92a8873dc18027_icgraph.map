@@ -1,0 +1,7 @@
+<map id="skepsi::tensor::get_shape" name="skepsi::tensor::get_shape">
+<area shape="rect" id="node1" title=" " alt="" coords="211,139,341,181"/>
+<area shape="rect" id="node2" href="$classskepsi_1_1op_1_1add__op.html#af4b8b38417d859c2f85c701539ec22e8" title=" " alt="" coords="17,5,151,46"/>
+<area shape="rect" id="node3" href="$geadd__internal_8cpp.html#a440d38989e42bb1b86d21c0039ae2943" title=" " alt="" coords="6,94,162,135"/>
+<area shape="rect" id="node4" href="$gemm__internal_8cpp.html#ac132e546328ad19f32c9fccf7cb9d7b3" title=" " alt="" coords="6,183,162,225"/>
+<area shape="rect" id="node5" href="$classskepsi_1_1op_1_1matmul__op.html#a2eaacde58055702e748f511b777090f4" title=" " alt="" coords="17,249,151,290"/>
+</map>

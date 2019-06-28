@@ -1,6 +1,7 @@
 <map id="include/optimizer/optimizers.h" name="include/optimizer/optimizers.h">
-<area shape="rect" id="node2" href="$magmadnn_8h.html" title="include/magmadnn.h" alt="" coords="118,259,261,285"/>
-<area shape="rect" id="node3" href="$neuralnetwork_8h.html" title="include/model/neuralnetwork\l/neuralnetwork.h" alt="" coords="75,80,261,121"/>
-<area shape="rect" id="node4" href="$neuralnetwork_8cpp.html" title="src/model/neuralnetwork\l/neuralnetwork.cpp" alt="" coords="75,169,239,211"/>
-<area shape="rect" id="node5" href="$models_8h.html" title="include/model/models.h" alt="" coords="263,177,422,203"/>
+<area shape="rect" id="node1" title=" " alt="" coords="5,5,203,32"/>
+<area shape="rect" id="node2" href="$magmadnn_8h.html" title=" " alt="" coords="119,261,264,288"/>
+<area shape="rect" id="node3" href="$neuralnetwork_8h.html" title=" " alt="" coords="75,81,267,122"/>
+<area shape="rect" id="node4" href="$neuralnetwork_8cpp.html" title=" " alt="" coords="75,171,241,213"/>
+<area shape="rect" id="node5" href="$models_8h.html" title=" " alt="" coords="267,179,429,205"/>
 </map>

@@ -1,8 +1,9 @@
 <map id="include/math/argmax.h" name="include/math/argmax.h">
-<area shape="rect" id="node2" href="$argmax_8cpp.html" title="src/math/argmax.cpp" alt="" coords="5,87,151,114"/>
-<area shape="rect" id="node3" href="$tensor__math_8h.html" title="include/math/tensor\l_math.h" alt="" coords="99,169,235,211"/>
-<area shape="rect" id="node5" href="$neuralnetwork_8h.html" title="include/model/neuralnetwork\l/neuralnetwork.h" alt="" coords="249,80,435,121"/>
-<area shape="rect" id="node4" href="$magmadnn_8h.html" title="include/magmadnn.h" alt="" coords="276,259,419,285"/>
-<area shape="rect" id="node6" href="$neuralnetwork_8cpp.html" title="src/model/neuralnetwork\l/neuralnetwork.cpp" alt="" coords="260,169,424,211"/>
-<area shape="rect" id="node7" href="$models_8h.html" title="include/model/models.h" alt="" coords="448,177,607,203"/>
+<area shape="rect" id="node1" title=" " alt="" coords="111,5,268,32"/>
+<area shape="rect" id="node2" href="$argmax_8cpp.html" title=" " alt="" coords="5,88,152,115"/>
+<area shape="rect" id="node3" href="$tensor__math_8h.html" title=" " alt="" coords="99,171,237,213"/>
+<area shape="rect" id="node5" href="$neuralnetwork_8h.html" title=" " alt="" coords="249,81,441,122"/>
+<area shape="rect" id="node4" href="$magmadnn_8h.html" title=" " alt="" coords="278,261,423,288"/>
+<area shape="rect" id="node6" href="$neuralnetwork_8cpp.html" title=" " alt="" coords="262,171,428,213"/>
+<area shape="rect" id="node7" href="$models_8h.html" title=" " alt="" coords="453,179,616,205"/>
 </map>

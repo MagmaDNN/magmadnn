@@ -1,0 +1,7 @@
+<map id="skepsi::tensor::get_memory_manager" name="skepsi::tensor::get_memory_manager">
+<area shape="rect" id="node1" title=" " alt="" coords="411,34,549,75"/>
+<area shape="rect" id="node2" href="$classskepsi_1_1op_1_1tanh__op.html#ac22efbcddeb571b6fa5856fe504aa3e7" title=" " alt="" coords="207,5,345,46"/>
+<area shape="rect" id="node3" href="$classskepsi_1_1tensor.html#ad49b534ffce65872659da8ebefd9cc1c" title=" " alt="" coords="189,71,363,97"/>
+<area shape="rect" id="node4" href="$classskepsi_1_1op_1_1matmul__op.html#a2eaacde58055702e748f511b777090f4" title=" " alt="" coords="7,30,140,71"/>
+<area shape="rect" id="node5" href="$classskepsi_1_1op_1_1sigmoid__op.html#af011409d011d1294ef64ce20acf98d3c" title=" " alt="" coords="5,95,141,137"/>
+</map>

@@ -1,6 +1,6 @@
 var classmagmadnn_1_1op_1_1_sum_op =
 [
-    [ "SumOp", "classmagmadnn_1_1op_1_1_sum_op.html#a065956a17ce14a48192d9446de519d82", null ],
+    [ "SumOp", "classmagmadnn_1_1op_1_1_sum_op.html#a915b423b829ef70638be80cf5df8459f", null ],
     [ "_eval", "classmagmadnn_1_1op_1_1_sum_op.html#a4b1d059e9f88a8228777def2e12fea58", null ],
     [ "_grad", "classmagmadnn_1_1op_1_1_sum_op.html#aa52566788096d19b856d0eb2f28bad58", null ],
     [ "to_string", "classmagmadnn_1_1op_1_1_sum_op.html#a7bcc74192db7d10f7df0d5eb514e0072", null ],

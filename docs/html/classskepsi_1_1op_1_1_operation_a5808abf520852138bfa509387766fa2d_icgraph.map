@@ -1,0 +1,8 @@
+<map id="skepsi::op::Operation::to_string" name="skepsi::op::Operation::to_string">
+<area shape="rect" id="node1" title=" " alt="" coords="211,135,359,177"/>
+<area shape="rect" id="node2" href="$classskepsi_1_1op_1_1_add_op.html#a64fcd5c3cb41c4e2041e7aac669869dc" title=" " alt="" coords="15,5,153,46"/>
+<area shape="rect" id="node3" href="$classskepsi_1_1op_1_1_matmul_op.html#a35d6a911d06f82bf3823a0e3f89dd084" title=" " alt="" coords="9,70,159,111"/>
+<area shape="rect" id="node4" href="$classskepsi_1_1op_1_1_relu_op.html#a8872a3ecebff3d38d15b5cd152dd9315" title=" " alt="" coords="17,135,151,177"/>
+<area shape="rect" id="node5" href="$classskepsi_1_1op_1_1_sigmoid_op.html#a01b3df3ef22d96b33af35ef7fb0e3591" title=" " alt="" coords="6,201,162,242"/>
+<area shape="rect" id="node6" href="$classskepsi_1_1op_1_1_tanh_op.html#af20b4d72a16d00b2849b0eb62e57d4a0" title=" " alt="" coords="15,266,153,307"/>
+</map>

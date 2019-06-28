@@ -32,7 +32,7 @@ void test_linear(memory_t mem_type, unsigned int size) {
     dataloader::LinearLoader<float> *data = new dataloader::LinearLoader<float>(x, y, batch_size);
 
     Tensor<float> *x_batch = new Tensor<float> ({num_samples / data->get_num_batches() , size}, mem_type);
-    Tensor<float> *y_batch = new Tensor<float> ({num_samples / data->get_num_batches()}, mem_type);
+    Tensor<float> *y_batch = new Tensor<float> ({num_samples / data->get_num_batches(), 1}, mem_type);
 
     for (unsigned int i = 0; i < data->get_num_batches(); i ++) {
         data->next(x_batch, y_batch);

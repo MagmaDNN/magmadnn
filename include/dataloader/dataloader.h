@@ -21,9 +21,8 @@ public:
         assert(num_batches > 0);
         assert(num_batches == unsigned(y->get_shape(0) / batch_size));
         
-        feature_size = 1;
-        for (unsigned int i = 1; i < x->get_shape().size(); i ++) {
-            feature_size *= x->get_shape(i);
+        sample_size_x = x->get_size() / x->get_shape(0);
+        sample_size_y = y->get_size() / y->get_shape(0);
         }
     }
     virtual void next(Tensor<T> *x_batch, Tensor<T> *y_batch) = 0;
@@ -38,7 +37,8 @@ protected:
     Tensor<T> *x;
     Tensor<T> *y;
     unsigned int batch_size;
-    unsigned int feature_size;
+    unsigned int sample_size_x;
+    unsigned int sample_size_y;
     unsigned int num_batches;
 };
 

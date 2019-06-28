@@ -17,11 +17,12 @@ LinearLoader<T>::LinearLoader(Tensor<T> *x, Tensor<T> *y, unsigned int batch_siz
 
 template <typename T>
 void LinearLoader<T>::next(Tensor<T> *x_batch, Tensor<T> *y_batch) {
-    unsigned int batch_mem_space = this->batch_size * this->feature_size;
-    assert((curr_index + 1) * batch_mem_space <= this->x->get_size());
-    assert((curr_index + 1) * this->batch_size <= this->y->get_size());
-    x_batch->copy_from(*(this->x), curr_index * batch_mem_space, batch_mem_space);
-    y_batch->copy_from(*(this->y), curr_index * this->batch_size, this->batch_size);
+    unsigned int batch_mem_space_x = this->batch_size * this->sample_size_x;
+    unsigned int batch_mem_space_y = this->batch_size * this->sample_size_y;
+    assert((curr_index + 1) * batch_mem_space_x <= this->x->get_size());
+    assert((curr_index + 1) * batch_mem_space_y <= this->y->get_size());
+    x_batch->copy_from(*(this->x), curr_index * batch_mem_space_x, batch_mem_space_x);
+    y_batch->copy_from(*(this->y), curr_index * batch_mem_space_y, batch_mem_space_y);
     curr_index ++;
 }
 

@@ -8,7 +8,7 @@
  */
 #include "magmadnn.h"
 #include "utilities.h"
-#include <iostream>
+
 using namespace magmadnn;
 
 void test_linear(memory_t mem_type, unsigned int size);
@@ -34,6 +34,7 @@ void test_linear(memory_t mem_type, unsigned int size) {
     Tensor<float> *x_batch = new Tensor<float> ({num_samples / data->get_num_batches() , size}, mem_type);
     Tensor<float> *y_batch = new Tensor<float> ({num_samples / data->get_num_batches(), 1}, mem_type);
 
+    // batch loop
     for (unsigned int i = 0; i < data->get_num_batches(); i ++) {
         data->next(x_batch, y_batch);
         for (unsigned int j = 0; j < batch_size; j ++) {

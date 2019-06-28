@@ -19,7 +19,7 @@ There are several tutorials in [docs/tutorials](/docs/tutorials). These give an 
 
 ### Examples
 -----------
-For examples of what MagmaDNN code looks like see the [examples/ folder](https://github.com/MagmaDNN/magmadnn/tree/master/examples). If MagmaDNN is downloaded and installed, then the examples can be made and run with `make examples`.
+For examples of what MagmaDNN code looks like see the [examples/ folder](/examples). If MagmaDNN is downloaded and installed, then the examples can be made and run with `make examples`.
 
 
 _author:_ Daniel Nichols

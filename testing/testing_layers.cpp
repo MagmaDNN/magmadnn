@@ -9,12 +9,13 @@
 #include <stdio.h>
 #include "magmadnn.h"
 #include "utilities.h"
-
+#include <iostream>
 using namespace magmadnn;
 
 void test_input(memory_t mem, unsigned int size);
 void test_fullyconnected(memory_t mem, unsigned int size);
 void test_activation(memory_t mem, unsigned int size);
+void test_dropout(memory_t mem, unsigned int size);
 void test_layers(memory_t mem, unsigned int size);
 
 int main(int argc, char **argv) {
@@ -25,6 +26,8 @@ int main(int argc, char **argv) {
     test_for_all_mem_types(test_fullyconnected, 15);
 
     test_for_all_mem_types(test_activation, 15);
+
+    test_for_all_mem_types(test_dropout, 15);
 
     test_for_all_mem_types(test_layers, 15);
 
@@ -154,6 +157,46 @@ void test_activation(memory_t mem, unsigned int size) {
     show_success();
 }
 
+void test_dropout(memory_t mem, unsigned int size) {
+    float val = 2.4;
+    float dropout_rate = 0.2;
+
+    printf("testing %s dropout...  ", get_memory_type_name(mem));
+
+    Tensor<float> *data_tensor = new Tensor<float> ({size, size}, {CONSTANT, {val}}, mem);
+    op::Variable<float> *data = op::var("data", data_tensor);
+
+    /* create the layer */
+    layer::DropoutLayer<float> *dropout = layer::dropout(data, dropout_rate);
+
+    /* the output of the layer */
+    op::Operation<float> *output = dropout->out();
+    Tensor<float> *output_tensor = output->eval();
+
+    /* synchronize the memory if managed was being used */
+    sync(output_tensor);
+
+    /* don't check HOST for now */
+    if (mem == HOST) return;
+
+    bool exists_zero = false;
+    bool exists_nonzero = false;
+    for (unsigned int i = 0; i < output_tensor->get_shape(0); i ++) {
+        for (unsigned int j = 0; j < output_tensor->get_shape(1); j ++) {
+            assert(output_tensor->get({i,j}) == 0.0f || output_tensor->get({i,j}) == val / (1 - dropout_rate));
+            if (output_tensor->get({i,j}) == 0.0f) {
+                exists_zero = true;
+            } if (output_tensor->get({i,j}) == val / (1 - dropout_rate)) {
+                exists_nonzero = true;
+            }
+        } 
+    } 
+
+    if (!exists_zero || !exists_nonzero) assert(false);
+
+    show_success();
+}
+
 void test_layers(memory_t mem, unsigned int size) {
     unsigned int hidden_units = 728;
     unsigned int output_classes = 10;
@@ -165,7 +208,8 @@ void test_layers(memory_t mem, unsigned int size) {
 
     layer::InputLayer<float> *input = layer::input(data);
     layer::FullyConnectedLayer<float> *fc1 = layer::fullyconnected(input->out(), hidden_units);
-    layer::FullyConnectedLayer<float> *fc2 = layer::fullyconnected(fc1->out(), output_classes);
+    layer::DropoutLayer<float> *dropout = layer::dropout(fc1->out(), 0.1);
+    layer::FullyConnectedLayer<float> *fc2 = layer::fullyconnected(dropout->out(), output_classes);
     layer::OutputLayer<float> *output = layer::output(fc2->out());
 
     op::Operation<float> *out = output->out();

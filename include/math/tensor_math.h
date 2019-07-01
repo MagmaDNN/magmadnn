@@ -20,3 +20,4 @@
 #include "math/concat.h"
 #include "math/tile.h"
 #include "math/relu.h"
+#include "math/dropout.h"

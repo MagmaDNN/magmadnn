@@ -41,18 +41,18 @@ void MemoryManager<T>::init_host() {
 #if defined(_HAS_CUDA_)
 template <typename T>
 void MemoryManager<T>::init_device() {
-    cudaMalloc((void**) &device_ptr, size * sizeof(T));
+    cudaErrchk( cudaMalloc((void**) &device_ptr, size * sizeof(T)) );
 }
 
 template <typename T>
 void MemoryManager<T>::init_managed() {
     host_ptr = (T *) std::malloc(size * sizeof(T));
-    cudaMalloc((void**) &device_ptr, size * sizeof(T));
+    cudaErrchk( cudaMalloc((void**) &device_ptr, size * sizeof(T)) );
 }
 
 template <typename T>
 void MemoryManager<T>::init_cuda_managed() {
-    cudaMallocManaged((void**) &cuda_managed_ptr, size * sizeof(T));
+    cudaErrchk( cudaMallocManaged((void**) &cuda_managed_ptr, size * sizeof(T)) );
 }
 #endif
 
@@ -80,12 +80,12 @@ MemoryManager<T>::~MemoryManager<T>() {
             std::free(host_ptr); break;
         #if defined(_HAS_CUDA_)
         case DEVICE:
-            cudaFree(device_ptr); break;
+            cudaErrchk( cudaFree(device_ptr) ); break;
         case MANAGED:
             std::free(host_ptr); break;
-            cudaFree(device_ptr); break;
+            cudaErrchk( cudaFree(device_ptr) ); break;
         case CUDA_MANAGED:
-            cudaFree(cuda_managed_ptr); break;
+            cudaErrchk( cudaFree(cuda_managed_ptr) ); break;
         #endif
     }
 }
@@ -134,7 +134,8 @@ magmadnn_error_t MemoryManager<T>::copy_from_host(T *src, unsigned int begin_idx
         #if defined(_HAS_CUDA_)
         case DEVICE:
             // host --> device
-            return (magmadnn_error_t) cudaMemcpy(device_ptr, src+begin_idx, copy_size*sizeof(T), cudaMemcpyHostToDevice);
+            cudaErrchk( cudaMemcpy(device_ptr, src+begin_idx, copy_size*sizeof(T), cudaMemcpyHostToDevice) );
+            return (magmadnn_error_t) 0;
         case MANAGED:
             // host --> managed
 			std::copy(src+begin_idx, (src+begin_idx) + copy_size, host_ptr);
@@ -160,18 +161,18 @@ magmadnn_error_t MemoryManager<T>::copy_from_device(T *src, unsigned int begin_i
     switch (mem_type) {
         case HOST:
             // device --> host
-            err = cudaMemcpy(host_ptr, src+begin_idx, copy_size*sizeof(T), cudaMemcpyDeviceToHost); break;
+            cudaErrchk( cudaMemcpy(host_ptr, src+begin_idx, copy_size*sizeof(T), cudaMemcpyDeviceToHost) ); break;
         case DEVICE:
             // device --> device
-            err = cudaMemcpy(device_ptr, src+begin_idx, copy_size*sizeof(T), cudaMemcpyDeviceToDevice); break;
+            cudaErrchk( cudaMemcpy(device_ptr, src+begin_idx, copy_size*sizeof(T), cudaMemcpyDeviceToDevice) ); break;
         case MANAGED:
             // device --> managed
-            err = cudaMemcpy(device_ptr, src+begin_idx, copy_size*sizeof(T), cudaMemcpyDeviceToDevice);
+            cudaErrchk( cudaMemcpy(device_ptr, src+begin_idx, copy_size*sizeof(T), cudaMemcpyDeviceToDevice) );
             sync(true);
             return err;
         case CUDA_MANAGED:
             // device --> cmanaged
-            err = cudaMemcpy(cuda_managed_ptr, src+begin_idx, copy_size*sizeof(T), cudaMemcpyDeviceToDevice);
+            cudaErrchk( cudaMemcpy(cuda_managed_ptr, src+begin_idx, copy_size*sizeof(T), cudaMemcpyDeviceToDevice) );
             sync(true);
             return err;
     }
@@ -189,7 +190,8 @@ magmadnn_error_t MemoryManager<T>::copy_from_managed(T *host_src, T *device_src,
             return (magmadnn_error_t) 0;
         case DEVICE:
             // managed --> device
-            return cudaMemcpy(device_ptr, device_src+begin_idx, copy_size*sizeof(T), cudaMemcpyDeviceToDevice);
+            cudaErrchk( cudaMemcpy(device_ptr, device_src+begin_idx, copy_size*sizeof(T), cudaMemcpyDeviceToDevice) );
+            return (magmadnn_error_t) 0;
         case MANAGED:
             // managed --> managed
             std::copy(host_src+begin_idx, (host_src+begin_idx) + copy_size, host_ptr);
@@ -215,7 +217,8 @@ magmadnn_error_t MemoryManager<T>::copy_from_cudamanaged(T *src, unsigned int be
             return (magmadnn_error_t) 0;
         case DEVICE:
             // cmanaged --> device
-            return cudaMemcpy(device_ptr, src+begin_idx, copy_size*sizeof(T), cudaMemcpyDeviceToDevice);
+            cudaErrchk( cudaMemcpy(device_ptr, src+begin_idx, copy_size*sizeof(T), cudaMemcpyDeviceToDevice) );
+            return (magmadnn_error_t) 0;
         case MANAGED:
             // cmanaged --> managed
             std::copy(src+begin_idx, (src+begin_idx) + copy_size, host_ptr);
@@ -237,12 +240,12 @@ magmadnn_error_t MemoryManager<T>::sync(bool gpu_was_modified) {
         cudaError_t err = (cudaError_t) 0;
 
         if (mem_type == CUDA_MANAGED) {
-            err = cudaDeviceSynchronize();
+            cudaErrchk(cudaDeviceSynchronize());
         } else if (mem_type == MANAGED) {
             if (gpu_was_modified) {
-                err = cudaMemcpy(host_ptr, device_ptr, size*sizeof(T), cudaMemcpyDeviceToHost);
+                cudaErrchk( cudaMemcpy(host_ptr, device_ptr, size*sizeof(T), cudaMemcpyDeviceToHost) );
             } else {
-                err = cudaMemcpy(device_ptr, host_ptr, size*sizeof(T), cudaMemcpyHostToDevice);
+                cudaErrchk( cudaMemcpy(device_ptr, host_ptr, size*sizeof(T), cudaMemcpyHostToDevice) );
             }
         }
         return (magmadnn_error_t) err;
@@ -263,7 +266,7 @@ T MemoryManager<T>::get(unsigned int idx) const {
             return host_ptr[idx];
         #if defined(_HAS_CUDA_)
         case DEVICE:
-			cudaSetDevice(device_id);
+			cudaErrchk( cudaSetDevice(device_id) );
             return internal::get_device_array_element(device_ptr, idx);
         case MANAGED:
             return host_ptr[idx];
@@ -284,11 +287,11 @@ void MemoryManager<T>::set(unsigned int idx, T val) {
             host_ptr[idx] = val; break;
         #if defined(_HAS_CUDA_)
         case DEVICE:
-			cudaSetDevice(device_id);
+			cudaErrchk( cudaSetDevice(device_id) );
             internal::set_device_array_element(device_ptr, idx, val); break;
         case MANAGED:
             host_ptr[idx] = val;
-			cudaSetDevice(device_id);
+			cudaErrchk( cudaSetDevice(device_id) );
             internal::set_device_array_element(device_ptr, idx, val);
             break;
         case CUDA_MANAGED:
@@ -302,7 +305,7 @@ magmadnn_error_t MemoryManager<T>::set_device(device_t device_id) {
 
     #if defined(_HAS_CUDA_)
 	int n_devices = 0;
-	cudaGetDeviceCount(&n_devices);
+	cudaErrchk( cudaGetDeviceCount(&n_devices) );
 	if ((int)device_id >= n_devices) {
 		fprintf(stderr, "invalid device id\n");
 		return (magmadnn_error_t) 1;

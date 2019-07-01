@@ -14,6 +14,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include "types.h"
+#include "utilities_internal.h"
 
 // include cuda files if on GPU
 #if defined(_HAS_CUDA_)

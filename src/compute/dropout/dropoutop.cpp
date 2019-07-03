@@ -28,6 +28,7 @@ DropoutOp<T>::DropoutOp(Operation<T> *input, float dropout_rate, unsigned long l
 template <typename T>
 DropoutOp<T>::~DropoutOp() {
     if (mask_tensor != NULL) delete mask_tensor;
+    cudnnErrchk( cudnnDestroyDropoutDescriptor(shared_settings.dropoutDesc) );
 }
 
 template <typename T>

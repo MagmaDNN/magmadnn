@@ -44,6 +44,12 @@ WARNINGS ?= -Wall
 FPIC ?= -fPIC
 CXX_VERSION ?= -std=c++11
 DEBUG ?= 0
+# this flag dictates whether to use openmp or not for some CPU code
+# set it to false by default
+USE_OPENMP ?= 0
+ifeq ($(USE_OPENMP),1)
+OPENMP_FLAGS = -fopenmp -D_USE_OPENMP_
+endif
 
 # set optimization to Og for debugging
 ifeq ($(DEBUG),1)

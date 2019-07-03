@@ -182,6 +182,87 @@ template void fill_glorot(MemoryManager<double>&, const std::vector<double>&);
 
 
 template <typename T>
+void fill_mask(MemoryManager<T> &m, const std::vector<T>& params) {
+
+    assert( params.size() >= 1 );
+
+    T p;
+    p = params[0];
+
+    T val = 1;
+    if (params.size() >= 2) val = params[1];
+
+    std::default_random_engine random_generator;
+    std::bernoulli_distribution bernoulli(p);
+
+    switch (m.get_memory_type()) {
+        case HOST:
+            for (unsigned int i = 0; i < m.get_size(); i++)
+                m.get_host_ptr()[i] = bernoulli(random_generator) * val;
+            break;
+            
+        #if defined(_HAS_CUDA_)
+        case DEVICE:
+            // TODO replace with kernel call
+            for (unsigned int i = 0; i < m.get_size(); i++)
+                m.set(i, bernoulli(random_generator) * val);
+            break;
+        case MANAGED:
+            for (unsigned int i = 0; i < m.get_size(); i++)
+                m.get_host_ptr()[i] = bernoulli(random_generator) * val;
+            m.sync(false);
+            break;
+        case CUDA_MANAGED:
+            for (unsigned int i = 0; i < m.get_size(); i++)
+                m.get_cuda_managed_ptr()[i] = bernoulli(random_generator) * val;
+            m.sync(false);
+            break;
+        #endif
+    }
+}
+template <> void fill_mask(MemoryManager<int>& m, const std::vector<int>& params) {
+
+    assert( params.size() >= 1 );
+
+    int p;
+    p = params[0];
+
+    int val = 1;
+    if (params.size() >= 2) val = params[1];
+
+    std::default_random_engine random_generator;
+    std::bernoulli_distribution bernoulli(p);
+
+    switch (m.get_memory_type()) {
+        case HOST:
+            for (unsigned int i = 0; i < m.get_size(); i++)
+                m.get_host_ptr()[i] = bernoulli(random_generator) * val;
+            break;
+            
+        #if defined(_HAS_CUDA_)
+        case DEVICE:
+            // TODO replace with kernel call
+            for (unsigned int i = 0; i < m.get_size(); i++)
+                m.set(i, bernoulli(random_generator) * val);
+            break;
+        case MANAGED:
+            for (unsigned int i = 0; i < m.get_size(); i++)
+                m.get_host_ptr()[i] = bernoulli(random_generator) * val;
+            m.sync(false);
+            break;
+        case CUDA_MANAGED:
+            for (unsigned int i = 0; i < m.get_size(); i++)
+                m.get_cuda_managed_ptr()[i] = bernoulli(random_generator) * val;
+            m.sync(false);
+            break;
+        #endif
+    }
+}
+template void fill_mask(MemoryManager<float>&, const std::vector<float>&);
+template void fill_mask(MemoryManager<double>&, const std::vector<double>&);
+
+
+template <typename T>
 void fill_diagonal(MemoryManager<T> &m, const std::vector<T>& params) {
     bool use_constant_value;
     unsigned int root;

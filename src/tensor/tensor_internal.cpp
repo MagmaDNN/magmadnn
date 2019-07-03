@@ -18,6 +18,8 @@ void fill_memory(MemoryManager<T> &m, tensor_filler_t<T> filler) {
             fill_uniform(m, filler.values); break;
         case GLOROT:
             fill_glorot(m, filler.values); break;
+        case MASK:
+            fill_mask(m, filler.values); break;
         case CONSTANT:
             fill_constant(m, filler.values); break;
         case ZERO:

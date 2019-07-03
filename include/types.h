@@ -45,6 +45,7 @@ extern magmadnn_settings_t *MAGMADNN_SETTINGS;	/* make this available to everyth
 enum tensor_fill_t {
 	UNIFORM,
 	GLOROT,
+	MASK,
 	CONSTANT,
 	ZERO,
 	ONE,
@@ -54,7 +55,7 @@ enum tensor_fill_t {
 };	
 
 /** Defines how to fill a tensor and with what parameters.
- * fill_type: use UNIFORM, GLOROT, CONSTANT, ZERO, ONE, or NONE @see tensor_fill_t
+ * fill_type: use UNIFORM, GLOROT, MASK, CONSTANT, ZERO, ONE, or NONE @see tensor_fill_t
  * values: the parameters for the fill_type
  */
 template <typename T>

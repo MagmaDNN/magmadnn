@@ -47,6 +47,14 @@ void fill_uniform(MemoryManager<T> &m, const std::vector<T>& params);
 template <typename T>
 void fill_glorot(MemoryManager<T> &m, const std::vector<T>& params);
 
+/** Fills the memorymanager zeroes and ones using a Bernoulli distribution.
+ * @tparam T 
+ * @param m memorymanager to be filled.
+ * @param params 
+ */
+template <typename T>
+void fill_mask(MemoryManager<T> &m, const std::vector<T>& params);
+
 /** Fills the memorymanager's diagonal elements. Assumes the memory manager is square.
  * If one value is given for params, then it is applied to all diagonals. Otherwise the list
  * is applied to fill the diagonals.

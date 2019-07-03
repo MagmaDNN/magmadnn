@@ -31,6 +31,7 @@ Tensor<float> ones ({3,2,10}, {ONE, {}});    /* initialize the values to 1.0f */
 Tensor<float> zeros ({100}, {ZERO, {}});    /* initialize the values to zero */
 Tensor<float> identity ({5,5}, {IDENTITY, {}});    /* initialize to the Identity matrix -- must be a square matrix */
 Tensor<float> diagonal ({3,3}, {DIAGONAL, {1.0f, -1.0f, 3.14f}});   /* set the tensors diagonal elements to 1,-1,3.14. You can also pass one value which will be places across the diagonal. */
+Tensor<float> mask ({3,6,4}, {MASK, {0.2}});   /* initialize values using Bernoulli distribution with mean 0.2 */
 Tensor<float> uniform ({20}, {UNIFORM, {-1.0f, 1.0f}}); /* initialize to uniform values between -1 and 1 */
 Tensor<float> normal ({5,4}, {GLOROT, {0.0f, 1.0f}});   /* normal distribution with mean 0.0 and std. dev. 1.0 */
 ```

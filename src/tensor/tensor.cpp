@@ -61,6 +61,14 @@ void Tensor<T>::init(std::vector<unsigned int>& shape, tensor_filler_t<T> filler
     this->mem_type = mem_type;
     this->device_id = device_id;
 
+    // calculate stride values
+    this->strides.resize(shape.size());
+    unsigned int tmp_stride = 1;
+    for (int i = ((int)shape.size())-1; i >= 0; i--) {
+        strides[i] = tmp_stride;
+        tmp_stride *= shape[i];
+    }
+
     // calculate the total number of elements
     this->size = 1;
     for (unsigned int i = 0; i < shape.size(); i++) {
@@ -187,6 +195,18 @@ unsigned int Tensor<T>::get_shape(unsigned int idx) const {
 
 template <typename T>
 unsigned int Tensor<T>::get_flattened_index(const std::vector<unsigned int>& idx) const {
+    unsigned int flattened_idx = 0;
+
+    for (unsigned int i = 0; i < idx.size(); i++) {
+        flattened_idx += idx[i] * strides[i];
+    }
+
+    return flattened_idx;
+}
+
+/** @deprecated */
+template <typename T>
+unsigned int Tensor<T>::get_flattened_index_old(const std::vector<unsigned int>& idx) const {
     unsigned int jump_size = 1; // the total amount to jump to get to next axis
     unsigned int flattened_idx = 0;
 

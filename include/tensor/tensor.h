@@ -227,6 +227,7 @@ public:
 private:
 	void init(std::vector<unsigned int>& shape, tensor_filler_t<T> filler, memory_t mem_type, device_t device_id);
 	unsigned int get_flattened_index(const std::vector<unsigned int>& idx) const;
+	unsigned int get_flattened_index_old(const std::vector<unsigned int>& idx) const;
 
 	/* device specific code */
 	#if defined(_HAS_CUDA_)
@@ -239,6 +240,7 @@ private:
 	MemoryManager<T> *mem_manager;	/* allocated by init */
 	
 	std::vector<unsigned int> shape;	/* tensor axes (shape) */
+	std::vector<unsigned int> strides;	/* axis strides in memory */
 	unsigned int size;		/* total number of elements in tensor */
 	memory_t mem_type;		/* the type of memory to use for this tensor */
 	device_t device_id;		/* device number i.e. gpu0 or cpu1 */

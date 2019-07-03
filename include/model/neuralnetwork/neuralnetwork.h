@@ -59,6 +59,9 @@ public:
     virtual Tensor<T> *predict(Tensor<T> *sample);
     virtual unsigned int predict_class(Tensor<T> *sample);
 
+
+    virtual std::vector<layer::Layer<T> *> get_layers() { return this->layers; }
+
 protected:
     typename std::vector<layer::Layer<T> *> layers;
     optimizer::loss_t loss_func;

@@ -15,7 +15,7 @@ namespace op {
 template <typename T>
 class DropoutOp : public Operation<T> {
 public:
-	DropoutOp(Operation<T> *input, float dropout_rate, bool copy=true, bool needs_grad=true);
+	DropoutOp(Operation<T> *input, float dropout_rate, unsigned long long seed, bool copy=true, bool needs_grad=true);
 
 	virtual ~DropoutOp();
 
@@ -31,6 +31,7 @@ protected:
 	Tensor<T> *mask_tensor;
 	
 	float dropout_rate;
+	unsigned long long seed;
 
 	#if defined(_HAS_CUDA_)
 	void init_settings();
@@ -45,7 +46,7 @@ protected:
 };
 
 template <typename T>
-DropoutOp<T>* dropout(Operation<T> *input, float dropout_rate, bool copy=true, bool needs_grad=true);
+DropoutOp<T>* dropout(Operation<T> *input, float dropout_rate, unsigned long long seed, bool copy=true, bool needs_grad=true);
 
 } // namespace op
 } // namespace magmadnn

@@ -12,8 +12,8 @@ namespace magmadnn {
 namespace layer {
 
 template <typename T>
-DropoutLayer<T>::DropoutLayer(op::Operation<T> *input, float dropout_rate) : 
-    Layer<T>::Layer(input->get_output_shape(), input), dropout_rate(dropout_rate) {
+DropoutLayer<T>::DropoutLayer(op::Operation<T> *input, float dropout_rate, unsigned long long seed) : 
+    Layer<T>::Layer(input->get_output_shape(), input), dropout_rate(dropout_rate), seed(seed) {
     init();
 }
 
@@ -29,7 +29,7 @@ std::vector<op::Operation<T> *> DropoutLayer<T>::get_weights() {
 
 template <typename T>
 void DropoutLayer<T>::init() {
-    this->output = op::dropout(this->input, dropout_rate);
+    this->output = op::dropout(this->input, dropout_rate, seed);
 
     this->name = "DropoutLayer";
 }
@@ -39,12 +39,12 @@ template class DropoutLayer<double>;
 
 
 template <typename T>
-DropoutLayer<T>* dropout(op::Operation<T> *input, float dropout_rate) {
-    return new DropoutLayer<T>(input, dropout_rate);
+DropoutLayer<T>* dropout(op::Operation<T> *input, float dropout_rate, unsigned long long seed) {
+    return new DropoutLayer<T>(input, dropout_rate, seed);
 }
-template DropoutLayer<int>* dropout(op::Operation<int> *input, float dropout_rate);
-template DropoutLayer<float>* dropout(op::Operation<float> *input, float dropout_rate);
-template DropoutLayer<double>* dropout(op::Operation<double> *input, float dropout_rate);
+template DropoutLayer<int>* dropout(op::Operation<int> *input, float dropout_rate, unsigned long long seed);
+template DropoutLayer<float>* dropout(op::Operation<float> *input, float dropout_rate, unsigned long long seed);
+template DropoutLayer<double>* dropout(op::Operation<double> *input, float dropout_rate, unsigned long long seed);
 
 
 }   // layer

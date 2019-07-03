@@ -5,9 +5,11 @@ namespace magmadnn {
 namespace op {
 
 template <typename T>
-DropoutOp<T>::DropoutOp(Operation<T> *input, float dropout_rate, bool copy, bool needs_grad)
-: Operation<T>::Operation({input}, needs_grad), input(input), dropout_rate(dropout_rate), copy(copy) {
+DropoutOp<T>::DropoutOp(Operation<T> *input, float dropout_rate, unsigned long long seed, bool copy, bool needs_grad)
+: Operation<T>::Operation({input}, needs_grad), input(input), dropout_rate(dropout_rate), seed(seed), copy(copy) {
     /* setup code in here */
+    assert( dropout_rate >= 0 && dropout_rate <= 1 );
+
     this->output_shape = input->get_output_shape();
     this->mem_type = input->get_memory_type();
     this->name = "Dropout";
@@ -92,10 +94,10 @@ void DropoutOp<T>::init_settings() {
     cudnnErrchk( cudnnCreateDropoutDescriptor(&shared_settings.dropoutDesc) );
     cudnnErrchk( cudnnSetDropoutDescriptor(shared_settings.dropoutDesc,
         settings.handle,
-        dropout_rate,
+        this->dropout_rate,
         shared_settings.states,
         shared_settings.stateSizeInBytes,
-        time(NULL) // use time for random seed
+        this->seed
         )
     );
 
@@ -111,12 +113,12 @@ template class DropoutOp<double>;
 
 
 template <typename T>
-DropoutOp<T> *dropout(Operation<T> *input, float dropout_rate, bool copy, bool needs_grad) {
-    return new DropoutOp<T>(input, dropout_rate, copy, needs_grad);
+DropoutOp<T> *dropout(Operation<T> *input, float dropout_rate, unsigned long long seed, bool copy, bool needs_grad) {
+    return new DropoutOp<T>(input, dropout_rate, seed, copy, needs_grad);
 }
-template DropoutOp<int> *dropout(Operation<int> *input, float dropout_rate, bool copy, bool needs_grad);
-template DropoutOp<float> *dropout(Operation<float> *input, float dropout_rate, bool copy, bool needs_grad);
-template DropoutOp<double> *dropout(Operation<double> *input, float dropout_rate, bool copy, bool needs_grad);
+template DropoutOp<int> *dropout(Operation<int> *input, float dropout_rate, unsigned long long seed, bool copy, bool needs_grad);
+template DropoutOp<float> *dropout(Operation<float> *input, float dropout_rate, unsigned long long seed, bool copy, bool needs_grad);
+template DropoutOp<double> *dropout(Operation<double> *input, float dropout_rate, unsigned long long seed, bool copy, bool needs_grad);
 
 
 }   // namespace op

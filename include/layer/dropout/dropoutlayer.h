@@ -12,13 +12,16 @@
 #include "compute/operation.h"
 #include "compute/tensor_operations.h"
 
+const float DEFAULT_DROPOUT_RATE = 0.2;
+const unsigned long long DEFAULT_SEED = time(NULL);
+
 namespace magmadnn {
 namespace layer {
 
 template <typename T>
 class DropoutLayer : public Layer<T> {
 public:
-    DropoutLayer(op::Operation<T> *input, float dropout_rate);
+    DropoutLayer(op::Operation<T> *input, float dropout_rate, unsigned long long seed);
     virtual ~DropoutLayer();
 
     virtual std::vector<op::Operation<T> *> get_weights();
@@ -27,10 +30,11 @@ protected:
     void init();
 
     float dropout_rate;
+    unsigned long long seed;
 };
 
 template <typename T>
-DropoutLayer<T>* dropout(op::Operation<T> *input, float dropout_rate);
+DropoutLayer<T>* dropout(op::Operation<T> *input, float dropout_rate = DEFAULT_DROPOUT_RATE, unsigned long long seed = DEFAULT_SEED);
 
 }   // layer
 }   // magmadnn

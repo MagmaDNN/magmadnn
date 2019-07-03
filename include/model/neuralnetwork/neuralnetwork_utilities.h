@@ -19,7 +19,7 @@ namespace utilities {
 
 
 template <typename T>
-magmadnn_error_t copy_network(model::NeuralNetwork<T>& dst, const model::NeuralNetwork<T>& src);
+magmadnn_error_t copy_network(model::NeuralNetwork<T>& dst, model::NeuralNetwork<T>& src);
 
 
 }

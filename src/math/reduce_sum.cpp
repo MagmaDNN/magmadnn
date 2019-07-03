@@ -101,7 +101,6 @@ void reduce_sum_device(Tensor<T> *x, int axis, Tensor<T> *out, reduce_sum_cudnn_
     /* call cudnn */
     T alpha = (T) 1;
     T beta = (T) 0;
-
     cudnnErrchk( cudnnReduceTensor(
         ::magmadnn::internal::MAGMADNN_SETTINGS->cudnn_handle,  /* cudnn handle */
         settings.descriptor,    /* reduce tensor descriptor */

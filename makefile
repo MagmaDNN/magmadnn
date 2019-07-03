@@ -44,6 +44,8 @@ WARNINGS ?= -Wall
 FPIC ?= -fPIC
 CXX_VERSION ?= -std=c++11
 DEBUG ?= 0
+PROFILE_FLAGS ?= 
+
 # this flag dictates whether to use openmp or not for some CPU code
 # set it to false by default
 USE_OPENMP ?= 0
@@ -57,7 +59,7 @@ OPTIMIZATION_LEVEL = -O0
 endif
 
 # the entire flags for compilation
-CXXFLAGS := $(OPTIMIZATION_LEVEL) $(WARNINGS) $(CXX_VERSION) $(CUDA_MACRO) $(FPIC) -MMD
+CXXFLAGS := $(OPTIMIZATION_LEVEL) $(WARNINGS) $(CXX_VERSION) $(CUDA_MACRO) $(FPIC) -MMD $(OPENMP_FLAGS) $(PROFILE_FLAGS)
 NVCCFLAGS := $(CXX_VERSION) $(OPTIMIZATION_LEVEL) -Xcompiler "$(CXXFLAGS)" $(NV_SM) $(NV_COMP)
 LD_FLAGS := $(LIBDIRS) $(LIBS)
 

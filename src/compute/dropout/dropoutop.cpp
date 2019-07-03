@@ -14,10 +14,18 @@ DropoutOp<T>::DropoutOp(Operation<T> *input, float dropout_rate, bool copy, bool
 
     this->input_tensor = input->get_output_tensor();
     this->output_tensor = new Tensor<T> (this->output_shape, {NONE, {}}, this->mem_type);
-
+    
+    T p = 1.0f - dropout_rate;
+    this->mask_tensor = new Tensor<T> (this->output_shape, {MASK, {static_cast<T>(p), static_cast<T>(1.0f/p)}}, this->mem_type);
+    
     #if defined(_HAS_CUDA_)
     init_settings();
     #endif
+}
+
+template <typename T>
+DropoutOp<T>::~DropoutOp() {
+    if (mask_tensor != NULL) delete mask_tensor;
 }
 
 template <typename T>
@@ -27,7 +35,7 @@ Tensor<T> *DropoutOp<T>::_eval(bool recompute) {
     input_tensor = input->eval(recompute);
 
     if (this->mem_type == HOST) {
-        math::dropout(input_tensor, this->output_tensor);
+        math::dropout(input_tensor, this->output_tensor, mask_tensor);
     }
     #if defined(_HAS_CUDA_)
     else {
@@ -57,7 +65,7 @@ Tensor<T> *DropoutOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor
     }
 
     if (this->mem_type == HOST) {
-        math::dropout_grad(grad, out);
+        math::dropout_grad(grad, out, mask_tensor, dropout_rate);
     }
     #if defined(_HAS_CUDA_)
     else {

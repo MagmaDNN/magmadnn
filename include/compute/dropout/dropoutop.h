@@ -17,6 +17,8 @@ class DropoutOp : public Operation<T> {
 public:
 	DropoutOp(Operation<T> *input, float dropout_rate, bool copy=true, bool needs_grad=true);
 
+	virtual ~DropoutOp();
+
 	std::string to_string() { return "Dropout(" + input->to_string() + ")"; }
 	
 protected:
@@ -26,6 +28,8 @@ protected:
 	Operation<T> *input;
 	Tensor<T> *input_tensor;
 
+	Tensor<T> *mask_tensor;
+	
 	float dropout_rate;
 
 	#if defined(_HAS_CUDA_)

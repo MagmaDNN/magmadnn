@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include "magmadnn.h"
 #include "utilities.h"
-#include <iostream>
+
 using namespace magmadnn;
 
 void test_input(memory_t mem, unsigned int size);
@@ -176,9 +176,6 @@ void test_dropout(memory_t mem, unsigned int size) {
     /* synchronize the memory if managed was being used */
     sync(output_tensor);
 
-    /* don't check HOST for now */
-    if (mem == HOST) return;
-
     bool exists_zero = false;
     bool exists_nonzero = false;
     for (unsigned int i = 0; i < output_tensor->get_shape(0); i ++) {
@@ -190,7 +187,7 @@ void test_dropout(memory_t mem, unsigned int size) {
                 exists_nonzero = true;
             }
         } 
-    } 
+    }
 
     if (!exists_zero || !exists_nonzero) assert(false);
 

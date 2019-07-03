@@ -21,10 +21,10 @@ namespace utilities {
 
 
 template <typename T>
-magmadnn_error_t copy_layer(layer::Layer<T> *dst, const layer::Layer<T> *src);
+magmadnn_error_t copy_layer(layer::Layer<T> *dst, layer::Layer<T> *src);
 
 template <typename T>
-magmadnn_error_t copy_layers(std::vector<layer::Layer<T> *>& dsts, const std::vector<layer::Layer<T> *>& srcs);
+magmadnn_error_t copy_layers(std::vector<layer::Layer<T> *> dsts, std::vector<layer::Layer<T> *> srcs);
 
 }
 }

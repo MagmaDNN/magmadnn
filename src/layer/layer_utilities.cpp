@@ -22,18 +22,24 @@ magmadnn_error_t copy_layer(layer::Layer<T> *dst, layer::Layer<T> *src) {
     assert(dst_weights.size() == src_weights.size());
 
     for (unsigned int i = 0; i < dst_weights.size(); i++) {
-        dst_weights[i]->get_output_tensor()->copy_from(src_weights[i]->get_output_tensor());
+        dst_weights[i]->get_output_tensor()->copy_from(*src_weights[i]->get_output_tensor());
     }
+    return (magmadnn_error_t) 0;
 }
 
 template <typename T>
-magmadnn_error_t copy_layers(std::vector<layer::Layer<T> *>& dsts, const std::vector<layer::Layer<T> *>& srcs) {
+magmadnn_error_t copy_layers(std::vector<layer::Layer<T> *> dsts, std::vector<layer::Layer<T> *> srcs) {
     assert( dsts.size() == srcs.size());
 
     for (unsigned int i = 0; i < dsts.size(); i++) {
         copy_layer(dsts[i], srcs[i]);
     }
+
+    return (magmadnn_error_t) 0;
 }
+template magmadnn_error_t copy_layers(std::vector<layer::Layer<int> *> dsts, std::vector<layer::Layer<int> *> srcs);
+template magmadnn_error_t copy_layers(std::vector<layer::Layer<float> *> dsts, std::vector<layer::Layer<float> *> srcs);
+template magmadnn_error_t copy_layers(std::vector<layer::Layer<double> *> dsts, std::vector<layer::Layer<double> *> srcs);
 
 }
 }

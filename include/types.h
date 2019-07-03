@@ -11,6 +11,7 @@
 #include <vector> // for tensor_filler_t
 #if defined(_HAS_CUDA_)
 #include "cudnn.h"
+#include "cublas_v2.h"
 #endif
 
 namespace magmadnn {
@@ -33,6 +34,7 @@ struct magmadnn_settings_t {
 	unsigned int n_devices;
 	#if defined(_HAS_CUDA_)
 	cudnnHandle_t cudnn_handle;
+	cublasHandle_t cublas_handle;
 	#endif
 };
 namespace internal {

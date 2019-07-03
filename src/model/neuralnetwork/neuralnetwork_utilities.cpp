@@ -14,14 +14,15 @@ namespace utilities {
 
 
 template <typename T>
-magmadnn_error_t copy_network(model::NeuralNetwork<T>& dst, const model::NeuralNetwork<T>& src) {
-    const std::vector<::magmadnn::layer::Layer<T> *>& dst_layers = dst.get_layers();
-    const std::vector<::magmadnn::layer::Layer<T> *>& src_layers = src.get_layers();
+magmadnn_error_t copy_network(model::NeuralNetwork<T>& dst, model::NeuralNetwork<T>& src) {
 
-    assert( dst_layers.size() == dst_layers.size() );
+    assert( dst.get_layers().size() == src.get_layers().size() );
 
-    ::magmadnn::layer::utilities::copy_layers(dst_layers, src_layers);
+    return ::magmadnn::layer::utilities::copy_layers(dst.get_layers(), src.get_layers());
 }
+template magmadnn_error_t copy_network(model::NeuralNetwork<int>& dst, model::NeuralNetwork<int>& src);
+template magmadnn_error_t copy_network(model::NeuralNetwork<float>& dst, model::NeuralNetwork<float>& src);
+template magmadnn_error_t copy_network(model::NeuralNetwork<double>& dst, model::NeuralNetwork<double>& src);
 
 
 }

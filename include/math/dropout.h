@@ -43,10 +43,10 @@ struct cudnn_dropout_shared_settings_t {
 #endif
 
 template <typename T>
-void dropout(Tensor<T> *x, Tensor<T> *out, Tensor<T> *mask);
+void dropout(Tensor<T> *x, Tensor<T> *out, Tensor<T> *mask, float dropout_rate);
 
 template <typename T>
-void dropout_grad(Tensor<T> *grad, Tensor<T> *out, Tensor<T> *mask, float dropout_rate);
+void dropout_grad(Tensor<T> *grad, Tensor<T> *out, Tensor<T> *mask);
 
 #if defined(_HAS_CUDA_)
 template <typename T>

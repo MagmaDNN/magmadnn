@@ -12,25 +12,25 @@ namespace magmadnn {
 namespace math {
 
 template <typename T>
-void dropout(Tensor<T> *x, Tensor<T> *out, Tensor<T> *mask) {
+void dropout(Tensor<T> *x, Tensor<T> *out, Tensor<T> *mask, float dropout_rate) {
     if (out->get_memory_type() == HOST) {
-        math::product(mask, x, out);   
+        float p = 1.0f - dropout_rate;
+        Tensor<T> a(mask->get_shape(), {MASK, {static_cast<T>(p), static_cast<T>(1.0f/p)}}, mask->get_memory_type());
+        mask->copy_from(a);
+        math::product(mask, x, out);
     } else {
         fprintf(stderr, "For dropout on GPU, please use dropout_device\n");
     }
 }
-template void dropout(Tensor<int> *x, Tensor<int> *out, Tensor<int> *mask);
-template void dropout(Tensor<float> *x, Tensor<float> *out, Tensor<float> *mask);
-template void dropout(Tensor<double> *x, Tensor<double> *out, Tensor<double> *mask);
+template void dropout(Tensor<int> *x, Tensor<int> *out, Tensor<int> *mask, float dropout_rate);
+template void dropout(Tensor<float> *x, Tensor<float> *out, Tensor<float> *mask, float dropout_rate);
+template void dropout(Tensor<double> *x, Tensor<double> *out, Tensor<double> *mask, float dropout_rate);
 
 
 template <typename T>
-void dropout_grad(Tensor<T> *grad, Tensor<T> *out, Tensor<T> *mask, float dropout_rate) {
+void dropout_grad(Tensor<T> *grad, Tensor<T> *out, Tensor<T> *mask) {
     if (out->get_memory_type() == HOST) {
-        float p = 1.0f - dropout_rate;
-        Tensor<T> a(grad->get_shape(), {CONSTANT, {static_cast<T>(1.0f/p)}}, out->get_memory_type());
-        math::product(mask, &a);
-        math::product(&a, grad, out);
+        math::product(mask, grad, out);
     }
     #if defined(_HAS_CUDA_)
     else {
@@ -38,9 +38,9 @@ void dropout_grad(Tensor<T> *grad, Tensor<T> *out, Tensor<T> *mask, float dropou
     }
     #endif
 }
-template void dropout_grad(Tensor<int> *grad, Tensor<int> *out, Tensor<int> *mask, float dropout_rate);
-template void dropout_grad(Tensor<float> *grad, Tensor<float> *out, Tensor<float> *mask, float dropout_rate);
-template void dropout_grad(Tensor<double> *grad, Tensor<double> *out, Tensor<double> *mask, float dropout_rate);
+template void dropout_grad(Tensor<int> *grad, Tensor<int> *out, Tensor<int> *mask);
+template void dropout_grad(Tensor<float> *grad, Tensor<float> *out, Tensor<float> *mask);
+template void dropout_grad(Tensor<double> *grad, Tensor<double> *out, Tensor<double> *mask);
 
 
 

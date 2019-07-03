@@ -35,7 +35,7 @@ Tensor<T> *DropoutOp<T>::_eval(bool recompute) {
     input_tensor = input->eval(recompute);
 
     if (this->mem_type == HOST) {
-        math::dropout(input_tensor, this->output_tensor, mask_tensor);
+        math::dropout(input_tensor, this->output_tensor, mask_tensor, dropout_rate);
     }
     #if defined(_HAS_CUDA_)
     else {
@@ -65,7 +65,7 @@ Tensor<T> *DropoutOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor
     }
 
     if (this->mem_type == HOST) {
-        math::dropout_grad(grad, out, mask_tensor, dropout_rate);
+        math::dropout_grad(grad, out, mask_tensor);
     }
     #if defined(_HAS_CUDA_)
     else {

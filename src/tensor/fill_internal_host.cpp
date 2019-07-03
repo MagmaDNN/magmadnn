@@ -191,8 +191,9 @@ void fill_mask(MemoryManager<T> &m, const std::vector<T>& params) {
 
     T val = 1;
     if (params.size() >= 2) val = params[1];
-
-    std::default_random_engine random_generator;
+    
+    std::random_device rd;
+    std::mt19937 random_generator(rd());
     std::bernoulli_distribution bernoulli(p);
 
     switch (m.get_memory_type()) {
@@ -230,7 +231,8 @@ template <> void fill_mask(MemoryManager<int>& m, const std::vector<int>& params
     int val = 1;
     if (params.size() >= 2) val = params[1];
 
-    std::default_random_engine random_generator;
+    std::random_device rd;
+    std::mt19937 random_generator(rd());    
     std::bernoulli_distribution bernoulli(p);
 
     switch (m.get_memory_type()) {

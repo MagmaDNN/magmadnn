@@ -48,7 +48,7 @@ NeuralNetwork<T>::NeuralNetwork(std::vector<layer::Layer<T> *> layers, optimizer
         case optimizer::CROSS_ENTROPY:
             this->_obj = op::crossentropy(this->ground_truth_op_ptr, this->network_output_op_ptr); break;
         case optimizer::MSE:
-            std::fprintf(stderr, "MSE loss not yet implemented.\n"); break;
+            this->_obj = op::meansquarederror(this->ground_truth_op_ptr, this->network_output_op_ptr); break;
         default:
             std::fprintf(stderr, "Unknown loss function.\n"); break;
     }

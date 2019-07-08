@@ -501,20 +501,38 @@ void test_conv2d(memory_t mem_type, unsigned int size) {
 	/* basic convolution2d test */
 	unsigned int batch_size = 5;
 	unsigned int channels = 3;
-	unsigned int h = size;
-	unsigned int w = size; 
+	unsigned int h = 5;
+	unsigned int w = 5; 
+
+	int pad_h = 1;
+	int pad_w = 1;
+	int vertical_stride = 1;
+	int horizontal_stride = 1;
+	int dilation_h = 1;
+	int dilation_w = 1;
+	bool use_cross_correlation = true;
 
 	unsigned int filter_h = 3;
 	unsigned int filter_w = 3;
 
 	op::Operation<float> *x = op::var<float> ("data", {batch_size, channels, h, w}, {GLOROT, {0.0f, 1.0f}}, mem_type);
-	op::Operation<float> *filter = op::var<float> ("filter", {filter_h, filter_w}, {GLOROT, {0.0f, 1.0f}}, mem_type);
+	op::Operation<float> *filter = op::var<float> ("filter", {filter_h, filter_w, filter_h, filter_w}, {GLOROT, {0.0f, 1.0f}}, mem_type);
 
-	op::Operation<float> *conv = op::conv2dforward(x, filter);
+	op::Operation<float> *conv = op::conv2dforward(x, filter, pad_h, pad_w, vertical_stride, horizontal_stride, dilation_h, dilation_w, use_cross_correlation);
 
 	Tensor<float> *out = conv->eval();
 
 	sync(out);
+
+	/* formula from: https://docs.nvidia.com/deeplearning/sdk/cudnn-developer-guide/index.html#cudnnGetConvolution2dForwardOutputDim */
+	unsigned int expected_h = 1 + ( h + 2*pad_h - (((filter_h-1)*dilation_h)+1) ) / vertical_stride;
+	unsigned int expected_w = 1 + ( w + 2*pad_w - (((filter_w-1)*dilation_w)+1) ) / horizontal_stride;
+
+	assert( out->get_shape().size() == 4);
+	assert( out->get_shape(0) == batch_size );
+	assert( out->get_shape(1) == channels );
+	assert( out->get_shape(2) == expected_h );
+	assert( out->get_shape(3) == expected_w );
 
 	delete conv;
 

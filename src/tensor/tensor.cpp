@@ -232,6 +232,7 @@ void Tensor<T>::reshape(const std::vector<unsigned int>& dims) {
         tmp_stride *= shape[i];
     }
 
+    #if defined(_HAS_CUDA_)
     /* update cudnn descriptor if on GPU */
     int n=1, c=1, h=1, w=1;
     if (shape.size() == 4) {
@@ -257,7 +258,7 @@ void Tensor<T>::reshape(const std::vector<unsigned int>& dims) {
         ::magmadnn::internal::get_cudnn_data_type(static_cast<T>(0)),
         n, c, h, w
     ) );
-
+    #endif
 }
 
 template<typename T>

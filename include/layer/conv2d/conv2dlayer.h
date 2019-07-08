@@ -48,6 +48,21 @@ protected:
 
 };
 
+
+/** Create a convolutional 2d Operation.
+ * @tparam T numeric
+ * @param input the input data; must be a 4D tensor in format NCHW (N-batch, C-Channel, H-height, W-Width)
+ * @param filter_shape 
+ * @param out_channels 
+ * @param padding 
+ * @param strides 
+ * @param dilation_rates 
+ * @param use_cross_correlation 
+ * @param use_bias 
+ * @param filter_initializer 
+ * @param bias_initializer 
+ * @return Conv2dLayer<T>* 
+ */
 template <typename T>
 Conv2dLayer<T>* conv2d(op::Operation<T> *input, const std::vector<unsigned int>& filter_shape={3, 3}, int out_channels=1, const std::vector<unsigned int>& padding={0,0},
         const std::vector<unsigned int>& strides={1,1}, const std::vector<unsigned int>& dilation_rates={1,1}, bool use_cross_correlation=true, bool use_bias=false,

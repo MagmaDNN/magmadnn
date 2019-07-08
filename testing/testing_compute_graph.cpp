@@ -504,6 +504,9 @@ void test_conv2d(memory_t mem_type, unsigned int size) {
 	unsigned int h = 5;
 	unsigned int w = 5; 
 
+	unsigned int in_channels = channels;
+	unsigned int out_channels = 2;
+
 	int pad_h = 1;
 	int pad_w = 1;
 	int vertical_stride = 1;
@@ -516,7 +519,7 @@ void test_conv2d(memory_t mem_type, unsigned int size) {
 	unsigned int filter_w = 3;
 
 	op::Operation<float> *x = op::var<float> ("data", {batch_size, channels, h, w}, {GLOROT, {0.0f, 1.0f}}, mem_type);
-	op::Operation<float> *filter = op::var<float> ("filter", {filter_h, filter_w, filter_h, filter_w}, {GLOROT, {0.0f, 1.0f}}, mem_type);
+	op::Operation<float> *filter = op::var<float> ("filter", {out_channels, in_channels, filter_h, filter_w}, {GLOROT, {0.0f, 1.0f}}, mem_type);
 
 	op::Operation<float> *conv = op::conv2dforward(x, filter, pad_h, pad_w, vertical_stride, horizontal_stride, dilation_h, dilation_w, use_cross_correlation);
 
@@ -530,7 +533,7 @@ void test_conv2d(memory_t mem_type, unsigned int size) {
 
 	assert( out->get_shape().size() == 4);
 	assert( out->get_shape(0) == batch_size );
-	assert( out->get_shape(1) == channels );
+	assert( out->get_shape(1) == out_channels );
 	assert( out->get_shape(2) == expected_h );
 	assert( out->get_shape(3) == expected_w );
 

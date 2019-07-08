@@ -43,10 +43,10 @@ magmadnn_error_t magmadnn_finalize() {
 
     /* destroy cudnn */
     cudnnDestroy(internal::MAGMADNN_SETTINGS->cudnn_handle);
-    #endif
 
     /* destroy cublas */
     cublasDestroy(internal::MAGMADNN_SETTINGS->cublas_handle);
+    #endif
 
     /* delete settings */
     delete internal::MAGMADNN_SETTINGS;

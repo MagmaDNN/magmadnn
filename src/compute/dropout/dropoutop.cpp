@@ -28,7 +28,10 @@ DropoutOp<T>::DropoutOp(Operation<T> *input, float dropout_rate, unsigned long l
 template <typename T>
 DropoutOp<T>::~DropoutOp() {
     if (mask_tensor != NULL) delete mask_tensor;
+    
+    #if defined(_HAS_CUDA_)
     cudnnErrchk( cudnnDestroyDropoutDescriptor(shared_settings.dropoutDesc) );
+    #endif
 }
 
 template <typename T>

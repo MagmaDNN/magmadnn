@@ -21,6 +21,7 @@
 #include "reducesum/reducesumop.h"
 
 #include "crossentropy/crossentropyop.h"
+#include "meansquarederror/meansquarederror.h"
 
 #include "transpose/transposeop.h"
 

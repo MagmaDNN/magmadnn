@@ -24,6 +24,7 @@ void test_affine(memory_t mem_type, unsigned int size);
 void test_sigmoid(memory_t mem_type, unsigned int size);
 void test_tanh(memory_t mem_type, unsigned int size);
 void test_crossentropy(memory_t mem_type, unsigned int size);
+void test_meansquarederror(memory_t mem_type, unsigned int size);
 
 int main(int argc, char **argv) {
 	magmadnn_init();
@@ -42,6 +43,7 @@ int main(int argc, char **argv) {
 	test_for_all_mem_types(test_sigmoid, 50);
 	test_for_all_mem_types(test_tanh, 50);
 	test_for_all_mem_types(test_crossentropy, 10);
+	test_for_all_mem_types(test_meansquarederror, 10);
     
 	magmadnn_finalize();
     return 0;
@@ -527,6 +529,31 @@ void test_crossentropy(memory_t mem_type, unsigned int size) {
 	double loss = out->get(0);
 
 	assert( fequal(loss, expected_loss) );
+
+	show_success();
+}
+
+
+void test_meansquarederror(memory_t mem_type, unsigned int size) {
+	printf("Testing %s meansquarederror...  ", get_memory_type_name(mem_type));
+
+	op::Operation<float> *truth = op::var<float>("truth", {size}, {GLOROT, {0.0f, 1.0f}}, mem_type);
+	op::Operation<float> *predicted = op::var<float>("predicted", {size}, {GLOROT, {0.0f, 1.0f}}, mem_type);
+
+	op::Operation<float> *mse_loss = op::meansquarederror(truth, predicted);
+	Tensor<float> *loss_tensor = mse_loss->eval();
+
+	sync(loss_tensor);
+
+	float expected_loss = 0.0f;
+	float diff;
+	for (unsigned int i = 0; i < size; i++) {
+		diff = truth->get_output_tensor()->get(i) - predicted->get_output_tensor()->get(i);
+		expected_loss += diff*diff;
+	}
+	expected_loss /= (float) size;
+
+	assert( fequal(loss_tensor->get(0), expected_loss) );
 
 	show_success();
 }

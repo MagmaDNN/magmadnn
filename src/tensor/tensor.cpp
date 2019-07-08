@@ -223,6 +223,41 @@ void Tensor<T>::reshape(const std::vector<unsigned int>& dims) {
     for (unsigned int i = 0; i < dims.size(); i ++) dims_size *= dims[i];
     assert(size == dims_size);
     shape = dims;
+
+    /* update strides */
+    strides.resize(dims.size());
+    unsigned int tmp_stride = 1;
+    for (int i = ((int)shape.size())-1; i >= 0; i--) {
+        strides[i] = tmp_stride;
+        tmp_stride *= shape[i];
+    }
+
+    /* update cudnn descriptor if on GPU */
+    int n=1, c=1, h=1, w=1;
+    if (shape.size() == 4) {
+        n = shape[0];
+        c = shape[1];
+        h = shape[2];
+        w = shape[3];
+    } else if (shape.size() == 3) {
+        n = shape[0];
+        c = shape[1];
+        h = shape[2];
+    } else if (shape.size() == 2) {
+        n = shape[0];
+        c = shape[1];
+    } else if (shape.size() == 1) {
+        n = shape[0];
+    } else {
+        fprintf(stderr, "Cannot create tensor descriptor for tensor of this shape\n");
+    }
+    cudnnErrchk( cudnnSetTensor4dDescriptor(
+        this->desc,
+        CUDNN_TENSOR_NCHW,
+        ::magmadnn::internal::get_cudnn_data_type(static_cast<T>(0)),
+        n, c, h, w
+    ) );
+
 }
 
 template<typename T>

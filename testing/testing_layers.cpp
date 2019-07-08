@@ -16,6 +16,7 @@ void test_input(memory_t mem, unsigned int size);
 void test_fullyconnected(memory_t mem, unsigned int size);
 void test_activation(memory_t mem, unsigned int size);
 void test_dropout(memory_t mem, unsigned int size);
+void test_flatten(memory_t mem, unsigned int size);
 void test_layers(memory_t mem, unsigned int size);
 
 int main(int argc, char **argv) {
@@ -28,6 +29,8 @@ int main(int argc, char **argv) {
     test_for_all_mem_types(test_activation, 15);
 
     test_for_all_mem_types(test_dropout, 15);
+
+    test_for_all_mem_types(test_flatten, 15);
 
     test_for_all_mem_types(test_layers, 15);
 
@@ -190,6 +193,29 @@ void test_dropout(memory_t mem, unsigned int size) {
     }
 
     if (!exists_zero || !exists_nonzero) assert(false);
+
+    show_success();
+}
+
+void test_flatten(memory_t mem, unsigned int size) {
+    printf("testing %s flatten...  ", get_memory_type_name(mem));
+
+    Tensor<float> *data_tensor = new Tensor<float> ({size*5, size, size*3, size*2}, {CONSTANT, {3}}, mem);
+    op::Variable<float> *data = op::var("data", data_tensor);
+
+    /* create the layer */
+    layer::FlattenLayer<float> *flatten = layer::flatten(data);
+
+    /* the output of the layer */
+    op::Operation<float> *output = flatten->out();
+    Tensor<float> *output_tensor = output->eval();
+
+    /* synchronize the memory if managed was being used */
+    sync(output_tensor);
+
+    assert( output_tensor->get_shape().size() == 2 );
+    assert( output_tensor->get_shape(0) == size*5 );
+    assert( output_tensor->get_shape(1) == size*(size*3)*(size*2) );
 
     show_success();
 }

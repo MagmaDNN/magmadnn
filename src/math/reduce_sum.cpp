@@ -101,20 +101,29 @@ void reduce_sum_device(Tensor<T> *x, int axis, Tensor<T> *out, reduce_sum_cudnn_
     /* call cudnn */
     T alpha = (T) 1;
     T beta = (T) 0;
-    cudnnErrchk( cudnnReduceTensor(
-        ::magmadnn::internal::MAGMADNN_SETTINGS->cudnn_handle,  /* cudnn handle */
-        settings.descriptor,    /* reduce tensor descriptor */
-        NULL,       /* indices ptr */
-        0,          /* indices ptr size */
-        settings.workspace,     /* ptr to workspace */
-        settings.workspace_size,    /* size of memory allocated to workspace ptr */
-        &alpha, /* alpha */
-        x->get_cudnn_tensor_descriptor(),   /* x -- descriptor */
-        x->get_ptr(),      /* x ptr */
-        &beta,      /* beta */
-        out->get_cudnn_tensor_descriptor(),    /* out -- descriptor */
-        out->get_ptr()                      /*out ptr */
-    ) );
+
+    /* if scalar, just copy */
+    if (x->get_size() == out->get_size()) {
+        out->copy_from(*x);
+    }
+
+    /* else do reduce sum */
+    else {
+        cudnnErrchk( cudnnReduceTensor(
+            ::magmadnn::internal::MAGMADNN_SETTINGS->cudnn_handle,  /* cudnn handle */
+            settings.descriptor,    /* reduce tensor descriptor */
+            NULL,       /* indices ptr */
+            0,          /* indices ptr size */
+            settings.workspace,     /* ptr to workspace */
+            settings.workspace_size,    /* size of memory allocated to workspace ptr */
+            &alpha, /* alpha */
+            x->get_cudnn_tensor_descriptor(),   /* x -- descriptor */
+            x->get_ptr(),      /* x ptr */
+            &beta,      /* beta */
+            out->get_cudnn_tensor_descriptor(),    /* out -- descriptor */
+            out->get_ptr()                      /*out ptr */
+        ) );
+    }
 }
 template void reduce_sum_device(Tensor<int> *x, int axis, Tensor<int> *out, reduce_sum_cudnn_settings_t settings);
 template void reduce_sum_device(Tensor<float> *x, int axis, Tensor<float> *out, reduce_sum_cudnn_settings_t settings);

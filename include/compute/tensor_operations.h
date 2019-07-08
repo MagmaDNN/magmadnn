@@ -30,3 +30,4 @@
 #include "linearforward/linearforwardop.h"
 #include "softmax/softmaxop.h"
 #include "dropout/dropoutop.h"
+#include "flatten/flattenop.h"

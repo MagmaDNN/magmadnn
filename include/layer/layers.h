@@ -15,3 +15,4 @@
 #include "output/outputlayer.h"
 #include "activation/activationlayer.h"
 #include "dropout/dropoutlayer.h"
+#include "flatten/flattenlayer.h"

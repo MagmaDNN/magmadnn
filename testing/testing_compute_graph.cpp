@@ -23,6 +23,7 @@ void test_sumreduce(memory_t mem_type, unsigned int);
 void test_affine(memory_t mem_type, unsigned int size);
 void test_sigmoid(memory_t mem_type, unsigned int size);
 void test_tanh(memory_t mem_type, unsigned int size);
+void test_conv2d(memory_t mem_type, unsigned int size);
 void test_crossentropy(memory_t mem_type, unsigned int size);
 void test_meansquarederror(memory_t mem_type, unsigned int size);
 
@@ -42,6 +43,14 @@ int main(int argc, char **argv) {
 	test_for_all_mem_types(test_affine, 50);
 	test_for_all_mem_types(test_sigmoid, 50);
 	test_for_all_mem_types(test_tanh, 50);
+
+
+	#if defined(_HAS_CUDA_)
+	test_conv2d(DEVICE, 30);
+	test_conv2d(MANAGED, 30);
+	test_conv2d(CUDA_MANAGED, 30);
+	#endif
+
 	test_for_all_mem_types(test_crossentropy, 10);
 	test_for_all_mem_types(test_meansquarederror, 10);
     
@@ -485,6 +494,34 @@ void test_tanh(memory_t mem_type, unsigned int size) {
 	show_success();
 }
 
+
+void test_conv2d(memory_t mem_type, unsigned int size) {
+	printf("Testing %s conv2d...  ", get_memory_type_name(mem_type));
+
+	/* basic convolution2d test */
+	unsigned int batch_size = 5;
+	unsigned int channels = 3;
+	unsigned int h = size;
+	unsigned int w = size; 
+
+	unsigned int filter_h = 3;
+	unsigned int filter_w = 3;
+
+	op::Operation<float> *x = op::var<float> ("data", {batch_size, channels, h, w}, {GLOROT, {0.0f, 1.0f}}, mem_type);
+	op::Operation<float> *filter = op::var<float> ("filter", {filter_h, filter_w}, {GLOROT, {0.0f, 1.0f}}, mem_type);
+
+	op::Operation<float> *conv = op::conv2dforward(x, filter);
+
+	Tensor<float> *out = conv->eval();
+
+	sync(out);
+
+	delete conv;
+
+	show_success();
+}
+
+
 void test_crossentropy(memory_t mem_type, unsigned int size) {
 	printf("Testing %s crossentropy...  ", get_memory_type_name(mem_type));
 
@@ -554,6 +591,8 @@ void test_meansquarederror(memory_t mem_type, unsigned int size) {
 	expected_loss /= (float) size;
 
 	assert( fequal(loss_tensor->get(0), expected_loss) );
+
+	delete mse_loss;
 
 	show_success();
 }

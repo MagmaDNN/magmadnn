@@ -18,7 +18,7 @@ The project is split into several main subdirectories: [include](#include), [src
 #### src
 `src` contains the source files (.cpp and .cu) for the entire library. Everything defined in `include` must be implemented here.
 #### docs
-The `docs` folder contains these contributing guidelines and is the destination for doxygen output. Assuming doxygen is properly installed, running `doxygen doxygen.config` in the project root directory will build the docs into the `docs` folder.
+The `docs` folder contains these contributing guidelines and is the destination for doxygen output. Assuming doxygen is properly installed, running `make docs` (or `doxygen doxygen.config`) in the project root directory will build the docs into the `docs` folder.
 #### testing
 `testing` contains ~unit-test-ish type tests. They are intended to ensure that the library is installed and running correctly. If `sh run_tests.sh` does not succeed, then something went wrong with the installation.
 #### examples

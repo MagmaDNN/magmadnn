@@ -58,7 +58,7 @@ g++ -O3 -o hello_world -I/path/to/blas/include -I/path/to/magmadnn/include hello
 
 On the GPU:
 ```sh
-g++ -O3 -o hello_world -I/path/to/blas/include -I/path/to/magma/include -I/path/to/magmadnn/include hello_world.cpp -L/path/to/magma/lib -L/path/to/blas/lib -L/path/to/magmadnn/lib -lopenblas -lcudart -lcudnn -lmagma -lmagmadnn
+g++ -O3 -DUSE_GPU -o hello_world -I/path/to/blas/include -I/path/to/magma/include -I/path/to/magmadnn/include hello_world.cpp -L/path/to/magma/lib -L/path/to/blas/lib -L/path/to/magmadnn/lib -lopenblas -lcudart -lcudnn -lmagma -lmagmadnn
 ```
 
 or a more general makefile
@@ -66,7 +66,7 @@ or a more general makefile
 ```makefile
 CXX = g++
 INC = -I/path/to/blas/include -I/path/to/magma/include -I/path/to/magmadnn/include
-FLAGS = -O3 $(INC)
+FLAGS = -O3 $(INC) -DUSE_GPU
 LIBS = -L/path/to/magma/lib -L/path/to/blas/lib -L/path/to/magmadnn/lib -lopenblas -lcudart -lcudnn -lmagma -lmagmadnn
 TARGETS = hello_world
 

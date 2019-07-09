@@ -34,3 +34,4 @@ This script can clean, build, install, and run the testers for the MagmaDNN libr
 | --clean   	| -c                	|                 	|  if set, then `make clean` will be run before building and installing. 	|
 | --verbose 	| -v                	|                 	| verbose mode                                                           	|
 | --no-test 	| N/A               	|                 	|  if set, then the testers will not be built or run.                    	|
+| --dev         | N/A                   |                   | same as '--clean --debug --verbose'                                       |

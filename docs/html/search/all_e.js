@@ -12,6 +12,6 @@ var searchData=
   ['reluop',['ReluOp',['../classmagmadnn_1_1op_1_1_relu_op.html',1,'magmadnn::op']]],
   ['reluop_2ecpp',['reluop.cpp',['../reluop_8cpp.html',1,'']]],
   ['reluop_2eh',['reluop.h',['../reluop_8h.html',1,'']]],
-  ['reset',['reset',['../classmagmadnn_1_1op_1_1_operation.html#abc0ccb94dd330a36517c437c6a968351',1,'magmadnn::op::Operation']]],
+  ['reset',['reset',['../classmagmadnn_1_1op_1_1_operation.html#abc0ccb94dd330a36517c437c6a968351',1,'magmadnn::op::Operation::reset()'],['../classmagmadnn_1_1dataloader_1_1_data_loader.html#af318199cbbf26b84200d45fb0be6a264',1,'magmadnn::dataloader::DataLoader::reset()'],['../classmagmadnn_1_1dataloader_1_1_linear_loader.html#a54d3f986db9dd37e1828987de5bab9b1',1,'magmadnn::dataloader::LinearLoader::reset()']]],
   ['reshape',['reshape',['../classmagmadnn_1_1_tensor.html#a0f8d0a0741fade84db25a48f790f284c',1,'magmadnn::Tensor']]]
 ];

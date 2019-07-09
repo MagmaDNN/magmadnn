@@ -1,33 +1,9 @@
-/*
-@ @licstart  The following is the entire license notice for the
-JavaScript code in this file.
-
-Copyright (C) 1997-2019 by Dimitri van Heesch
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of version 2 of the GNU General Public License as published by
-the Free Software Foundation
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License along
-with this program; if not, write to the Free Software Foundation, Inc.,
-51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-
-@licend  The above is the entire license notice
-for the JavaScript code in this file
-*/
 var NAVTREE =
 [
   [ "MagmaDNN", "index.html", [
     [ "#### Adding New Operations", "md_include_compute__r_e_a_d_m_e.html", [
       [ "### Tutorials", "index.html#autotoc_md6", null ],
-      [ "### Download and Installation", "index.html#autotoc_md7", null ],
-      [ "### Testing", "index.html#autotoc_md11", null ],
-      [ "### Examples", "index.html#autotoc_md12", null ]
+      [ "### Examples", "index.html#autotoc_md7", null ]
     ] ],
     [ "Adding New Layers", "autotoc_md4.html", null ],
     [ "Classes", "annotated.html", [
@@ -40,8 +16,8 @@ var NAVTREE =
         [ "Variables", "functions_vars.html", null ]
       ] ]
     ] ],
-    [ "Files", "files.html", [
-      [ "File List", "files.html", "files_dup" ]
+    [ "Files", null, [
+      [ "File List", "files.html", "files" ]
     ] ]
   ] ]
 ];
@@ -49,10 +25,10 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 ".html",
-"classmagmadnn_1_1op_1_1_linear_forward_op.html#a7228e9da532bca128e03f9cf7aa6ae67",
-"dir_7ceff166ba32a72be6e636f05a4944a2.html",
-"outputlayer_8h.html#af949827bf8d3d538f2975bccaa68670c",
-"variable_8cpp.html"
+"classmagmadnn_1_1op_1_1_add_op.html#a7d9c29e780aec55bafa4e91429aa9110",
+"classmagmadnn_1_1op_1_1_tanh_op.html#a92e694adc1708d2a05451c471b61f71a",
+"flattenlayer_8cpp.html#a883cf921109c77376a938418d5269ae4",
+"product__internal_8h_source.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

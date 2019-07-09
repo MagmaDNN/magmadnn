@@ -1,22 +1,29 @@
 <map id="include/math/dot.h" name="include/math/dot.h">
-<area shape="rect" id="node1" title=" " alt="" coords="407,5,537,32"/>
-<area shape="rect" id="node2" href="$dot_8cpp.html" title=" " alt="" coords="244,88,364,115"/>
-<area shape="rect" id="node3" href="$matmulop_8h.html" title=" " alt="" coords="389,81,555,122"/>
-<area shape="rect" id="node20" href="$tensor__math_8h.html" title=" " alt="" coords="728,353,867,394"/>
-<area shape="rect" id="node4" href="$matmulop_8cpp.html" title=" " alt="" coords="69,171,211,213"/>
-<area shape="rect" id="node5" href="$dotop_8h.html" title=" " alt="" coords="401,171,543,213"/>
-<area shape="rect" id="node8" href="$tensor__operations_8h_source.html" title=" " alt="" coords="285,353,445,394"/>
-<area shape="rect" id="node6" href="$dotop_8cpp.html" title=" " alt="" coords="481,269,660,296"/>
-<area shape="rect" id="node7" href="$sigmoidop_8h.html" title=" " alt="" coords="287,262,456,303"/>
-<area shape="rect" id="node9" href="$activationlayer_8h.html" title=" " alt="" coords="287,443,444,485"/>
-<area shape="rect" id="node12" href="$magmadnn_8h.html" title=" " alt="" coords="346,805,491,832"/>
-<area shape="rect" id="node16" href="$fullyconnectedlayer_8h.html" title=" " alt="" coords="469,443,653,485"/>
-<area shape="rect" id="node18" href="$outputlayer_8h.html" title=" " alt="" coords="125,443,261,485"/>
-<area shape="rect" id="node10" href="$activationlayer_8cpp.html" title=" " alt="" coords="275,534,411,575"/>
-<area shape="rect" id="node11" href="$layers_8h.html" title=" " alt="" coords="435,541,581,568"/>
-<area shape="rect" id="node13" href="$neuralnetwork_8h.html" title=" " alt="" coords="345,625,537,666"/>
-<area shape="rect" id="node14" href="$neuralnetwork_8cpp.html" title=" " alt="" coords="370,715,536,757"/>
-<area shape="rect" id="node15" href="$models_8h.html" title=" " alt="" coords="183,723,345,749"/>
-<area shape="rect" id="node17" href="$fullyconnectedlayer_8cpp.html" title=" " alt="" coords="605,534,771,575"/>
-<area shape="rect" id="node19" href="$outputlayer_8cpp.html" title=" " alt="" coords="43,541,251,568"/>
+<area shape="rect" id="node2" href="$dot_8cpp.html" title="src/math/dot.cpp" alt="" coords="700,87,820,114"/>
+<area shape="rect" id="node3" href="$matmulop_8h.html" title="include/compute/matmul\l/matmulop.h" alt="" coords="845,80,1009,121"/>
+<area shape="rect" id="node28" href="$tensor__math_8h.html" title="include/math/tensor\l_math.h" alt="" coords="1360,348,1496,389"/>
+<area shape="rect" id="node4" href="$matmulop_8cpp.html" title="src/compute/matmul\l/matmulop.cpp" alt="" coords="692,169,833,211"/>
+<area shape="rect" id="node5" href="$dotop_8h.html" title="include/compute/dot\l/dotop.h" alt="" coords="857,169,996,211"/>
+<area shape="rect" id="node8" href="$tensor__operations_8h_source.html" title="include/compute/tensor\l_operations.h" alt="" coords="687,348,844,389"/>
+<area shape="rect" id="node6" href="$dotop_8cpp.html" title="src/compute/dot/dotop.cpp" alt="" coords="642,266,819,293"/>
+<area shape="rect" id="node7" href="$sigmoidop_8h.html" title="include/compute/sigmoid\l/sigmoidop.h" alt="" coords="843,259,1010,300"/>
+<area shape="rect" id="node9" href="$activationlayer_8h.html" title="include/layer/activation\l/activationlayer.h" alt="" coords="775,437,929,479"/>
+<area shape="rect" id="node12" href="$magmadnn_8h.html" title="include/magmadnn.h" alt="" coords="791,802,934,829"/>
+<area shape="rect" id="node18" href="$dropoutlayer_8h.html" title="include/layer/dropout\l/dropoutlayer.h" alt="" coords="954,437,1097,479"/>
+<area shape="rect" id="node20" href="$flattenlayer_8h.html" title="include/layer/flatten\l/flattenlayer.h" alt="" coords="1121,437,1255,479"/>
+<area shape="rect" id="node22" href="$fullyconnectedlayer_8h.html" title="include/layer/fullyconnected\l/fullyconnectedlayer.h" alt="" coords="245,437,427,479"/>
+<area shape="rect" id="node24" href="$outputlayer_8h.html" title="include/layer/output\l/outputlayer.h" alt="" coords="451,437,586,479"/>
+<area shape="rect" id="node26" href="$poolinglayer_8h.html" title="include/layer/pooling\l/poolinglayer.h" alt="" coords="610,437,750,479"/>
+<area shape="rect" id="node10" href="$activationlayer_8cpp.html" title="src/layer/activation\l/activationlayer.cpp" alt="" coords="867,527,1002,568"/>
+<area shape="rect" id="node11" href="$layers_8h.html" title="include/layer/layers.h" alt="" coords="698,534,843,561"/>
+<area shape="rect" id="node13" href="$neuralnetwork_8h.html" title="include/model/neuralnetwork\l/neuralnetwork.h" alt="" coords="601,616,788,657"/>
+<area shape="rect" id="node14" href="$neuralnetwork_8cpp.html" title="src/model/neuralnetwork\l/neuralnetwork.cpp" alt="" coords="537,705,701,747"/>
+<area shape="rect" id="node15" href="$models_8h.html" title="include/model/models.h" alt="" coords="725,713,883,739"/>
+<area shape="rect" id="node16" href="$neuralnetwork__utilities_8h.html" title="include/model/neuralnetwork\l/neuralnetwork_utilities.h" alt="" coords="325,705,512,747"/>
+<area shape="rect" id="node17" href="$neuralnetwork__utilities_8cpp.html" title="src/model/neuralnetwork\l/neuralnetwork_utilities.cpp" alt="" coords="329,795,509,836"/>
+<area shape="rect" id="node19" href="$dropoutlayer_8cpp.html" title="src/layer/dropout/dropoutlayer.cpp" alt="" coords="1027,534,1245,561"/>
+<area shape="rect" id="node21" href="$flattenlayer_8cpp.html" title="src/layer/flatten/flattenlayer.cpp" alt="" coords="1269,534,1475,561"/>
+<area shape="rect" id="node23" href="$fullyconnectedlayer_8cpp.html" title="src/layer/fullyconnected\l/fullyconnectedlayer.cpp" alt="" coords="43,527,205,568"/>
+<area shape="rect" id="node25" href="$outputlayer_8cpp.html" title="src/layer/output/outputlayer.cpp" alt="" coords="229,534,435,561"/>
+<area shape="rect" id="node27" href="$poolinglayer_8cpp.html" title="src/layer/pooling/poolinglayer.cpp" alt="" coords="459,534,674,561"/>
 </map>

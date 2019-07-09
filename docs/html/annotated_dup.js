@@ -11,10 +11,14 @@ var annotated_dup =
       ] ],
       [ "layer", null, [
         [ "ActivationLayer", "classmagmadnn_1_1layer_1_1_activation_layer.html", "classmagmadnn_1_1layer_1_1_activation_layer" ],
+        [ "Conv2dLayer", "classmagmadnn_1_1layer_1_1_conv2d_layer.html", "classmagmadnn_1_1layer_1_1_conv2d_layer" ],
+        [ "DropoutLayer", "classmagmadnn_1_1layer_1_1_dropout_layer.html", "classmagmadnn_1_1layer_1_1_dropout_layer" ],
+        [ "FlattenLayer", "classmagmadnn_1_1layer_1_1_flatten_layer.html", "classmagmadnn_1_1layer_1_1_flatten_layer" ],
         [ "FullyConnectedLayer", "classmagmadnn_1_1layer_1_1_fully_connected_layer.html", "classmagmadnn_1_1layer_1_1_fully_connected_layer" ],
         [ "InputLayer", "classmagmadnn_1_1layer_1_1_input_layer.html", "classmagmadnn_1_1layer_1_1_input_layer" ],
         [ "Layer", "classmagmadnn_1_1layer_1_1_layer.html", "classmagmadnn_1_1layer_1_1_layer" ],
-        [ "OutputLayer", "classmagmadnn_1_1layer_1_1_output_layer.html", "classmagmadnn_1_1layer_1_1_output_layer" ]
+        [ "OutputLayer", "classmagmadnn_1_1layer_1_1_output_layer.html", "classmagmadnn_1_1layer_1_1_output_layer" ],
+        [ "PoolingLayer", "classmagmadnn_1_1layer_1_1_pooling_layer.html", "classmagmadnn_1_1layer_1_1_pooling_layer" ]
       ] ],
       [ "model", null, [
         [ "metric_t", "structmagmadnn_1_1model_1_1metric__t.html", "structmagmadnn_1_1model_1_1metric__t" ],
@@ -27,12 +31,15 @@ var annotated_dup =
         [ "Conv2DForwardOp", "classmagmadnn_1_1op_1_1_conv2_d_forward_op.html", "classmagmadnn_1_1op_1_1_conv2_d_forward_op" ],
         [ "CrossEntropyOp", "classmagmadnn_1_1op_1_1_cross_entropy_op.html", "classmagmadnn_1_1op_1_1_cross_entropy_op" ],
         [ "DivOp", "classmagmadnn_1_1op_1_1_div_op.html", "classmagmadnn_1_1op_1_1_div_op" ],
+        [ "DropoutOp", "classmagmadnn_1_1op_1_1_dropout_op.html", "classmagmadnn_1_1op_1_1_dropout_op" ],
+        [ "FlattenOp", "classmagmadnn_1_1op_1_1_flatten_op.html", "classmagmadnn_1_1op_1_1_flatten_op" ],
         [ "GradTable", "classmagmadnn_1_1op_1_1_grad_table.html", "classmagmadnn_1_1op_1_1_grad_table" ],
         [ "LinearForwardOp", "classmagmadnn_1_1op_1_1_linear_forward_op.html", "classmagmadnn_1_1op_1_1_linear_forward_op" ],
         [ "LogOp", "classmagmadnn_1_1op_1_1_log_op.html", "classmagmadnn_1_1op_1_1_log_op" ],
         [ "MatmulOp", "classmagmadnn_1_1op_1_1_matmul_op.html", "classmagmadnn_1_1op_1_1_matmul_op" ],
         [ "NegativeOp", "classmagmadnn_1_1op_1_1_negative_op.html", "classmagmadnn_1_1op_1_1_negative_op" ],
         [ "Operation", "classmagmadnn_1_1op_1_1_operation.html", "classmagmadnn_1_1op_1_1_operation" ],
+        [ "PoolingOp", "classmagmadnn_1_1op_1_1_pooling_op.html", "classmagmadnn_1_1op_1_1_pooling_op" ],
         [ "PowOp", "classmagmadnn_1_1op_1_1_pow_op.html", "classmagmadnn_1_1op_1_1_pow_op" ],
         [ "ProductOp", "classmagmadnn_1_1op_1_1_product_op.html", "classmagmadnn_1_1op_1_1_product_op" ],
         [ "ReduceSumOp", "classmagmadnn_1_1op_1_1_reduce_sum_op.html", "classmagmadnn_1_1op_1_1_reduce_sum_op" ],

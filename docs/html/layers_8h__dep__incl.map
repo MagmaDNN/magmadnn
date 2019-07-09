@@ -1,7 +1,8 @@
 <map id="include/layer/layers.h" name="include/layer/layers.h">
-<area shape="rect" id="node1" title=" " alt="" coords="5,5,152,32"/>
-<area shape="rect" id="node2" href="$magmadnn_8h.html" title=" " alt="" coords="94,261,239,288"/>
-<area shape="rect" id="node3" href="$neuralnetwork_8h.html" title=" " alt="" coords="49,81,241,122"/>
-<area shape="rect" id="node4" href="$neuralnetwork_8cpp.html" title=" " alt="" coords="50,171,216,213"/>
-<area shape="rect" id="node5" href="$models_8h.html" title=" " alt="" coords="241,179,404,205"/>
+<area shape="rect" id="node2" href="$magmadnn_8h.html" title="include/magmadnn.h" alt="" coords="95,266,237,293"/>
+<area shape="rect" id="node3" href="$neuralnetwork_8h.html" title="include/model/neuralnetwork\l/neuralnetwork.h" alt="" coords="137,80,323,121"/>
+<area shape="rect" id="node4" href="$neuralnetwork_8cpp.html" title="src/model/neuralnetwork\l/neuralnetwork.cpp" alt="" coords="51,169,215,211"/>
+<area shape="rect" id="node5" href="$models_8h.html" title="include/model/models.h" alt="" coords="239,177,397,203"/>
+<area shape="rect" id="node6" href="$neuralnetwork__utilities_8h.html" title="include/model/neuralnetwork\l/neuralnetwork_utilities.h" alt="" coords="422,169,609,211"/>
+<area shape="rect" id="node7" href="$neuralnetwork__utilities_8cpp.html" title="src/model/neuralnetwork\l/neuralnetwork_utilities.cpp" alt="" coords="425,259,605,300"/>
 </map>

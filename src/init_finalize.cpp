@@ -1,7 +1,7 @@
 /**
  * @file init_finalize.cpp
  * @author Daniel Nichols
- * @version 0.0.1
+ * @version 1.0
  * @date 2019-03-15
  * 
  * @copyright Copyright (c) 2019

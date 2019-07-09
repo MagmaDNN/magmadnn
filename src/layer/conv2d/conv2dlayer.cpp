@@ -1,7 +1,7 @@
 /**
  * @file conv2dlayer.cpp
  * @author Daniel Nichols
- * @version 0.1.0
+ * @version 1.0
  * @date 2019-07-08
  * 
  * @copyright Copyright (c) 2019

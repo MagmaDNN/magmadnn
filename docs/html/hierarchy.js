@@ -6,9 +6,13 @@ var hierarchy =
     [ "magmadnn::op::GradTable< T >", "classmagmadnn_1_1op_1_1_grad_table.html", null ],
     [ "magmadnn::layer::Layer< T >", "classmagmadnn_1_1layer_1_1_layer.html", [
       [ "magmadnn::layer::ActivationLayer< T >", "classmagmadnn_1_1layer_1_1_activation_layer.html", null ],
+      [ "magmadnn::layer::Conv2dLayer< T >", "classmagmadnn_1_1layer_1_1_conv2d_layer.html", null ],
+      [ "magmadnn::layer::DropoutLayer< T >", "classmagmadnn_1_1layer_1_1_dropout_layer.html", null ],
+      [ "magmadnn::layer::FlattenLayer< T >", "classmagmadnn_1_1layer_1_1_flatten_layer.html", null ],
       [ "magmadnn::layer::FullyConnectedLayer< T >", "classmagmadnn_1_1layer_1_1_fully_connected_layer.html", null ],
       [ "magmadnn::layer::InputLayer< T >", "classmagmadnn_1_1layer_1_1_input_layer.html", null ],
-      [ "magmadnn::layer::OutputLayer< T >", "classmagmadnn_1_1layer_1_1_output_layer.html", null ]
+      [ "magmadnn::layer::OutputLayer< T >", "classmagmadnn_1_1layer_1_1_output_layer.html", null ],
+      [ "magmadnn::layer::PoolingLayer< T >", "classmagmadnn_1_1layer_1_1_pooling_layer.html", null ]
     ] ],
     [ "magmadnn::magmadnn_settings_t", "structmagmadnn_1_1magmadnn__settings__t.html", null ],
     [ "magmadnn::MemoryManager< T >", "classmagmadnn_1_1_memory_manager.html", null ],
@@ -22,10 +26,13 @@ var hierarchy =
       [ "magmadnn::op::Conv2DForwardOp< T >", "classmagmadnn_1_1op_1_1_conv2_d_forward_op.html", null ],
       [ "magmadnn::op::CrossEntropyOp< T >", "classmagmadnn_1_1op_1_1_cross_entropy_op.html", null ],
       [ "magmadnn::op::DivOp< T >", "classmagmadnn_1_1op_1_1_div_op.html", null ],
+      [ "magmadnn::op::DropoutOp< T >", "classmagmadnn_1_1op_1_1_dropout_op.html", null ],
+      [ "magmadnn::op::FlattenOp< T >", "classmagmadnn_1_1op_1_1_flatten_op.html", null ],
       [ "magmadnn::op::LinearForwardOp< T >", "classmagmadnn_1_1op_1_1_linear_forward_op.html", null ],
       [ "magmadnn::op::LogOp< T >", "classmagmadnn_1_1op_1_1_log_op.html", null ],
       [ "magmadnn::op::MatmulOp< T >", "classmagmadnn_1_1op_1_1_matmul_op.html", null ],
       [ "magmadnn::op::NegativeOp< T >", "classmagmadnn_1_1op_1_1_negative_op.html", null ],
+      [ "magmadnn::op::PoolingOp< T >", "classmagmadnn_1_1op_1_1_pooling_op.html", null ],
       [ "magmadnn::op::PowOp< T >", "classmagmadnn_1_1op_1_1_pow_op.html", null ],
       [ "magmadnn::op::ProductOp< T >", "classmagmadnn_1_1op_1_1_product_op.html", null ],
       [ "magmadnn::op::ReduceSumOp< T >", "classmagmadnn_1_1op_1_1_reduce_sum_op.html", null ],

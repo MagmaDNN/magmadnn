@@ -1,7 +1,7 @@
 /**
  * @file testing_layers.cpp
  * @author Daniel Nichols
- * @version 0.0.1
+ * @version 1.0
  * @date 2019-03-11
  * 
  * @copyright Copyright (c) 2019

@@ -2,6 +2,7 @@ var utilities__internal_8h =
 [
     [ "OP_IS_MATRIX", "utilities__internal_8h.html#ab7e306cff8a5e513a36061cb5692c766", null ],
     [ "OP_IS_N_DIMENSIONAL", "utilities__internal_8h.html#ab5b0f84bcc385b8c32542e4f343533bc", null ],
+    [ "OP_IS_SAME_MEMORY_TYPE", "utilities__internal_8h.html#a027c54e1e692981e980726555a349e31", null ],
     [ "OP_IS_SCALAR", "utilities__internal_8h.html#aa539811243f9d5ffc052323eac68ac83", null ],
     [ "OP_IS_VECTOR", "utilities__internal_8h.html#a6a151bb767ede8a515fbc266656c71ea", null ],
     [ "T_IS_MATRIX", "utilities__internal_8h.html#aefcadb4ddf766a62fd6c0d4857f66db4", null ],

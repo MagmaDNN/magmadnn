@@ -1,0 +1,6 @@
+<map id="magmadnn::dataloader::DataLoader::DataLoader" name="magmadnn::dataloader::DataLoader::DataLoader">
+<area shape="rect" id="node2" href="$classmagmadnn_1_1_tensor.html#a2f491d8576b365e606b006185dc8c68a" title="magmadnn::Tensor::get\l_shape" alt="" coords="241,5,401,47"/>
+<area shape="rect" id="node3" href="$classmagmadnn_1_1_tensor.html#a58fd9222e40cc20358fe3cfa18a66497" title="magmadnn::Tensor::get_size" alt="" coords="225,71,416,98"/>
+<area shape="rect" id="node4" href="$classmagmadnn_1_1dataloader_1_1_data_loader.html#a26e5214174b05aa563c6dd88ac065d33" title="magmadnn::dataloader\l::DataLoader::next" alt="" coords="243,123,398,164"/>
+<area shape="rect" id="node5" href="$classmagmadnn_1_1dataloader_1_1_data_loader.html#af318199cbbf26b84200d45fb0be6a264" title="magmadnn::dataloader\l::DataLoader::reset" alt="" coords="243,188,398,229"/>
+</map>

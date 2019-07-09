@@ -1,5 +1,5 @@
 <map id="magmadnn::Tensor::get_size" name="magmadnn::Tensor::get_size">
-<area shape="rect" id="node1" title=" " alt="" coords="283,41,477,68"/>
-<area shape="rect" id="node2" href="$classmagmadnn_1_1model_1_1_neural_network.html#ae6c7571fefbfc2a2a487a2c3bfcce177" title=" " alt="" coords="6,5,234,46"/>
-<area shape="rect" id="node3" href="$classmagmadnn_1_1_tensor.html#a9b562390b2e36adbcbc478386914c1cd" title=" " alt="" coords="17,71,223,97"/>
+<area shape="rect" id="node2" href="$classmagmadnn_1_1dataloader_1_1_data_loader.html#a722eb7f35d7a2d73b9f94840fe16aee2" title="magmadnn::dataloader\l::DataLoader::DataLoader" alt="" coords="270,5,442,47"/>
+<area shape="rect" id="node3" href="$classmagmadnn_1_1model_1_1_neural_network.html#ae6c7571fefbfc2a2a487a2c3bfcce177" title="magmadnn::model::NeuralNetwork\l::predict" alt="" coords="244,71,468,112"/>
+<area shape="rect" id="node4" href="$classmagmadnn_1_1_tensor.html#a9b562390b2e36adbcbc478386914c1cd" title="magmadnn::Tensor::copy_from" alt="" coords="255,137,457,163"/>
 </map>

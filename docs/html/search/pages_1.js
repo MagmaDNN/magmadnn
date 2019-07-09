@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['magmadnn',['Magmadnn',['../index.html',1,'']]]
+  ['magmadnn',['MagmaDNN',['../index.html',1,'']]]
 ];

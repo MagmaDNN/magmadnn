@@ -1,13 +1,14 @@
 <map id="include/compute/gradtable.h" name="include/compute/gradtable.h">
-<area shape="rect" id="node1" title=" " alt="" coords="208,5,397,32"/>
-<area shape="rect" id="node2" href="$gradtable_8cpp.html" title=" " alt="" coords="5,80,184,107"/>
-<area shape="rect" id="node3" href="$gradients_8h.html" title=" " alt="" coords="208,80,397,107"/>
-<area shape="rect" id="node6" href="$gradientdescent_8h.html" title=" " alt="" coords="337,155,556,197"/>
-<area shape="rect" id="node4" href="$gradients_8cpp.html" title=" " alt="" coords="83,163,261,189"/>
-<area shape="rect" id="node5" href="$magmadnn_8h.html" title=" " alt="" coords="363,517,508,544"/>
-<area shape="rect" id="node7" href="$gradientdescent_8cpp.html" title=" " alt="" coords="337,246,532,287"/>
-<area shape="rect" id="node8" href="$optimizers_8h.html" title=" " alt="" coords="557,253,755,280"/>
-<area shape="rect" id="node9" href="$neuralnetwork_8h.html" title=" " alt="" coords="560,337,752,378"/>
-<area shape="rect" id="node10" href="$neuralnetwork_8cpp.html" title=" " alt="" coords="474,427,640,469"/>
-<area shape="rect" id="node11" href="$models_8h.html" title=" " alt="" coords="665,435,828,461"/>
+<area shape="rect" id="node2" href="$gradtable_8cpp.html" title="src/compute/gradtable.cpp" alt="" coords="5,80,181,107"/>
+<area shape="rect" id="node3" href="$gradients_8h.html" title="include/compute/gradients.h" alt="" coords="206,80,391,107"/>
+<area shape="rect" id="node6" href="$gradientdescent_8h.html" title="include/optimizer/gradientdescent\l/gradientdescent.h" alt="" coords="332,155,548,196"/>
+<area shape="rect" id="node4" href="$gradients_8cpp.html" title="src/compute/gradients.cpp" alt="" coords="81,162,257,189"/>
+<area shape="rect" id="node5" href="$magmadnn_8h.html" title="include/magmadnn.h" alt="" coords="274,519,417,546"/>
+<area shape="rect" id="node7" href="$gradientdescent_8cpp.html" title="src/optimizer/gradientdescent\l/gradientdescent.cpp" alt="" coords="334,244,527,285"/>
+<area shape="rect" id="node8" href="$optimizers_8h.html" title="include/optimizer/optimizers.h" alt="" coords="552,251,747,278"/>
+<area shape="rect" id="node9" href="$neuralnetwork_8h.html" title="include/model/neuralnetwork\l/neuralnetwork.h" alt="" coords="556,333,743,375"/>
+<area shape="rect" id="node10" href="$neuralnetwork_8cpp.html" title="src/model/neuralnetwork\l/neuralnetwork.cpp" alt="" coords="383,423,547,464"/>
+<area shape="rect" id="node11" href="$models_8h.html" title="include/model/models.h" alt="" coords="571,430,730,457"/>
+<area shape="rect" id="node12" href="$neuralnetwork__utilities_8h.html" title="include/model/neuralnetwork\l/neuralnetwork_utilities.h" alt="" coords="755,423,941,464"/>
+<area shape="rect" id="node13" href="$neuralnetwork__utilities_8cpp.html" title="src/model/neuralnetwork\l/neuralnetwork_utilities.cpp" alt="" coords="758,512,938,553"/>
 </map>

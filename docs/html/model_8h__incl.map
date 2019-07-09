@@ -1,24 +1,10 @@
 <map id="include/model/model.h" name="include/model/model.h">
-<area shape="rect" id="node1" title=" " alt="" coords="355,5,511,32"/>
-<area shape="rect" id="node2" title=" " alt="" coords="515,229,569,256"/>
-<area shape="rect" id="node3" href="$types_8h.html" title=" " alt="" coords="94,528,159,555"/>
-<area shape="rect" id="node5" href="$tensor_8h.html" title=" " alt="" coords="271,229,381,256"/>
-<area shape="rect" id="node20" href="$operation_8h.html" title=" " alt="" coords="361,155,505,181"/>
-<area shape="rect" id="node22" href="$optimizer_8h.html" title=" " alt="" coords="581,80,725,107"/>
-<area shape="rect" id="node4" title=" " alt="" coords="561,603,620,629"/>
-<area shape="rect" id="node6" href="$memorymanager_8h.html" title=" " alt="" coords="299,453,484,480"/>
-<area shape="rect" id="node11" href="$tensor__internal_8h.html" title=" " alt="" coords="365,304,485,331"/>
-<area shape="rect" id="node14" href="$utilities__internal_8h.html" title=" " alt="" coords="725,453,851,480"/>
-<area shape="rect" id="node7" title=" " alt="" coords="451,528,528,555"/>
-<area shape="rect" id="node8" title=" " alt="" coords="184,528,248,555"/>
-<area shape="rect" id="node9" title=" " alt="" coords="272,528,333,555"/>
-<area shape="rect" id="node10" title=" " alt="" coords="357,528,427,555"/>
-<area shape="rect" id="node12" href="$fill__internal_8h.html" title=" " alt="" coords="495,379,592,405"/>
-<area shape="rect" id="node13" title=" " alt="" coords="511,453,577,480"/>
-<area shape="rect" id="node15" title=" " alt="" coords="801,528,857,555"/>
-<area shape="rect" id="node16" title=" " alt="" coords="882,528,947,555"/>
-<area shape="rect" id="node17" title=" " alt="" coords="971,528,1031,555"/>
-<area shape="rect" id="node18" title=" " alt="" coords="653,528,693,555"/>
-<area shape="rect" id="node19" title=" " alt="" coords="717,528,776,555"/>
-<area shape="rect" id="node21" title=" " alt="" coords="409,229,457,256"/>
+<area shape="rect" id="node3" href="$types_8h.html" title="types.h" alt="" coords="811,528,876,555"/>
+<area shape="rect" id="node5" href="$tensor_8h.html" title="tensor/tensor.h" alt="" coords="718,229,827,256"/>
+<area shape="rect" id="node20" href="$operation_8h.html" title="compute/operation.h" alt="" coords="659,155,799,181"/>
+<area shape="rect" id="node22" href="$optimizer_8h.html" title="optimizer/optimizer.h" alt="" coords="608,80,751,107"/>
+<area shape="rect" id="node6" href="$memorymanager_8h.html" title="memory/memorymanager.h" alt="" coords="470,453,651,480"/>
+<area shape="rect" id="node11" href="$utilities__internal_8h.html" title="utilities_internal.h" alt="" coords="146,528,269,555"/>
+<area shape="rect" id="node17" href="$tensor__internal_8h.html" title="tensor_internal.h" alt="" coords="501,304,620,331"/>
+<area shape="rect" id="node18" href="$fill__internal_8h.html" title="fill_internal.h" alt="" coords="301,379,396,405"/>
 </map>

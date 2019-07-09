@@ -1,7 +1,7 @@
 /**
  * @file add.cpp
  * @author Daniel Nichols
- * @version 0.1.0
+ * @version 1.0
  * @date 2019-06-24
  * 
  * @copyright Copyright (c) 2019

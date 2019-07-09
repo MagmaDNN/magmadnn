@@ -1,4 +1,8 @@
 <map id="include/dataloader/dataloaders.h" name="include/dataloader/dataloaders.h">
-<area shape="rect" id="node1" title=" " alt="" coords="12,6,143,47"/>
-<area shape="rect" id="node2" href="$magmadnn_8h.html" title=" " alt="" coords="5,96,149,123"/>
+<area shape="rect" id="node2" href="$magmadnn_8h.html" title="include/magmadnn.h" alt="" coords="85,281,228,307"/>
+<area shape="rect" id="node3" href="$neuralnetwork_8h.html" title="include/model/neuralnetwork\l/neuralnetwork.h" alt="" coords="127,95,314,136"/>
+<area shape="rect" id="node4" href="$neuralnetwork_8cpp.html" title="src/model/neuralnetwork\l/neuralnetwork.cpp" alt="" coords="41,184,205,225"/>
+<area shape="rect" id="node5" href="$models_8h.html" title="include/model/models.h" alt="" coords="229,191,388,218"/>
+<area shape="rect" id="node6" href="$neuralnetwork__utilities_8h.html" title="include/model/neuralnetwork\l/neuralnetwork_utilities.h" alt="" coords="413,184,599,225"/>
+<area shape="rect" id="node7" href="$neuralnetwork__utilities_8cpp.html" title="src/model/neuralnetwork\l/neuralnetwork_utilities.cpp" alt="" coords="416,273,596,315"/>
 </map>

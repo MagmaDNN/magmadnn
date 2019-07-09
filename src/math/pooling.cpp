@@ -1,7 +1,7 @@
 /**
  * @file pooling.cpp
  * @author Sedrick Keh
- * @version 0.1.0
+ * @version 1.0
  * @date 2019-07-08
  * 
  * @copyright Copyright (c) 2019

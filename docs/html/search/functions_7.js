@@ -8,7 +8,7 @@ var searchData=
   ['get_5faccuracy',['get_accuracy',['../classmagmadnn_1_1model_1_1_model.html#adabd95dc9af4d1b840bfb8f450e1c2ea',1,'magmadnn::model::Model']]],
   ['get_5fconsumers',['get_consumers',['../classmagmadnn_1_1op_1_1_operation.html#afd85cfaa8f758675ee093f7647a24bce',1,'magmadnn::op::Operation']]],
   ['get_5fdevice_5fid',['get_device_id',['../classmagmadnn_1_1_tensor.html#ab8571fbf59ade13e0c2ba2d435e1da3b',1,'magmadnn::Tensor']]],
-  ['get_5fgrad_5ftable',['get_grad_table',['../gradients_8cpp.html#ad61618524b88fb47795ae2e3570d6bc1',1,'magmadnn::op']]],
+  ['get_5fgrad_5ftable',['get_grad_table',['../gradients_8cpp.html#ad76abfa904fd8124b95ab62acb180a6a',1,'magmadnn::op']]],
   ['get_5fgrad_5ftensor',['get_grad_tensor',['../classmagmadnn_1_1op_1_1_operation.html#aa68cfbd314eb4e3380a89f64b493d3af',1,'magmadnn::op::Operation']]],
   ['get_5fhost_5fptr',['get_host_ptr',['../classmagmadnn_1_1_memory_manager.html#a9890ba3a1cc0204a74bd0679256e287c',1,'magmadnn::MemoryManager']]],
   ['get_5finput',['get_input',['../classmagmadnn_1_1layer_1_1_layer.html#a26d6179e24812cafe517fd784e94c6a4',1,'magmadnn::layer::Layer']]],

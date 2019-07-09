@@ -1,6 +1,10 @@
 <map id="include/dataloader/linear/linearloader.h" name="include/dataloader/linear/linearloader.h">
-<area shape="rect" id="node1" title=" " alt="" coords="85,6,227,47"/>
-<area shape="rect" id="node2" href="$linearloader_8cpp.html" title=" " alt="" coords="5,97,147,138"/>
-<area shape="rect" id="node3" href="$dataloaders_8h.html" title=" " alt="" coords="172,97,303,138"/>
-<area shape="rect" id="node4" href="$magmadnn_8h.html" title=" " alt="" coords="165,187,309,213"/>
+<area shape="rect" id="node2" href="$linearloader_8cpp.html" title="src/dataloader/linear\l/linearloader.cpp" alt="" coords="5,95,144,136"/>
+<area shape="rect" id="node3" href="$dataloaders_8h.html" title="include/dataloader\l/dataloaders.h" alt="" coords="169,95,295,136"/>
+<area shape="rect" id="node4" href="$magmadnn_8h.html" title="include/magmadnn.h" alt="" coords="206,370,349,397"/>
+<area shape="rect" id="node5" href="$neuralnetwork_8h.html" title="include/model/neuralnetwork\l/neuralnetwork.h" alt="" coords="248,184,435,225"/>
+<area shape="rect" id="node6" href="$neuralnetwork_8cpp.html" title="src/model/neuralnetwork\l/neuralnetwork.cpp" alt="" coords="162,273,326,315"/>
+<area shape="rect" id="node7" href="$models_8h.html" title="include/model/models.h" alt="" coords="350,281,509,307"/>
+<area shape="rect" id="node8" href="$neuralnetwork__utilities_8h.html" title="include/model/neuralnetwork\l/neuralnetwork_utilities.h" alt="" coords="533,273,720,315"/>
+<area shape="rect" id="node9" href="$neuralnetwork__utilities_8cpp.html" title="src/model/neuralnetwork\l/neuralnetwork_utilities.cpp" alt="" coords="537,363,717,404"/>
 </map>

@@ -1,24 +1,10 @@
 <map id="include/compute/gradtable.h" name="include/compute/gradtable.h">
-<area shape="rect" id="node1" title=" " alt="" coords="215,5,404,32"/>
-<area shape="rect" id="node2" title=" " alt="" coords="167,229,215,256"/>
-<area shape="rect" id="node3" title=" " alt="" coords="261,229,315,256"/>
-<area shape="rect" id="node4" title=" " alt="" coords="974,528,1033,555"/>
-<area shape="rect" id="node5" href="$operation_8h.html" title=" " alt="" coords="237,155,381,181"/>
-<area shape="rect" id="node22" href="$variable_8h.html" title=" " alt="" coords="350,80,484,107"/>
-<area shape="rect" id="node6" href="$tensor_8h.html" title=" " alt="" coords="339,229,449,256"/>
-<area shape="rect" id="node7" title=" " alt="" coords="487,603,545,629"/>
-<area shape="rect" id="node8" href="$types_8h.html" title=" " alt="" coords="45,528,109,555"/>
-<area shape="rect" id="node9" href="$memorymanager_8h.html" title=" " alt="" coords="253,453,437,480"/>
-<area shape="rect" id="node14" href="$tensor__internal_8h.html" title=" " alt="" coords="383,304,504,331"/>
-<area shape="rect" id="node17" href="$utilities__internal_8h.html" title=" " alt="" coords="696,453,821,480"/>
-<area shape="rect" id="node10" title=" " alt="" coords="135,528,212,555"/>
-<area shape="rect" id="node11" title=" " alt="" coords="236,528,300,555"/>
-<area shape="rect" id="node12" title=" " alt="" coords="324,528,385,555"/>
-<area shape="rect" id="node13" title=" " alt="" coords="409,528,479,555"/>
-<area shape="rect" id="node15" href="$fill__internal_8h.html" title=" " alt="" coords="447,379,544,405"/>
-<area shape="rect" id="node16" title=" " alt="" coords="463,453,529,480"/>
-<area shape="rect" id="node18" title=" " alt="" coords="687,528,744,555"/>
-<area shape="rect" id="node19" title=" " alt="" coords="769,528,833,555"/>
-<area shape="rect" id="node20" title=" " alt="" coords="859,528,899,555"/>
-<area shape="rect" id="node21" title=" " alt="" coords="604,528,663,555"/>
+<area shape="rect" id="node5" href="$operation_8h.html" title="compute/operation.h" alt="" coords="419,155,559,181"/>
+<area shape="rect" id="node22" href="$variable_8h.html" title="compute/variable.h" alt="" coords="529,80,661,107"/>
+<area shape="rect" id="node6" href="$tensor_8h.html" title="tensor/tensor.h" alt="" coords="519,229,629,256"/>
+<area shape="rect" id="node8" href="$types_8h.html" title="types.h" alt="" coords="5,528,71,555"/>
+<area shape="rect" id="node9" href="$memorymanager_8h.html" title="memory/memorymanager.h" alt="" coords="215,453,397,480"/>
+<area shape="rect" id="node14" href="$utilities__internal_8h.html" title="utilities_internal.h" alt="" coords="647,528,770,555"/>
+<area shape="rect" id="node19" href="$tensor__internal_8h.html" title="tensor_internal.h" alt="" coords="429,304,548,331"/>
+<area shape="rect" id="node20" href="$fill__internal_8h.html" title="fill_internal.h" alt="" coords="441,379,536,405"/>
 </map>

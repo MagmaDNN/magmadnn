@@ -1,5 +1,3 @@
 <map id="magmadnn::op::TransposeOp::_grad" name="magmadnn::op::TransposeOp::_grad">
-<area shape="rect" id="node1" title=" " alt="" coords="6,27,205,69"/>
-<area shape="rect" id="node2" href="$variable_8cpp.html#a8329b297f0304e66498484852411fb04" title=" " alt="" coords="267,5,405,32"/>
-<area shape="rect" id="node3" href="$classmagmadnn_1_1_tensor.html#a2f491d8576b365e606b006185dc8c68a" title=" " alt="" coords="254,57,418,98"/>
+<area shape="rect" id="node2" href="$classmagmadnn_1_1_tensor.html#a2f491d8576b365e606b006185dc8c68a" title="magmadnn::Tensor::get\l_shape" alt="" coords="248,5,408,47"/>
 </map>

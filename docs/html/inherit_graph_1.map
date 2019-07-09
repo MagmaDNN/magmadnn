@@ -1,7 +1,11 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classmagmadnn_1_1layer_1_1_layer.html" title=" " alt="" coords="5,107,203,133"/>
-<area shape="rect" id="node2" href="$classmagmadnn_1_1layer_1_1_activation_layer.html" title=" " alt="" coords="274,5,465,46"/>
-<area shape="rect" id="node3" href="$classmagmadnn_1_1layer_1_1_fully_connected_layer.html" title=" " alt="" coords="257,70,482,111"/>
-<area shape="rect" id="node4" href="$classmagmadnn_1_1layer_1_1_input_layer.html" title=" " alt="" coords="256,136,483,163"/>
-<area shape="rect" id="node5" href="$classmagmadnn_1_1layer_1_1_output_layer.html" title=" " alt="" coords="251,187,488,213"/>
+<area shape="rect" id="node1" href="$classmagmadnn_1_1layer_1_1_layer.html" title="magmadnn::layer::Layer\&lt; T \&gt;" alt="" coords="5,229,200,255"/>
+<area shape="rect" id="node2" href="$classmagmadnn_1_1layer_1_1_activation_layer.html" title="magmadnn::layer::Activation\lLayer\&lt; T \&gt;" alt="" coords="273,5,461,47"/>
+<area shape="rect" id="node3" href="$classmagmadnn_1_1layer_1_1_conv2d_layer.html" title="magmadnn::layer::Conv2dLayer\&lt; T \&gt;" alt="" coords="248,71,487,98"/>
+<area shape="rect" id="node4" href="$classmagmadnn_1_1layer_1_1_dropout_layer.html" title="magmadnn::layer::Dropout\lLayer\&lt; T \&gt;" alt="" coords="279,123,455,164"/>
+<area shape="rect" id="node5" href="$classmagmadnn_1_1layer_1_1_flatten_layer.html" title="magmadnn::layer::Flatten\lLayer\&lt; T \&gt;" alt="" coords="282,188,453,229"/>
+<area shape="rect" id="node6" href="$classmagmadnn_1_1layer_1_1_fully_connected_layer.html" title="magmadnn::layer::FullyConnected\lLayer\&lt; T \&gt;" alt="" coords="257,253,478,295"/>
+<area shape="rect" id="node7" href="$classmagmadnn_1_1layer_1_1_input_layer.html" title="magmadnn::layer::InputLayer\&lt; T \&gt;" alt="" coords="256,319,479,346"/>
+<area shape="rect" id="node8" href="$classmagmadnn_1_1layer_1_1_output_layer.html" title="magmadnn::layer::OutputLayer\&lt; T \&gt;" alt="" coords="251,370,484,397"/>
+<area shape="rect" id="node9" href="$classmagmadnn_1_1layer_1_1_pooling_layer.html" title="magmadnn::layer::Pooling\lLayer\&lt; T \&gt;" alt="" coords="281,421,454,463"/>
 </map>

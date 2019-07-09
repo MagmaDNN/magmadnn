@@ -1,7 +1,7 @@
 var classmagmadnn_1_1op_1_1_operation =
 [
     [ "Operation", "classmagmadnn_1_1op_1_1_operation.html#a804f1f265480804d4909d1e015f6cd7d", null ],
-    [ "Operation", "classmagmadnn_1_1op_1_1_operation.html#abc689ab0d44a860da7d9a07a023c6f87", null ],
+    [ "Operation", "classmagmadnn_1_1op_1_1_operation.html#ac7e6fc3e0f55096ea358ab9a4942c638", null ],
     [ "~Operation", "classmagmadnn_1_1op_1_1_operation.html#afdb3db27f112c2748c109673f8ff350d", null ],
     [ "_eval", "classmagmadnn_1_1op_1_1_operation.html#acdbd19837eb69f7654458f4f91a8726a", null ],
     [ "_grad", "classmagmadnn_1_1op_1_1_operation.html#ac56848e4f40e8c45d677d5bee7be81cb", null ],

@@ -1,4 +1,4 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classmagmadnn_1_1dataloader_1_1_data_loader.html" title=" " alt="" coords="6,5,165,46"/>
-<area shape="rect" id="node2" href="$classmagmadnn_1_1dataloader_1_1_linear_loader.html" title=" " alt="" coords="214,5,373,46"/>
+<area shape="rect" id="node1" href="$classmagmadnn_1_1dataloader_1_1_data_loader.html" title="magmadnn::dataloader\l::DataLoader\&lt; T \&gt;" alt="" coords="5,5,160,47"/>
+<area shape="rect" id="node2" href="$classmagmadnn_1_1dataloader_1_1_linear_loader.html" title="magmadnn::dataloader\l::LinearLoader\&lt; T \&gt;" alt="" coords="208,5,363,47"/>
 </map>

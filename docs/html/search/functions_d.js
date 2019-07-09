@@ -6,6 +6,6 @@ var searchData=
   ['set_5fname',['set_name',['../classmagmadnn_1_1layer_1_1_layer.html#a4e242da4458f5a6af136d51445fa7aca',1,'magmadnn::layer::Layer']]],
   ['sigmoid_5ffull',['sigmoid_full',['../sigmoid__internal_8cpp.html#a13bdc5996e6a6589f55fe2b9cfa0c877',1,'magmadnn::internal']]],
   ['squeeze',['squeeze',['../classmagmadnn_1_1_tensor.html#ac4642f779a98673edf2f5213dc145324',1,'magmadnn::Tensor']]],
-  ['sum_5ffull',['sum_full',['../sum__internal_8cpp.html#af78d829272b9db1038ddcc6fcccf6a8f',1,'magmadnn::internal']]],
+  ['sum_5ffull',['sum_full',['../sum__internal_8cpp.html#a97378d2e781154b2c11db036ce9edcb8',1,'magmadnn::internal']]],
   ['sync',['sync',['../classmagmadnn_1_1_memory_manager.html#acde0b1b561f982fbf10f72a809eb4935',1,'magmadnn::MemoryManager']]]
 ];

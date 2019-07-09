@@ -1,4 +1,11 @@
 <map id="magmadnn::op::MatmulOp::to_string" name="magmadnn::op::MatmulOp::to_string">
-<area shape="rect" id="node1" title=" " alt="" coords="6,5,186,46"/>
-<area shape="rect" id="node2" href="$classmagmadnn_1_1op_1_1_operation.html#aee54370065663bef161b7aa1fba58763" title=" " alt="" coords="235,5,413,46"/>
+<area shape="rect" id="node2" href="$classmagmadnn_1_1op_1_1_operation.html#aee54370065663bef161b7aa1fba58763" title="magmadnn::op::Operation\l::to_string" alt="" coords="231,5,403,47"/>
+<area shape="rect" id="node3" href="$classmagmadnn_1_1op_1_1_matmul_op.html#a9afbaad88fa46e4ae239f223fdf563ca" title="magmadnn::op::MatmulOp\l::_eval" alt="" coords="229,71,405,112"/>
+<area shape="rect" id="node6" href="$classmagmadnn_1_1op_1_1_matmul_op.html#a65f5175cab55af662e2dfdb2a6510458" title="magmadnn::op::MatmulOp\l::_grad" alt="" coords="229,136,405,177"/>
+<area shape="rect" id="node7" href="$variable_8cpp.html#a8329b297f0304e66498484852411fb04" title="magmadnn::op::var" alt="" coords="250,202,385,229"/>
+<area shape="rect" id="node8" href="$classmagmadnn_1_1op_1_1_operation.html#a006bfa4330f7e85952fdd90377ed1a6c" title="magmadnn::op::Operation\l::grad" alt="" coords="231,253,403,295"/>
+<area shape="rect" id="node10" href="$matmulop_8cpp.html#a29ecaae96a1f8af79d8b3cd35b06478d" title="magmadnn::op::matmul" alt="" coords="238,319,397,346"/>
+<area shape="rect" id="node4" href="$classmagmadnn_1_1op_1_1_operation.html#aad14d211a054e347752867ea12fd8f04" title="magmadnn::op::Operation\l::eval" alt="" coords="453,71,625,112"/>
+<area shape="rect" id="node5" href="$classmagmadnn_1_1op_1_1_operation.html#acdbd19837eb69f7654458f4f91a8726a" title="magmadnn::op::Operation\l::_eval" alt="" coords="673,71,845,112"/>
+<area shape="rect" id="node9" href="$classmagmadnn_1_1op_1_1_operation.html#ac56848e4f40e8c45d677d5bee7be81cb" title="magmadnn::op::Operation\l::_grad" alt="" coords="453,253,625,295"/>
 </map>

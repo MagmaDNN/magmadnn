@@ -1,4 +1,9 @@
 <map id="magmadnn::op::TanhOp::to_string" name="magmadnn::op::TanhOp::to_string">
-<area shape="rect" id="node1" title=" " alt="" coords="6,5,173,46"/>
-<area shape="rect" id="node2" href="$classmagmadnn_1_1op_1_1_operation.html#aee54370065663bef161b7aa1fba58763" title=" " alt="" coords="222,5,399,46"/>
+<area shape="rect" id="node2" href="$classmagmadnn_1_1op_1_1_operation.html#aee54370065663bef161b7aa1fba58763" title="magmadnn::op::Operation\l::to_string" alt="" coords="216,5,388,47"/>
+<area shape="rect" id="node3" href="$classmagmadnn_1_1op_1_1_tanh_op.html#a9b06ec2720f3aaca6efe3e1f1e5422eb" title="magmadnn::op::TanhOp\l::_eval" alt="" coords="221,71,383,112"/>
+<area shape="rect" id="node4" href="$classmagmadnn_1_1op_1_1_tanh_op.html#a54c9210da12cebe07c1243651369de6d" title="magmadnn::op::TanhOp\l::_grad" alt="" coords="221,136,383,177"/>
+<area shape="rect" id="node5" href="$classmagmadnn_1_1op_1_1_operation.html#a006bfa4330f7e85952fdd90377ed1a6c" title="magmadnn::op::Operation\l::grad" alt="" coords="436,165,608,207"/>
+<area shape="rect" id="node7" href="$variable_8cpp.html#a8329b297f0304e66498484852411fb04" title="magmadnn::op::var" alt="" coords="235,253,369,279"/>
+<area shape="rect" id="node8" href="$tanhop_8cpp.html#aa9c78f147bc16404b425f685dc522937" title="magmadnn::op::tanh" alt="" coords="231,303,373,330"/>
+<area shape="rect" id="node6" href="$classmagmadnn_1_1op_1_1_operation.html#ac56848e4f40e8c45d677d5bee7be81cb" title="magmadnn::op::Operation\l::_grad" alt="" coords="656,165,828,207"/>
 </map>

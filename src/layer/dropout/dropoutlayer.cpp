@@ -1,7 +1,7 @@
 /**
  * @file dropoutlayer.cpp
  * @author Sedrick Keh
- * @version 0.0.1
+ * @version 1.0
  * @date 2019-02-26
  * 
  * @copyright Copyright (c) 2019

@@ -2,6 +2,7 @@ var searchData=
 [
   ['layer',['Layer',['../classmagmadnn_1_1layer_1_1_layer.html',1,'magmadnn::layer']]],
   ['layer_2eh',['layer.h',['../layer_8h.html',1,'']]],
+  ['layer_5futilities_2eh',['layer_utilities.h',['../layer__utilities_8h.html',1,'']]],
   ['layers_2eh',['layers.h',['../layers_8h.html',1,'']]],
   ['learning_5frate',['learning_rate',['../structmagmadnn_1_1model_1_1nn__params__t.html#a85dc9c7770bbc9f75bc799dc10d1bf70',1,'magmadnn::model::nn_params_t']]],
   ['linearforwardop',['LinearForwardOp',['../classmagmadnn_1_1op_1_1_linear_forward_op.html',1,'magmadnn::op']]],

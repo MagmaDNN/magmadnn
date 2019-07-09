@@ -1,7 +1,7 @@
 /**
  * @file reluop.h
  * @author Daniel Nichols
- * @version 0.0.1
+ * @version 1.0
  * @date 2019-05-01
  * 
  * @copyright Copyright (c) 2019

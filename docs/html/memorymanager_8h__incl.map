@@ -1,9 +1,4 @@
 <map id="include/memory/memorymanager.h" name="include/memory/memorymanager.h">
-<area shape="rect" id="node1" title=" " alt="" coords="86,5,318,32"/>
-<area shape="rect" id="node2" title=" " alt="" coords="178,155,236,181"/>
-<area shape="rect" id="node3" title=" " alt="" coords="26,80,103,107"/>
-<area shape="rect" id="node4" title=" " alt="" coords="127,80,191,107"/>
-<area shape="rect" id="node5" title=" " alt="" coords="215,80,276,107"/>
-<area shape="rect" id="node6" title=" " alt="" coords="300,80,370,107"/>
-<area shape="rect" id="node7" href="$types_8h.html" title=" " alt="" coords="394,80,459,107"/>
+<area shape="rect" id="node7" href="$types_8h.html" title="types.h" alt="" coords="394,80,460,107"/>
+<area shape="rect" id="node8" href="$utilities__internal_8h.html" title="utilities_internal.h" alt="" coords="484,80,607,107"/>
 </map>

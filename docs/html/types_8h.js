@@ -11,6 +11,7 @@ var types_8h =
     [ "tensor_fill_t", "types_8h.html#a58649f5b273e1fcf2168ea38f965f425", [
       [ "UNIFORM", "types_8h.html#a58649f5b273e1fcf2168ea38f965f425a8b5a4b5ace502a0468d939c84f7288b4", null ],
       [ "GLOROT", "types_8h.html#a58649f5b273e1fcf2168ea38f965f425ae3ba4ef77951d736c5a33b337adaeca1", null ],
+      [ "MASK", "types_8h.html#a58649f5b273e1fcf2168ea38f965f425a408f17c0882b128f1cf9362129a1c6db", null ],
       [ "CONSTANT", "types_8h.html#a58649f5b273e1fcf2168ea38f965f425a55b84cac15f5d0bf3d70bbfb452c7fc9", null ],
       [ "ZERO", "types_8h.html#a58649f5b273e1fcf2168ea38f965f425af8cb0eaec70b5b4a83872375cada2495", null ],
       [ "ONE", "types_8h.html#a58649f5b273e1fcf2168ea38f965f425a789d5cab42e3297867ff3e3353f7beff", null ],

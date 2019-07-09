@@ -1,0 +1,25 @@
+var classmagmadnn_1_1layer_1_1_conv2d_layer =
+[
+    [ "Conv2dLayer", "classmagmadnn_1_1layer_1_1_conv2d_layer.html#a5324cdec6211b0ada1b08e1d029290ea", null ],
+    [ "~Conv2dLayer", "classmagmadnn_1_1layer_1_1_conv2d_layer.html#a569d8013b0ee448a0821d43703efc5f8", null ],
+    [ "get_bias", "classmagmadnn_1_1layer_1_1_conv2d_layer.html#a417a55e0cc894bc8ed0ee2a9afa17b9e", null ],
+    [ "get_filter", "classmagmadnn_1_1layer_1_1_conv2d_layer.html#a9e71280b3370e47e179b64f9faac6b1f", null ],
+    [ "get_weights", "classmagmadnn_1_1layer_1_1_conv2d_layer.html#aa2dabdab6e3a1d87de772e35cbb15265", null ],
+    [ "init", "classmagmadnn_1_1layer_1_1_conv2d_layer.html#aeb35a32f5c0c145edc520ded2bfd6f07", null ],
+    [ "bias", "classmagmadnn_1_1layer_1_1_conv2d_layer.html#a1dbad6dce51037f15f4d244eb94a36c2", null ],
+    [ "bias_initializer", "classmagmadnn_1_1layer_1_1_conv2d_layer.html#ac930ed7fad803d60eb69f5452b200d60", null ],
+    [ "bias_tensor", "classmagmadnn_1_1layer_1_1_conv2d_layer.html#a9142a7abb96bb09c426e974345f7f865", null ],
+    [ "dilation_h", "classmagmadnn_1_1layer_1_1_conv2d_layer.html#a2fe329b62d159cb5048d078bb018312e", null ],
+    [ "dilation_w", "classmagmadnn_1_1layer_1_1_conv2d_layer.html#ae94cca1e7e3154792b8e0a7fc0989063", null ],
+    [ "filter", "classmagmadnn_1_1layer_1_1_conv2d_layer.html#a3ffc3ee462cb3e9512c20ba6f861938b", null ],
+    [ "filter_initializer", "classmagmadnn_1_1layer_1_1_conv2d_layer.html#a7e147c0b9266964fde2801565be11cfb", null ],
+    [ "filter_tensor", "classmagmadnn_1_1layer_1_1_conv2d_layer.html#a293f9a30037b7bf7eb587c879bc4d016", null ],
+    [ "in_channels", "classmagmadnn_1_1layer_1_1_conv2d_layer.html#a39e26dde0987958e5121903e5ac8d805", null ],
+    [ "out_channels", "classmagmadnn_1_1layer_1_1_conv2d_layer.html#a638fe4f4343918f054d63e14005faa2d", null ],
+    [ "pad_h", "classmagmadnn_1_1layer_1_1_conv2d_layer.html#a5c9d7d1e208594686f6f0f6242eb8d40", null ],
+    [ "pad_w", "classmagmadnn_1_1layer_1_1_conv2d_layer.html#ab3dfb0e01373112149c1b53be912b35b", null ],
+    [ "stride_h", "classmagmadnn_1_1layer_1_1_conv2d_layer.html#a530ab05939dfb0413795e8109b1ccb40", null ],
+    [ "stride_w", "classmagmadnn_1_1layer_1_1_conv2d_layer.html#a6d32ae9e01bee29d5913d1b54007f6b6", null ],
+    [ "use_bias", "classmagmadnn_1_1layer_1_1_conv2d_layer.html#aa48a9278512c5e035516180198053ee9", null ],
+    [ "use_cross_correlation", "classmagmadnn_1_1layer_1_1_conv2d_layer.html#a30af02db43b729f308ad86239483197a", null ]
+];

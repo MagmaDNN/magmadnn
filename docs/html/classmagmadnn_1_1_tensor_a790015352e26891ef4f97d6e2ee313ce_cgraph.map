@@ -1,5 +1,4 @@
 <map id="magmadnn::Tensor::copy_from" name="magmadnn::Tensor::copy_from">
-<area shape="rect" id="node1" title=" " alt="" coords="6,41,213,68"/>
-<area shape="rect" id="node2" href="$classmagmadnn_1_1_tensor.html#a2f491d8576b365e606b006185dc8c68a" title=" " alt="" coords="262,5,426,46"/>
-<area shape="rect" id="node3" href="$classmagmadnn_1_1_tensor.html#a445efb705a2962b3c8265f8f6af0e845" title=" " alt="" coords="262,71,426,97"/>
+<area shape="rect" id="node2" href="$classmagmadnn_1_1_tensor.html#a2f491d8576b365e606b006185dc8c68a" title="magmadnn::Tensor::get\l_shape" alt="" coords="256,5,416,47"/>
+<area shape="rect" id="node3" href="$classmagmadnn_1_1_tensor.html#a445efb705a2962b3c8265f8f6af0e845" title="magmadnn::Tensor::get" alt="" coords="256,71,416,98"/>
 </map>

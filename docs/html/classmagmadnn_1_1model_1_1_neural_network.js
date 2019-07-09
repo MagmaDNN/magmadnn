@@ -1,9 +1,10 @@
 var classmagmadnn_1_1model_1_1_neural_network =
 [
-    [ "NeuralNetwork", "classmagmadnn_1_1model_1_1_neural_network.html#a4a211e7b950ac63cc36fe03a82fafa7b", null ],
-    [ "NeuralNetwork", "classmagmadnn_1_1model_1_1_neural_network.html#ac521d19814d1bf94c4428155b33221f2", null ],
+    [ "NeuralNetwork", "classmagmadnn_1_1model_1_1_neural_network.html#a89ce26696b8356da9f4753dcae73b51a", null ],
+    [ "NeuralNetwork", "classmagmadnn_1_1model_1_1_neural_network.html#ad579ee231a23c98dd23564c9d5907b54", null ],
     [ "~NeuralNetwork", "classmagmadnn_1_1model_1_1_neural_network.html#aad7d7758a97aace4790b9658c87bcf6e", null ],
     [ "fit", "classmagmadnn_1_1model_1_1_neural_network.html#a3da6b5b77f6775fc7a4e351116eba197", null ],
+    [ "get_layers", "classmagmadnn_1_1model_1_1_neural_network.html#a76d00199c5bc003a5a2f2b7cd1e62a5f", null ],
     [ "predict", "classmagmadnn_1_1model_1_1_neural_network.html#ae6c7571fefbfc2a2a487a2c3bfcce177", null ],
     [ "predict_class", "classmagmadnn_1_1model_1_1_neural_network.html#a37b2d7563871808e156b91548da6ecaa", null ],
     [ "_obj", "classmagmadnn_1_1model_1_1_neural_network.html#a38df48787b0dbe931b3ee8e12be63467", null ],

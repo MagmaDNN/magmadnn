@@ -1,4 +1,5 @@
 <map id="magmadnn::MemoryManager::copy_from" name="magmadnn::MemoryManager::copy_from">
-<area shape="rect" id="node1" title=" " alt="" coords="251,5,448,46"/>
-<area shape="rect" id="node2" href="$classmagmadnn_1_1_memory_manager.html#aabe66c4d30586ebb7d8e3f73f9bec1e8" title=" " alt="" coords="5,5,203,46"/>
+<area shape="rect" id="node2" href="$classmagmadnn_1_1_memory_manager.html#aabe66c4d30586ebb7d8e3f73f9bec1e8" title="magmadnn::MemoryManager\l::MemoryManager" alt="" coords="244,5,435,47"/>
+<area shape="rect" id="node3" href="$classmagmadnn_1_1_memory_manager.html#ab3bb823bf3e7e2f3d1fad8e0d45d0b2c" title="magmadnn::MemoryManager\l::operator=" alt="" coords="244,71,435,112"/>
+<area shape="rect" id="node4" href="$classmagmadnn_1_1_memory_manager.html#aa2a3614e718276f411d05a530cedfc70" title="magmadnn::MemoryManager\l::copy_from" alt="" coords="244,136,435,177"/>
 </map>

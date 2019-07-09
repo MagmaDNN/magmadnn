@@ -1,7 +1,7 @@
 /**
  * @file tensor_io.h
  * @author Daniel Nichols
- * @version 0.0.1
+ * @version 1.0
  * @date 2019-04-05
  * 
  * @copyright Copyright (c) 2019

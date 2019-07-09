@@ -1,9 +1,10 @@
 <map id="include/optimizer/gradientdescent/gradientdescent.h" name="include/optimizer/gradientdescent/gradientdescent.h">
-<area shape="rect" id="node1" title=" " alt="" coords="103,6,323,47"/>
-<area shape="rect" id="node2" href="$gradientdescent_8cpp.html" title=" " alt="" coords="5,97,200,138"/>
-<area shape="rect" id="node3" href="$optimizers_8h.html" title=" " alt="" coords="225,104,423,131"/>
-<area shape="rect" id="node4" href="$magmadnn_8h.html" title=" " alt="" coords="339,368,484,395"/>
-<area shape="rect" id="node5" href="$neuralnetwork_8h.html" title=" " alt="" coords="295,187,487,229"/>
-<area shape="rect" id="node6" href="$neuralnetwork_8cpp.html" title=" " alt="" coords="295,278,461,319"/>
-<area shape="rect" id="node7" href="$models_8h.html" title=" " alt="" coords="487,285,649,312"/>
+<area shape="rect" id="node2" href="$gradientdescent_8cpp.html" title="src/optimizer/gradientdescent\l/gradientdescent.cpp" alt="" coords="5,95,199,136"/>
+<area shape="rect" id="node3" href="$optimizers_8h.html" title="include/optimizer/optimizers.h" alt="" coords="223,102,418,129"/>
+<area shape="rect" id="node4" href="$magmadnn_8h.html" title="include/magmadnn.h" alt="" coords="295,370,437,397"/>
+<area shape="rect" id="node5" href="$neuralnetwork_8h.html" title="include/model/neuralnetwork\l/neuralnetwork.h" alt="" coords="337,184,523,225"/>
+<area shape="rect" id="node6" href="$neuralnetwork_8cpp.html" title="src/model/neuralnetwork\l/neuralnetwork.cpp" alt="" coords="251,273,415,315"/>
+<area shape="rect" id="node7" href="$models_8h.html" title="include/model/models.h" alt="" coords="439,281,597,307"/>
+<area shape="rect" id="node8" href="$neuralnetwork__utilities_8h.html" title="include/model/neuralnetwork\l/neuralnetwork_utilities.h" alt="" coords="622,273,809,315"/>
+<area shape="rect" id="node9" href="$neuralnetwork__utilities_8cpp.html" title="src/model/neuralnetwork\l/neuralnetwork_utilities.cpp" alt="" coords="625,363,805,404"/>
 </map>

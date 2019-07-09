@@ -1,23 +1,9 @@
 <map id="include/compute/op_utilities.h" name="include/compute/op_utilities.h">
-<area shape="rect" id="node1" title=" " alt="" coords="99,6,236,47"/>
-<area shape="rect" id="node2" title=" " alt="" coords="5,469,45,496"/>
-<area shape="rect" id="node3" title=" " alt="" coords="69,469,128,496"/>
-<area shape="rect" id="node4" href="$utilities__internal_8h.html" title=" " alt="" coords="203,395,328,421"/>
-<area shape="rect" id="node9" href="$operation_8h.html" title=" " alt="" coords="545,96,689,123"/>
-<area shape="rect" id="node5" title=" " alt="" coords="237,469,293,496"/>
-<area shape="rect" id="node6" title=" " alt="" coords="318,469,383,496"/>
-<area shape="rect" id="node7" title=" " alt="" coords="153,469,212,496"/>
-<area shape="rect" id="node8" title=" " alt="" coords="513,544,572,571"/>
-<area shape="rect" id="node10" title=" " alt="" coords="643,171,697,197"/>
-<area shape="rect" id="node11" title=" " alt="" coords="723,171,771,197"/>
-<area shape="rect" id="node12" href="$tensor_8h.html" title=" " alt="" coords="509,171,619,197"/>
-<area shape="rect" id="node13" href="$types_8h.html" title=" " alt="" coords="510,469,575,496"/>
-<area shape="rect" id="node14" href="$memorymanager_8h.html" title=" " alt="" coords="651,395,836,421"/>
-<area shape="rect" id="node19" href="$tensor__internal_8h.html" title=" " alt="" coords="454,245,575,272"/>
-<area shape="rect" id="node15" title=" " alt="" coords="779,469,856,496"/>
-<area shape="rect" id="node16" title=" " alt="" coords="880,469,944,496"/>
-<area shape="rect" id="node17" title=" " alt="" coords="600,469,661,496"/>
-<area shape="rect" id="node18" title=" " alt="" coords="685,469,755,496"/>
-<area shape="rect" id="node20" href="$fill__internal_8h.html" title=" " alt="" coords="427,320,524,347"/>
-<area shape="rect" id="node21" title=" " alt="" coords="509,395,576,421"/>
+<area shape="rect" id="node4" href="$utilities__internal_8h.html" title="utilities_internal.h" alt="" coords="121,468,244,495"/>
+<area shape="rect" id="node9" href="$operation_8h.html" title="compute/operation.h" alt="" coords="199,95,339,121"/>
+<area shape="rect" id="node12" href="$tensor_8h.html" title="tensor/tensor.h" alt="" coords="380,169,489,196"/>
+<area shape="rect" id="node13" href="$types_8h.html" title="types.h" alt="" coords="735,468,801,495"/>
+<area shape="rect" id="node14" href="$memorymanager_8h.html" title="memory/memorymanager.h" alt="" coords="415,393,596,420"/>
+<area shape="rect" id="node19" href="$tensor__internal_8h.html" title="tensor_internal.h" alt="" coords="350,244,469,271"/>
+<area shape="rect" id="node20" href="$fill__internal_8h.html" title="fill_internal.h" alt="" coords="323,319,418,345"/>
 </map>

@@ -1,7 +1,7 @@
 /**
  * @file variable.h
  * @author Daniel Nichols
- * @version 0.0.1
+ * @version 1.0
  * @date 2019-02-18
  * 
  * @copyright Copyright (c) 2019

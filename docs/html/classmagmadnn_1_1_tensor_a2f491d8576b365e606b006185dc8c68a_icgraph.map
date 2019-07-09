@@ -1,8 +1,9 @@
 <map id="magmadnn::Tensor::get_shape" name="magmadnn::Tensor::get_shape">
-<area shape="rect" id="node1" title=" " alt="" coords="262,183,426,225"/>
-<area shape="rect" id="node2" href="$geadd__internal_8cpp.html#a83f1a1489f2ecc138a1e28735320931a" title=" " alt="" coords="39,29,179,70"/>
-<area shape="rect" id="node3" href="$gemm__internal_8cpp.html#ad38a7779361172aff29e753612383b1c" title=" " alt="" coords="39,118,179,159"/>
-<area shape="rect" id="node4" href="$classmagmadnn_1_1op_1_1_product_op.html#abbb9e163da7fbd70dd6302ee99214eae" title=" " alt="" coords="18,183,201,225"/>
-<area shape="rect" id="node5" href="$classmagmadnn_1_1op_1_1_transpose_op.html#a7ee2749892e77ef7e298bff89f662b11" title=" " alt="" coords="10,249,209,290"/>
-<area shape="rect" id="node6" href="$classmagmadnn_1_1_tensor.html#a790015352e26891ef4f97d6e2ee313ce" title=" " alt="" coords="6,315,213,341"/>
+<area shape="rect" id="node2" href="$classmagmadnn_1_1dataloader_1_1_data_loader.html#a722eb7f35d7a2d73b9f94840fe16aee2" title="magmadnn::dataloader\l::DataLoader::DataLoader" alt="" coords="229,5,401,47"/>
+<area shape="rect" id="node3" href="$geadd__internal_8cpp.html#a83f1a1489f2ecc138a1e28735320931a" title="magmadnn::internal\l::geadd_check" alt="" coords="247,95,383,136"/>
+<area shape="rect" id="node4" href="$gemm__internal_8cpp.html#ad38a7779361172aff29e753612383b1c" title="magmadnn::internal\l::gemm_check" alt="" coords="247,184,383,225"/>
+<area shape="rect" id="node5" href="$classmagmadnn_1_1op_1_1_product_op.html#abbb9e163da7fbd70dd6302ee99214eae" title="magmadnn::op::ProductOp\l::_grad" alt="" coords="225,249,404,291"/>
+<area shape="rect" id="node6" href="$classmagmadnn_1_1op_1_1_transpose_op.html#a7ee2749892e77ef7e298bff89f662b11" title="magmadnn::op::TransposeOp\l::_grad" alt="" coords="217,315,412,356"/>
+<area shape="rect" id="node8" href="$classmagmadnn_1_1_tensor.html#a790015352e26891ef4f97d6e2ee313ce" title="magmadnn::Tensor::copy_from" alt="" coords="213,381,416,407"/>
+<area shape="rect" id="node7" href="$classmagmadnn_1_1op_1_1_transpose_op.html#a7a045fa8cbfd1c218f000fd19e1c998d" title="magmadnn::op::TransposeOp\l::to_string" alt="" coords="464,315,659,356"/>
 </map>

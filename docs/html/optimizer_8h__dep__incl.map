@@ -1,11 +1,12 @@
 <map id="include/optimizer/optimizer.h" name="include/optimizer/optimizer.h">
-<area shape="rect" id="node1" title=" " alt="" coords="183,5,373,32"/>
-<area shape="rect" id="node2" href="$optimizers_8h.html" title=" " alt="" coords="255,179,452,205"/>
-<area shape="rect" id="node7" href="$model_8h.html" title=" " alt="" coords="74,179,229,205"/>
-<area shape="rect" id="node8" href="$gradientdescent_8h.html" title=" " alt="" coords="317,81,536,122"/>
-<area shape="rect" id="node3" href="$magmadnn_8h.html" title=" " alt="" coords="169,443,313,469"/>
-<area shape="rect" id="node4" href="$neuralnetwork_8h.html" title=" " alt="" coords="147,262,339,303"/>
-<area shape="rect" id="node5" href="$neuralnetwork_8cpp.html" title=" " alt="" coords="193,353,359,394"/>
-<area shape="rect" id="node6" href="$models_8h.html" title=" " alt="" coords="5,360,168,387"/>
-<area shape="rect" id="node9" href="$gradientdescent_8cpp.html" title=" " alt="" coords="477,171,672,213"/>
+<area shape="rect" id="node2" href="$optimizers_8h.html" title="include/optimizer/optimizers.h" alt="" coords="15,177,210,203"/>
+<area shape="rect" id="node9" href="$model_8h.html" title="include/model/model.h" alt="" coords="453,177,605,203"/>
+<area shape="rect" id="node10" href="$gradientdescent_8h.html" title="include/optimizer/gradientdescent\l/gradientdescent.h" alt="" coords="205,80,421,121"/>
+<area shape="rect" id="node3" href="$magmadnn_8h.html" title="include/magmadnn.h" alt="" coords="5,445,148,471"/>
+<area shape="rect" id="node4" href="$neuralnetwork_8h.html" title="include/model/neuralnetwork\l/neuralnetwork.h" alt="" coords="314,259,501,300"/>
+<area shape="rect" id="node5" href="$neuralnetwork_8cpp.html" title="src/model/neuralnetwork\l/neuralnetwork.cpp" alt="" coords="325,348,489,389"/>
+<area shape="rect" id="node6" href="$models_8h.html" title="include/model/models.h" alt="" coords="513,355,672,382"/>
+<area shape="rect" id="node7" href="$neuralnetwork__utilities_8h.html" title="include/model/neuralnetwork\l/neuralnetwork_utilities.h" alt="" coords="114,348,301,389"/>
+<area shape="rect" id="node8" href="$neuralnetwork__utilities_8cpp.html" title="src/model/neuralnetwork\l/neuralnetwork_utilities.cpp" alt="" coords="172,437,352,479"/>
+<area shape="rect" id="node11" href="$gradientdescent_8cpp.html" title="src/optimizer/gradientdescent\l/gradientdescent.cpp" alt="" coords="235,169,428,211"/>
 </map>

@@ -1,7 +1,7 @@
 ## Tutorial 05: First Neural Network
 ------------------------------------
 
-Writing training routines for neural networks can be a difficult task for beginners, however, MagmaDNN provides the `Model` class, which only requires the coder to define the network and it will take care of training. The model we'll be using is `magmadnn::model::NeuralNetwork<T>`. 
+Writing training routines for neural networks can be difficult, however, MagmaDNN provides the `Model` class, which only requires the coder to define the network and it will take care of training. The model we'll be using is `magmadnn::model::NeuralNetwork<T>`. 
 
 
 For a full neural network example using the MNIST data set see [the simple_network example](/docs/simple_network.cpp).

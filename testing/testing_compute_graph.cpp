@@ -554,8 +554,8 @@ void test_pooling(memory_t mem_type, unsigned int size) {
 	/* basic pooling test */
 	unsigned int batch_size = 5;
 	unsigned int channels = 3;
-	unsigned int h = 5;
-	unsigned int w = 5; 
+	unsigned int h = size;
+	unsigned int w = size; 
 
 	int filter_h = 2;
 	int filter_w = 2;
@@ -563,10 +563,9 @@ void test_pooling(memory_t mem_type, unsigned int size) {
 	int pad_w = 1;
 	int vertical_stride = 2;
 	int horizontal_stride = 2;
-	bool propagate_nan = false;
 
 	op::Operation<float> *x = op::var<float> ("data", {batch_size, channels, h, w}, {GLOROT, {0.0f, 1.0f}}, mem_type);
-	op::Operation<float> *pool = op::pooling(x, filter_h, filter_w, pad_h, pad_w, vertical_stride, horizontal_stride, propagate_nan);
+	op::Operation<float> *pool = op::pooling(x, filter_h, filter_w, pad_h, pad_w, vertical_stride, horizontal_stride, MAX_POOL);
 
 	Tensor<float> *out = pool->eval();
 
@@ -581,6 +580,13 @@ void test_pooling(memory_t mem_type, unsigned int size) {
 	assert( out->get_shape(1) == channels );
 	assert( out->get_shape(2) == expected_h );
 	assert( out->get_shape(3) == expected_w );
+
+
+    /* testing grad */
+    Tensor<float> *grad = new Tensor<float> (out->get_shape(), {ONE,{}}, mem_type);
+	Tensor<float> *d_flatten_wrt_x = pool->grad(NULL, x, grad);
+	sync(grad);
+	sync(d_flatten_wrt_x);
 
 	delete pool;
 

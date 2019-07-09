@@ -14,6 +14,7 @@ The TODO section for this project is broken into course and fine grained tasks.
 - [x] Compute graph and basic operations for tensors
 - [x] Tests for compute graph and tensor operations
 - [x] Link with BLAS/LAPACK (OpenBLAS?) and MAGMA
+- [ ] Better MKL support
 - [x] Basic Layer classes (Dense, Activation, Flatten, CNN)
 - [x] Model with forward/backward propagation
 - [x] Tests for Model/Layer training
@@ -28,6 +29,8 @@ The TODO section for this project is broken into course and fine grained tasks.
 - [x] I/O methods for Tensors
 - [ ] Tests for tensor I/O
 - [x] Batch Loaders
+- [ ] 100% Documentation
+- [ ] Establish/Connect with build Pipeline
 - [ ] Preprocessing methods (PCA, LDA, encoding)
 - [ ] Tests for preprocessing methods
 - [ ] Implement RNN
@@ -44,10 +47,13 @@ The TODO section for this project is broken into course and fine grained tasks.
 ### Fine Task List:
 -----------------------------------
 - [x] Ensure CPU and GPU training results are the same.
-- [ ] Revise memory system with compute graph and tensors. Check with gdb. Possibly replace operation references with smart pointers.
+- [ ] Revise memory system with compute graph and tensors. Check with gdb. Possibly replace MemoryManager pointers with reference-counting smart pointers.
 - [ ] remove unused operation _internal files.
 - [x] check and fix speed of get/set with vector access
 - [ ] tensor axis iterators
 - [ ] CPU only convolution
 - [ ] Fast ReduceSum
-- [ ] Scalar Network output bug (CuDNN reduce sum issue)
+- [x] Scalar Network output bug (CuDNN reduce sum issue)
+- [ ] Adam
+- [ ] h5 and/or onnx model load/save
+- [ ] NeuralNetwork add constructor with custom loss function

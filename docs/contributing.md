@@ -33,11 +33,11 @@ Contains template make.inc files that can be used in the build and installation 
 There are several different naming conventions used throughout the project. 
 
 ### File Naming
-First and foremost, device and host distinction. Code that is device kernels only should be in their own source files. These source files should be named `*_device.cu`. Device files should only kernels and host functions to call these kernels.
+First and foremost, device and host distinction. Code that is device kernels only should be in their own source files. These source files should be named `*_device.cu`. Device files should only contain kernels and host functions to call these kernels.
 
 Host code files do not require a special ending and should be in `*.cpp` files. 
 
-Any internal utility functions should be in the `magmadnn::internal` namespace and should reside in files with a name such as `*_internal*.*`. For instance, a file that contains tensor addition utilities might be called `tensor_add_internal.cpp`. If that same utility contained device code, then it could be `tensor_add_internal_device.cu`. 
+Any internal utility functions should be in the `magmadnn::...::internal` namespace and should reside in files with a name such as `*_internal*.*`. For instance, a file that contains tensor addition utilities might be called `tensor_add_internal.cpp`. If that same utility contained device code, then it could be `tensor_add_internal_device.cu`. 
 
 If a file contains a class, then the filename should be the same as the classname. For example, the class `foo` should reside in files `foo.h` and `foo.cpp`.
 

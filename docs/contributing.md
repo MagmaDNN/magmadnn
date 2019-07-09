@@ -6,6 +6,8 @@ Below is a guideline on how to contribute to the project.
 
 [Naming Conventions](#naming-conventions)
 
+[GPU Code](#GPU-Code)
+
 [Pull Requests](#pull-requests)
 
 
@@ -42,7 +44,24 @@ Any internal utility functions should be in the `magmadnn::...::internal` namesp
 If a file contains a class, then the filename should be the same as the classname. For example, the class `foo` should reside in files `foo.h` and `foo.cpp`.
 
 ### Operations
-Operations must be defined in `include/compute` and implemented in `src/compute`. Each operation should reside in its own folder. The operation class and filenames should be postfixed by `Op` (i.e. `matmulop.cpp`). All operations should lie in the `magmadnn::op` namespace. For more information on creating operations [see here](https://github.com/Dando18/magmadnn/blob/master/include/compute/README.md).
+Operations must be defined in `include/compute` and implemented in `src/compute`. Each operation should reside in its own folder. The operation class and filenames should be postfixed by `Op` (i.e. `matmulop.cpp`). All operations should lie in the `magmadnn::op` namespace. For more information on creating operations [see here](/include/compute/README.md).
+
+
+## GPU Code
+------------
+MagmaDNN uses CUDA to power its GPU capabilities. To offer a more streamlined compile process all CUDA code in MagmaDNN is guarded by the macro `_HAS_CUDA_`. So code that utilizes any CUDA functionality should look similar to,
+
+```c++
+#if defined(_HAS_CUDA_)
+cudaMalloc((void **)&ptr, n_bytes); /* or any other CUDA code */
+#endif
+```
+
+Special CUDA syntax, such as kernel calls, must reside in `.cu` files, since nvcc is only used to compile `.cu` files.
+
+### Supporting GPU operations
+MagmaDNN aims to support both CPU and GPU operations. However, the focus of optimization is on CPU/GPU builds and not CPU-only. Thus it is imperative to implement an algorithm on the GPU that is optimized, and the CPU only version can be merely functional. While speed all around is ideal, the focus is on optimizing the CPU/GPU pairing.
+
 
 ## Pull Requests
 ----------------

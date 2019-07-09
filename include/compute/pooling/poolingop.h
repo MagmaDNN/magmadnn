@@ -11,7 +11,7 @@ namespace op {
 template <typename T>
 class PoolingOp : public Operation<T> {
 public:
-	PoolingOp(Operation<T> *input, int filter_h = 0, int filter_w = 0, int pad_h=0, int pad_w=0, int vertical_stride=1, int horizontal_stride=1, bool propagate_nan=false, bool needs_grad=true);
+	PoolingOp(Operation<T> *input, int filter_h = 0, int filter_w = 0, int pad_h=0, int pad_w=0, int vertical_stride=1, int horizontal_stride=1, pooling_mode mode=MAX_POOL, bool propagate_nan=false, bool needs_grad=true);
 	~PoolingOp();
 
 	std::string to_string() { return "Pooling(" + input->to_string() + ")"; }
@@ -27,6 +27,7 @@ protected:
 	Tensor<T> *input_tensor;
 
 	int filter_h, filter_w, pad_h, pad_w, vertical_stride, horizontal_stride;
+	pooling_mode mode;
 	bool propagate_nan;
 
 	#if defined(_HAS_CUDA_)
@@ -36,7 +37,7 @@ protected:
 };
 
 template <typename T>
-PoolingOp<T>* pooling(Operation<T> *input, int filter_h = 0, int filter_w = 0, int pad_h=0, int pad_w=0, int vertical_stride=1, int horizontal_stride=1, bool propagate_nan=false, bool needs_grad=true);
+PoolingOp<T>* pooling(Operation<T> *input, int filter_h = 0, int filter_w = 0, int pad_h=0, int pad_w=0, int vertical_stride=1, int horizontal_stride=1, pooling_mode mode=MAX_POOL, bool propagate_nan=false, bool needs_grad=true);
 
 } // namespace op
 } // namespace magmadnn

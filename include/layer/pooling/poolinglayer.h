@@ -15,11 +15,6 @@
 namespace magmadnn {
 namespace layer {
 
-enum pooling_mode {
-    MAX_POOL,
-    AVERAGE_POOL
-};
-
 template <typename T>
 class PoolingLayer : public Layer<T> {
 public:

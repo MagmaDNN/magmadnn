@@ -54,7 +54,7 @@ template <typename T>
 void PoolingLayer<T>::init() {
     assert( this->input_shape.size() == 4 );
 
-    this->output = op::pooling(this->input, filter_h, filter_w, pad_h, pad_w, stride_h, stride_w, propagate_nan);
+    this->output = op::pooling(this->input, filter_h, filter_w, pad_h, pad_w, stride_h, stride_w, mode, propagate_nan);
 
     this->name = "Pooling";
 }

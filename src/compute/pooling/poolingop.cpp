@@ -5,9 +5,9 @@ namespace magmadnn {
 namespace op {
 
 template <typename T>
-PoolingOp<T>::PoolingOp(Operation<T> *input, int filter_h, int filter_w, int pad_h, int pad_w, int vertical_stride, int horizontal_stride, bool propagate_nan, bool needs_grad)
+PoolingOp<T>::PoolingOp(Operation<T> *input, int filter_h, int filter_w, int pad_h, int pad_w, int vertical_stride, int horizontal_stride, pooling_mode mode, bool propagate_nan, bool needs_grad)
 : Operation<T>::Operation({input}, needs_grad), input(input), filter_h(filter_h), filter_w(filter_w), pad_h(pad_h), pad_w(pad_w), 
-vertical_stride(vertical_stride), horizontal_stride(horizontal_stride), propagate_nan(propagate_nan) {
+vertical_stride(vertical_stride), horizontal_stride(horizontal_stride), mode(mode), propagate_nan(propagate_nan) {
     /* setup code in here */
     this->mem_type = input->get_memory_type();
     this->name = "Pooling";
@@ -84,7 +84,7 @@ void PoolingOp<T>::init_settings() {
 
         /* set the pooling description */
         cudnnErrchk( cudnnSetPooling2dDescriptor(this->settings.poolingDesc,
-            this->settings.mode,
+            (mode == MAX_POOL) ? CUDNN_POOLING_MAX_DETERMINISTIC : CUDNN_POOLING_AVERAGE_COUNT_EXCLUDE_PADDING,
             (propagate_nan) ? CUDNN_PROPAGATE_NAN : CUDNN_NOT_PROPAGATE_NAN,
             filter_h,
             filter_w, 
@@ -131,12 +131,12 @@ template class PoolingOp<double>;
 
 
 template <typename T>
-PoolingOp<T> *pooling(Operation<T> *input, int filter_h, int filter_w, int pad_h, int pad_w, int vertical_stride, int horizontal_stride, bool propagate_nan, bool needs_grad) {
-    return new PoolingOp<T>(input, filter_h, filter_w, pad_h, pad_w, vertical_stride, horizontal_stride, propagate_nan, needs_grad);
+PoolingOp<T> *pooling(Operation<T> *input, int filter_h, int filter_w, int pad_h, int pad_w, int vertical_stride, int horizontal_stride, pooling_mode mode, bool propagate_nan, bool needs_grad) {
+    return new PoolingOp<T>(input, filter_h, filter_w, pad_h, pad_w, vertical_stride, horizontal_stride, mode, propagate_nan, needs_grad);
 }
-template PoolingOp<int> *pooling(Operation<int> *input, int filter_h, int filter_w, int pad_h, int pad_w, int vertical_stride, int horizontal_stride, bool propagate_nan, bool needs_grad);
-template PoolingOp<float> *pooling(Operation<float> *input, int filter_h, int filter_w, int pad_h, int pad_w, int vertical_stride, int horizontal_stride, bool propagate_nan, bool needs_grad);
-template PoolingOp<double> *pooling(Operation<double> *input, int filter_h, int filter_w, int pad_h, int pad_w, int vertical_stride, int horizontal_stride, bool propagate_nan, bool needs_grad);
+template PoolingOp<int> *pooling(Operation<int> *input, int filter_h, int filter_w, int pad_h, int pad_w, int vertical_stride, int horizontal_stride, pooling_mode mode, bool propagate_nan, bool needs_grad);
+template PoolingOp<float> *pooling(Operation<float> *input, int filter_h, int filter_w, int pad_h, int pad_w, int vertical_stride, int horizontal_stride, pooling_mode mode, bool propagate_nan, bool needs_grad);
+template PoolingOp<double> *pooling(Operation<double> *input, int filter_h, int filter_w, int pad_h, int pad_w, int vertical_stride, int horizontal_stride, pooling_mode mode, bool propagate_nan, bool needs_grad);
 
 
 }   // namespace op

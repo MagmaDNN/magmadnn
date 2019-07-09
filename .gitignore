@@ -38,7 +38,7 @@ make.inc
 .vscode/*
 
 # misc. scripts
-build_and_test.sh
+/build_and_test.sh
 test.sh
 fix_libs.sh
 

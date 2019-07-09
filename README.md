@@ -1,6 +1,6 @@
 # MagmaDNN
 
-A neural network library in c++ aimed at providing a simple, modularized framework for deep learning. This is a Work-In-Progress replacement for [MagmaDNN](https://bitbucket.org/icl/magmadnn).
+A neural network library in c++ aimed at providing a simple, modularized framework for deep learning that is accelerated for heterogeneous architectures. MagmaDNN's releases are located at [https://bitbucket.org/icl/magmadnn](https://bitbucket.org/icl/magmadnn) (and [here](https://icl.cs.utk.edu/magma/)), while active development occurs at [https://github.com/MagmaDNN/magmadnn/tree/dev](https://github.com/MagmaDNN/magmadnn/tree/dev).
 
 ===== VERSION 0.1.0 =====
 - Currently MagmaDNN provides a dynamic memory manager, tensor wrapper for the memory manager, and a set of math operations for the tensor.

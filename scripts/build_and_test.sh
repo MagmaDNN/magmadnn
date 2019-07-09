@@ -29,6 +29,7 @@ function show_help() {
     printf "\t-c|--clean clean; clean the library before building.\n"
     printf "\t-v|--verbose verbose; show output.\n"
     printf "\t--no-test run_tests; if set, then the testers won't be built or run.\n"
+    printf "\t--dev dev; development mode, same as '--debug --clean --verbose'"
 }
 
 ! getopt --test > /dev/null
@@ -38,7 +39,7 @@ if [[ ${PIPESTATUS[0]} -ne 4 ]]; then
 fi
 
 OPTIONS=hj:dco:v
-LONGOPTIONS=help,threads:,debug,clean,output:,verbose,no-test
+LONGOPTIONS=help,threads:,debug,clean,output:,verbose,no-test,dev
 
 ! PARSED=$(getopt --options=$OPTIONS --longoptions=$LONGOPTIONS --name "$0" -- "$@")
 if [[ ${PIPESTATUS[0]} -ne 0 ]]; then
@@ -75,6 +76,12 @@ while true; do
         ;;
     --no-test)
         do_test=0
+        shift
+        ;;
+    --dev)
+        debug=1
+        clean=1
+        verbose=1
         shift
         ;;
     --)

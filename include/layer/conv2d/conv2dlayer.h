@@ -49,19 +49,19 @@ protected:
 };
 
 
-/** Create a convolutional 2d Operation.
+/** Create a Conv2d Layer. Computes the output on the GPU. Uses CuDNN. No host functionality.
  * @tparam T numeric
  * @param input the input data; must be a 4D tensor in format NCHW (N-batch, C-Channel, H-height, W-Width)
- * @param filter_shape 
- * @param out_channels 
- * @param padding 
- * @param strides 
- * @param dilation_rates 
- * @param use_cross_correlation 
- * @param use_bias 
- * @param filter_initializer 
- * @param bias_initializer 
- * @return Conv2dLayer<T>* 
+ * @param filter_shape shape of the convolution kernel. must be a 2 dimensional vector; defaults to {3,3}
+ * @param out_channels number of output filters; defaults to 1
+ * @param padding the padding size to use. must be a two dimensional vector; defaults to {0,0}
+ * @param strides striding of convolution. must be a two dimensional vector; defaults to {1,1}
+ * @param dilation_rates rate of dilation. must be a two dimensional vector; defaults to {1,1}
+ * @param use_cross_correlation whether to do a cross correlation convolution or standard convolution; defaults to cross correlation
+ * @param use_bias use convolutional bias or not; defaults to false
+ * @param filter_initializer how to initialize the filter tensor; defaults to {GLOROT,{0.0f,0.2f}}
+ * @param bias_initializer how to initialize the bias tensor; defaults to {GLOROT, {0.0f,0.2f}}
+ * @return Conv2dLayer<T>* a new layer
  */
 template <typename T>
 Conv2dLayer<T>* conv2d(op::Operation<T> *input, const std::vector<unsigned int>& filter_shape={3, 3}, int out_channels=1, const std::vector<unsigned int>& padding={0,0},

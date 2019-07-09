@@ -33,6 +33,13 @@ protected:
     unsigned long long seed;
 };
 
+/** A new Dropout layer.
+ * @tparam T numeric
+ * @param input input tensor to randomly dropout.
+ * @param dropout_rate percentage of values to dropout.
+ * @param seed seed for random sampling.
+ * @return DropoutLayer<T>* a dropout layer.
+ */
 template <typename T>
 DropoutLayer<T>* dropout(op::Operation<T> *input, float dropout_rate = DEFAULT_DROPOUT_RATE, unsigned long long seed = DEFAULT_SEED);
 

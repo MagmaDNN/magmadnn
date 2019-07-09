@@ -27,6 +27,11 @@ protected:
 
 };
 
+/** A new Flatten layer. Typically used after a convolutional layer. Converts the input tensor into a 2d Tensor by flattening it.
+ * @tparam T numeric
+ * @param input Input to flatten
+ * @return FlattenLayer<T>* Flatten layer
+ */
 template <typename T>
 FlattenLayer<T>* flatten(op::Operation<T> *input);
 

@@ -11,7 +11,7 @@ Below is a guideline on how to contribute to the project.
 
 ## Project Layout
 -----------------
-The project is split into several main subdirectories: [include](#include), [src](#src), [docs](#docs), [testing](#testing), [examples](#examples), and [make.inc-examples](#make.inc-examples).
+The project is split into several main subdirectories: [include](#include), [src](#src), [docs](#docs), [scripts](#scripts), [testing](#testing), [examples](#examples), and [make.inc-examples](#make.inc-examples).
 
 #### include
 `include` contains the header files for the entire project. `include` and `src` should have the same folder structure.
@@ -19,6 +19,8 @@ The project is split into several main subdirectories: [include](#include), [src
 `src` contains the source files (.cpp and .cu) for the entire library. Everything defined in `include` must be implemented here.
 #### docs
 The `docs` folder contains these contributing guidelines and is the destination for doxygen output. Assuming doxygen is properly installed, running `make docs` (or `doxygen doxygen.config`) in the project root directory will build the docs into the `docs` folder.
+#### scripts
+The scripts directory contains several tools to assist in the development of MagmaDNN. More information is located in [scripts/README.md](/scripts/README.md).
 #### testing
 `testing` contains ~unit-test-ish type tests. They are intended to ensure that the library is installed and running correctly. If `sh run_tests.sh` does not succeed, then something went wrong with the installation.
 #### examples

@@ -24,6 +24,7 @@ void test_affine(memory_t mem_type, unsigned int size);
 void test_sigmoid(memory_t mem_type, unsigned int size);
 void test_tanh(memory_t mem_type, unsigned int size);
 void test_conv2d(memory_t mem_type, unsigned int size);
+void test_pooling(memory_t mem_type, unsigned int size);
 void test_crossentropy(memory_t mem_type, unsigned int size);
 void test_meansquarederror(memory_t mem_type, unsigned int size);
 
@@ -49,6 +50,10 @@ int main(int argc, char **argv) {
 	test_conv2d(DEVICE, 30);
 	test_conv2d(MANAGED, 30);
 	test_conv2d(CUDA_MANAGED, 30);
+
+	test_pooling(DEVICE, 30);
+	test_pooling(MANAGED, 30);
+	test_pooling(CUDA_MANAGED, 30);
 	#endif
 
 	test_for_all_mem_types(test_crossentropy, 10);
@@ -542,6 +547,45 @@ void test_conv2d(memory_t mem_type, unsigned int size) {
 	show_success();
 }
 
+
+void test_pooling(memory_t mem_type, unsigned int size) {
+	printf("Testing %s pooling...  ", get_memory_type_name(mem_type));
+
+	/* basic pooling test */
+	unsigned int batch_size = 5;
+	unsigned int channels = 3;
+	unsigned int h = 5;
+	unsigned int w = 5; 
+
+	int filter_h = 2;
+	int filter_w = 2;
+	int pad_h = 1;
+	int pad_w = 1;
+	int vertical_stride = 2;
+	int horizontal_stride = 2;
+	bool propagate_nan = false;
+
+	op::Operation<float> *x = op::var<float> ("data", {batch_size, channels, h, w}, {GLOROT, {0.0f, 1.0f}}, mem_type);
+	op::Operation<float> *pool = op::pooling(x, filter_h, filter_w, pad_h, pad_w, vertical_stride, horizontal_stride, propagate_nan);
+
+	Tensor<float> *out = pool->eval();
+
+	sync(out);
+
+	/* formula from: https://docs.nvidia.com/deeplearning/sdk/cudnn-developer-guide/index.html#cudnnGetPoolingNdForwardOutputDim */
+	unsigned int expected_h = 1 + ( h + 2*pad_h - filter_h ) / vertical_stride;
+	unsigned int expected_w = 1 + ( w + 2*pad_w - filter_w ) / horizontal_stride;
+
+	assert( out->get_shape().size() == 4);
+	assert( out->get_shape(0) == batch_size );
+	assert( out->get_shape(1) == channels );
+	assert( out->get_shape(2) == expected_h );
+	assert( out->get_shape(3) == expected_w );
+
+	delete pool;
+
+	show_success();
+}
 
 void test_crossentropy(memory_t mem_type, unsigned int size) {
 	printf("Testing %s crossentropy...  ", get_memory_type_name(mem_type));

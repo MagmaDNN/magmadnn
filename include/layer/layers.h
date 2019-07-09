@@ -16,4 +16,5 @@
 #include "activation/activationlayer.h"
 #include "dropout/dropoutlayer.h"
 #include "conv2d/conv2dlayer.h"
+#include "pooling/poolinglayer.h"
 #include "flatten/flattenlayer.h"

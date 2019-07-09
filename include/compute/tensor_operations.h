@@ -29,5 +29,7 @@
 #include "pow/powop.h"
 #include "linearforward/linearforwardop.h"
 #include "softmax/softmaxop.h"
+
 #include "dropout/dropoutop.h"
 #include "flatten/flattenop.h"
+#include "pooling/poolingop.h"

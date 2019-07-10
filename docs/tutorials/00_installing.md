@@ -19,6 +19,8 @@ MagmaDNN-GPU install:
 
 _Note:_ if installing dependencies in non-standard paths make sure to update `LD_LIBRARY_PATH` so that your operating system can find the shared object files.
 
+OpenBLAS is the easiest BLAS to install, while intel-mkl might be the fastest. OpenBLAS, on Ubuntu, can be easily installed with `sudo apt install libopenblas-dev`.
+
 #### Downloading
 
 Currently MagmaDNN does not offer any pre-compiled binaries, so it must be built from source. Once you have installed all of the dependencies the source can be downloaded using:

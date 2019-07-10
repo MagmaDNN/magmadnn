@@ -1,10 +1,10 @@
 # MagmaDNN
 
-A neural network library in c++ aimed at providing a simple, modularized framework for deep learning that is accelerated for heterogeneous architectures. MagmaDNN's releases are located at [https://bitbucket.org/icl/magmadnn](https://bitbucket.org/icl/magmadnn) (and [here](https://icl.cs.utk.edu/magma/)), while active development occurs at [https://github.com/MagmaDNN/magmadnn/tree/dev](https://github.com/MagmaDNN/magmadnn/tree/dev).
+A neural network library in c++ aimed at providing a simple, modularized framework for deep learning that is accelerated for heterogeneous architectures. MagmaDNN's releases are located at [https://bitbucket.org/icl/magmadnn](https://bitbucket.org/icl/magmadnn) (and [here](https://icl.cs.utk.edu/magma/)), while active development occurs at [https://github.com/MagmaDNN/magmadnn/tree/dev](https://github.com/MagmaDNN/magmadnn/tree/dev). If you're looking to contribute or submit a pull-requests/issues, then please do so on the github development repository.
 
 ===== VERSION 1.0 =====
-- Currently MagmaDNN provides a dynamic memory manager, tensor wrapper for the memory manager, and a set of math operations for the tensor.
-- As of 1.0 it now has support for a full compute graph, gradient computation, forward/backward propagation, and NN Layers.
+
+In version 1.0 MagmaDNN offers a strong tensor core with standard machine learning and DNN functionalities built around it. For nightly development builds use the github repository linked above.
 
 MagmaDNN is optimized towards heterogeneous architectures (multi-core CPU and GPU), so it is advised to use with a modern NVIDIA GPU. However, MagmaDNN does support a CPU only install. This is mainly meant for testing and is not nearly as optimized as the GPU version.
 

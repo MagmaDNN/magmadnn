@@ -25,15 +25,13 @@ int main(int argc, char **argv) {
     magmadnn_init();
 
     Tensor<float> *images_host, *labels_host;
-    uint32_t n_images, n_rows, n_cols, n_labels, n_classes = 10, n_features;
+    uint32_t n_images, n_rows, n_cols, n_labels, n_classes = 10;
 
     /* these functions read-in and return tensors holding the mnist data set
         to use them, please change the string to the path to your local copy of the mnist dataset.
         it can be downloaded from http://yann.lecun.com/exdb/mnist */
     images_host = read_mnist_images("/opt/data/mnist/train-images-idx3-ubyte", n_images, n_rows, n_cols);
     labels_host = read_mnist_labels("/opt/data/mnist/train-labels-idx1-ubyte", n_labels, n_classes);
-
-    n_features = n_rows * n_cols;
 
     if (images_host == NULL || labels_host == NULL) {
         return 1;

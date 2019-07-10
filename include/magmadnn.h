@@ -14,6 +14,10 @@
 #define _HAS_CUDA_
 #endif
 
+#if defined(_HAS_CUDA_)
+#define USE_GPU
+#endif
+
 
 #include "types.h"
 #include "init_finalize.h"

@@ -74,5 +74,30 @@ template PoolingLayer<float>* pooling(op::Operation<float>*, const std::vector<u
 template PoolingLayer<double>* pooling(op::Operation<double>*, const std::vector<unsigned int>&, const std::vector<unsigned int>&,
         const std::vector<unsigned int>&, pooling_mode, bool);
 
+template <typename T>
+PoolingLayer<T>* pooling(op::Operation<T> *input, const std::vector<unsigned int>& filter_shape, layer::padding_t padding,
+        const std::vector<unsigned int>& strides, pooling_mode mode, bool propagate_nan) {
+    assert( strides.size() == 2 && filter_shape.size() == 2 );
+    
+	/* formula derived from: https://docs.nvidia.com/deeplearning/sdk/cudnn-developer-guide/index.html#cudnnGetPoolingNdForwardOutputDim */
+    unsigned int padding_h, padding_w;
+    if (padding == layer::SAME) {
+        unsigned int tempval_h = (input->get_output_shape(2)-1) * (strides[0]-1) + filter_shape[0];
+        unsigned int tempval_w = (input->get_output_shape(3)-1) * (strides[1]-1) + filter_shape[1];
+        padding_h = tempval_h / 2;
+        padding_w = tempval_w / 2;
+    } else {
+        padding_h = 0; 
+        padding_w = 0;
+    }
+    return new PoolingLayer<T>(input, filter_shape, {padding_h, padding_w}, strides, mode, propagate_nan);
+}
+template PoolingLayer<int>* pooling(op::Operation<int>*, const std::vector<unsigned int>&, layer::padding_t,
+        const std::vector<unsigned int>&, pooling_mode, bool);
+template PoolingLayer<float>* pooling(op::Operation<float>*, const std::vector<unsigned int>&, layer::padding_t,
+        const std::vector<unsigned int>&, pooling_mode, bool);
+template PoolingLayer<double>* pooling(op::Operation<double>*, const std::vector<unsigned int>&, layer::padding_t,
+        const std::vector<unsigned int>&, pooling_mode, bool);
+
 }   // layer
 }   // magmadnn

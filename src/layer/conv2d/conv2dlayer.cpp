@@ -100,5 +100,34 @@ template Conv2dLayer<float>* conv2d(op::Operation<float>*, const std::vector<uns
 template Conv2dLayer<double>* conv2d(op::Operation<double>*, const std::vector<unsigned int>&, int, const std::vector<unsigned int>&,
         const std::vector<unsigned int>&, const std::vector<unsigned int>&, bool, bool, tensor_filler_t<double>, tensor_filler_t<double>);
 
+
+template <typename T>
+Conv2dLayer<T>* conv2d(op::Operation<T> *input, const std::vector<unsigned int>& filter_shape, int out_channels, padding_t padding,
+        const std::vector<unsigned int>& strides, const std::vector<unsigned int>& dilation_rates, bool use_cross_correlation, bool use_bias,
+        tensor_filler_t<T> filter_initializer, tensor_filler_t<T> bias_initializer) {
+    assert( strides.size() == 2 && filter_shape.size() == 2 );
+    
+    /* Formula derived from https://docs.nvidia.com/deeplearning/sdk/cudnn-developer-guide/index.html#cudnnGetConvolution2dForwardOutputDim */
+    unsigned int padding_h, padding_w;
+    
+    if (padding == layer::SAME) {
+        unsigned int tempval_h = (input->get_output_shape(2)-1) * (strides[0]-1) + (filter_shape[0]-1) * dilation_rates[0] + 1;
+        unsigned int tempval_w = (input->get_output_shape(3)-1) * (strides[1]-1) + (filter_shape[1]-1) * dilation_rates[1] + 1;
+        padding_h = tempval_h / 2;
+        padding_w = tempval_w / 2;
+    } else {
+        padding_h = 0;
+        padding_w = 0;
+    }
+    return new Conv2dLayer<T> (input, filter_shape, out_channels, {padding_h, padding_w}, strides, dilation_rates, use_cross_correlation, use_bias, filter_initializer, bias_initializer);
+}
+template Conv2dLayer<int>* conv2d(op::Operation<int>*, const std::vector<unsigned int>&, int, padding_t, 
+        const std::vector<unsigned int>&, const std::vector<unsigned int>&, bool, bool, tensor_filler_t<int>, tensor_filler_t<int>);
+template Conv2dLayer<float>* conv2d(op::Operation<float>*, const std::vector<unsigned int>&, int, padding_t,
+        const std::vector<unsigned int>&, const std::vector<unsigned int>&, bool, bool, tensor_filler_t<float>, tensor_filler_t<float>);
+template Conv2dLayer<double>* conv2d(op::Operation<double>*, const std::vector<unsigned int>&, int, padding_t,
+        const std::vector<unsigned int>&, const std::vector<unsigned int>&, bool, bool, tensor_filler_t<double>, tensor_filler_t<double>);
+
+
 }   // layer
 }   // magmadnn

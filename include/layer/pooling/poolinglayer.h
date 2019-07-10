@@ -11,6 +11,7 @@
 #include "tensor/tensor.h"
 #include "compute/operation.h"
 #include "compute/tensor_operations.h"
+#include "layer/conv2d/conv2dlayer.h"
 
 namespace magmadnn {
 namespace layer {
@@ -46,6 +47,11 @@ protected:
  */
 template <typename T>
 PoolingLayer<T>* pooling(op::Operation<T> *input, const std::vector<unsigned int>& filter_shape={2, 2}, const std::vector<unsigned int>& padding={0,0},
+        const std::vector<unsigned int>& strides={1,1}, pooling_mode mode = MAX_POOL, bool propagate_nan=false);
+
+/* Indicate pooling type when creating */
+template <typename T>
+PoolingLayer<T>* pooling(op::Operation<T> *input, const std::vector<unsigned int>& filter_shape={2, 2}, layer::padding_t padding=layer::SAME,
         const std::vector<unsigned int>& strides={1,1}, pooling_mode mode = MAX_POOL, bool propagate_nan=false);
 
 }   // layer

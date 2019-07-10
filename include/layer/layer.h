@@ -17,7 +17,7 @@ namespace layer {
 template <typename T>
 class Layer {
 public:
-	
+	virtual ~Layer(){};
 	virtual std::vector<op::Operation<T> *> get_weights() = 0;
 
 	virtual op::Operation<T>* out() {

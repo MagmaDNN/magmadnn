@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.13"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>MagmaDNN: Magmadnn</title>
+<title>MagmaDNN: Adding New Layers</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -32,7 +32,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">MagmaDNN
-   &#160;<span id="projectnumber">0.1.0</span>
+   &#160;<span id="projectnumber">1.0</span>
    </div>
    <div id="projectbrief">c++NeuralNetworkFramework</div>
   </td>
@@ -91,31 +91,10 @@ $(document).ready(function(){initNavTree('autotoc_md5.html','');});
 
 <div class="header">
   <div class="headertitle">
-<div class="title">Magmadnn </div>  </div>
+<div class="title">Adding New Layers </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p>A neural network library in c++ aimed at providing a simple, modularized framework for deep learning. This is a Work-In-Progress replacement for <a href="https://bitbucket.org/icl/magmadnn">MagmaDNN</a>.</p>
-<p>===== VERSION 0.1.0 =====</p><ul>
-<li>Currently magmadnn provides a dynamic memory manager, tensor wrapper for the memory manager, and a set of math operations for the tensor.</li>
-<li>As of 0.1.0 it now has support for a full compute graph, gradient computation, forward/backward propagation, and basic NN Layers.</li>
-</ul>
-<p>There are several tutorials in <a href="/docs/tutorials">docs/tutorials</a>. These give an introduction into installing and using the library.</p>
-<p><a class="anchor" id="invalid"></a></p><h5>Dependencies</h5>
-<p>MagmaDNN uses <code>make</code> as its build system, so it must be installed on your system and in your path before you can build the library. The build also requires a c++11 capable compiler.</p>
-<p>If compiling with GPU capabilities, then CUDA and likewise nvcc must be installed and in the proper PATHs. MagmaDNN has only been tested on Ubuntu (&gt;16) and MacOS using CUDA (&gt;9.0), however it is likely to work on most *nix based systems with a recent CUDA install.</p>
-<p>MagmaDNN makes heavy use of BLAS libraries. For CPU only code a C BLAS library must be installed (such as <a href="https://www.openblas.net/">openblas</a>, <a href="http://math-atlas.sourceforge.net/">atlas</a>, intel mkl, etc...). If using the GPU, then <a href="http://icl.cs.utk.edu/magma/">Magma</a> (&gt;=2.5.0) and <a href="https://developer.nvidia.com/cudnn">CuDNN</a> (&gt;=7) must be installed.</p>
-<p><a class="anchor" id="invalid"></a></p><h5>Download</h5>
-<p>First get the repository on your computer with</p>
-<div class="fragment"><div class="line">git clone https://github.com/MagmaDNN/magmadnn</div><div class="line">cd magmadnn</div></div><!-- fragment --><p><a class="anchor" id="invalid"></a></p><h5>Install</h5>
-<p>Next copy the make include settings into the head directory and edit them to your preferences.</p>
-<div class="fragment"><div class="line">cp make.inc-examples/make.inc-standard ./make.inc</div><div class="line">vim make.inc # if you want to edit the settings</div></div><!-- fragment --><p>After this simply run <code>make install</code> to build and install MagmaDNN. If your prefix (install location) has root priviledge access, then you'll need to run with <code>sudo</code>.</p>
-<p>So the entire script looks like:</p>
-<div class="fragment"><div class="line">git clone https://github.com/MagmaDNN/magmadnn</div><div class="line">cd magmadnn</div><div class="line">cp make.inc-examples/make.inc-standard ./make.inc</div><div class="line">sudo make install</div></div><!-- fragment --><p>MagmaDNN comes with some tester files to make sure everything is working properly. You can build them using the same makefile as for installation. Use the following commands to build and run the testers:</p>
-<div class="fragment"><div class="line">make testing</div><div class="line">cd testing</div><div class="line">sh run_tests.sh</div></div><!-- fragment --><p>If you're getting failed testers, then there is something wrong with your installation. See the https://github.com/MagmaDNN/magmadnn/tree/master/docs/troubleshooting.md "troubleshooting section" for more help.</p>
-<p>For examples of what MagmaDNN code looks like see the <a href="https://github.com/MagmaDNN/magmadnn/tree/master/examples">examples/ folder</a>. If MagmaDNN is downloaded and installed, then the examples can be made and run with <code>make examples</code>.</p>
-<p><em>author:</em> Daniel Nichols</p>
-<p><em>co-author:</em> Sedrick Keh </p>
-</div></div><!-- contents -->
+<div class="textblock"></div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->

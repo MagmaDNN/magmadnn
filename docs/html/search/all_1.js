@@ -12,5 +12,5 @@ var searchData=
   ['argmax',['argmax',['../argmax_8cpp.html#a7276746f27335834df38159ba0a461a2',1,'magmadnn::math']]],
   ['argmax_2ecpp',['argmax.cpp',['../argmax_8cpp.html',1,'']]],
   ['argmax_2eh',['argmax.h',['../argmax_8h.html',1,'']]],
-  ['adding_20new_20layers',['Adding New Layers',['../autotoc_md4.html',1,'']]]
+  ['adding_20new_20layers',['Adding New Layers',['../autotoc_md5.html',1,'']]]
 ];

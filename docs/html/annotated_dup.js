@@ -3,8 +3,9 @@ var annotated_dup =
     [ "magmadnn", null, [
       [ "constructor", "md_include_compute__r_e_a_d_m_e.html#autotoc_md0", null ],
       [ "eval", "md_include_compute__r_e_a_d_m_e.html#autotoc_md1", null ],
-      [ "to_string", "md_include_compute__r_e_a_d_m_e.html#autotoc_md2", null ],
-      [ "func", "md_include_compute__r_e_a_d_m_e.html#autotoc_md3", null ],
+      [ "grad", "md_include_compute__r_e_a_d_m_e.html#autotoc_md2", null ],
+      [ "to_string", "md_include_compute__r_e_a_d_m_e.html#autotoc_md3", null ],
+      [ "func", "md_include_compute__r_e_a_d_m_e.html#autotoc_md4", null ],
       [ "dataloader", null, [
         [ "DataLoader", "classmagmadnn_1_1dataloader_1_1_data_loader.html", "classmagmadnn_1_1dataloader_1_1_data_loader" ],
         [ "LinearLoader", "classmagmadnn_1_1dataloader_1_1_linear_loader.html", "classmagmadnn_1_1dataloader_1_1_linear_loader" ]

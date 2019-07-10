@@ -3,7 +3,7 @@
  * @author Daniel Nichols
  * @version 1.0
  * @date 2019-06-24
- * 
+ *
  * @copyright Copyright (c) 2019
  */
 #pragma once
@@ -26,8 +26,6 @@ void conv2d_grad_data(Tensor<T> *w, Tensor<T> *grad, Tensor<T> *out);
 
 template <typename T>
 void conv2d_grad_filter(Tensor<T> *x, Tensor<T> *grad, Tensor<T> *out);
-
-
 
 #if defined(_HAS_CUDA_)
 
@@ -56,5 +54,5 @@ void conv2d_grad_filter_device(Tensor<T> *x, Tensor<T> *grad, Tensor<T> *out, co
 
 #endif
 
-}
-}
+}  // namespace math
+}  // namespace magmadnn

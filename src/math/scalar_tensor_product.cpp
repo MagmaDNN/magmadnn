@@ -3,7 +3,7 @@
  * @author Daniel Nichols
  * @version 0.1
  * @date 2019-06-07
- * 
+ *
  * @copyright Copyright (c) 2019
  */
 #include "math/scalar_tensor_product.h"
@@ -22,15 +22,15 @@ void scalar_tensor_product(T scalar, Tensor<T> *x, Tensor<T> *out) {
             out_ptr[i] = scalar * x_ptr[i];
         }
     }
-    #if defined(_HAS_CUDA_)
+#if defined(_HAS_CUDA_)
     else {
         scalar_tensor_product_device(scalar, x, out);
     }
-    #endif
+#endif
 }
 template void scalar_tensor_product(int scalar, Tensor<int> *x, Tensor<int> *out);
 template void scalar_tensor_product(float scalar, Tensor<float> *x, Tensor<float> *out);
 template void scalar_tensor_product(double scalar, Tensor<double> *x, Tensor<double> *out);
 
-}
-}
+}  // namespace math
+}  // namespace magmadnn

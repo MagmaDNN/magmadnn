@@ -3,7 +3,7 @@
  * @author Daniel Nichols
  * @version 1.0
  * @date 2019-06-24
- * 
+ *
  * @copyright Copyright (c) 2019
  */
 #pragma once
@@ -21,5 +21,5 @@ template <typename T>
 void add_in_place_device(T alpha, Tensor<T> *x, T beta, Tensor<T> *out);
 #endif
 
-}
-}
+}  // namespace math
+}  // namespace magmadnn

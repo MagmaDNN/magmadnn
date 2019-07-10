@@ -3,19 +3,18 @@
  * @author Daniel Nichols
  * @version 0.1
  * @date 2019-05-17
- * 
+ *
  * @copyright Copyright (c) 2019
  */
 
 #pragma once
 
 #include <vector>
-#include "compute/operation.h"
-#include "compute/variable.h"
-#include "compute/gradtable.h"
-#include "compute/variable.h"
 #include "compute/add/addop.h"
+#include "compute/gradtable.h"
+#include "compute/operation.h"
 #include "compute/sum/sumop.h"
+#include "compute/variable.h"
 #include "utilities_internal.h"
 
 namespace magmadnn {
@@ -29,9 +28,9 @@ namespace op {
  * @return magmadnn_error_t non-zero on error
  */
 template <typename T>
-magmadnn_error_t get_grad_table(const std::vector<Operation<T> *>& vars, Operation<T> *graph, GradTable<T> &table);
+magmadnn_error_t get_grad_table(const std::vector<Operation<T> *> &vars, Operation<T> *graph, GradTable<T> &table);
 
-} // namespace op
+}  // namespace op
 
 // build_grad should only be used internally
 namespace internal {
@@ -44,7 +43,7 @@ namespace internal {
  * @return magmadnn_error_t non-zero on error
  */
 template <typename T>
-magmadnn_error_t build_grad(op::Operation<T>* var, op::Operation<T> *graph, op::GradTable<T> &table, Tensor<T> **grad);
+magmadnn_error_t build_grad(op::Operation<T> *var, op::Operation<T> *graph, op::GradTable<T> &table, Tensor<T> **grad);
 
-}   // namespace internal
-}   // namespace magmadnn
+}  // namespace internal
+}  // namespace magmadnn

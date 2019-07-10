@@ -3,7 +3,7 @@
  * @author Daniel Nichols
  * @version 0.1
  * @date 2019-06-23
- * 
+ *
  * @copyright Copyright (c) 2019
  */
 #pragma once
@@ -22,5 +22,5 @@ template <typename T>
 void bias_add_device(Tensor<T> *x, Tensor<T> *bias, Tensor<T> *out);
 #endif
 
-}
-}
+}  // namespace math
+}  // namespace magmadnn

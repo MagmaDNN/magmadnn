@@ -2,8 +2,8 @@
 #pragma once
 
 #include "compute/operation.h"
-#include "tensor/tensor.h"
 #include "math/dropout.h"
+#include "tensor/tensor.h"
 
 #if defined(_HAS_CUDA_)
 #include "cudnn.h"
@@ -14,39 +14,40 @@ namespace op {
 
 template <typename T>
 class DropoutOp : public Operation<T> {
-public:
-	DropoutOp(Operation<T> *input, float dropout_rate, unsigned long long seed, bool copy=true, bool needs_grad=true);
+   public:
+    DropoutOp(Operation<T> *input, float dropout_rate, unsigned long long seed, bool copy = true,
+              bool needs_grad = true);
 
-	virtual ~DropoutOp();
+    virtual ~DropoutOp();
 
-	std::string to_string() { return "Dropout(" + input->to_string() + ")"; }
-	
-protected:
-	Tensor<T> *_eval(bool recompute);
-	Tensor<T> *_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad);
+    std::string to_string() { return "Dropout(" + input->to_string() + ")"; }
 
-	Operation<T> *input;
-	Tensor<T> *input_tensor;
+   protected:
+    Tensor<T> *_eval(bool recompute);
+    Tensor<T> *_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad);
 
-	Tensor<T> *mask_tensor;
-	
-	float dropout_rate;
-	unsigned long long seed;
+    Operation<T> *input;
+    Tensor<T> *input_tensor;
 
-	#if defined(_HAS_CUDA_)
-	void init_settings();
+    Tensor<T> *mask_tensor;
 
-	math::cudnn_dropout_settings_t settings;
-	math::cudnn_dropout_grad_settings_t grad_settings;
-	math::cudnn_dropout_shared_settings_t shared_settings;
-	#endif
+    float dropout_rate;
+    unsigned long long seed;
 
-	bool copy;
+#if defined(_HAS_CUDA_)
+    void init_settings();
 
+    math::cudnn_dropout_settings_t settings;
+    math::cudnn_dropout_grad_settings_t grad_settings;
+    math::cudnn_dropout_shared_settings_t shared_settings;
+#endif
+
+    bool copy;
 };
 
 template <typename T>
-DropoutOp<T>* dropout(Operation<T> *input, float dropout_rate, unsigned long long seed, bool copy=true, bool needs_grad=true);
+DropoutOp<T> *dropout(Operation<T> *input, float dropout_rate, unsigned long long seed, bool copy = true,
+                      bool needs_grad = true);
 
-} // namespace op
-} // namespace magmadnn
+}  // namespace op
+}  // namespace magmadnn

@@ -3,7 +3,7 @@
  * @author Sedrick Keh
  * @version 0.1
  * @date 2019-06-14
- * 
+ *
  * @copyright Copyright (c) 2019
  */
 #pragma once
@@ -18,9 +18,9 @@ namespace math {
  * @param A
  * @param B
  * @param C axis dim size should equal sum of A and B axis dim size
-*/
+ */
 template <typename T>
 void concat(Tensor<T> *A, Tensor<T> *B, Tensor<T> *C, unsigned int axis);
 
-}
-}
+}  // namespace math
+}  // namespace magmadnn

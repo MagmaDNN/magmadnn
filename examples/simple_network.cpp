@@ -3,12 +3,12 @@
  * @author Daniel Nichols
  * @version 0.1
  * @date 2019-05-30
- * 
+ *
  * @copyright Copyright (c) 2019
  */
+#include <cstdint>
 #include <cstdio>
 #include <vector>
-#include <cstdint>
 
 /* we must include magmadnn as always */
 #include "magmadnn.h"
@@ -20,8 +20,6 @@ using namespace magmadnn;
 Tensor<float> *read_mnist_images(const char *file_name, uint32_t &n_images, uint32_t &n_rows, uint32_t &n_cols);
 Tensor<float> *read_mnist_labels(const char *file_name, uint32_t &n_labels, uint32_t n_classes);
 void print_image(uint32_t image_idx, Tensor<float> *images, Tensor<float> *labels, uint32_t n_rows, uint32_t n_cols);
-
-
 
 int main(int argc, char **argv) {
     /* every magmadnn program must begin with magmadnn_init. This allows magmadnn to test the environment
@@ -53,23 +51,23 @@ int main(int argc, char **argv) {
 
     /* initialize our model parameters */
     model::nn_params_t params;
-    params.batch_size = 32;    /* batch size: the number of samples to process in each mini-batch */
+    params.batch_size = 32; /* batch size: the number of samples to process in each mini-batch */
     params.n_epochs = 5;    /* # of epochs: the number of passes over the entire training set */
     params.learning_rate = 0.05;
 
-    /* this is only necessary for a general example which can handle all install types. Typically,
-        When you write your own MagmaDNN code you will not need macros as you can simply pass DEVICE
-        to the x_batch constructor. */
-    #if defined(USE_GPU)
+/* this is only necessary for a general example which can handle all install types. Typically,
+    When you write your own MagmaDNN code you will not need macros as you can simply pass DEVICE
+    to the x_batch constructor. */
+#if defined(USE_GPU)
     training_memory_type = DEVICE;
-    #else
+#else
     training_memory_type = HOST;
-    #endif
+#endif
 
     /* INITIALIZING THE NETWORK */
-    /* create a variable (of type float) with size  (batch_size x n_features) 
+    /* create a variable (of type float) with size  (batch_size x n_features)
         This will serve as the input to our network. */
-    auto x_batch = op::var<float>("x_batch", {params.batch_size, n_features}, {NONE,{}}, training_memory_type);
+    auto x_batch = op::var<float>("x_batch", {params.batch_size, n_features}, {NONE, {}}, training_memory_type);
 
     /* initialize the layers in our network */
     auto input = layer::input(x_batch);
@@ -88,7 +86,7 @@ int main(int argc, char **argv) {
     std::vector<layer::Layer<float> *> layers = {input, fc1, act1, fc2, act2, fc3, act3, output};
 
     /* this creates a Model for us. The model can train on our data and perform other typical operations
-        that a ML model can. 
+        that a ML model can.
         layers: the previously created vector of layers containing our network
         loss_func: use cross entropy as our loss function
         optimizer: use stochastic gradient descent to optimize our network
@@ -116,10 +114,11 @@ int main(int argc, char **argv) {
     return 0;
 }
 
-
-
-
-#define FREAD_CHECK(res, nmemb) if((res) != (nmemb)) { fprintf(stderr, "fread fail.\n"); return NULL; }
+#define FREAD_CHECK(res, nmemb)           \
+    if ((res) != (nmemb)) {               \
+        fprintf(stderr, "fread fail.\n"); \
+        return NULL;                      \
+    }
 
 inline void endian_swap(uint32_t &val) {
     /* taken from https://stackoverflow.com/questions/13001183/how-to-read-little-endian-integers-from-file-in-c */
@@ -133,7 +132,7 @@ Tensor<float> *read_mnist_images(const char *file_name, uint32_t &n_images, uint
     uint8_t val;
 
     file = std::fopen(file_name, "r");
-    
+
     if (file == NULL) {
         std::fprintf(stderr, "Could not open %s for reading.\n", file_name);
         return NULL;
@@ -159,16 +158,16 @@ Tensor<float> *read_mnist_images(const char *file_name, uint32_t &n_images, uint
     char bytes[n_rows * n_cols];
 
     /* allocate tensor */
-    data = new Tensor<float> ({n_images, n_rows, n_cols}, {NONE,{}}, HOST);
+    data = new Tensor<float>({n_images, n_rows, n_cols}, {NONE, {}}, HOST);
 
     for (uint32_t i = 0; i < n_images; i++) {
-        FREAD_CHECK(fread(bytes, sizeof(char), n_rows * n_cols, file), n_rows*n_cols);
+        FREAD_CHECK(fread(bytes, sizeof(char), n_rows * n_cols, file), n_rows * n_cols);
 
         for (uint32_t r = 0; r < n_rows; r++) {
             for (uint32_t c = 0; c < n_cols; c++) {
-                val = bytes[r*n_cols + c];
+                val = bytes[r * n_cols + c];
 
-                data->set(i*n_rows*n_cols + r*n_cols + c, (val/128.0f) - 1.0f);
+                data->set(i * n_rows * n_cols + r * n_cols + c, (val / 128.0f) - 1.0f);
             }
         }
     }
@@ -186,7 +185,7 @@ Tensor<float> *read_mnist_labels(const char *file_name, uint32_t &n_labels, uint
     uint8_t val;
 
     file = std::fopen(file_name, "r");
-    
+
     if (file == NULL) {
         std::fprintf(stderr, "Could not open %s for reading.\n", file_name);
         return NULL;
@@ -204,20 +203,18 @@ Tensor<float> *read_mnist_labels(const char *file_name, uint32_t &n_labels, uint
 
     printf("Preparing to read %u labels with %u classes ...\n", n_labels, n_classes);
 
-
     /* allocate tensor */
-    labels = new Tensor<float> ({n_labels, n_classes}, {ZERO,{}}, HOST);
+    labels = new Tensor<float>({n_labels, n_classes}, {ZERO, {}}, HOST);
 
     printf("finished reading labels.\n");
 
     for (unsigned int i = 0; i < n_labels; i++) {
         FREAD_CHECK(fread(&val, sizeof(char), 1, file), 1);
 
-        labels->set(i*n_classes + val, 1.0f);
+        labels->set(i * n_classes + val, 1.0f);
     }
 
     fclose(file);
-
 
     return labels;
 }
@@ -228,8 +225,7 @@ void print_image(uint32_t image_idx, Tensor<float> *images, Tensor<float> *label
 
     /* assign the label */
     for (uint32_t i = 0; i < n_classes; i++) {
-
-        if (std::fabs(labels->get(image_idx*n_classes + i) - 1.0f) <= 1E-8) {
+        if (std::fabs(labels->get(image_idx * n_classes + i) - 1.0f) <= 1E-8) {
             label = i;
             break;
         }
@@ -239,7 +235,7 @@ void print_image(uint32_t image_idx, Tensor<float> *images, Tensor<float> *label
 
     for (unsigned int r = 0; r < n_rows; r++) {
         for (unsigned int c = 0; c < n_cols; c++) {
-            printf("%3u ", (uint8_t) ((images->get(image_idx*n_rows*n_cols + r*n_cols + c)+1.0f)*128.0f) );
+            printf("%3u ", (uint8_t)((images->get(image_idx * n_rows * n_cols + r * n_cols + c) + 1.0f) * 128.0f));
         }
         printf("\n");
     }

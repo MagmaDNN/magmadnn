@@ -3,7 +3,7 @@
  * @author Daniel Nichols
  * @version 0.1
  * @date 2019-06-07
- * 
+ *
  * @copyright Copyright (c) 2019
  */
 #pragma once
@@ -21,5 +21,5 @@ template <typename T>
 void scalar_tensor_product_device(T scalar, Tensor<T> *x, Tensor<T> *out);
 #endif
 
-}
-}
+}  // namespace math
+}  // namespace magmadnn

@@ -3,7 +3,7 @@
  * @author Daniel Nichols
  * @version 1.0
  * @date 2019-03-11
- * 
+ *
  * @copyright Copyright (c) 2019
  */
 #include <stdio.h>
@@ -22,7 +22,7 @@ void test_layer_container(memory_t mem, unsigned int size);
 
 int main(int argc, char **argv) {
     magmadnn_init();
-    
+
     test_for_all_mem_types(test_input, 50);
 
     test_for_all_mem_types(test_fullyconnected, 15);
@@ -34,7 +34,7 @@ int main(int argc, char **argv) {
     test_for_all_mem_types(test_flatten, 15);
 
     test_for_all_mem_types(test_layers, 15);
-    
+
     test_for_all_mem_types(test_layer_container, 5);
 
     magmadnn_finalize();
@@ -44,7 +44,7 @@ int main(int argc, char **argv) {
 void test_input(memory_t mem, unsigned int size) {
     printf("testing %s input...  ", get_memory_type_name(mem));
 
-    Tensor<float> *data_tensor = new Tensor<float> ({size, size}, {IDENTITY, {}}, mem);
+    Tensor<float> *data_tensor = new Tensor<float>({size, size}, {IDENTITY, {}}, mem);
     op::Variable<float> *data = op::var("data", data_tensor);
 
     layer::InputLayer<float> *input_layer = new layer::InputLayer<float>(data);
@@ -56,9 +56,9 @@ void test_input(memory_t mem, unsigned int size) {
     for (unsigned int i = 0; i < size; i++) {
         for (unsigned int j = 0; j < size; j++) {
             if (i == j)
-                assert( fequal(output_tensor->get({i,j}), 1.0f) );
+                assert(fequal(output_tensor->get({i, j}), 1.0f));
             else
-                assert( fequal(output_tensor->get({i,j}), 0.0f) );
+                assert(fequal(output_tensor->get({i, j}), 0.0f));
         }
     }
 
@@ -70,7 +70,7 @@ void test_input(memory_t mem, unsigned int size) {
 void test_fullyconnected(memory_t mem, unsigned int size) {
     unsigned int batch_size = size;
     unsigned int n_features = size + 2;
-    unsigned int hidden_units = size*3/4;
+    unsigned int hidden_units = size * 3 / 4;
 
     printf("testing %s fullyconnected...  ", get_memory_type_name(mem));
 
@@ -84,12 +84,11 @@ void test_fullyconnected(memory_t mem, unsigned int size) {
 
     Tensor<double> *weight_tensor = fc->get_weight()->get_output_tensor();
     Tensor<double> *bias_tensor = fc->get_bias()->get_output_tensor();
-    Tensor<double> predicted_output ({batch_size, hidden_units}, {NONE,{}}, mem);
+    Tensor<double> predicted_output({batch_size, hidden_units}, {NONE, {}}, mem);
 
-    assert( out_tensor->get_shape().size() == 2 );
-    assert( out_tensor->get_shape(0) == batch_size );
-    assert( out_tensor->get_shape(1) == hidden_units );
-
+    assert(out_tensor->get_shape().size() == 2);
+    assert(out_tensor->get_shape(0) == batch_size);
+    assert(out_tensor->get_shape(1) == hidden_units);
 
     /* calculate the predicted output and compare it to the actual */
     math::matmul(1.0, false, input_tensor, false, weight_tensor, 0.0, &predicted_output);
@@ -101,16 +100,16 @@ void test_fullyconnected(memory_t mem, unsigned int size) {
     /* assert predicted output and out are the same */
     for (unsigned int i = 0; i < batch_size; i++) {
         for (unsigned int j = 0; j < hidden_units; j++) {
-            assert( fequal(predicted_output.get({i,j}), out_tensor->get({i,j})) );
+            assert(fequal(predicted_output.get({i, j}), out_tensor->get({i, j})));
         }
     }
 
     /* CHECK THE GRADIENT OF THIS LAYER */
-    Tensor<double> grad ({batch_size, hidden_units}, {UNIFORM, {-1.0f, 1.0f}}, mem);
-    
+    Tensor<double> grad({batch_size, hidden_units}, {UNIFORM, {-1.0f, 1.0f}}, mem);
+
     Tensor<double> *grad_wrt_weight = out->grad(NULL, fc->get_weight(), &grad);
     Tensor<double> *grad_wrt_bias = out->grad(NULL, fc->get_bias(), &grad);
-    Tensor<double> predicted_grad_wrt_weight ({n_features, hidden_units}, {NONE,{}}, mem);
+    Tensor<double> predicted_grad_wrt_weight({n_features, hidden_units}, {NONE, {}}, mem);
 
     math::matmul(1.0, true, input_tensor, false, &grad, 0.0, &predicted_grad_wrt_weight);
 
@@ -121,7 +120,7 @@ void test_fullyconnected(memory_t mem, unsigned int size) {
     /* grad_wrt_weight should be X^T . G */
     for (unsigned int i = 0; i < n_features; i++) {
         for (unsigned int j = 0; j < hidden_units; j++) {
-            assert( fequal(grad_wrt_weight->get({i,j}), predicted_grad_wrt_weight.get({i,j})) );
+            assert(fequal(grad_wrt_weight->get({i, j}), predicted_grad_wrt_weight.get({i, j})));
         }
     }
     /* grad_wrt_bias should be row sums of grad */
@@ -130,7 +129,7 @@ void test_fullyconnected(memory_t mem, unsigned int size) {
         for (unsigned int j = 0; j < hidden_units; j++) {
             row_sum += grad.get({i, j});
         }
-        assert( fabs(row_sum - grad_wrt_bias->get(i)) <= 1E-8 );
+        assert(fabs(row_sum - grad_wrt_bias->get(i)) <= 1E-8);
     }
 
     delete fc;
@@ -143,7 +142,7 @@ void test_activation(memory_t mem, unsigned int size) {
 
     printf("testing %s activation...  ", get_memory_type_name(mem));
 
-    Tensor<float> *data_tensor = new Tensor<float> ({size, size}, {CONSTANT, {val}}, mem);
+    Tensor<float> *data_tensor = new Tensor<float>({size, size}, {CONSTANT, {val}}, mem);
     op::Variable<float> *data = op::var("data", data_tensor);
 
     /* create the layer */
@@ -157,7 +156,7 @@ void test_activation(memory_t mem, unsigned int size) {
     sync(output_tensor);
 
     for (unsigned int i = 0; i < output_tensor->get_size(); i++) {
-        assert( fabs(output_tensor->get(i) - tanh(val)) <= 1E-8 );
+        assert(fabs(output_tensor->get(i) - tanh(val)) <= 1E-8);
     }
 
     show_success();
@@ -169,7 +168,7 @@ void test_dropout(memory_t mem, unsigned int size) {
 
     printf("testing %s dropout...  ", get_memory_type_name(mem));
 
-    Tensor<float> *data_tensor = new Tensor<float> ({size, size}, {CONSTANT, {val}}, mem);
+    Tensor<float> *data_tensor = new Tensor<float>({size, size}, {CONSTANT, {val}}, mem);
     op::Variable<float> *data = op::var("data", data_tensor);
 
     /* create the layer */
@@ -184,15 +183,16 @@ void test_dropout(memory_t mem, unsigned int size) {
 
     bool exists_zero = false;
     bool exists_nonzero = false;
-    for (unsigned int i = 0; i < output_tensor->get_shape(0); i ++) {
-        for (unsigned int j = 0; j < output_tensor->get_shape(1); j ++) {
-            assert(output_tensor->get({i,j}) == 0.0f || output_tensor->get({i,j}) == val / (1 - dropout_rate));
-            if (output_tensor->get({i,j}) == 0.0f) {
+    for (unsigned int i = 0; i < output_tensor->get_shape(0); i++) {
+        for (unsigned int j = 0; j < output_tensor->get_shape(1); j++) {
+            assert(output_tensor->get({i, j}) == 0.0f || output_tensor->get({i, j}) == val / (1 - dropout_rate));
+            if (output_tensor->get({i, j}) == 0.0f) {
                 exists_zero = true;
-            } if (output_tensor->get({i,j}) == val / (1 - dropout_rate)) {
+            }
+            if (output_tensor->get({i, j}) == val / (1 - dropout_rate)) {
                 exists_nonzero = true;
             }
-        } 
+        }
     }
 
     if (!exists_zero || !exists_nonzero) assert(false);
@@ -203,7 +203,7 @@ void test_dropout(memory_t mem, unsigned int size) {
 void test_flatten(memory_t mem, unsigned int size) {
     printf("testing %s flatten...  ", get_memory_type_name(mem));
 
-    Tensor<float> *data_tensor = new Tensor<float> ({size*5, size, size*3, size*2}, {CONSTANT, {3}}, mem);
+    Tensor<float> *data_tensor = new Tensor<float>({size * 5, size, size * 3, size * 2}, {CONSTANT, {3}}, mem);
     op::Variable<float> *data = op::var("data", data_tensor);
 
     /* create the layer */
@@ -216,9 +216,9 @@ void test_flatten(memory_t mem, unsigned int size) {
     /* synchronize the memory if managed was being used */
     sync(output_tensor);
 
-    assert( output_tensor->get_shape().size() == 2 );
-    assert( output_tensor->get_shape(0) == size*5 );
-    assert( output_tensor->get_shape(1) == size*(size*3)*(size*2) );
+    assert(output_tensor->get_shape().size() == 2);
+    assert(output_tensor->get_shape(0) == size * 5);
+    assert(output_tensor->get_shape(1) == size * (size * 3) * (size * 2));
 
     show_success();
 }
@@ -229,7 +229,7 @@ void test_layers(memory_t mem, unsigned int size) {
 
     printf("testing %s layers...  ", get_memory_type_name(mem));
 
-    Tensor<float> *data_tensor = new Tensor<float> ({size, size}, {UNIFORM, {-1.0, 1.0}}, mem);
+    Tensor<float> *data_tensor = new Tensor<float>({size, size}, {UNIFORM, {-1.0, 1.0}}, mem);
     op::Variable<float> *data = op::var("data", data_tensor);
 
     layer::InputLayer<float> *input = layer::input(data);
@@ -243,17 +243,16 @@ void test_layers(memory_t mem, unsigned int size) {
 
     sync(out_tensor);
 
-    assert( out_tensor->get_shape(0) == size );
-    assert( out_tensor->get_shape(1) == output_classes );
+    assert(out_tensor->get_shape(0) == size);
+    assert(out_tensor->get_shape(1) == output_classes);
 
     show_success();
 }
 
 void test_layer_container(memory_t mem, unsigned int size) {
-
     printf("testing %s layer_container...  ", get_memory_type_name(mem));
 
-    op::Variable<float> *data = op::var<float>("data", {size, size}, {GLOROT,{0.0f, 1.0f}}, mem);
+    op::Variable<float> *data = op::var<float>("data", {size, size}, {GLOROT, {0.0f, 1.0f}}, mem);
 
     layer::layerContainer<float> lc = layer::layerContainer<float>(data);
     lc.appendLayer(layer::fullyconnected(lc.getLastLayerOutput(), 20, false))
@@ -261,6 +260,5 @@ void test_layer_container(memory_t mem, unsigned int size) {
         .appendLayer(layer::fullyconnected(lc.getLastLayerOutput(), size))
         .appendLayer(layer::activation(lc.getLastLayerOutput(), layer::SOFTMAX));
 
-    
     show_success();
 }

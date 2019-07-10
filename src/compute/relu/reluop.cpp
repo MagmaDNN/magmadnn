@@ -3,7 +3,7 @@
  * @author Daniel Nichols
  * @version 0.1
  * @date 2019-05-01
- * 
+ *
  * @copyright Copyright (c) 2019
  */
 #include "compute/relu/reluop.h"
@@ -18,79 +18,77 @@ ReluOp<T>::ReluOp(Operation<T> *x, bool copy, bool needs_grad)
     this->mem_type = x->get_memory_type();
 
     if (copy) {
-        this->output_tensor = new Tensor<T> (this->output_shape, this->mem_type);
+        this->output_tensor = new Tensor<T>(this->output_shape, this->mem_type);
     } else {
         fprintf(stderr, "inplace relu not defined\n");
     }
 
-    #if defined(_HAS_CUDA_)
-    cudnnErrchk( cudnnCreateActivationDescriptor(&cudnn_settings.descriptor) );
-    cudnnErrchk( cudnnSetActivationDescriptor(cudnn_settings.descriptor, CUDNN_ACTIVATION_RELU, CUDNN_NOT_PROPAGATE_NAN, 1.0) );
-    #endif
+#if defined(_HAS_CUDA_)
+    cudnnErrchk(cudnnCreateActivationDescriptor(&cudnn_settings.descriptor));
+    cudnnErrchk(
+        cudnnSetActivationDescriptor(cudnn_settings.descriptor, CUDNN_ACTIVATION_RELU, CUDNN_NOT_PROPAGATE_NAN, 1.0));
+#endif
 }
 
 template <typename T>
 ReluOp<T>::~ReluOp() {
-    #if defined(_HAS_CUDA_)
-    cudnnErrchk( cudnnDestroyActivationDescriptor(cudnn_settings.descriptor) );
-    #endif
+#if defined(_HAS_CUDA_)
+    cudnnErrchk(cudnnDestroyActivationDescriptor(cudnn_settings.descriptor));
+#endif
 }
 
 template <typename T>
-Tensor<T>* ReluOp<T>::_eval(bool recompute) {
-
+Tensor<T> *ReluOp<T>::_eval(bool recompute) {
     x_tensor = x->eval(recompute);
-    
+
     this->output_tensor = x_tensor;
 
-    //internal::relu_full(x_tensor, this->output_tensor);
+    // internal::relu_full(x_tensor, this->output_tensor);
     if (this->mem_type == HOST) {
         math::relu(x_tensor, this->output_tensor);
     }
-    #if defined(_HAS_CUDA_)
+#if defined(_HAS_CUDA_)
     else {
         math::relu_device(x_tensor, this->output_tensor, this->cudnn_settings);
     }
-    #endif
-
+#endif
 
     return this->output_tensor;
 }
 
 template <typename T>
 Tensor<T> *ReluOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad) {
-    
-    Tensor<T> *out = this->_grad_cache[(uintptr_t)var];
+    Tensor<T> *out = this->_grad_cache[(uintptr_t) var];
 
     if (out == NULL) {
-        out = new Tensor<T> (this->output_shape, {NONE,{}}, this->mem_type);
-        this->_grad_cache[(uintptr_t)var] = out;
+        out = new Tensor<T>(this->output_shape, {NONE, {}}, this->mem_type);
+        this->_grad_cache[(uintptr_t) var] = out;
     }
 
     x_tensor = x->eval(false);
     if (this->mem_type == HOST) {
         math::relu_grad(this->x_tensor, this->output_tensor, grad, out);
     }
-    #if defined(_HAS_CUDA_)
+#if defined(_HAS_CUDA_)
     else {
         math::relu_grad_device(x_tensor, this->output_tensor, grad, out, this->cudnn_settings);
     }
-    #endif
+#endif
 
     return out;
 }
- 
+
 template class ReluOp<int>;
 template class ReluOp<float>;
 template class ReluOp<double>;
 
 template <typename T>
 ReluOp<T> *relu(Operation<T> *x, bool copy, bool needs_grad) {
-    return new ReluOp<T> (x, copy, needs_grad);
+    return new ReluOp<T>(x, copy, needs_grad);
 }
 template ReluOp<int> *relu(Operation<int> *x, bool copy, bool needs_grad);
 template ReluOp<float> *relu(Operation<float> *x, bool copy, bool needs_grad);
 template ReluOp<double> *relu(Operation<double> *x, bool copy, bool needs_grad);
 
-}   // namespace op
-}   // namespace magmadnn
+}  // namespace op
+}  // namespace magmadnn

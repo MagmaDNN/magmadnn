@@ -37,17 +37,17 @@ void crossentropy_full(Tensor<T> *x, Tensor<T> *y, Tensor<T> *softmax, Tensor<T>
         for (unsigned int i = 0; i < x_size; i++) {
             out_ptr[0] += y_ptr[i] * log(softmax_ptr[i]);
         }
-        out_ptr[0] /= - ((T) n_rows);
+        out_ptr[0] /= -((T) n_rows);
     }
-    #if defined(_HAS_CUDA_)
+#if defined(_HAS_CUDA_)
     else {
         crossentropy_full_device(x, y, softmax, out);
     }
-    #endif
+#endif
 }
 template void crossentropy_full(Tensor<int> *x, Tensor<int> *y, Tensor<int> *softmax, Tensor<int> *out);
 template void crossentropy_full(Tensor<float> *x, Tensor<float> *y, Tensor<float> *softmax, Tensor<float> *out);
 template void crossentropy_full(Tensor<double> *x, Tensor<double> *y, Tensor<double> *softmax, Tensor<double> *out);
 
-}   // namespace op
-}   // namespace magmadnn
+}  // namespace internal
+}  // namespace magmadnn

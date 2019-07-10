@@ -3,7 +3,7 @@
  * @author Daniel Nichols
  * @version 0.1
  * @date 2019-06-13
- * 
+ *
  * @copyright Copyright (c) 2019
  */
 #pragma once
@@ -16,6 +16,5 @@ namespace math {
 
 template <typename T>
 void negate(Tensor<T> *x, Tensor<T> *out);
-
 }
-}
+}  // namespace magmadnn

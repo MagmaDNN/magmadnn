@@ -3,7 +3,7 @@
  * @author Daniel Nichols
  * @version 0.1
  * @date 2019-06-13
- * 
+ *
  * @copyright Copyright (c) 2019
  */
 #include "math/negate.h"
@@ -22,24 +22,17 @@ void negate(Tensor<T> *x, Tensor<T> *out) {
             out_ptr[i] = -x_ptr[i];
         }
     }
-    #if defined(_HAS_CUDA_)
+#if defined(_HAS_CUDA_)
     else {
         T alpha = (T) 1;
         T beta = (T) 0;
-        cudnnErrchk( cudnnOpTensor(internal::MAGMADNN_SETTINGS->cudnn_handle,
-                        CUDNN_OP_TENSOR_NOT,
-                        &alpha,
-                        x->get_cudnn_tensor_descriptor(),
-                        x->get_ptr(),
-                        &beta,
-                        x->get_cudnn_tensor_descriptor(),
-                        x->get_ptr(),
-                        &beta,
-                        out->get_cudnn_tensor_descriptor(),
-                        out->get_ptr()) );
+        cudnnErrchk(cudnnOpTensor(internal::MAGMADNN_SETTINGS->cudnn_handle, CUDNN_OP_TENSOR_NOT, &alpha,
+                                  x->get_cudnn_tensor_descriptor(), x->get_ptr(), &beta,
+                                  x->get_cudnn_tensor_descriptor(), x->get_ptr(), &beta,
+                                  out->get_cudnn_tensor_descriptor(), out->get_ptr()));
     }
-    #endif
+#endif
 }
 
-}
-}
+}  // namespace math
+}  // namespace magmadnn

@@ -3,7 +3,7 @@
  * @author Sedrick Keh
  * @version 1.0
  * @date 2019-07-08
- * 
+ *
  * @copyright Copyright (c) 2019
  */
 #include "layer/flatten/flattenlayer.h"
@@ -31,15 +31,13 @@ template class FlattenLayer<int>;
 template class FlattenLayer<float>;
 template class FlattenLayer<double>;
 
-
 template <typename T>
-FlattenLayer<T>* flatten(op::Operation<T> *input) {
+FlattenLayer<T> *flatten(op::Operation<T> *input) {
     return new FlattenLayer<T>(input);
 }
-template FlattenLayer<int>* flatten(op::Operation<int> *input);
-template FlattenLayer<float>* flatten(op::Operation<float> *input);
-template FlattenLayer<double>* flatten(op::Operation<double> *input);
+template FlattenLayer<int> *flatten(op::Operation<int> *input);
+template FlattenLayer<float> *flatten(op::Operation<float> *input);
+template FlattenLayer<double> *flatten(op::Operation<double> *input);
 
-
-}   // layer
-}   // magmadnn
+}  // namespace layer
+}  // namespace magmadnn

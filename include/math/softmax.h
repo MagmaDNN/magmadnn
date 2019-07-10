@@ -3,14 +3,14 @@
  * @author Daniel Nichols
  * @version 0.1
  * @date 2019-06-12
- * 
+ *
  * @copyright Copyright (c) 2019
  */
 #pragma once
 
 #include "tensor/tensor.h"
-#include "utilities_internal.h"
 #include "types.h"
+#include "utilities_internal.h"
 
 #if defined(_HAS_CUDA_)
 #include "cudnn.h"
@@ -52,5 +52,5 @@ template <typename T>
 void softmax_grad_device(Tensor<T> *y, Tensor<T> *grad, Tensor<T> *out, cudnn_softmax_grad_settings_t settings);
 #endif
 
-}
-}
+}  // namespace math
+}  // namespace magmadnn

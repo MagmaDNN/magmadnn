@@ -3,7 +3,7 @@
  * @author Daniel Nichols
  * @version 1.0
  * @date 2019-02-22
- * 
+ *
  * @copyright Copyright (c) 2019
  */
 #pragma once
@@ -14,12 +14,12 @@ namespace magmadnn {
 namespace internal {
 
 /** Returns true if A, B, C are valid parameters to geadd_full.
- * @tparam T 
+ * @tparam T
  * @param A a tensor
  * @param B a tensor
  * @param C a tensor
- * @return true 
- * @return false 
+ * @return true
+ * @return false
  */
 template <typename T>
 bool geadd_check(Tensor<T> *A, Tensor<T> *B, Tensor<T> *C);
@@ -48,12 +48,11 @@ template <typename T>
 void geadd_full_device(T alpha, Tensor<T> *A, T beta, Tensor<T> *B, Tensor<T> *C);
 #endif
 
-
 /**
  * @tparam T numeric
- * @param alpha 
- * @param x 
- * @param out 
+ * @param alpha
+ * @param x
+ * @param out
  */
 template <typename T>
 void tensor_scalar_add_full(T alpha, Tensor<T> *x, Tensor<T> *out);
@@ -61,13 +60,13 @@ void tensor_scalar_add_full(T alpha, Tensor<T> *x, Tensor<T> *out);
 #if defined(_HAS_CUDA_)
 /**
  * @tparam T numeric
- * @param alpha 
- * @param x 
- * @param out 
+ * @param alpha
+ * @param x
+ * @param out
  */
 template <typename T>
 void tensor_scalar_add_full_device(T alpha, Tensor<T> *x, Tensor<T> *out);
 #endif
 
-}   // namespace internal
-}   // namespace magmadnn
+}  // namespace internal
+}  // namespace magmadnn

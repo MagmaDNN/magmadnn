@@ -3,7 +3,7 @@
  * @author Daniel Nichols
  * @version 1.0
  * @date 2019-06-21
- * 
+ *
  * @copyright Copyright (c) 2019
  */
 #pragma once
@@ -34,8 +34,9 @@ template <typename T>
 void relu_device(Tensor<T> *x, Tensor<T> *out, relu_cudnn_settings_t settings);
 
 template <typename T>
-void relu_grad_device(Tensor<T> *x, Tensor<T> *relu_out, Tensor<T> *grad, Tensor<T> *out, relu_cudnn_settings_t settings);
+void relu_grad_device(Tensor<T> *x, Tensor<T> *relu_out, Tensor<T> *grad, Tensor<T> *out,
+                      relu_cudnn_settings_t settings);
 #endif
 
-}
-}
+}  // namespace math
+}  // namespace magmadnn

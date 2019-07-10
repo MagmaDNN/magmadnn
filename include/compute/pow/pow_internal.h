@@ -10,12 +10,10 @@ namespace internal {
 template <typename T>
 void pow_grad(Tensor<T> *x, int power, Tensor<T> *grad, Tensor<T> *out);
 
-
 #if defined(_HAS_CUDA_)
 template <typename T>
 void pow_grad_device(Tensor<T> *x, int power, Tensor<T> *grad, Tensor<T> *out);
 #endif
 
-
-}   // namespace internal
-}   // namespace magmadnn
+}  // namespace internal
+}  // namespace magmadnn

@@ -6,13 +6,13 @@ namespace op {
 
 template <typename T>
 PowOp<T>::PowOp(Operation<T> *input, int power, bool copy, bool needs_grad)
-: Operation<T>::Operation({input}, needs_grad), input(input), power(power), copy(copy) {
+    : Operation<T>::Operation({input}, needs_grad), input(input), power(power), copy(copy) {
     /* setup code in here */
     this->output_shape = input->get_output_shape();
     this->mem_type = input->get_memory_type();
     this->name = "POW";
 
-    this->output_tensor = new Tensor<T> (this->output_shape, {NONE, {}}, this->mem_type);
+    this->output_tensor = new Tensor<T>(this->output_shape, {NONE, {}}, this->mem_type);
 }
 
 template <typename T>
@@ -27,13 +27,13 @@ Tensor<T> *PowOp<T>::_eval(bool recompute) {
 template <typename T>
 Tensor<T> *PowOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad) {
     /* return gradient in here ... */
-    Tensor<T> *out = this->_grad_cache[(uintptr_t)var];
+    Tensor<T> *out = this->_grad_cache[(uintptr_t) var];
 
     input_tensor = input->eval(false);
 
     if (out == NULL) {
-        out = new Tensor<T> (this->output_shape, {NONE,{}}, this->mem_type);
-        this->_grad_cache[(uintptr_t)var] = out;
+        out = new Tensor<T>(this->output_shape, {NONE, {}}, this->mem_type);
+        this->_grad_cache[(uintptr_t) var] = out;
     }
 
     /* G * power * x^(power-1) */
@@ -46,7 +46,6 @@ template class PowOp<int>;
 template class PowOp<float>;
 template class PowOp<double>;
 
-
 template <typename T>
 PowOp<T> *pow(Operation<T> *input, int power, bool copy, bool needs_grad) {
     return new PowOp<T>(input, power, copy, needs_grad);
@@ -55,6 +54,5 @@ template PowOp<int> *pow(Operation<int> *input, int power, bool copy, bool needs
 template PowOp<float> *pow(Operation<float> *input, int power, bool copy, bool needs_grad);
 template PowOp<double> *pow(Operation<double> *input, int power, bool copy, bool needs_grad);
 
-
-}   // namespace op
-}   // namespace magmadnn
+}  // namespace op
+}  // namespace magmadnn

@@ -1,14 +1,14 @@
 
 #pragma once
 
-#include "tensor/tensor.h"
-#include "math/tile.h"
-#include "utilities_internal.h"
 #include "cblas.h"
+#include "math/tile.h"
+#include "tensor/tensor.h"
 #include "types.h"
+#include "utilities_internal.h"
 #if defined(_HAS_CUDA_)
-#include "magma.h"
 #include "cudnn.h"
+#include "magma.h"
 #endif
 
 namespace magmadnn {
@@ -22,5 +22,5 @@ template <typename T>
 void reduce_sum_grad_device(Tensor<T> *grad, int axis, Tensor<T> *out);
 #endif
 
-}   // namespace internal
-}   // namespace magmadnn
+}  // namespace internal
+}  // namespace magmadnn

@@ -3,7 +3,7 @@
  * @author Daniel Nichols
  * @version 0.1
  * @date 2019-05-30
- * 
+ *
  * @copyright Copyright (c) 2019
  */
 #pragma once

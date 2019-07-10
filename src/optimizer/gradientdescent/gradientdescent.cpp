@@ -3,7 +3,7 @@
  * @author Daniel Nichols
  * @version 0.1
  * @date 2019-05-29
- * 
+ *
  * @copyright Copyright (c) 2019
  */
 #include "optimizer/gradientdescent/gradientdescent.h"
@@ -18,7 +18,7 @@ GradientDescent<T>::GradientDescent(T learning_rate) : Optimizer<T>::Optimizer()
 }
 
 template <typename T>
-void GradientDescent<T>::minimize(op::Operation<T> *obj_func, const std::vector<op::Operation<T> *>& wrt) {
+void GradientDescent<T>::minimize(op::Operation<T> *obj_func, const std::vector<op::Operation<T> *> &wrt) {
     typename std::vector<op::Operation<T> *>::const_iterator vit;
 
     this->_obj_func = obj_func;
@@ -29,7 +29,7 @@ void GradientDescent<T>::minimize(op::Operation<T> *obj_func, const std::vector<
     /* build the gradients */
     this->table.clear();
     op::get_grad_table(wrt, this->_obj_func, this->table);
-    
+
     /* now update each one */
     for (vit = wrt.begin(); vit != wrt.end(); vit++) {
         this->update((*vit), table.get(*vit));
@@ -49,5 +49,5 @@ template class GradientDescent<int>;
 template class GradientDescent<float>;
 template class GradientDescent<double>;
 
-}   // namespace optimizer
-}   // namespace magmadnn
+}  // namespace optimizer
+}  // namespace magmadnn

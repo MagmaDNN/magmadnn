@@ -3,7 +3,7 @@
  * @author Daniel Nichols
  * @version 1.0
  * @date 2019-02-26
- * 
+ *
  * @copyright Copyright (c) 2019
  */
 #include "layer/output/outputlayer.h"
@@ -12,9 +12,7 @@ namespace magmadnn {
 namespace layer {
 
 template <typename T>
-OutputLayer<T>::OutputLayer(op::Operation<T> *input) 
-    : Layer<T>::Layer(input->get_output_shape(), input) {
-    
+OutputLayer<T>::OutputLayer(op::Operation<T> *input) : Layer<T>::Layer(input->get_output_shape(), input) {
     init();
 }
 
@@ -24,9 +22,7 @@ std::vector<op::Operation<T> *> OutputLayer<T>::get_weights() {
 }
 
 template <typename T>
-OutputLayer<T>::~OutputLayer() {
-
-}
+OutputLayer<T>::~OutputLayer() {}
 
 template <typename T>
 void OutputLayer<T>::init() {
@@ -34,19 +30,17 @@ void OutputLayer<T>::init() {
 
     this->output = this->input;
 }
-template class OutputLayer <int>;
-template class OutputLayer <float>;
-template class OutputLayer <double>;
-
+template class OutputLayer<int>;
+template class OutputLayer<float>;
+template class OutputLayer<double>;
 
 template <typename T>
-OutputLayer<T>* output(op::Operation<T> *input) {
-    return new OutputLayer<T> (input);
+OutputLayer<T> *output(op::Operation<T> *input) {
+    return new OutputLayer<T>(input);
 }
-template OutputLayer<int>* output(op::Operation<int> *);
-template OutputLayer<float>* output(op::Operation<float> *);
-template OutputLayer<double>* output(op::Operation<double> *);
+template OutputLayer<int> *output(op::Operation<int> *);
+template OutputLayer<float> *output(op::Operation<float> *);
+template OutputLayer<double> *output(op::Operation<double> *);
 
-
-}   // layer
-}   // magmadnn
+}  // namespace layer
+}  // namespace magmadnn

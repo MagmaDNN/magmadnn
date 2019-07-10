@@ -3,7 +3,7 @@
  * @author Daniel Nichols
  * @version 0.1
  * @date 2019-05-30
- * 
+ *
  * @copyright Copyright (c) 2019
  */
 #pragma once
@@ -20,12 +20,10 @@ namespace internal {
 template <typename T>
 void crossentropy_full(Tensor<T> *x, Tensor<T> *y, Tensor<T> *softmax, Tensor<T> *out);
 
-
 #if defined(_HAS_CUDA_)
 template <typename T>
 void crossentropy_full_device(Tensor<T> *x, Tensor<T> *y, Tensor<T> *softmax, Tensor<T> *out);
 #endif
 
-
-}   // namespace internal
-}   // namespace magmadnn
+}  // namespace internal
+}  // namespace magmadnn

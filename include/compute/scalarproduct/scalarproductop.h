@@ -2,8 +2,8 @@
 #pragma once
 
 #include "compute/operation.h"
-#include "tensor/tensor.h"
 #include "compute/scalarproduct/scalarproduct_internal.h"
+#include "tensor/tensor.h"
 
 namespace magmadnn {
 namespace op {
@@ -13,31 +13,31 @@ namespace op {
  */
 template <typename T>
 class ScalarProductOp : public Operation<T> {
-public:
-	ScalarProductOp(T alpha, Operation<T> *x, bool copy=true, bool needs_grad=true);
-	ScalarProductOp(Operation<T> *scalar, Operation<T> *x, bool copy=true, bool needs_grad=true);
+   public:
+    ScalarProductOp(T alpha, Operation<T> *x, bool copy = true, bool needs_grad = true);
+    ScalarProductOp(Operation<T> *scalar, Operation<T> *x, bool copy = true, bool needs_grad = true);
 
-	
-	std::string to_string();
-protected:
-	Tensor<T> *_eval(bool recompute=true);
-	Tensor<T> *_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad);
+    std::string to_string();
 
-	T alpha;
-	Operation<T> *scalar;
-	Operation<T> *x;
+   protected:
+    Tensor<T> *_eval(bool recompute = true);
+    Tensor<T> *_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad);
 
-	Tensor<T> *x_tensor;
-	Tensor<T> *scalar_tensor;
-	
-	bool copy;
+    T alpha;
+    Operation<T> *scalar;
+    Operation<T> *x;
+
+    Tensor<T> *x_tensor;
+    Tensor<T> *scalar_tensor;
+
+    bool copy;
 };
 
 template <typename T>
-ScalarProductOp<T> *scalarproduct(T alpha, Operation<T> *x, bool copy=true, bool needs_grad=true);
+ScalarProductOp<T> *scalarproduct(T alpha, Operation<T> *x, bool copy = true, bool needs_grad = true);
 
 template <typename T>
-ScalarProductOp<T> *scalarproduct(Operation<T> *scalar, Operation<T> *x, bool copy=true, bool needs_grad=true);
+ScalarProductOp<T> *scalarproduct(Operation<T> *scalar, Operation<T> *x, bool copy = true, bool needs_grad = true);
 
-} // namespace op
-} // namespace magmadnn
+}  // namespace op
+}  // namespace magmadnn

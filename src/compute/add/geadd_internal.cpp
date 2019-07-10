@@ -3,7 +3,7 @@
  * @author Daniel Nichols
  * @version 1.0
  * @date 2019-02-22
- * 
+ *
  * @copyright Copyright (c) 2019
  */
 #include "compute/add/geadd_internal.h"
@@ -13,20 +13,19 @@ namespace internal {
 
 template <typename T>
 bool geadd_check(Tensor<T> *A, Tensor<T> *B, Tensor<T> *C) {
-    assert( A->get_shape().size() == 2 );
-    assert( B->get_shape().size() == 2 );
-    assert( C->get_shape().size() == 2 );
+    assert(A->get_shape().size() == 2);
+    assert(B->get_shape().size() == 2);
+    assert(C->get_shape().size() == 2);
 
-    assert( A->get_shape(0) == B->get_shape(0) );
-    assert( A->get_shape(0) == C->get_shape(0) );
-    assert( A->get_shape(1) == B->get_shape(1) );
-    assert( A->get_shape(1) == C->get_shape(1) );
+    assert(A->get_shape(0) == B->get_shape(0));
+    assert(A->get_shape(0) == C->get_shape(0));
+    assert(A->get_shape(1) == B->get_shape(1));
+    assert(A->get_shape(1) == C->get_shape(1));
     return true;
 }
 
 template <typename T>
 void geadd_full(T alpha, Tensor<T> *A, T beta, Tensor<T> *B, Tensor<T> *C) {
-
     if (A->get_memory_type() == HOST) {
         T *a_ptr = A->get_ptr();
         T *b_ptr = B->get_ptr();
@@ -37,11 +36,11 @@ void geadd_full(T alpha, Tensor<T> *A, T beta, Tensor<T> *B, Tensor<T> *C) {
             c_ptr[i] = (alpha * a_ptr[i]) + (beta * b_ptr[i]);
         }
     }
-    #if defined(_HAS_CUDA_)
+#if defined(_HAS_CUDA_)
     else {
         geadd_full_device(alpha, A, beta, B, C);
     }
-    #endif
+#endif
 }
 template void geadd_full(int alpha, Tensor<int> *A, int beta, Tensor<int> *B, Tensor<int> *C);
 template void geadd_full(float alpha, Tensor<float> *A, float beta, Tensor<float> *B, Tensor<float> *C);
@@ -58,15 +57,15 @@ void tensor_scalar_add_full(T alpha, Tensor<T> *x, Tensor<T> *out) {
             out_ptr[i] = alpha + x_ptr[i];
         }
     }
-    #if defined(_HAS_CUDA_)
+#if defined(_HAS_CUDA_)
     else {
         tensor_scalar_add_full_device(alpha, x, out);
     }
-    #endif
+#endif
 }
 template void tensor_scalar_add_full(int alpha, Tensor<int> *x, Tensor<int> *out);
 template void tensor_scalar_add_full(float alpha, Tensor<float> *x, Tensor<float> *out);
 template void tensor_scalar_add_full(double alpha, Tensor<double> *x, Tensor<double> *out);
 
-}   // namespace internal
-}   // namespace magmadnn
+}  // namespace internal
+}  // namespace magmadnn

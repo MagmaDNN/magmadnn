@@ -3,19 +3,19 @@
  * @author Daniel Nichols
  * @version 0.1
  * @date 2019-06-14
- * 
+ *
  * @copyright Copyright (c) 2019
- * 
+ *
  */
 #pragma once
 
-#include "tensor/tensor.h"
 #include "cblas.h"
+#include "tensor/tensor.h"
 #include "utilities_internal.h"
 
 #if defined(_HAS_CUDA_)
-#include "magma.h"
 #include "cudnn.h"
+#include "magma.h"
 
 #include "cublas_v2.h"
 #endif
@@ -37,5 +37,5 @@ template <typename T>
 void reduce_sum_device(Tensor<T> *x, int axis, Tensor<T> *out, reduce_sum_cudnn_settings_t settings);
 #endif
 
-}
-}
+}  // namespace math
+}  // namespace magmadnn

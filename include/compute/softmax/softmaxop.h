@@ -2,9 +2,9 @@
 #pragma once
 
 #include "compute/operation.h"
+#include "math/softmax.h"
 #include "tensor/tensor.h"
 #include "utilities_internal.h"
-#include "math/softmax.h"
 
 #if defined(_HAS_CUDA_)
 #include "cudnn.h"
@@ -15,31 +15,30 @@ namespace op {
 
 template <typename T>
 class SoftmaxOp : public Operation<T> {
-public:
-	SoftmaxOp(Operation<T> *input, bool copy=true, bool needs_grad=true);
+   public:
+    SoftmaxOp(Operation<T> *input, bool copy = true, bool needs_grad = true);
 
-	
-	std::string to_string() { return "Softmax(" + input->to_string() + ")"; }
-protected:
-	Tensor<T> *_eval(bool recompute);
-	Tensor<T> *_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad);
+    std::string to_string() { return "Softmax(" + input->to_string() + ")"; }
 
-	Operation<T> *input;
-	Tensor<T> *input_tensor;
+   protected:
+    Tensor<T> *_eval(bool recompute);
+    Tensor<T> *_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad);
 
-	#if defined(_HAS_CUDA_)
-	void init_settings();
+    Operation<T> *input;
+    Tensor<T> *input_tensor;
 
-	math::cudnn_softmax_settings_t settings;
-	math::cudnn_softmax_grad_settings_t grad_settings;
-	#endif
+#if defined(_HAS_CUDA_)
+    void init_settings();
 
-	bool copy;
+    math::cudnn_softmax_settings_t settings;
+    math::cudnn_softmax_grad_settings_t grad_settings;
+#endif
 
+    bool copy;
 };
 
 template <typename T>
-SoftmaxOp<T>* softmax(Operation<T> *input, bool copy=true, bool needs_grad=true);
+SoftmaxOp<T> *softmax(Operation<T> *input, bool copy = true, bool needs_grad = true);
 
-} // namespace op
-} // namespace magmadnn
+}  // namespace op
+}  // namespace magmadnn

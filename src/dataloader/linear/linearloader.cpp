@@ -3,7 +3,7 @@
  * @author Sedrick Keh
  * @version 0.1
  * @date 2019-06-26
- * 
+ *
  * @copyright Copyright (c) 2019
  */
 #include "dataloader/linear/linearloader.h"
@@ -12,8 +12,8 @@ namespace magmadnn {
 namespace dataloader {
 
 template <typename T>
-LinearLoader<T>::LinearLoader(Tensor<T> *x, Tensor<T> *y, unsigned int batch_size) :
-    DataLoader<T>::DataLoader(x, y, batch_size), curr_index(0) {}
+LinearLoader<T>::LinearLoader(Tensor<T> *x, Tensor<T> *y, unsigned int batch_size)
+    : DataLoader<T>::DataLoader(x, y, batch_size), curr_index(0) {}
 
 template <typename T>
 void LinearLoader<T>::next(Tensor<T> *x_batch, Tensor<T> *y_batch) {
@@ -23,7 +23,7 @@ void LinearLoader<T>::next(Tensor<T> *x_batch, Tensor<T> *y_batch) {
     assert((curr_index + 1) * batch_mem_space_y <= this->y->get_size());
     x_batch->copy_from(*(this->x), curr_index * batch_mem_space_x, batch_mem_space_x);
     y_batch->copy_from(*(this->y), curr_index * batch_mem_space_y, batch_mem_space_y);
-    curr_index ++;
+    curr_index++;
 }
 
 template <typename T>
@@ -34,5 +34,5 @@ void LinearLoader<T>::reset() {
 template class LinearLoader<int>;
 template class LinearLoader<float>;
 template class LinearLoader<double>;
-}   // namespace dataloader
-}   // namespace magmadnn
+}  // namespace dataloader
+}  // namespace magmadnn

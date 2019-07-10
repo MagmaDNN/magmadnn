@@ -3,7 +3,7 @@
  * @author Daniel Nichols
  * @version 0.1
  * @date 2019-06-07
- * 
+ *
  * @copyright Copyright (c) 2019
  */
 #include "math/dot.h"
@@ -23,7 +23,6 @@ void dot(T alpha, Tensor<T> *A, Tensor<T> *B, T beta, Tensor<T> *out) {
 
 template <typename T>
 void dot(T alpha, bool trans_A, Tensor<T> *A, bool trans_B, Tensor<T> *B, T beta, Tensor<T> *out) {
-
     unsigned int n_axes_a = A->get_shape().size();
     unsigned int n_axes_b = B->get_shape().size();
     bool a_is_scalar = (A->get_size() == 1);
@@ -45,7 +44,7 @@ void dot(T alpha, bool trans_A, Tensor<T> *A, bool trans_B, Tensor<T> *B, T beta
 
         A->get_memory_manager()->sync();
         scalar_tensor_product(A->get(0), B, out);
-    
+
     } else if (b_is_scalar) {
         /* broadcast product - a(scalar?OR?tensor) b(scalar) */
 
@@ -57,9 +56,10 @@ void dot(T alpha, bool trans_A, Tensor<T> *A, bool trans_B, Tensor<T> *B, T beta
     }
 }
 template void dot(int alpha, bool trans_A, Tensor<int> *A, bool trans_B, Tensor<int> *B, int beta, Tensor<int> *out);
-template void dot(float alpha, bool trans_A, Tensor<float> *A, bool trans_B, Tensor<float> *B, float beta, Tensor<float> *out);
-template void dot(double alpha, bool trans_A, Tensor<double> *A, bool trans_B, Tensor<double> *B, double beta, Tensor<double> *out);
+template void dot(float alpha, bool trans_A, Tensor<float> *A, bool trans_B, Tensor<float> *B, float beta,
+                  Tensor<float> *out);
+template void dot(double alpha, bool trans_A, Tensor<double> *A, bool trans_B, Tensor<double> *B, double beta,
+                  Tensor<double> *out);
 
-
-}
-}
+}  // namespace math
+}  // namespace magmadnn

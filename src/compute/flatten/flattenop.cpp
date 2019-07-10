@@ -6,7 +6,7 @@ namespace op {
 
 template <typename T>
 FlattenOp<T>::FlattenOp(Operation<T> *input, bool copy, bool needs_grad)
-: Operation<T>::Operation({input}, needs_grad), input(input), copy(copy) {
+    : Operation<T>::Operation({input}, needs_grad), input(input), copy(copy) {
     /* setup code in here */
 
     unsigned int batch_size = input->get_output_shape(0);
@@ -17,7 +17,7 @@ FlattenOp<T>::FlattenOp(Operation<T> *input, bool copy, bool needs_grad)
     this->name = "Flatten";
 
     this->input_tensor = input->get_output_tensor();
-    this->output_tensor = new Tensor<T> (this->output_shape, {NONE, {}}, this->mem_type);
+    this->output_tensor = new Tensor<T>(this->output_shape, {NONE, {}}, this->mem_type);
 }
 
 template <typename T>
@@ -34,11 +34,11 @@ Tensor<T> *FlattenOp<T>::_eval(bool recompute) {
 template <typename T>
 Tensor<T> *FlattenOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad) {
     /* return gradient in here ... */
-    Tensor<T> *out = this->_grad_cache[(uintptr_t)var];
+    Tensor<T> *out = this->_grad_cache[(uintptr_t) var];
 
     if (out == NULL) {
-        out = new Tensor<T> (this->output_shape, {NONE, {}}, this->mem_type);
-        this->_grad_cache[(uintptr_t)var] = out;
+        out = new Tensor<T>(this->output_shape, {NONE, {}}, this->mem_type);
+        this->_grad_cache[(uintptr_t) var] = out;
     }
 
     out->copy_from(*grad);
@@ -51,7 +51,6 @@ template class FlattenOp<int>;
 template class FlattenOp<float>;
 template class FlattenOp<double>;
 
-
 template <typename T>
 FlattenOp<T> *flatten(Operation<T> *input, bool copy, bool needs_grad) {
     return new FlattenOp<T>(input, copy, needs_grad);
@@ -60,6 +59,5 @@ template FlattenOp<int> *flatten(Operation<int> *input, bool copy, bool needs_gr
 template FlattenOp<float> *flatten(Operation<float> *input, bool copy, bool needs_grad);
 template FlattenOp<double> *flatten(Operation<double> *input, bool copy, bool needs_grad);
 
-
-}   // namespace op
-}   // namespace magmadnn
+}  // namespace op
+}  // namespace magmadnn

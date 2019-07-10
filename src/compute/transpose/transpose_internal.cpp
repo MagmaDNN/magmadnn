@@ -12,19 +12,19 @@ void transpose_full(Tensor<T> *x, Tensor<T> *out) {
 
         for (unsigned int r = 0; r < x_rows; r++) {
             for (unsigned int c = 0; c < x_cols; c++) {
-                out->set({(int)c, (int)r}, x->get({(int)r, (int)c}));
+                out->set({(int) c, (int) r}, x->get({(int) r, (int) c}));
             }
         }
     }
-    #if defined(_HAS_CUDA_)
+#if defined(_HAS_CUDA_)
     else {
         transpose_full_device(x, out);
     }
-    #endif
+#endif
 }
 template void transpose_full(Tensor<int> *x, Tensor<int> *out);
 template void transpose_full(Tensor<float> *x, Tensor<float> *out);
 template void transpose_full(Tensor<double> *x, Tensor<double> *out);
 
-}   // namespace op
-}   // namespace magmadnn
+}  // namespace internal
+}  // namespace magmadnn

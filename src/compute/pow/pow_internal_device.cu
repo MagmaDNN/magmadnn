@@ -12,7 +12,7 @@ __global__ void kernel_pow_grad_device(T *x, int power, T *grad, T *out, bool gr
     unsigned int stride = blockDim.x * gridDim.x;
 
     for (unsigned int i = idx; i < size; i += stride) {
-        out[i] = grad[(grad_is_scalar) ? 0 : i] * ((T)power) * powf(x[i], power-1);
+        out[i] = grad[(grad_is_scalar) ? 0 : i] * ((T) power) * powf(x[i], power - 1);
     }
 }
 
@@ -22,20 +22,21 @@ __global__ void kernel_pow_grad_device(int *x, int power, int *grad, int *out, b
     unsigned int stride = blockDim.x * gridDim.x;
 
     for (unsigned int i = idx; i < size; i += stride) {
-        out[i] = grad[(grad_is_scalar) ? 0 : i] * ((int)power) * ((int)powf((float)x[i], power-1));
+        out[i] = grad[(grad_is_scalar) ? 0 : i] * ((int) power) * ((int) powf((float) x[i], power - 1));
     }
 }
- 
+
 template <typename T>
 void pow_grad_device(Tensor<T> *x, int power, Tensor<T> *grad, Tensor<T> *out) {
     unsigned int size = out->get_size();
-    kernel_pow_grad_device <<<(size+BLK_SIZE-1)/BLK_SIZE,BLK_SIZE>>> (x->get_ptr(), power, grad->get_ptr(), out->get_ptr(), (grad->get_size()==1), size);
+    kernel_pow_grad_device<<<(size + BLK_SIZE - 1) / BLK_SIZE, BLK_SIZE>>>(
+        x->get_ptr(), power, grad->get_ptr(), out->get_ptr(), (grad->get_size() == 1), size);
 }
 template void pow_grad_device(Tensor<int> *x, int power, Tensor<int> *input, Tensor<int> *out);
 template void pow_grad_device(Tensor<float> *x, int power, Tensor<float> *input, Tensor<float> *out);
 template void pow_grad_device(Tensor<double> *x, int power, Tensor<double> *input, Tensor<double> *out);
- 
-}   // namespace op
-}   // namespace magmadnn
+
+}  // namespace internal
+}  // namespace magmadnn
 
 #undef BLK_SIZE

@@ -3,7 +3,7 @@
  * @author Daniel Nichols
  * @version 1.0
  * @date 2019-02-26
- * 
+ *
  * @copyright Copyright (c) 2019
  */
 #include "layer/input/inputlayer.h"
@@ -31,15 +31,13 @@ template class InputLayer<int>;
 template class InputLayer<float>;
 template class InputLayer<double>;
 
-
 template <typename T>
-InputLayer<T>* input(op::Operation<T> *input) {
+InputLayer<T> *input(op::Operation<T> *input) {
     return new InputLayer<T>(input);
 }
-template InputLayer<int>* input(op::Operation<int> *input);
-template InputLayer<float>* input(op::Operation<float> *input);
-template InputLayer<double>* input(op::Operation<double> *input);
+template InputLayer<int> *input(op::Operation<int> *input);
+template InputLayer<float> *input(op::Operation<float> *input);
+template InputLayer<double> *input(op::Operation<double> *input);
 
-
-}   // layer
-}   // magmadnn
+}  // namespace layer
+}  // namespace magmadnn

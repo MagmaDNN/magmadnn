@@ -3,14 +3,14 @@
  * @author Daniel Nichols
  * @version 0.1
  * @date 2019-05-17
- * 
+ *
  * @copyright Copyright (c) 2019
  */
 #pragma once
 
+#include <cstdint>
 #include <map>
 #include <string>
-#include <cstdint>
 #include "compute/operation.h"
 #include "compute/variable.h"
 
@@ -22,7 +22,7 @@ namespace op {
  */
 template <typename T>
 class GradTable {
-public:
+   public:
     /** Constructs a new grad table.
      */
     GradTable();
@@ -33,14 +33,14 @@ public:
     unsigned int get_size();
 
     /** Takes a variable and returns the tree to compute its gradient.
-     * @param var 
-     * @return Operation<T>* 
+     * @param var
+     * @return Operation<T>*
      */
     Tensor<T>* get(Operation<T>* var);
 
     /** Sets var's gradient to grad.
-     * @param var 
-     * @param grad 
+     * @param var
+     * @param grad
      */
     void set(Operation<T>* var, Tensor<T>* grad);
 
@@ -48,11 +48,10 @@ public:
      */
     void clear();
 
-protected:
-    std::map<Operation<T> *, Tensor<T>* > _table;   // the underlying table to store data
-    typename std::map<Operation<T> *, Tensor<T> *>::iterator tmp_map_iterator;
-
+   protected:
+    std::map<Operation<T>*, Tensor<T>*> _table;  // the underlying table to store data
+    typename std::map<Operation<T>*, Tensor<T>*>::iterator tmp_map_iterator;
 };
 
-}   // namespace op
-}   // namespace magmadnn
+}  // namespace op
+}  // namespace magmadnn

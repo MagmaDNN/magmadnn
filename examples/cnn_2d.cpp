@@ -3,12 +3,12 @@
  * @author Daniel Nichols
  * @version 1.0
  * @date 2019-07-08
- * 
+ *
  * @copyright Copyright (c) 2019
  */
+#include <cstdint>
 #include <cstdio>
 #include <vector>
-#include <cstdint>
 
 #include "magmadnn.h"
 
@@ -18,8 +18,6 @@ using namespace magmadnn;
 Tensor<float> *read_mnist_images(const char *file_name, uint32_t &n_images, uint32_t &n_rows, uint32_t &n_cols);
 Tensor<float> *read_mnist_labels(const char *file_name, uint32_t &n_labels, uint32_t n_classes);
 void print_image(uint32_t image_idx, Tensor<float> *images, Tensor<float> *labels, uint32_t n_rows, uint32_t n_cols);
-
-
 
 int main(int argc, char **argv) {
     magmadnn_init();
@@ -47,31 +45,32 @@ int main(int argc, char **argv) {
     params.n_epochs = 20;
     params.learning_rate = 0.05;
 
-    #if defined(USE_GPU)
+#if defined(USE_GPU)
     training_memory_type = DEVICE;
-    #else
+#else
     training_memory_type = HOST;
-    #endif
+#endif
 
-    auto x_batch = op::var<float>("x_batch", {params.batch_size, 1, n_rows, n_cols}, {NONE,{}}, training_memory_type);
+    auto x_batch = op::var<float>("x_batch", {params.batch_size, 1, n_rows, n_cols}, {NONE, {}}, training_memory_type);
 
     auto input = layer::input<float>(x_batch);
 
-    auto conv2d1 = layer::conv2d<float>(input->out(), {5,5}, 32, {0,0}, {1,1}, {1,1}, true, false);
-    auto act1 = layer::activation<float> (conv2d1->out(), layer::RELU);
-    auto pool1 = layer::pooling<float>(act1->out(), {2,2}, {0,0}, {2,2}, MAX_POOL);
+    auto conv2d1 = layer::conv2d<float>(input->out(), {5, 5}, 32, {0, 0}, {1, 1}, {1, 1}, true, false);
+    auto act1 = layer::activation<float>(conv2d1->out(), layer::RELU);
+    auto pool1 = layer::pooling<float>(act1->out(), {2, 2}, {0, 0}, {2, 2}, MAX_POOL);
     auto dropout1 = layer::dropout<float>(pool1->out(), 0.25);
 
-    auto flatten = layer::flatten<float> (dropout1->out());
+    auto flatten = layer::flatten<float>(dropout1->out());
 
-    auto fc1 = layer::fullyconnected<float> (flatten->out(), 128, true);
-    auto act2 = layer::activation<float> (fc1->out(), layer::RELU);
-    auto fc2 = layer::fullyconnected<float> (act2->out(), n_classes, false);
-    auto act3 = layer::activation<float> (fc2->out(), layer::SOFTMAX);
+    auto fc1 = layer::fullyconnected<float>(flatten->out(), 128, true);
+    auto act2 = layer::activation<float>(fc1->out(), layer::RELU);
+    auto fc2 = layer::fullyconnected<float>(act2->out(), n_classes, false);
+    auto act3 = layer::activation<float>(fc2->out(), layer::SOFTMAX);
 
-    auto output = layer::output<float> (act3->out());
+    auto output = layer::output<float>(act3->out());
 
-    std::vector<layer::Layer<float> *> layers = {input, conv2d1, act1, pool1, dropout1, flatten, fc1, act2, fc2, act3, output};
+    std::vector<layer::Layer<float> *> layers = {input, conv2d1, act1, pool1, dropout1, flatten,
+                                                 fc1,   act2,    fc2,  act3,  output};
 
     model::NeuralNetwork<float> model(layers, optimizer::CROSS_ENTROPY, optimizer::SGD, params);
 
@@ -88,10 +87,11 @@ int main(int argc, char **argv) {
     return 0;
 }
 
-
-
-
-#define FREAD_CHECK(res, nmemb) if((res) != (nmemb)) { fprintf(stderr, "fread fail.\n"); return NULL; }
+#define FREAD_CHECK(res, nmemb)           \
+    if ((res) != (nmemb)) {               \
+        fprintf(stderr, "fread fail.\n"); \
+        return NULL;                      \
+    }
 
 inline void endian_swap(uint32_t &val) {
     /* taken from https://stackoverflow.com/questions/13001183/how-to-read-little-endian-integers-from-file-in-c */
@@ -105,7 +105,7 @@ Tensor<float> *read_mnist_images(const char *file_name, uint32_t &n_images, uint
     uint8_t val;
 
     file = std::fopen(file_name, "r");
-    
+
     if (file == NULL) {
         std::fprintf(stderr, "Could not open %s for reading.\n", file_name);
         return NULL;
@@ -131,16 +131,16 @@ Tensor<float> *read_mnist_images(const char *file_name, uint32_t &n_images, uint
     char bytes[n_rows * n_cols];
 
     /* allocate tensor */
-    data = new Tensor<float> ({n_images, 1, n_rows, n_cols}, {NONE,{}}, HOST);
+    data = new Tensor<float>({n_images, 1, n_rows, n_cols}, {NONE, {}}, HOST);
 
     for (uint32_t i = 0; i < n_images; i++) {
-        FREAD_CHECK(fread(bytes, sizeof(char), n_rows * n_cols, file), n_rows*n_cols);
+        FREAD_CHECK(fread(bytes, sizeof(char), n_rows * n_cols, file), n_rows * n_cols);
 
         for (uint32_t r = 0; r < n_rows; r++) {
             for (uint32_t c = 0; c < n_cols; c++) {
-                val = bytes[r*n_cols + c];
+                val = bytes[r * n_cols + c];
 
-                data->set(i*n_rows*n_cols + r*n_cols + c, (val/128.0f) - 1.0f);
+                data->set(i * n_rows * n_cols + r * n_cols + c, (val / 128.0f) - 1.0f);
             }
         }
     }
@@ -158,7 +158,7 @@ Tensor<float> *read_mnist_labels(const char *file_name, uint32_t &n_labels, uint
     uint8_t val;
 
     file = std::fopen(file_name, "r");
-    
+
     if (file == NULL) {
         std::fprintf(stderr, "Could not open %s for reading.\n", file_name);
         return NULL;
@@ -176,20 +176,18 @@ Tensor<float> *read_mnist_labels(const char *file_name, uint32_t &n_labels, uint
 
     printf("Preparing to read %u labels with %u classes ...\n", n_labels, n_classes);
 
-
     /* allocate tensor */
-    labels = new Tensor<float> ({n_labels, n_classes}, {ZERO,{}}, HOST);
+    labels = new Tensor<float>({n_labels, n_classes}, {ZERO, {}}, HOST);
 
     printf("finished reading labels.\n");
 
     for (unsigned int i = 0; i < n_labels; i++) {
         FREAD_CHECK(fread(&val, sizeof(char), 1, file), 1);
 
-        labels->set(i*n_classes + val, 1.0f);
+        labels->set(i * n_classes + val, 1.0f);
     }
 
     fclose(file);
-
 
     return labels;
 }
@@ -200,8 +198,7 @@ void print_image(uint32_t image_idx, Tensor<float> *images, Tensor<float> *label
 
     /* assign the label */
     for (uint32_t i = 0; i < n_classes; i++) {
-
-        if (std::fabs(labels->get(image_idx*n_classes + i) - 1.0f) <= 1E-8) {
+        if (std::fabs(labels->get(image_idx * n_classes + i) - 1.0f) <= 1E-8) {
             label = i;
             break;
         }
@@ -211,7 +208,7 @@ void print_image(uint32_t image_idx, Tensor<float> *images, Tensor<float> *label
 
     for (unsigned int r = 0; r < n_rows; r++) {
         for (unsigned int c = 0; c < n_cols; c++) {
-            printf("%3u ", (uint8_t) ((images->get(image_idx*n_rows*n_cols + r*n_cols + c)+1.0f)*128.0f) );
+            printf("%3u ", (uint8_t)((images->get(image_idx * n_rows * n_cols + r * n_cols + c) + 1.0f) * 128.0f));
         }
         printf("\n");
     }

@@ -3,9 +3,9 @@
  * @author Daniel Nichols
  * @version 0.1
  * @date 2019-06-10
- * 
+ *
  * @copyright Copyright (c) 2019
- * 
+ *
  */
 #pragma once
 
@@ -15,7 +15,6 @@
 namespace magmadnn {
 namespace math {
 
-
 template <typename T>
 void pow(Tensor<T> *x, int power, Tensor<T> *out);
 
@@ -24,6 +23,5 @@ template <typename T>
 void pow_device(Tensor<T> *x, int power, Tensor<T> *out);
 #endif
 
-
-}
-}
+}  // namespace math
+}  // namespace magmadnn

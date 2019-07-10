@@ -3,15 +3,15 @@
  * @author Daniel Nichols
  * @version 0.1
  * @date 2019-06-25
- * 
+ *
  * @copyright Copyright (c) 2019
  */
-#include <cstdio>
-#include <vector>
-#include <limits>
 #include <cstdint>
-#include <iostream>
+#include <cstdio>
 #include <iomanip>
+#include <iostream>
+#include <limits>
+#include <vector>
 
 #include "magmadnn.h"
 
@@ -24,9 +24,10 @@ void print_image(uint32_t image_idx, Tensor<float> *images, Tensor<float> *label
 
 void show_sample(Tensor<float> *images, Tensor<float> *labels, uint32_t n_rows, uint32_t n_cols);
 void train(model::NeuralNetwork<float> &model, Tensor<float> *images, Tensor<float> *labels);
-void predict(model::NeuralNetwork<float> &model, Tensor<float> *images, Tensor<float> *labels, uint32_t n_rows, uint32_t n_cols);
-void test(model::NeuralNetwork<float> &model, Tensor<float> *images, Tensor<float> *labels, uint32_t n_rows, uint32_t n_cols, uint32_t n_classes);
-
+void predict(model::NeuralNetwork<float> &model, Tensor<float> *images, Tensor<float> *labels, uint32_t n_rows,
+             uint32_t n_cols);
+void test(model::NeuralNetwork<float> &model, Tensor<float> *images, Tensor<float> *labels, uint32_t n_rows,
+          uint32_t n_cols, uint32_t n_classes);
 
 int main(int argc, char **argv) {
     magmadnn_init();
@@ -40,7 +41,10 @@ int main(int argc, char **argv) {
 
     /* process args */
     if (argc != 3 && argc != 4) {
-        std::cerr << "usage: " << argv[0] << " <path-to-mnist-training-data> <path-to-mnist-training-labels> <use_gpu(optional):y or n>" << std::endl;
+        std::cerr << "usage: " << argv[0]
+                  << " <path-to-mnist-training-data> <path-to-mnist-training-labels> "
+                     "<use_gpu(optional):y or n>"
+                  << std::endl;
         exit(1);
     } else {
         images_path = std::string(argv[1]);
@@ -51,25 +55,23 @@ int main(int argc, char **argv) {
         }
     }
 
-    
     /* dataset can be downloaded from http://yann.lecun.com/exdb/mnist */
     images_host = read_mnist_images(images_path.c_str(), n_images, n_rows, n_cols);
     labels_host = read_mnist_labels(labels_path.c_str(), n_labels, n_classes);
     n_features = n_rows * n_cols;
 
-
     model::nn_params_t params;
-    params.batch_size = 32;    
+    params.batch_size = 32;
     params.n_epochs = 10;
     params.learning_rate = 0.05;
 
-    #if defined(USE_GPU)
+#if defined(USE_GPU)
     training_memory_type = (use_gpu) ? DEVICE : HOST;
-    #else
+#else
     training_memory_type = HOST;
-    #endif
+#endif
 
-    auto x_batch = op::var<float>("x_batch", {params.batch_size, n_features}, {NONE,{}}, training_memory_type);
+    auto x_batch = op::var<float>("x_batch", {params.batch_size, n_features}, {NONE, {}}, training_memory_type);
 
     auto input_layer = layer::input(x_batch);
     auto fc1 = layer::fullyconnected(input_layer->out(), 512);
@@ -87,8 +89,6 @@ int main(int argc, char **argv) {
 
     model::NeuralNetwork<float> model(layers, optimizer::CROSS_ENTROPY, optimizer::SGD, params);
 
-
-
     std::cout << "\n==== MNIST Interactive ====\n";
     do {
         std::cout << "\nOptions:\n";
@@ -97,7 +97,7 @@ int main(int argc, char **argv) {
         std::cout << "\t 1. Train\n";
         std::cout << "\t 2. Predict\n";
         std::cout << "\t 3. Test\n";
-        
+
         std::cout << "your option:  ";
         std::cin >> input;
         std::cout << "\n";
@@ -111,13 +111,23 @@ int main(int argc, char **argv) {
         }
 
         switch (input) {
-            case -1: break;
-            case 0: show_sample(images_host, labels_host, n_rows, n_cols); break;
-            case 1: train(model, images_host, labels_host); break;
-            case 2: predict(model, images_host, labels_host, n_rows, n_cols); break;
-            case 3: test(model, images_host, labels_host, n_rows, n_cols, n_classes); break;
+            case -1:
+                break;
+            case 0:
+                show_sample(images_host, labels_host, n_rows, n_cols);
+                break;
+            case 1:
+                train(model, images_host, labels_host);
+                break;
+            case 2:
+                predict(model, images_host, labels_host, n_rows, n_cols);
+                break;
+            case 3:
+                test(model, images_host, labels_host, n_rows, n_cols, n_classes);
+                break;
             default:
-                std::cout << "Invalid Option. Try again.\n"; break;
+                std::cout << "Invalid Option. Try again.\n";
+                break;
         }
     } while (input != -1);
 
@@ -127,7 +137,6 @@ int main(int argc, char **argv) {
 
     magmadnn_finalize();
 }
-
 
 void show_sample(Tensor<float> *images, Tensor<float> *labels, uint32_t n_rows, uint32_t n_cols) {
     uint32_t image_idx = 0;
@@ -146,14 +155,15 @@ void train(model::NeuralNetwork<float> &model, Tensor<float> *images, Tensor<flo
     model.fit(images, labels, metrics, true);
 }
 
-void predict(model::NeuralNetwork<float> &model, Tensor<float> *images, Tensor<float> *labels, uint32_t n_rows, uint32_t n_cols) {
+void predict(model::NeuralNetwork<float> &model, Tensor<float> *images, Tensor<float> *labels, uint32_t n_rows,
+             uint32_t n_cols) {
     uint32_t image_index = 0, predicted_class;
 
     std::cout << "Enter image index:  ";
     std::cin >> image_index;
     std::cout << "\n";
 
-    Tensor<float> sample ({n_rows * n_cols}, {NONE,{}}, images->get_memory_type());
+    Tensor<float> sample({n_rows * n_cols}, {NONE, {}}, images->get_memory_type());
 
     sample.copy_from(*images, image_index * sample.get_size(), sample.get_size());
 
@@ -164,7 +174,8 @@ void predict(model::NeuralNetwork<float> &model, Tensor<float> *images, Tensor<f
     for (unsigned int i = 0; i < labels->get_shape(1); i++) std::cout << std::setfill('-') << std::setw(11) << "-";
     std::cout << "\n|";
     for (unsigned int i = 0; i < labels->get_shape(1); i++) {
-        std::cout << std::setfill(' ') << std::setw(5) << i << std::setw(3) << " " <<  " | ";
+        std::cout << std::setfill(' ') << std::setw(5) << i << std::setw(3) << " "
+                  << " | ";
     }
     std::cout << "\n";
     for (unsigned int i = 0; i < labels->get_shape(1); i++) std::cout << std::setfill('-') << std::setw(11) << "-";
@@ -180,23 +191,23 @@ void predict(model::NeuralNetwork<float> &model, Tensor<float> *images, Tensor<f
     print_image(image_index, images, labels, n_rows, n_cols);
 }
 
-void test(model::NeuralNetwork<float> &model, Tensor<float> *images, Tensor<float> *labels, uint32_t n_rows, uint32_t n_cols, uint32_t n_classes) {
+void test(model::NeuralNetwork<float> &model, Tensor<float> *images, Tensor<float> *labels, uint32_t n_rows,
+          uint32_t n_cols, uint32_t n_classes) {
     uint32_t predicted_class, actual_class, total_correct;
 
-    Tensor<float> sample ({n_rows * n_cols}, {NONE,{}}, images->get_memory_type());
+    Tensor<float> sample({n_rows * n_cols}, {NONE, {}}, images->get_memory_type());
 
     total_correct = 0;
 
     std::cout << "Incorrect indices:  ";
-    for (uint32_t i = 0; i < images->get_shape(0); i++) { 
+    for (uint32_t i = 0; i < images->get_shape(0); i++) {
         sample.copy_from(*images, i * sample.get_size(), sample.get_size());
 
         predicted_class = model.predict_class(&sample);
 
         actual_class = n_classes + 1;
         for (uint32_t j = 0; j < n_classes; j++) {
-
-            if (std::fabs(labels->get(i*n_classes + j) - 1.0f) <= 1E-8) {
+            if (std::fabs(labels->get(i * n_classes + j) - 1.0f) <= 1E-8) {
                 actual_class = j;
                 break;
             }
@@ -207,18 +218,22 @@ void test(model::NeuralNetwork<float> &model, Tensor<float> *images, Tensor<floa
         } else {
             std::cout << i << " ";
         }
-
     }
     std::cout << "\n";
 
     std::cout << total_correct << "/" << images->get_shape(0) << " images correct.\n";
 }
 
-
-#define FREAD_CHECK(res, nmemb) if((res) != (nmemb)) { fprintf(stderr, "fread fail.\n"); return NULL; }
+#define FREAD_CHECK(res, nmemb)           \
+    if ((res) != (nmemb)) {               \
+        fprintf(stderr, "fread fail.\n"); \
+        return NULL;                      \
+    }
 
 inline void endian_swap(uint32_t &val) {
-    /* taken from https://stackoverflow.com/questions/13001183/how-to-read-little-endian-integers-from-file-in-c */
+    /* taken from
+     * https://stackoverflow.com/questions/13001183/how-to-read-little-endian-integers-from-file-in-c
+     */
     val = (val >> 24) | ((val << 8) & 0xff0000) | ((val >> 8) & 0xff00) | (val << 24);
 }
 
@@ -229,7 +244,7 @@ Tensor<float> *read_mnist_images(const char *file_name, uint32_t &n_images, uint
     uint8_t val;
 
     file = std::fopen(file_name, "r");
-    
+
     if (file == NULL) {
         std::fprintf(stderr, "Could not open %s for reading.\n", file_name);
         return NULL;
@@ -255,16 +270,16 @@ Tensor<float> *read_mnist_images(const char *file_name, uint32_t &n_images, uint
     char bytes[n_rows * n_cols];
 
     /* allocate tensor */
-    data = new Tensor<float> ({n_images, n_rows, n_cols}, {NONE,{}}, HOST);
+    data = new Tensor<float>({n_images, n_rows, n_cols}, {NONE, {}}, HOST);
 
     for (uint32_t i = 0; i < n_images; i++) {
-        FREAD_CHECK(fread(bytes, sizeof(char), n_rows * n_cols, file), n_rows*n_cols);
+        FREAD_CHECK(fread(bytes, sizeof(char), n_rows * n_cols, file), n_rows * n_cols);
 
         for (uint32_t r = 0; r < n_rows; r++) {
             for (uint32_t c = 0; c < n_cols; c++) {
-                val = bytes[r*n_cols + c];
+                val = bytes[r * n_cols + c];
 
-                data->set(i*n_rows*n_cols + r*n_cols + c, (val/128.0f) - 1.0f);
+                data->set(i * n_rows * n_cols + r * n_cols + c, (val / 128.0f) - 1.0f);
             }
         }
     }
@@ -282,7 +297,7 @@ Tensor<float> *read_mnist_labels(const char *file_name, uint32_t &n_labels, uint
     uint8_t val;
 
     file = std::fopen(file_name, "r");
-    
+
     if (file == NULL) {
         std::fprintf(stderr, "Could not open %s for reading.\n", file_name);
         return NULL;
@@ -300,20 +315,18 @@ Tensor<float> *read_mnist_labels(const char *file_name, uint32_t &n_labels, uint
 
     printf("Preparing to read %u labels with %u classes ...\n", n_labels, n_classes);
 
-
     /* allocate tensor */
-    labels = new Tensor<float> ({n_labels, n_classes}, {ZERO,{}}, HOST);
+    labels = new Tensor<float>({n_labels, n_classes}, {ZERO, {}}, HOST);
 
     printf("finished reading labels.\n");
 
     for (unsigned int i = 0; i < n_labels; i++) {
         FREAD_CHECK(fread(&val, sizeof(char), 1, file), 1);
 
-        labels->set(i*n_classes + val, 1.0f);
+        labels->set(i * n_classes + val, 1.0f);
     }
 
     fclose(file);
-
 
     return labels;
 }
@@ -324,8 +337,7 @@ void print_image(uint32_t image_idx, Tensor<float> *images, Tensor<float> *label
 
     /* assign the label */
     for (uint32_t i = 0; i < n_classes; i++) {
-
-        if (std::fabs(labels->get(image_idx*n_classes + i) - 1.0f) <= 1E-8) {
+        if (std::fabs(labels->get(image_idx * n_classes + i) - 1.0f) <= 1E-8) {
             label = i;
             break;
         }
@@ -335,13 +347,13 @@ void print_image(uint32_t image_idx, Tensor<float> *images, Tensor<float> *label
 
     for (unsigned int r = 0; r < n_rows; r++) {
         for (unsigned int c = 0; c < n_cols; c++) {
-
-            float val = images->get(image_idx*n_rows*n_cols + r*n_cols + c);
+            float val = images->get(image_idx * n_rows * n_cols + r * n_cols + c);
 
             /* get color */
-            int code_id = static_cast<int>(static_cast<float>(255-232)*((-val + 1.0f)/2.0f) + 232);
+            int code_id = static_cast<int>(static_cast<float>(255 - 232) * ((-val + 1.0f) / 2.0f) + 232);
 
-            printf("\x1B[48;5;255m%s\x1B[38;5;%dm%3u \x1B[0m", (code_id != 255) ? "\x1B[1m":"", code_id, (uint8_t) ((val+1.0f)*128.0f) );
+            printf("\x1B[48;5;255m%s\x1B[38;5;%dm%3u \x1B[0m", (code_id != 255) ? "\x1B[1m" : "", code_id,
+                   (uint8_t)((val + 1.0f) * 128.0f));
         }
         printf("\n");
     }

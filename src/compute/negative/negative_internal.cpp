@@ -12,18 +12,18 @@ void negative_full(Tensor<T> *x, Tensor<T> *out) {
         unsigned int size = out->get_size();
 
         for (unsigned int i = 0; i < size; i++) {
-            out_ptr[i] = - x_ptr[i];
+            out_ptr[i] = -x_ptr[i];
         }
     }
-    #if defined(_HAS_CUDA_)
+#if defined(_HAS_CUDA_)
     else {
         internal::negative_full_device(x, out);
     }
-    #endif
+#endif
 }
 template void negative_full(Tensor<int> *x, Tensor<int> *out);
 template void negative_full(Tensor<float> *x, Tensor<float> *out);
 template void negative_full(Tensor<double> *x, Tensor<double> *out);
 
-}   // namespace op
-}   // namespace magmadnn
+}  // namespace internal
+}  // namespace magmadnn

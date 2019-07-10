@@ -15,18 +15,18 @@ void pow_grad(Tensor<T> *x, int power, Tensor<T> *grad, Tensor<T> *out) {
 
         for (unsigned int i = 0; i < size; i++) {
             /* compute the power */
-            out_ptr[i] = grad_ptr[(grad_is_scalar) ? 0 : i] * ((T)power) * std::pow((T)x_ptr[i], (T)power-1);
+            out_ptr[i] = grad_ptr[(grad_is_scalar) ? 0 : i] * ((T) power) * std::pow((T) x_ptr[i], (T) power - 1);
         }
     }
-    #if defined(_HAS_CUDA_)
+#if defined(_HAS_CUDA_)
     else {
         internal::pow_grad_device(x, power, grad, out);
     }
-    #endif
+#endif
 }
 
-
-template <> void pow_grad(Tensor<int> *x, int power, Tensor<int> *grad, Tensor<int> *out) {
+template <>
+void pow_grad(Tensor<int> *x, int power, Tensor<int> *grad, Tensor<int> *out) {
     if (out->get_memory_type() == HOST) {
         int *x_ptr = x->get_ptr();
         int *grad_ptr = grad->get_ptr();
@@ -36,18 +36,18 @@ template <> void pow_grad(Tensor<int> *x, int power, Tensor<int> *grad, Tensor<i
 
         for (unsigned int i = 0; i < size; i++) {
             /* compute the power */
-            out_ptr[i] = grad_ptr[(grad_is_scalar) ? 0 : i] * power * ((int)std::pow((float)x_ptr[i], (float)(power-1)));
+            out_ptr[i] =
+                grad_ptr[(grad_is_scalar) ? 0 : i] * power * ((int) std::pow((float) x_ptr[i], (float) (power - 1)));
         }
     }
-    #if defined(_HAS_CUDA_)
+#if defined(_HAS_CUDA_)
     else {
         internal::pow_grad_device(x, power, grad, out);
     }
-    #endif
+#endif
 }
 template void pow_grad(Tensor<float> *x, int power, Tensor<float> *grad, Tensor<float> *out);
 template void pow_grad(Tensor<double> *x, int power, Tensor<double> *grad, Tensor<double> *out);
 
-
-}   // namespace op
-}   // namespace magmadnn
+}  // namespace internal
+}  // namespace magmadnn

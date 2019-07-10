@@ -1,0 +1,29 @@
+---
+name: Bug report
+about: Create a report to help us fix the bug
+title: "[BUG]"
+labels: bug
+assignees: ''
+
+---
+
+**Describe the bug**
+A clear and concise description of what the bug is.
+
+**To Reproduce**
+Steps to reproduce the behavior: ...
+
+**Expected behavior**
+A clear and concise description of what you expected to happen.
+
+**Environment:**
+ - OS: [e.g. Ubuntu 18.10]
+ - CUDA Version: [e.g. 10.0]
+ - CBLAS: [e.g. OpenBLAS]
+ - Magma Version: [e.g. 2.5.0]
+ - CuDNN Version: [e.g. 7.6]
+ - MagmaDNN Version [e.g. 1.0]
+
+
+**Additional context**
+Add any other context about the problem here.

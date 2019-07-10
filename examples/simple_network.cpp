@@ -62,7 +62,7 @@ int main(int argc, char **argv) {
         to the x_batch constructor. */
     #if defined(USE_GPU)
     training_memory_type = DEVICE;
-    #elif
+    #else
     training_memory_type = HOST;
     #endif
 

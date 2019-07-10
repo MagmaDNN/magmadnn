@@ -36,6 +36,7 @@ int main(int argc, char **argv) {
     uint32_t n_images, n_rows, n_cols, n_labels, n_classes = 10, n_features;
     bool use_gpu = true;
     int64_t input;
+    memory_t training_memory_type;
 
     /* process args */
     if (argc != 3 && argc != 4) {
@@ -62,7 +63,13 @@ int main(int argc, char **argv) {
     params.n_epochs = 10;
     params.learning_rate = 0.05;
 
-    auto x_batch = op::var<float>("x_batch", {params.batch_size, n_features}, {NONE,{}}, (use_gpu) ? DEVICE : HOST);
+    #if defined(USE_GPU)
+    training_memory_type = (use_gpu) ? DEVICE : HOST;
+    #else
+    training_memory_type = HOST;
+    #endif
+
+    auto x_batch = op::var<float>("x_batch", {params.batch_size, n_features}, {NONE,{}}, training_memory_type);
 
     auto input_layer = layer::input(x_batch);
     auto fc1 = layer::fullyconnected(input_layer->out(), 512);

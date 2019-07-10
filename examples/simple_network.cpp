@@ -31,6 +31,7 @@ int main(int argc, char **argv) {
     /* here we declare our variables for the simulation */
     Tensor<float> *images_host, *labels_host;
     uint32_t n_images, n_rows, n_cols, n_labels, n_classes = 10, n_features;
+    memory_t training_memory_type;
 
     /* these functions read-in and return tensors holding the mnist data set
         to use them, please change the string to the path to your local copy of the mnist dataset.
@@ -56,10 +57,19 @@ int main(int argc, char **argv) {
     params.n_epochs = 5;    /* # of epochs: the number of passes over the entire training set */
     params.learning_rate = 0.05;
 
+    /* this is only necessary for a general example which can handle all install types. Typically,
+        When you write your own MagmaDNN code you will not need macros as you can simply pass DEVICE
+        to the x_batch constructor. */
+    #if defined(USE_GPU)
+    training_memory_type = DEVICE;
+    #elif
+    training_memory_type = HOST;
+    #endif
+
     /* INITIALIZING THE NETWORK */
     /* create a variable (of type float) with size  (batch_size x n_features) 
         This will serve as the input to our network. */
-    auto x_batch = op::var<float>("x_batch", {params.batch_size, n_features}, {NONE,{}}, DEVICE);
+    auto x_batch = op::var<float>("x_batch", {params.batch_size, n_features}, {NONE,{}}, training_memory_type);
 
     /* initialize the layers in our network */
     auto input = layer::input(x_batch);

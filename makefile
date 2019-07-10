@@ -139,6 +139,13 @@ $(libstatic):
 	$(RANLIB) $(RANLIB_FLAGS) $@
 	@echo 
 
+
+# MacOS specific install information
+ostype = ${shell echo $${OSTYPE}}
+ifneq ($(findstring darwin, ${ostype}),)
+    $(libshared): LIBSHARED_FLAG += -install_name $(prefix)/lib/$(notdir $(libshared))
+endif
+
 $(libshared):
 	@echo "==== building shared lib ===="
 	mkdir -p $(LIB_DIR)

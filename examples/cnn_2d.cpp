@@ -44,31 +44,29 @@ int main(int argc, char **argv) {
     }
 
     model::nn_params_t params;
-    params.batch_size = 32;
-    params.n_epochs = 5;
+    params.batch_size = 128;
+    params.n_epochs = 20;
     params.learning_rate = 0.05;
 
     auto x_batch = op::var<float>("x_batch", {params.batch_size, 1, n_rows, n_cols}, {NONE,{}}, DEVICE);
 
     auto input = layer::input<float>(x_batch);
 
-    auto conv2d1 = layer::conv2d<float>(input->out(), {3,3}, 32, {0,0}, {1,1}, {1,1}, true, false);
+    auto conv2d1 = layer::conv2d<float>(input->out(), {5,5}, 32, {0,0}, {1,1}, {1,1}, true, false);
     auto act1 = layer::activation<float> (conv2d1->out(), layer::RELU);
+    auto pool1 = layer::pooling<float>(act1->out(), {2,2}, {0,0}, {2,2}, MAX_POOL);
+    auto dropout1 = layer::dropout<float>(pool1->out(), 0.25);
 
-    auto conv2d2 = layer::conv2d<float> (act1->out(), {3,3}, 64, {0,0}, {1,1}, {1,1}, true, false);
-    auto act2 = layer::activation<float>(conv2d2->out(), layer::RELU);
-
-    auto flatten = layer::flatten<float> (act2->out());
+    auto flatten = layer::flatten<float> (dropout1->out());
 
     auto fc1 = layer::fullyconnected<float> (flatten->out(), 128, true);
-    auto act3 = layer::activation<float> (fc1->out(), layer::RELU);
+    auto act2 = layer::activation<float> (fc1->out(), layer::RELU);
+    auto fc2 = layer::fullyconnected<float> (act2->out(), n_classes, false);
+    auto act3 = layer::activation<float> (fc2->out(), layer::SOFTMAX);
 
-    auto fc2 = layer::fullyconnected<float> (act3->out(), n_classes, false);
-    auto act4 = layer::activation<float> (fc2->out(), layer::SIGMOID);
+    auto output = layer::output<float> (act3->out());
 
-    auto output = layer::output<float> (act4->out());
-
-    std::vector<layer::Layer<float> *> layers = {input, conv2d1, act1, conv2d2, act2, flatten, fc1, act3, fc2, act4, output};
+    std::vector<layer::Layer<float> *> layers = {input, conv2d1, act1, pool1, dropout1, flatten, fc1, act2, fc2, act3, output};
 
     model::NeuralNetwork<float> model(layers, optimizer::CROSS_ENTROPY, optimizer::SGD, params);
 

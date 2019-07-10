@@ -18,6 +18,7 @@ void test_activation(memory_t mem, unsigned int size);
 void test_dropout(memory_t mem, unsigned int size);
 void test_flatten(memory_t mem, unsigned int size);
 void test_layers(memory_t mem, unsigned int size);
+void test_layer_container(memory_t mem, unsigned int size);
 
 int main(int argc, char **argv) {
     magmadnn_init();
@@ -33,6 +34,8 @@ int main(int argc, char **argv) {
     test_for_all_mem_types(test_flatten, 15);
 
     test_for_all_mem_types(test_layers, 15);
+    
+    test_for_all_mem_types(test_layer_container, 5);
 
     magmadnn_finalize();
     return 0;
@@ -243,5 +246,21 @@ void test_layers(memory_t mem, unsigned int size) {
     assert( out_tensor->get_shape(0) == size );
     assert( out_tensor->get_shape(1) == output_classes );
 
+    show_success();
+}
+
+void test_layer_container(memory_t mem, unsigned int size) {
+
+    printf("testing %s layer_container...  ", get_memory_type_name(mem));
+
+    op::Variable<float> *data = op::var<float>("data", {size, size}, {GLOROT,{0.0f, 1.0f}}, mem);
+
+    layer::layerContainer<float> lc = layer::layerContainer<float>(data);
+    lc.appendLayer(layer::fullyconnected(lc.getLastLayerOutput(), 20, false))
+        .appendLayer(layer::activation(lc.getLastLayerOutput(), layer::RELU))
+        .appendLayer(layer::fullyconnected(lc.getLastLayerOutput(), size))
+        .appendLayer(layer::activation(lc.getLastLayerOutput(), layer::SOFTMAX));
+
+    
     show_success();
 }

@@ -22,7 +22,6 @@
 #include "types.h"
 #include "init_finalize.h"
 #include "utilities_internal.h"
-#include "wrapper.h"
 
 #include "memory/memorymanager.h"
 #include "tensor/tensor.h"

@@ -9,6 +9,10 @@ RPATH_FLAGS := -Wl,-rpath,$(prefix)/lib
 LIB_PATH := $(prefix)/lib
 DEST = ./bin
 
+ifeq ($(HAS_CUDA),1)
+TESTING_FLAGS += -DUSE_GPU
+endif
+
 ifeq ($(DEBUG),1)
 TESTING_FLAGS += -g -DDEBUG
 endif

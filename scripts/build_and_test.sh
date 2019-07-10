@@ -29,7 +29,7 @@ function show_help() {
     printf "\t-c|--clean clean; clean the library before building.\n"
     printf "\t-v|--verbose verbose; show output.\n"
     printf "\t--no-test run_tests; if set, then the testers won't be built or run.\n"
-    printf "\t--dev dev; development mode, same as '--debug --clean --verbose'"
+    printf "\t--dev dev; development mode, same as '--debug --clean --verbose'\n"
 }
 
 ! getopt --test > /dev/null

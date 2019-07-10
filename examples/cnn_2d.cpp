@@ -26,6 +26,7 @@ int main(int argc, char **argv) {
 
     Tensor<float> *images_host, *labels_host;
     uint32_t n_images, n_rows, n_cols, n_labels, n_classes = 10;
+    memory_t training_memory_type;
 
     /* these functions read-in and return tensors holding the mnist data set
         to use them, please change the string to the path to your local copy of the mnist dataset.
@@ -46,7 +47,13 @@ int main(int argc, char **argv) {
     params.n_epochs = 20;
     params.learning_rate = 0.05;
 
-    auto x_batch = op::var<float>("x_batch", {params.batch_size, 1, n_rows, n_cols}, {NONE,{}}, DEVICE);
+    #if defined(USE_GPU)
+    training_memory_type = DEVICE;
+    #else
+    training_memory_type = HOST;
+    #endif
+
+    auto x_batch = op::var<float>("x_batch", {params.batch_size, 1, n_rows, n_cols}, {NONE,{}}, training_memory_type);
 
     auto input = layer::input<float>(x_batch);
 

@@ -1,4 +1,5 @@
 /*
+MAGMADNN_TEST_ASSERT_DEFAULT(mm->get(i) == i * val, "\"mm->get(i) == i * val\" failed");
     This is a test for the memorymanager class in magmadnn
 */
 
@@ -23,7 +24,7 @@ void test_get_set(memory_t mem, int size, bool verbose) {
 
     // test
     for (int i = 0; i < (int) size; i++) {
-        assert(mm->get(i) == i * val);
+        MAGMADNN_TEST_ASSERT_DEFAULT(mm->get(i) == i * val, "\"mm->get(i) == i * val\" failed");
     }
 
     delete mm;
@@ -45,7 +46,8 @@ void test_copy(memory_t src_mem, memory_t dst_mem, int size, bool verbose) {
     mm_dst->copy_from(*mm_src);
 
     // test for success
-    for (int i = 0; i < size; i++) assert(mm_src->get(i) == mm_src->get(i));
+    for (int i = 0; i < size; i++)
+        MAGMADNN_TEST_ASSERT_DEFAULT(mm_src->get(i) == mm_src->get(i), "\"mm_src->get(i) == mm_src->get(i)\" failed");
 
     // free
     delete mm_src;

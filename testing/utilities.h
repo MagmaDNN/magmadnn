@@ -19,6 +19,27 @@
 #define ANSI_COLOR_CYAN "\x1b[36m"
 #define ANSI_COLOR_RESET "\x1b[0m"
 
+#define MAGMADNN_TEST_ASSERT(ans_bool, exit_on_err, msg, ...)                                                        \
+    do {                                                                                                             \
+        if (!(ans_bool)) {                                                                                           \
+            std::fprintf(stderr, "[" ANSI_COLOR_RED "MAGMADNN_TEST_ERROR" ANSI_COLOR_RESET "](%s:%d:%s) ", __FILE__, \
+                         __LINE__, __func__);                                                                        \
+            std::fprintf(stderr, (msg), ##__VA_ARGS__);                                                              \
+            std::fprintf(stderr, "\n");                                                                              \
+            if ((exit_on_err)) {                                                                                     \
+                std::exit(1);                                                                                        \
+            }                                                                                                        \
+        }                                                                                                            \
+    } while (0)
+
+#define MAGMADNN_TEST_ASSERT_DEFAULT(ans_bool, msg, ...) MAGMADNN_TEST_ASSERT((ans_bool), true, (msg), ##__VA_ARGS__)
+
+#define MAGMADNN_TEST_ASSERT_FEQUAL(a, b, threshhold, exit_on_err, msg, ...) \
+    MAGMADNN_TEST_ASSERT(std::fabs((a) - (b)) <= (threshhold), exit_on_err, msg, ##__VA_ARGS__)
+
+#define MAGMADNN_TEST_ASSERT_FEQUAL_DEFAULT(a, b) \
+    MAGMADNN_TEST_ASSERT_FEQUAL((a), (b), 1E-8, true, "%g != %g", (a), (b))
+
 void show_success() { printf(ANSI_COLOR_GREEN "Success!" ANSI_COLOR_RESET "\n"); }
 
 bool fequal(float a, float b) { return (fabs(a - b) <= 1E-8); }

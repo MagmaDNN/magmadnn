@@ -57,7 +57,7 @@ void test_matmul(memory_t mem, unsigned int size) {
 
     for (unsigned int i = 0; i < size / 2; i++) {
         for (unsigned int j = 0; j < size - 5; j++) {
-            assert(fequal(C->get({i, j}), 300.0f));
+            MAGMADNN_TEST_ASSERT_FEQUAL_DEFAULT(C->get({i, j}), 300.0f);
         }
     }
 
@@ -80,7 +80,7 @@ void test_pow(memory_t mem, unsigned int size) {
     sync(out);
 
     for (unsigned int i = 0; i < size * size; i++) {
-        assert(fequal(out->get(i), 3.0f * 3.0f * 3.0f));
+        MAGMADNN_TEST_ASSERT_FEQUAL_DEFAULT(out->get(i), 3.0f * 3.0f * 3.0f);
     }
 
     show_success();
@@ -113,7 +113,7 @@ void test_relu(memory_t mem, unsigned int size) {
     float x_val;
     for (unsigned int i = 0; i < size; i++) {
         x_val = x->get(i);
-        assert(fequal(relu_out->get(i), (x_val > 0) ? x_val : 0.0f));
+        MAGMADNN_TEST_ASSERT_FEQUAL_DEFAULT(relu_out->get(i), (x_val > 0) ? x_val : 0.0f);
     }
 
     if (mem == HOST) {
@@ -134,7 +134,7 @@ void test_relu(memory_t mem, unsigned int size) {
 
     for (unsigned int i = 0; i < size; i++) {
         x_val = x->get(i);
-        assert(fequal(relu_grad->get(i), (x_val > 0) ? grad->get(i) : 0.0f));
+        MAGMADNN_TEST_ASSERT_FEQUAL_DEFAULT(relu_grad->get(i), (x_val > 0) ? grad->get(i) : 0.0f);
     }
 
     delete x;
@@ -191,7 +191,7 @@ void test_reduce_sum(memory_t mem, unsigned int size) {
     sync(&reduced);
 
     for (unsigned int i = 0; i < size; i++) {
-        assert(fequal(reduced.get(i), 1.0f));
+        MAGMADNN_TEST_ASSERT_FEQUAL_DEFAULT(reduced.get(i), 1.0f);
     }
 
     show_success();
@@ -210,8 +210,8 @@ void test_argmax(memory_t mem, unsigned int size) {
     sync(&out_1);
 
     for (unsigned int i = 0; i < size; i++) {
-        assert(fequal(out_0.get(i), (float) i));
-        assert(fequal(out_1.get(i), (float) i));
+        MAGMADNN_TEST_ASSERT_FEQUAL_DEFAULT(out_0.get(i), (float) i);
+        MAGMADNN_TEST_ASSERT_FEQUAL_DEFAULT(out_1.get(i), (float) i);
     }
 
     show_success();
@@ -230,7 +230,8 @@ void test_bias_add(memory_t mem, unsigned int size) {
 
     for (unsigned int i = 0; i < out.get_shape(0); i++) {
         for (unsigned int j = 0; j < out.get_shape(1); j++) {
-            assert(fequal(out.get({i, j}), x.get({i, j}) + bias.get({i})));
+            MAGMADNN_TEST_ASSERT_FEQUAL_DEFAULT(out.get({i, j}), x.get({i, j}) + bias.get({i}));
+            MAGMADNN_TEST_ASSERT_FEQUAL_DEFAULT(out.get({i, j}), x.get({i, j}) + bias.get({i}));
         }
     }
 
@@ -262,8 +263,7 @@ void test_sum(memory_t mem, unsigned int size) {
     sync(&actual_out);
 
     for (unsigned int i = 0; i < size * size; i++) {
-        MAGMADNN_TEST_ASSERT_FEQUAL_DEFAULT(out.get(i), actual_out.get(i), "test_sum error -- %g != %g", out.get(i),
-                                            actual_out.get(i));
+        MAGMADNN_TEST_ASSERT_FEQUAL_DEFAULT(out.get(i), actual_out.get(i));
     }
 
     show_success();
@@ -283,9 +283,9 @@ void test_concat(memory_t mem, unsigned int size) {
         for (unsigned int j = 0; j < size * 3 / 2; j++) {
             for (unsigned int k = 0; k < size * 2; k++) {
                 if (j < size / 2)
-                    assert(fequal(C->get({i, j, k}), 1.0f));
+                    MAGMADNN_TEST_ASSERT_FEQUAL_DEFAULT(C->get({i, j, k}), 1.0f);
                 else
-                    assert(fequal(C->get({i, j, k}), 2.0f));
+                    MAGMADNN_TEST_ASSERT_FEQUAL_DEFAULT(C->get({i, j, k}), 2.0f);
             }
         }
     }
@@ -305,7 +305,7 @@ void test_tile(memory_t mem, unsigned int size) {
     for (unsigned int i = 0; i < size; i++) {
         for (unsigned int j = 0; j < size; j++) {
             for (unsigned int k = 0; k < size * 2; k++) {
-                assert(E->get({i, j, k}) == 2.0f);
+                MAGMADNN_TEST_ASSERT_DEFAULT(E->get({i, j, k}) == 2.0f, "\"E->get({i, j, k}) == 2.0f\" failed");
             }
         }
     }

@@ -39,9 +39,11 @@ void test_linear(memory_t mem_type, unsigned int size) {
         data->next(x_batch, y_batch);
         for (unsigned int j = 0; j < batch_size; j++) {
             for (unsigned int k = 0; k < size; k++) {
-                assert(x_batch->get({j, k}) == x->get({i * batch_size + j, k}));
+                MAGMADNN_TEST_ASSERT_DEFAULT(x_batch->get({j, k}) == x->get({i * batch_size + j, k}),
+                                             "\"x_batch->get({j, k}) == x->get({i * batch_size + j, k})\" failed");
             }
-            assert(y_batch->get(j) == y->get(i * batch_size + j));
+            MAGMADNN_TEST_ASSERT_DEFAULT(y_batch->get(j) == y->get(i * batch_size + j),
+                                         "\"y_batch->get(j) == y->get(i * batch_size + j)\" failed");
         }
     }
 

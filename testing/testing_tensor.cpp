@@ -52,7 +52,8 @@ void test_indexing(memory_t mem, bool verbose) {
     for (int i = 0; i < (int) x_size; i++) {
         for (int j = 0; j < (int) y_size; j++) {
             for (int k = 0; k < (int) z_size; k++) {
-                assert(t->get({i, j, k}) == i * j * k);
+                MAGMADNN_TEST_ASSERT_DEFAULT(t->get({i, j, k}) == i * j * k,
+                                             "\"t->get({i, j, k}) == i * j * k\" failed");
             }
         }
     }
@@ -62,7 +63,7 @@ void test_indexing(memory_t mem, bool verbose) {
         for (unsigned int j = 0; j < y_size; j++) {
             for (unsigned int k = 0; k < z_size; k++) {
                 float val = (*t)[{i, j, k}];
-                assert(val == i * j * k);
+                MAGMADNN_TEST_ASSERT_DEFAULT(val == i * j * k, "\"val == i * j * k\" failed");
             }
         }
     }
@@ -86,7 +87,7 @@ void test_fill(tensor_filler_t<float> filler, memory_t mem, bool verbose) {
 
     for (int i = 0; i < (int) x_size; i++) {
         for (int j = 0; j < (int) y_size; j++) {
-            assert(t->get({i, j}) == val);
+            MAGMADNN_TEST_ASSERT_DEFAULT(t->get({i, j}) == val, "\"t->get({i, j}) == val\" failed");
         }
     }
     if (verbose) show_success();
@@ -115,7 +116,8 @@ void test_copy(memory_t mem, bool verbose) {
     for (unsigned int i = 0; i < x_size_new; i++) {
         for (unsigned int j = 0; j < y_size_new; j++) {
             for (unsigned int k = 0; k < z_size_new; k++) {
-                assert(t_new->get({i, j, k}) == i * j * k);
+                MAGMADNN_TEST_ASSERT_DEFAULT(t_new->get({i, j, k}) == i * j * k,
+                                             "\"t_new->get({i, j, k}) == i * j * k\" failed");
             }
         }
     }

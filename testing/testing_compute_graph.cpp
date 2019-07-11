@@ -90,7 +90,7 @@ void test_add(memory_t mem_type, unsigned int size) {
 
     for (int i = 0; i < (int) size; i++) {
         for (int j = 0; j < (int) size; j++) {
-            assert(fin->get({i, j}) == total);
+            MAGMADNN_TEST_ASSERT_DEFAULT(fin->get({i, j}) == total, "\"fin->get({i, j}) == total\" failed");
         }
     }
 
@@ -124,7 +124,7 @@ void test_sum(memory_t mem_type, unsigned int size) {
     for (int x = 0; x < (int) size; x++) {
         for (int y = 0; y < (int) size; y++) {
             for (int z = 0; z < (int) size; z++) {
-                assert(fequal(fin->get({x, y, z}), total));
+                MAGMADNN_TEST_ASSERT_FEQUAL_DEFAULT(fin->get({x, y, z}), total);
             }
         }
     }
@@ -164,7 +164,7 @@ void test_matmul(memory_t mem_type, unsigned int size) {
 
     for (int i = 0; i < (int) m; i++) {
         for (int j = 0; j < (int) p; j++) {
-            assert(fin->get({i, j}) == val);
+            MAGMADNN_TEST_ASSERT_DEFAULT(fin->get({i, j}) == val, "\"fin->get({i, j}) == val\" failed");
         }
     }
 
@@ -188,13 +188,13 @@ void test_transpose(memory_t mem, unsigned int size) {
 
     sync(trans);
 
-    assert(trans->get_size() == x->get_size());
-    assert(trans->get_shape(0) == x->get_shape(1));
-    assert(trans->get_shape(1) == x->get_shape(0));
+    MAGMADNN_TEST_ASSERT_DEFAULT(trans->get_size() == x->get_size(), "\"trans->get_size() == x->get_size()\" failed");
+    MAGMADNN_TEST_ASSERT_DEFAULT(trans->get_shape(0) == x->get_shape(1), "\"trans->get_shape(0) == x->get_shape(1)\" failed");
+    MAGMADNN_TEST_ASSERT_DEFAULT(trans->get_shape(1) == x->get_shape(0), "\"trans->get_shape(1) == x->get_shape(0)\" failed");
 
     for (unsigned int i = 0; i < size / 2; i++) {
         for (unsigned int j = 0; j < size; j++) {
-            assert(fequal(trans->get({i, j}), x->get({j, i})));
+            MAGMADNN_TEST_ASSERT_FEQUAL_DEFAULT(trans->get({i, j}), x->get({j, i}));
         }
     }
 
@@ -260,7 +260,7 @@ void test_product(memory_t mem_type, unsigned int size) {
 
     for (unsigned int i = 0; i < size; i++) {
         for (unsigned int j = 0; j < size; j++) {
-            assert(output->get({i, j}) == total);
+            MAGMADNN_TEST_ASSERT_DEFAULT(output->get({i, j}) == total, "\"output->get({i, j}) == total\" failed");
         }
     }
 
@@ -270,7 +270,7 @@ void test_product(memory_t mem_type, unsigned int size) {
     sync(d_product_wrt_x);
 
     for (unsigned int i = 0; i < d_product_wrt_x->get_size(); i++) {
-        assert(fequal(d_product_wrt_x->get(i), 54.0f));
+        MAGMADNN_TEST_ASSERT_FEQUAL_DEFAULT(d_product_wrt_x->get(i), 54.0f);
     }
 
     show_success();
@@ -292,12 +292,12 @@ void test_scalarproduct(memory_t mem_type, unsigned int size) {
     if (mem_type == MANAGED) fin->get_memory_manager()->sync(true);
 #endif
 
-    assert(fin->get_shape(0) == size);
-    assert(fin->get_shape(1) == size);
+    MAGMADNN_TEST_ASSERT_DEFAULT(fin->get_shape(0) == size, "\"fin->get_shape(0) == size\" failed");
+    MAGMADNN_TEST_ASSERT_DEFAULT(fin->get_shape(1) == size, "\"fin->get_shape(1) == size\" failed");
     for (unsigned int i = 0; i < size; i++) {
         for (unsigned int j = 0; j < size; j++) {
             // printf("%.4g %.4g\n", fin->get({(int)i,(int)j}), alpha * val);
-            assert(fequal(fin->get({(int) i, (int) j}), alpha * val));
+            MAGMADNN_TEST_ASSERT_FEQUAL_DEFAULT(fin->get({(int) i, (int) j}), alpha * val);
         }
     }
 
@@ -330,11 +330,11 @@ void test_softmax(memory_t mem_type, unsigned int size) {
 
     for (unsigned int i = 0; i < 6; i++) {
         if (i == 0 || i == 5)
-            assert(output->get(i) - val1 < 1E-6);
+            MAGMADNN_TEST_ASSERT_DEFAULT(output->get(i) - val1 < 1E-6, "\"output->get(i) - val1 < 1E-6\" failed");
         else if (i == 1 || i == 4)
-            assert(output->get(i) - val2 < 1E-6);
+            MAGMADNN_TEST_ASSERT_DEFAULT(output->get(i) - val2 < 1E-6, "\"output->get(i) - val2 < 1E-6\" failed");
         else
-            assert(output->get(i) - val3 < 1E-6);
+            MAGMADNN_TEST_ASSERT_DEFAULT(output->get(i) - val3 < 1E-6, "\"output->get(i) - val3 < 1E-6\" failed");
     }
 
     Tensor<float> *grad = new Tensor<float>({2, 3}, {ONE, {}}, mem_type);
@@ -377,14 +377,14 @@ void test_sumreduce(memory_t mem_type, unsigned int size) {
         if (!fequal(col_sums->get(i), 4.0f)) {
             printf("Bad vals : %.3g %.3g\n", col_sums->get(i), 4.0f);
         }
-        assert(fequal(col_sums->get(i), 4.0f));
+        MAGMADNN_TEST_ASSERT_FEQUAL_DEFAULT(col_sums->get(i), 4.0f);
     }
 
     for (unsigned int i = 0; i < row_sums->get_size(); i++) {
         if (!fequal(row_sums->get(i), 6.0f)) {
             printf("Bad vals : %.3g %.3g\n", row_sums->get(i), 6.0f);
         }
-        assert(fequal(row_sums->get(i), 6.0f));
+        MAGMADNN_TEST_ASSERT_FEQUAL_DEFAULT(row_sums->get(i), 6.0f);
     }
 
     /* test the gradient computation */
@@ -395,7 +395,7 @@ void test_sumreduce(memory_t mem_type, unsigned int size) {
 
     for (unsigned int i = 0; i < d_col_sums_wrt_x->get_shape(0); i++) {
         for (unsigned int j = 0; j < d_col_sums_wrt_x->get_shape(1); j++) {
-            assert(fequal(d_col_sums_wrt_x->get({i, j}), 1.0f));
+            MAGMADNN_TEST_ASSERT_FEQUAL_DEFAULT(d_col_sums_wrt_x->get({i, j}), 1.0f);
         }
     }
 
@@ -432,7 +432,7 @@ void test_affine(memory_t mem_type, unsigned int size) {
 
     for (int i = 0; i < (int) m; i++) {
         for (int j = 0; j < (int) p; j++) {
-            assert(fin->get({i, j}) == (val + b));
+            MAGMADNN_TEST_ASSERT_DEFAULT(fin->get({i, j}) == (val + b), "\"fin->get({i, j}) == (val + b)\" failed");
         }
     }
 
@@ -458,7 +458,7 @@ void test_sigmoid(memory_t mem_type, unsigned int size) {
     sync(fin);
 
     for (unsigned int i = 0; i < fin->get_size(); i++) {
-        assert(fabs(fin->get(i) - (-0.875)) < 1E-8);
+        MAGMADNN_TEST_ASSERT_DEFAULT(fabs(fin->get(i) - (-0.875)) < 1E-8, "\"fabs(fin->get(i) - (-0.875)) < 1E-8\" failed");
     }
 
     Tensor<float> *grad = new Tensor<float>({size, size}, {ONE, {}}, mem_type);
@@ -467,7 +467,7 @@ void test_sigmoid(memory_t mem_type, unsigned int size) {
     sync(d_sigmoid_wrt_x);
 
     for (unsigned int i = 0; i < d_sigmoid_wrt_x->get_size(); i++) {
-        assert(fabs(d_sigmoid_wrt_x->get(i) - (-1.640625)) < 1E-8);
+        MAGMADNN_TEST_ASSERT_DEFAULT(fabs(d_sigmoid_wrt_x->get(i) - (-1.640625)) < 1E-8, "\"fabs(d_sigmoid_wrt_x->get(i) - (-1.640625)) < 1E-8\" failed");
     }
 
     show_success();
@@ -494,7 +494,7 @@ void test_tanh(memory_t mem_type, unsigned int size) {
 #endif
 
     for (unsigned int i = 0; i < fin->get_size(); i++) {
-        assert(fabs(fin->get(i) - tanh(val)) < 1E-6);
+        MAGMADNN_TEST_ASSERT_DEFAULT(fabs(fin->get(i) - tanh(val)) < 1E-6, "\"fabs(fin->get(i) - tanh(val)) < 1E-6\" failed");
     }
 
     delete t0;
@@ -544,11 +544,11 @@ void test_conv2d(memory_t mem_type, unsigned int size) {
     unsigned int expected_h = 1 + (h + 2 * pad_h - (((filter_h - 1) * dilation_h) + 1)) / vertical_stride;
     unsigned int expected_w = 1 + (w + 2 * pad_w - (((filter_w - 1) * dilation_w) + 1)) / horizontal_stride;
 
-    assert(out->get_shape().size() == 4);
-    assert(out->get_shape(0) == batch_size);
-    assert(out->get_shape(1) == out_channels);
-    assert(out->get_shape(2) == expected_h);
-    assert(out->get_shape(3) == expected_w);
+    MAGMADNN_TEST_ASSERT_DEFAULT(out->get_shape().size() == 4, "\"out->get_shape().size() == 4\" failed");
+    MAGMADNN_TEST_ASSERT_DEFAULT(out->get_shape(0) == batch_size, "\"out->get_shape(0) == batch_size\" failed");
+    MAGMADNN_TEST_ASSERT_DEFAULT(out->get_shape(1) == out_channels, "\"out->get_shape(1) == out_channels\" failed");
+    MAGMADNN_TEST_ASSERT_DEFAULT(out->get_shape(2) == expected_h, "\"out->get_shape(2) == expected_h\" failed");
+    MAGMADNN_TEST_ASSERT_DEFAULT(out->get_shape(3) == expected_w, "\"out->get_shape(3) == expected_w\" failed");
 
     delete conv;
 
@@ -584,11 +584,11 @@ void test_pooling(memory_t mem_type, unsigned int size) {
     unsigned int expected_h = 1 + (h + 2 * pad_h - filter_h) / vertical_stride;
     unsigned int expected_w = 1 + (w + 2 * pad_w - filter_w) / horizontal_stride;
 
-    assert(out->get_shape().size() == 4);
-    assert(out->get_shape(0) == batch_size);
-    assert(out->get_shape(1) == channels);
-    assert(out->get_shape(2) == expected_h);
-    assert(out->get_shape(3) == expected_w);
+    MAGMADNN_TEST_ASSERT_DEFAULT(out->get_shape().size() == 4, "\"out->get_shape().size() == 4\" failed");
+    MAGMADNN_TEST_ASSERT_DEFAULT(out->get_shape(0) == batch_size, "\"out->get_shape(0) == batch_size\" failed");
+    MAGMADNN_TEST_ASSERT_DEFAULT(out->get_shape(1) == channels, "\"out->get_shape(1) == channels\" failed");
+    MAGMADNN_TEST_ASSERT_DEFAULT(out->get_shape(2) == expected_h, "\"out->get_shape(2) == expected_h\" failed");
+    MAGMADNN_TEST_ASSERT_DEFAULT(out->get_shape(3) == expected_w, "\"out->get_shape(3) == expected_w\" failed");
 
     /* testing grad */
     Tensor<float> *grad = new Tensor<float>(out->get_shape(), {ONE, {}}, mem_type);
@@ -644,7 +644,7 @@ void test_crossentropy(memory_t mem_type, unsigned int size) {
 
     double loss = out->get(0);
 
-    assert(fequal(loss, expected_loss));
+    MAGMADNN_TEST_ASSERT_FEQUAL_DEFAULT(loss, expected_loss);
 
     show_success();
 }
@@ -668,7 +668,7 @@ void test_meansquarederror(memory_t mem_type, unsigned int size) {
     }
     expected_loss /= (float) size;
 
-    assert(fequal(loss_tensor->get(0), expected_loss));
+    MAGMADNN_TEST_ASSERT_FEQUAL_DEFAULT(loss_tensor->get(0), expected_loss);
 
     delete mse_loss;
 

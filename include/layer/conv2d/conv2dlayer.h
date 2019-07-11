@@ -26,8 +26,9 @@ class Conv2dLayer : public Layer<T> {
     Conv2dLayer(op::Operation<T>* input, const std::vector<unsigned int>& filter_shape = {3, 3}, int out_channels = 1,
                 const std::vector<unsigned int>& padding = {0, 0}, const std::vector<unsigned int>& strides = {1, 1},
                 const std::vector<unsigned int>& dilation_rates = {1, 1}, bool use_cross_correlation = true,
-                bool use_bias = false, tensor_filler_t<T> filter_initializer = {GLOROT, {0.0, 0.2f}},
-                tensor_filler_t<T> bias_initializer = {GLOROT, {0.0, 0.2f}});
+                bool use_bias = false,
+                tensor_filler_t<T> filter_initializer = {GLOROT, {static_cast<T>(0.0), static_cast<T>(0.2f)}},
+                tensor_filler_t<T> bias_initializer = {GLOROT, {static_cast<T>(0.0), static_cast<T>(0.2f)}});
 
     virtual ~Conv2dLayer();
 
@@ -72,8 +73,9 @@ Conv2dLayer<T>* conv2d(op::Operation<T>* input, const std::vector<unsigned int>&
                        int out_channels = 1, const std::vector<unsigned int>& padding = {0, 0},
                        const std::vector<unsigned int>& strides = {1, 1},
                        const std::vector<unsigned int>& dilation_rates = {1, 1}, bool use_cross_correlation = true,
-                       bool use_bias = false, tensor_filler_t<T> filter_initializer = {GLOROT, {0.0, 0.2f}},
-                       tensor_filler_t<T> bias_initializer = {GLOROT, {0.0, 0.2f}});
+                       bool use_bias = false,
+                       tensor_filler_t<T> filter_initializer = {GLOROT, {static_cast<T>(0.0), static_cast<T>(0.2f)}},
+                       tensor_filler_t<T> bias_initializer = {GLOROT, {static_cast<T>(0.0), static_cast<T>(0.2f)}});
 
 /* Indicate pooling type when creating */
 template <typename T>
@@ -81,8 +83,9 @@ Conv2dLayer<T>* conv2d(op::Operation<T>* input, const std::vector<unsigned int>&
                        int out_channels = 1, layer::padding_t padding = layer::SAME,
                        const std::vector<unsigned int>& strides = {1, 1},
                        const std::vector<unsigned int>& dilation_rates = {1, 1}, bool use_cross_correlation = true,
-                       bool use_bias = false, tensor_filler_t<T> filter_initializer = {GLOROT, {0.0, 0.2f}},
-                       tensor_filler_t<T> bias_initializer = {GLOROT, {0.0, 0.2f}});
+                       bool use_bias = false,
+                       tensor_filler_t<T> filter_initializer = {GLOROT, {static_cast<T>(0.0), static_cast<T>(0.2f)}},
+                       tensor_filler_t<T> bias_initializer = {GLOROT, {static_cast<T>(0.0), static_cast<T>(0.2f)}});
 
 }  // namespace layer
 }  // namespace magmadnn

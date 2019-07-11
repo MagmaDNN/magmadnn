@@ -42,8 +42,6 @@ Tensor<T>::Tensor(std::vector<unsigned int> shape, tensor_filler_t<T> filler, me
 
 template <typename T>
 Tensor<T>::~Tensor() {
-    delete mem_manager;
-
 #if defined(_HAS_CUDA_)
     this->free_cudnn_descriptor();
 #endif
@@ -75,9 +73,10 @@ void Tensor<T>::init(std::vector<unsigned int>& shape, tensor_filler_t<T> filler
     }
 
     // create memory manager
-    this->mem_manager = new MemoryManager<T>(size, mem_type, device_id);
+    // this->mem_manager = new MemoryManager<T>(size, mem_type, device_id);
+    this->memory_manager_ptr = std::make_shared<MemoryManager<T>>(size, mem_type, device_id);
 
-    internal::fill_memory(*mem_manager, filler);
+    internal::fill_memory(*memory_manager_ptr, filler);
 
 #if defined(_HAS_CUDA_)
     /* create a cudnn descriptor */
@@ -86,11 +85,68 @@ void Tensor<T>::init(std::vector<unsigned int>& shape, tensor_filler_t<T> filler
 }
 
 template <typename T>
+Tensor<T>::Tensor(const Tensor<T>& t) {
+    this->shape = t.shape;
+    this->strides = t.strides;
+    this->size = t.size;
+
+    this->mem_type = t.mem_type;
+    this->device_id = t.device_id;
+
+    /* shared pointer -- reference count the memory manager */
+    this->memory_manager_ptr = t.memory_manager_ptr;
+
+/* TODO -- replace cudnn_descriptor with reference counting */
+#if defined(_HAS_CUDA_)
+    this->init_cudnn_descriptor();
+#endif
+}
+
+template <typename T>
+Tensor<T>::Tensor(Tensor<T>&& t) {
+    this->shape = t.shape;
+    this->strides = t.strides;
+    this->size = t.size;
+
+    this->mem_type = t.mem_type;
+    this->device_id = t.device_id;
+
+    /* shared pointer -- reference count */
+    this->memory_manager_ptr = t.memory_manager_ptr;
+
+    /* TODO -- replace cudnn_descriptor with reference counting */
+#if defined(_HAS_CUDA_)
+    this->init_cudnn_descriptor();
+#endif
+}
+
+template <typename T>
+Tensor<T>& Tensor<T>::operator=(const Tensor<T>& t) {
+    if (this == &t) return *this;
+
+    this->shape = t.shape;
+    this->strides = t.strides;
+    this->size = t.size;
+
+    this->mem_type = t.mem_type;
+    this->device_id = t.device_id;
+
+    /* shared pointer -- reference count */
+    this->memory_manager_ptr = t.memory_manager_ptr;
+
+    /* TODO -- replace cudnn_descriptor with reference counting */
+#if defined(_HAS_CUDA_)
+    this->init_cudnn_descriptor();
+#endif
+    return *this;
+}
+
+template <typename T>
 magmadnn_error_t Tensor<T>::copy_from(const Tensor<T>& src, unsigned int begin_idx, unsigned int size) {
     assert(this->size >= size);
     assert(src.size >= (begin_idx + size));
 
-    return this->mem_manager->copy_from(*src.get_memory_manager(), begin_idx, size);
+    return this->memory_manager_ptr->copy_from(*src.get_memory_manager(), begin_idx, size);
 }
 
 template <typename T>
@@ -124,65 +180,65 @@ magmadnn_error_t Tensor<T>::copy_from(const Tensor<T>& src, const std::vector<un
 template <typename T>
 T Tensor<T>::get(const std::vector<int>& idx) const {
     std::vector<unsigned int> ui_vec(idx.begin(), idx.end());
-    return mem_manager->get(get_flattened_index(ui_vec));
+    return memory_manager_ptr->get(get_flattened_index(ui_vec));
 }
 
 template <typename T>
 T Tensor<T>::get(const std::vector<unsigned int>& idx) const {
-    return mem_manager->get(get_flattened_index(idx));
+    return memory_manager_ptr->get(get_flattened_index(idx));
 }
 
 template <typename T>
 T Tensor<T>::get(const std::initializer_list<int>& idx) const {
     std::vector<unsigned int> ui_vec(idx.begin(), idx.end());
-    return mem_manager->get(get_flattened_index(ui_vec));
+    return memory_manager_ptr->get(get_flattened_index(ui_vec));
 }
 
 template <typename T>
 T Tensor<T>::get(const std::initializer_list<unsigned int>& idx) const {
-    return mem_manager->get(get_flattened_index(idx));
+    return memory_manager_ptr->get(get_flattened_index(idx));
 }
 
 template <typename T>
 T Tensor<T>::get(unsigned int flattened_idx) const {
-    return mem_manager->get(flattened_idx);
+    return memory_manager_ptr->get(flattened_idx);
 }
 
 template <typename T>
-const T Tensor<T>::operator[](unsigned int idx) const {
-    return mem_manager->get(idx);
+T Tensor<T>::operator[](unsigned int idx) const {
+    return memory_manager_ptr->get(idx);
 }
 
 template <typename T>
-const T Tensor<T>::operator[](const std::initializer_list<unsigned int>& idx) {
-    return mem_manager->get(get_flattened_index(idx));
+T Tensor<T>::operator[](const std::initializer_list<unsigned int>& idx) const {
+    return memory_manager_ptr->get(get_flattened_index(idx));
 }
 
 template <typename T>
-void Tensor<T>::set(const std::vector<int>& idx, T val) {
+void Tensor<T>::set(const std::vector<int>& idx, const T& val) {
     std::vector<unsigned int> ui_vec(idx.begin(), idx.end());
-    mem_manager->set(get_flattened_index(ui_vec), val);
+    memory_manager_ptr->set(get_flattened_index(ui_vec), val);
 }
 
 template <typename T>
-void Tensor<T>::set(const std::vector<unsigned int>& idx, T val) {
-    mem_manager->set(get_flattened_index(idx), val);
+void Tensor<T>::set(const std::vector<unsigned int>& idx, const T& val) {
+    memory_manager_ptr->set(get_flattened_index(idx), val);
 }
 
 template <typename T>
-void Tensor<T>::set(const std::initializer_list<int>& idx, T val) {
+void Tensor<T>::set(const std::initializer_list<int>& idx, const T& val) {
     std::vector<unsigned int> ui_vec(idx.begin(), idx.end());
-    mem_manager->set(get_flattened_index(ui_vec), val);
+    memory_manager_ptr->set(get_flattened_index(ui_vec), val);
 }
 
 template <typename T>
-void Tensor<T>::set(const std::initializer_list<unsigned int>& idx, T val) {
-    mem_manager->set(get_flattened_index(idx), val);
+void Tensor<T>::set(const std::initializer_list<unsigned int>& idx, const T& val) {
+    memory_manager_ptr->set(get_flattened_index(idx), val);
 }
 
 template <typename T>
-void Tensor<T>::set(unsigned int flattened_idx, T val) {
-    mem_manager->set(flattened_idx, val);
+void Tensor<T>::set(unsigned int flattened_idx, const T& val) {
+    memory_manager_ptr->set(flattened_idx, val);
 }
 
 template <typename T>
@@ -192,7 +248,7 @@ unsigned int Tensor<T>::get_shape(unsigned int idx) const {
 }
 
 template <typename T>
-unsigned int Tensor<T>::get_flattened_index(const std::vector<unsigned int>& idx) const {
+inline unsigned int Tensor<T>::get_flattened_index(const std::vector<unsigned int>& idx) const {
     unsigned int flattened_idx = 0;
 
     for (unsigned int i = 0; i < idx.size(); i++) {

@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include <memory>
 #include <vector>
 #include "memory/memorymanager.h"
 #include "tensor_internal.h"
@@ -73,6 +74,12 @@ class Tensor {
      */
     Tensor(std::vector<unsigned int> shape, tensor_filler_t<T> filler, memory_t mem_type, device_t device_id);
 
+    Tensor(const Tensor& t);
+
+    Tensor(Tensor&& t);
+
+    Tensor& operator=(const Tensor& t);
+
     /** Free tensor memory
      */
     ~Tensor();
@@ -132,44 +139,44 @@ class Tensor {
      * @param idx
      * @return const T
      */
-    const T operator[](unsigned int idx) const;
+    T operator[](unsigned int idx) const;
 
-    const T operator[](const std::initializer_list<unsigned int>& idx);
-
-    /** sets the value at the given index.
-     * @param idx indices to set value at
-     * @param val value to write into idx
-     */
-    void set(const std::vector<int>& idx, T val);
+    T operator[](const std::initializer_list<unsigned int>& idx) const;
 
     /** sets the value at the given index.
      * @param idx indices to set value at
      * @param val value to write into idx
      */
-    void set(const std::vector<unsigned int>& idx, T val);
+    void set(const std::vector<int>& idx, const T& val);
 
     /** sets the value at the given index.
      * @param idx indices to set value at
      * @param val value to write into idx
      */
-    void set(const std::initializer_list<int>& idx, T val);
+    void set(const std::vector<unsigned int>& idx, const T& val);
 
     /** sets the value at the given index.
      * @param idx indices to set value at
      * @param val value to write into idx
      */
-    void set(const std::initializer_list<unsigned int>& idx, T val);
+    void set(const std::initializer_list<int>& idx, const T& val);
 
     /** sets the value at the given index.
      * @param idx indices to set value at
      * @param val value to write into idx
      */
-    void set(unsigned int flattened_idx, T val);
+    void set(const std::initializer_list<unsigned int>& idx, const T& val);
+
+    /** sets the value at the given index.
+     * @param idx indices to set value at
+     * @param val value to write into idx
+     */
+    void set(unsigned int flattened_idx, const T& val);
 
     /** Returns the memory manager used by this tensor
      * @return MemoryManager<T>*
      */
-    MemoryManager<T>* get_memory_manager() const { return this->mem_manager; }
+    MemoryManager<T>* get_memory_manager() const { return this->memory_manager_ptr.get(); }
 
     /** returns a <i>copy</i> of the shape of this tensor.
      * @return std::vector<int>
@@ -190,7 +197,9 @@ class Tensor {
     /** returns the pointer used by the memory manager.
      * @return T*
      */
-    T* get_ptr() { return this->mem_manager->get_ptr(); }
+    T* get_ptr() { return this->memory_manager_ptr->get_ptr(); }
+
+    const T* get_ptr() const { return this->memory_manager_ptr->get_ptr(); }
 
     /** returns the memory type of this tensor
      * @return memory_t
@@ -203,7 +212,7 @@ class Tensor {
     device_t get_device_id() const { return this->device_id; }
 
 #if defined(_HAS_CUDA_)
-    cudnnTensorDescriptor_t get_cudnn_tensor_descriptor() { return desc; }
+    cudnnTensorDescriptor_t get_cudnn_tensor_descriptor() const { return desc; }
 #endif
 
     /** changes shape of tensor to match dims
@@ -222,7 +231,7 @@ class Tensor {
 
    private:
     void init(std::vector<unsigned int>& shape, tensor_filler_t<T> filler, memory_t mem_type, device_t device_id);
-    unsigned int get_flattened_index(const std::vector<unsigned int>& idx) const;
+    inline unsigned int get_flattened_index(const std::vector<unsigned int>& idx) const;
     unsigned int get_flattened_index_old(const std::vector<unsigned int>& idx) const;
 
 /* device specific code */
@@ -233,7 +242,7 @@ class Tensor {
     cudnnTensorDescriptor_t desc;
 #endif
 
-    MemoryManager<T>* mem_manager; /* allocated by init */
+    std::shared_ptr<MemoryManager<T>> memory_manager_ptr; /* allocated by init */
 
     std::vector<unsigned int> shape;   /* tensor axes (shape) */
     std::vector<unsigned int> strides; /* axis strides in memory */

@@ -56,9 +56,9 @@ void test_input(memory_t mem, unsigned int size) {
     for (unsigned int i = 0; i < size; i++) {
         for (unsigned int j = 0; j < size; j++) {
             if (i == j)
-                assert(fequal(output_tensor->get({i, j}), 1.0f));
+                MAGMADNN_TEST_ASSERT_FEQUAL_DEFAULT(output_tensor->get({i, j}), 1.0f);
             else
-                assert(fequal(output_tensor->get({i, j}), 0.0f));
+                MAGMADNN_TEST_ASSERT_FEQUAL_DEFAULT(output_tensor->get({i, j}), 0.0f);
         }
     }
 
@@ -86,9 +86,11 @@ void test_fullyconnected(memory_t mem, unsigned int size) {
     Tensor<double> *bias_tensor = fc->get_bias()->get_output_tensor();
     Tensor<double> predicted_output({batch_size, hidden_units}, {NONE, {}}, mem);
 
-    assert(out_tensor->get_shape().size() == 2);
-    assert(out_tensor->get_shape(0) == batch_size);
-    assert(out_tensor->get_shape(1) == hidden_units);
+    MAGMADNN_TEST_ASSERT_DEFAULT(out_tensor->get_shape().size() == 2, "\"out_tensor->get_shape().size() == 2\" failed");
+    MAGMADNN_TEST_ASSERT_DEFAULT(out_tensor->get_shape(0) == batch_size,
+                                 "\"out_tensor->get_shape(0) == batch_size\" failed");
+    MAGMADNN_TEST_ASSERT_DEFAULT(out_tensor->get_shape(1) == hidden_units,
+                                 "\"out_tensor->get_shape(1) == hidden_units\" failed");
 
     /* calculate the predicted output and compare it to the actual */
     math::matmul(1.0, false, input_tensor, false, weight_tensor, 0.0, &predicted_output);
@@ -100,7 +102,7 @@ void test_fullyconnected(memory_t mem, unsigned int size) {
     /* assert predicted output and out are the same */
     for (unsigned int i = 0; i < batch_size; i++) {
         for (unsigned int j = 0; j < hidden_units; j++) {
-            assert(fequal(predicted_output.get({i, j}), out_tensor->get({i, j})));
+            MAGMADNN_TEST_ASSERT_FEQUAL_DEFAULT(predicted_output.get({i, j}), out_tensor->get({i, j}));
         }
     }
 
@@ -120,7 +122,7 @@ void test_fullyconnected(memory_t mem, unsigned int size) {
     /* grad_wrt_weight should be X^T . G */
     for (unsigned int i = 0; i < n_features; i++) {
         for (unsigned int j = 0; j < hidden_units; j++) {
-            assert(fequal(grad_wrt_weight->get({i, j}), predicted_grad_wrt_weight.get({i, j})));
+            MAGMADNN_TEST_ASSERT_FEQUAL_DEFAULT(grad_wrt_weight->get({i, j}), predicted_grad_wrt_weight.get({i, j}));
         }
     }
     /* grad_wrt_bias should be row sums of grad */
@@ -129,7 +131,8 @@ void test_fullyconnected(memory_t mem, unsigned int size) {
         for (unsigned int j = 0; j < hidden_units; j++) {
             row_sum += grad.get({i, j});
         }
-        assert(fabs(row_sum - grad_wrt_bias->get(i)) <= 1E-8);
+        MAGMADNN_TEST_ASSERT_DEFAULT(fabs(row_sum - grad_wrt_bias->get(i)) <= 1E-8,
+                                     "\"fabs(row_sum - grad_wrt_bias->get(i)) <= 1E-8\" failed");
     }
 
     delete fc;
@@ -156,7 +159,8 @@ void test_activation(memory_t mem, unsigned int size) {
     sync(output_tensor);
 
     for (unsigned int i = 0; i < output_tensor->get_size(); i++) {
-        assert(fabs(output_tensor->get(i) - tanh(val)) <= 1E-8);
+        MAGMADNN_TEST_ASSERT_DEFAULT(fabs(output_tensor->get(i) - tanh(val)) <= 1E-8,
+                                     "\"fabs(output_tensor->get(i) - tanh(val)) <= 1E-8\" failed");
     }
 
     show_success();
@@ -185,7 +189,10 @@ void test_dropout(memory_t mem, unsigned int size) {
     bool exists_nonzero = false;
     for (unsigned int i = 0; i < output_tensor->get_shape(0); i++) {
         for (unsigned int j = 0; j < output_tensor->get_shape(1); j++) {
-            assert(output_tensor->get({i, j}) == 0.0f || output_tensor->get({i, j}) == val / (1 - dropout_rate));
+            MAGMADNN_TEST_ASSERT_DEFAULT(
+                output_tensor->get({i, j}) == 0.0f || output_tensor->get({i, j}) == val / (1 - dropout_rate),
+                "\"output_tensor->get({i, j}) == 0.0f || output_tensor->get({i, j}) == val / (1 - dropout_rate)\" "
+                "failed");
             if (output_tensor->get({i, j}) == 0.0f) {
                 exists_zero = true;
             }
@@ -195,7 +202,7 @@ void test_dropout(memory_t mem, unsigned int size) {
         }
     }
 
-    if (!exists_zero || !exists_nonzero) assert(false);
+    if (!exists_zero || !exists_nonzero) MAGMADNN_TEST_ASSERT_DEFAULT(false, "\"false\" failed");
 
     show_success();
 }
@@ -216,9 +223,12 @@ void test_flatten(memory_t mem, unsigned int size) {
     /* synchronize the memory if managed was being used */
     sync(output_tensor);
 
-    assert(output_tensor->get_shape().size() == 2);
-    assert(output_tensor->get_shape(0) == size * 5);
-    assert(output_tensor->get_shape(1) == size * (size * 3) * (size * 2));
+    MAGMADNN_TEST_ASSERT_DEFAULT(output_tensor->get_shape().size() == 2,
+                                 "\"output_tensor->get_shape().size() == 2\" failed");
+    MAGMADNN_TEST_ASSERT_DEFAULT(output_tensor->get_shape(0) == size * 5,
+                                 "\"output_tensor->get_shape(0) == size * 5\" failed");
+    MAGMADNN_TEST_ASSERT_DEFAULT(output_tensor->get_shape(1) == size * (size * 3) * (size * 2),
+                                 "\"output_tensor->get_shape(1) == size * (size * 3) * (size * 2)\" failed");
 
     show_success();
 }
@@ -243,8 +253,9 @@ void test_layers(memory_t mem, unsigned int size) {
 
     sync(out_tensor);
 
-    assert(out_tensor->get_shape(0) == size);
-    assert(out_tensor->get_shape(1) == output_classes);
+    MAGMADNN_TEST_ASSERT_DEFAULT(out_tensor->get_shape(0) == size, "\"out_tensor->get_shape(0) == size\" failed");
+    MAGMADNN_TEST_ASSERT_DEFAULT(out_tensor->get_shape(1) == output_classes,
+                                 "\"out_tensor->get_shape(1) == output_classes\" failed");
 
     show_success();
 }

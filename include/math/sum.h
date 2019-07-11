@@ -9,16 +9,17 @@
 #pragma once
 
 #include "tensor/tensor.h"
+#include "utilities_internal.h"
 
 namespace magmadnn {
 namespace math {
 
 template <typename T>
-void sum(std::vector<Tensor<T>*>& tensors, Tensor<T>* out);
+void sum(const std::vector<Tensor<T>*>& tensors, Tensor<T>* out);
 
 #if defined(_HAS_CUDA_)
 template <typename T>
-void sum_device(std::vector<Tensor<T>*>& tensors, Tensor<T>* out);
+void sum_device(const std::vector<Tensor<T>*>& tensors, Tensor<T>* out);
 #endif
 
 }  // namespace math

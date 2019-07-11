@@ -43,7 +43,7 @@ void test_simple_grad(memory_t mem, unsigned int size) {
     op::GradTable<float> table;
     magmadnn_error_t err = op::get_grad_table({x, b}, affine, table);
 
-    assert(err == 0);
+    MAGMADNN_TEST_ASSERT_DEFAULT(err == 0, "\"err == 0\" failed");
 
     Tensor<float> *affine_wrt_x = table.get(x);
 
@@ -51,7 +51,7 @@ void test_simple_grad(memory_t mem, unsigned int size) {
 
     for (unsigned int i = 0; i < affine_wrt_x->get_size(); i++) {
         if (!fequal(affine_wrt_x->get(i), 5.0f)) printf("bad vals: %.5g %.5g\n", affine_wrt_x->get(i), 5.0f);
-        assert(fequal(affine_wrt_x->get(i), 5.0));
+        MAGMADNN_TEST_ASSERT_FEQUAL_DEFAULT(affine_wrt_x->get(i), 5.0);
     }
 
     Tensor<float> *affine_wrt_b = table.get(b);
@@ -59,7 +59,7 @@ void test_simple_grad(memory_t mem, unsigned int size) {
     sync(affine_wrt_b);
 
     for (unsigned int i = 0; i < affine_wrt_b->get_size(); i++) {
-        assert(fequal(affine_wrt_b->get(i), 1.0));
+        MAGMADNN_TEST_ASSERT_FEQUAL_DEFAULT(affine_wrt_b->get(i), 1.0);
     }
 
     delete affine;
@@ -86,7 +86,7 @@ void test_full_grad(memory_t mem, unsigned int size) {
     op::GradTable<float> table;
     magmadnn_error_t err = op::get_grad_table({x}, expr, table);
 
-    assert(err == 0);
+    MAGMADNN_TEST_ASSERT_DEFAULT(err == 0, "\"err == 0\" failed");
 
     Tensor<float> *d_expr_wrt_x = table.get(x);
 
@@ -94,7 +94,7 @@ void test_full_grad(memory_t mem, unsigned int size) {
 
     for (unsigned int i = 0; i < d_expr_wrt_x->get_size(); i++) {
         if (!fequal(d_expr_wrt_x->get(i), out)) std::printf("bad vals: %.5g %.5g\n", d_expr_wrt_x->get(i), out);
-        assert(fequal(d_expr_wrt_x->get(i), out));
+        MAGMADNN_TEST_ASSERT_FEQUAL_DEFAULT(d_expr_wrt_x->get(i), out);
     }
 
     delete expr;
@@ -126,7 +126,7 @@ void test_optimize(memory_t mem, unsigned int size) {
     sync(x_tensor);
 
     for (unsigned int i = 0; i < size; i++) {
-        assert(fequal(x_tensor->get(i), 0.0f));
+        MAGMADNN_TEST_ASSERT_FEQUAL_DEFAULT(x_tensor->get(i), 0.0f);
     }
 
     delete expr;

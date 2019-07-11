@@ -12,7 +12,10 @@ namespace magmadnn {
 namespace math {
 
 template <typename T>
-void sum(std::vector<Tensor<T>*>& tensors, Tensor<T>* out) {
+void sum(const std::vector<Tensor<T>*>& tensors, Tensor<T>* out) {
+    /* early exit */
+    if (tensors.size() == 0) return;
+
     /* iterate over all the tensors and ensure the same memory type */
     for (const auto& t : tensors) {
         assert(T_IS_SAME_MEMORY_TYPE(out, t));
@@ -24,7 +27,7 @@ void sum(std::vector<Tensor<T>*>& tensors, Tensor<T>* out) {
         unsigned int size = out->get_size();
 
         /* iterate over tensors first for cache efficiency */
-        for (typename std::vector<Tensor<T>*>::iterator it = tensors.begin(); it != tensors.end(); it++) {
+        for (typename std::vector<Tensor<T>*>::const_iterator it = tensors.begin(); it != tensors.end(); it++) {
             t_ptr = (*it)->get_ptr(); /* get the pointer to this tensors memory */
 
             if (it == tensors.begin()) {
@@ -46,9 +49,9 @@ void sum(std::vector<Tensor<T>*>& tensors, Tensor<T>* out) {
     }
 #endif
 }
-template void sum(std::vector<Tensor<int>*>& tensors, Tensor<int>* out);
-template void sum(std::vector<Tensor<float>*>& tensors, Tensor<float>* out);
-template void sum(std::vector<Tensor<double>*>& tensors, Tensor<double>* out);
+template void sum(const std::vector<Tensor<int>*>& tensors, Tensor<int>* out);
+template void sum(const std::vector<Tensor<float>*>& tensors, Tensor<float>* out);
+template void sum(const std::vector<Tensor<double>*>& tensors, Tensor<double>* out);
 
 }  // namespace math
 }  // namespace magmadnn

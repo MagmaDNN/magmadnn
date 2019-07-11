@@ -40,6 +40,11 @@ class MemoryManager {
      */
     MemoryManager(const MemoryManager& that);
 
+    /** Move Constructor -- this allows the copying of rvalues
+     * @param that some rvalue MemoryManager
+     */
+    MemoryManager(MemoryManager&& that);
+
     /** Copy assignment operator.
      * @param that
      * @return MemoryManager&
@@ -126,12 +131,17 @@ class MemoryManager {
      *  @param idx index to set
      *  @param val value to set at idx
      */
-    void set(unsigned int idx, T val);
+    void set(unsigned int idx, const T& val);
 
     /** returns a CPU pointer to the data.
      *  @return cpu pointer
      */
     T* get_host_ptr();
+
+    /** Get a constant pointer to the host memory
+     * @return const T*
+     */
+    const T* get_host_ptr() const;
 
 #if defined(_HAS_CUDA_)
     /** returns a CUDA pointer
@@ -139,10 +149,20 @@ class MemoryManager {
      */
     T* get_device_ptr();
 
+    /** get a constant pointer to device memory
+     * @return const T*
+     */
+    const T* get_device_ptr() const;
+
     /** returns the managed CUDA memory.
      *  @return pointer to data memory
      */
     T* get_cuda_managed_ptr();
+
+    /** get a constant pointer to cuda_managed memory
+     * @return const T*
+     */
+    const T* get_cuda_managed_ptr() const;
 #endif
 
     /** Returns a pointer to whatever memory type this is using. For MANAGED
@@ -150,6 +170,11 @@ class MemoryManager {
      *  @return the data ptr
      */
     T* get_ptr();
+
+    /** Get a constant pointer to this MemoryManager's memory.
+     * @return const T*
+     */
+    const T* get_ptr() const;
 
     /** Returns the size of this memorymanager
      * @return unsigned int  the size of this memory manager

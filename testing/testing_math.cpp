@@ -20,6 +20,7 @@ void test_crossentropy(memory_t mem, unsigned int size);
 void test_reduce_sum(memory_t mem, unsigned int size);
 void test_argmax(memory_t mem, unsigned int size);
 void test_bias_add(memory_t mem, unsigned int size);
+void test_sum(memory_t mem, unsigned int size);
 void test_concat(memory_t mem, unsigned int size);
 void test_tile(memory_t mem, unsigned int size);
 
@@ -36,6 +37,7 @@ int main(int argc, char **argv) {
     test_argmax(HOST, 10);
 
     test_for_all_mem_types(test_bias_add, 15);
+    test_for_all_mem_types(test_sum, 5);
     test_for_all_mem_types(test_concat, 4);
     test_for_all_mem_types(test_tile, 4);
 
@@ -230,6 +232,38 @@ void test_bias_add(memory_t mem, unsigned int size) {
         for (unsigned int j = 0; j < out.get_shape(1); j++) {
             assert(fequal(out.get({i, j}), x.get({i, j}) + bias.get({i})));
         }
+    }
+
+    show_success();
+}
+
+void test_sum(memory_t mem, unsigned int size) {
+    printf("Testing %s sum...  ", get_memory_type_name(mem));
+
+    Tensor<float> a({size, size}, {UNIFORM, {-1.0f, 1.0f}}, mem);
+    Tensor<float> b({size, size}, {UNIFORM, {-1.0f, 1.0f}}, mem);
+    Tensor<float> c({size, size}, {UNIFORM, {-1.0f, 1.0f}}, mem);
+    Tensor<float> out({size, size}, {ZERO, {}}, mem);
+
+    math::sum({&a, &b, &c}, &out);
+
+    std::vector<Tensor<float> *> tensors = {&a, &b, &c};
+    Tensor<float> actual_out({size, size}, {ZERO, {}}, mem);
+
+    for (unsigned int i = 0; i < size * size; i++) {
+        float sum = 0.0f;
+        for (const auto &t : tensors) {
+            sum += t->get(i);
+        }
+        actual_out.set(i, sum);
+    }
+
+    sync(&out);
+    sync(&actual_out);
+
+    for (unsigned int i = 0; i < size * size; i++) {
+        MAGMADNN_TEST_ASSERT_FEQUAL_DEFAULT(out.get(i), actual_out.get(i), "test_sum error -- %g != %g", out.get(i),
+                                            actual_out.get(i));
     }
 
     show_success();

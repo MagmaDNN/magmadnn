@@ -18,5 +18,6 @@
 #include "input/inputlayer.h"
 #include "output/outputlayer.h"
 #include "pooling/poolinglayer.h"
+#include "residual/residuallayer.h"
 
 #include "layer/wrapper.h"

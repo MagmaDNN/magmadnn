@@ -19,5 +19,6 @@
 #include "output/outputlayer.h"
 #include "pooling/poolinglayer.h"
 #include "residual/residuallayer.h"
+#include "shortcut/shortcutlayer.h"
 
 #include "layer/wrapper.h"

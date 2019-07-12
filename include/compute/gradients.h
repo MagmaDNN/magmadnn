@@ -15,6 +15,7 @@
 #include "compute/operation.h"
 #include "compute/sum/sumop.h"
 #include "compute/variable.h"
+#include "math/sum.h"
 #include "utilities_internal.h"
 
 namespace magmadnn {

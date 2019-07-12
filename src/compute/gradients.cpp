@@ -95,24 +95,10 @@ magmadnn_error_t build_grad(op::Operation<T> *var, op::Operation<T> *graph, op::
         return (magmadnn_error_t) 2;
     } else if (bprops.size() == 1) {
         result = bprops.at(0);
-    } else if (bprops.size() == 2) {
-        /*
-        result = op::add(bprops.at(0), bprops.at(1), true, false);
-        */
-        /* TODO : Add and sum tensors */
-        result = NULL;
-        fprintf(stderr, "Implement add in gradients\n");
     } else {
-        /* currently sum cannot handle scalar values, so just tetrate adds for
-         * now */
-        // result = op::sum(bprops);
-        /*
+        /* Add and sum tensors */
         result = bprops.at(0);
-        for (unsigned int i = 1; i < bprops.size(); i++) {
-            result = op::add(result, bprops.at(i));
-        }*/
-        result = NULL;
-        fprintf(stderr, "Implement sum in gradients\n");
+        math::sum(bprops, result);
     }
 
     table.set(var, result);

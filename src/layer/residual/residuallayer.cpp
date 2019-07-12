@@ -33,15 +33,25 @@ void ResidualLayer<T>::init() {
 
     assert(filters.size() == out_channels.size());
 
-    layers.push_back(layer::conv2d<T>(this->input, {filters[0].first, filters[0].second}, out_channels[0], layer::SAME,
-                                      {1, 1}, {1, 1}, true, false));
-    layers.push_back(layer::activation<T>(layers[layers.size() - 1]->out(), layer::RELU));
+    /* Input and initial conv layer */
+    layers.push_back(layer::input<T>(this->input));
+    layers.push_back(layer::conv2d<T>(layers[layers.size() - 1]->out(), {filters[0].first, filters[0].second},
+                                      out_channels[0], layer::SAME, {1, 1}, {1, 1}, true, false));
+
+    /* Block of conv + activation layers */
     for (unsigned int i = 1; i < filters.size(); i++) {
+        layers.push_back(layer::activation<T>(layers[layers.size() - 1]->out(), layer::RELU));
         layers.push_back(layer::conv2d<T>(layers[layers.size() - 1]->out(), {filters[i].first, filters[i].second},
                                           out_channels[i], layer::SAME, {1, 1}, {1, 1}, true, false));
-        layers.push_back(layer::activation<T>(layers[layers.size() - 1]->out(), layer::RELU));
     }
 
+    /* Shortcut layer */
+    layers.push_back(layer::shortcut(layers[layers.size() - 1]->out(), layers[0]->out()));
+
+    /* Final activation layer */
+    layers.push_back(layer::activation<T>(layers[layers.size() - 1]->out(), layer::RELU));
+
+    /* Update weights for get_weights() */
     for (unsigned int i = 0; i < layers.size(); i++) {
         std::vector<op::Operation<T> *> layer_i_weights = layers[i]->get_weights();
         for (unsigned int j = 0; j < layer_i_weights.size(); j++) weights.push_back(layer_i_weights[j]);

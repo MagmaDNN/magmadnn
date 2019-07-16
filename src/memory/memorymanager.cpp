@@ -287,11 +287,10 @@ void MemoryManager<T>::set(unsigned int idx, T val) {
             host_ptr[idx] = val; break;
         #if defined(_HAS_CUDA_)
         case DEVICE:
-			cudaErrchk( cudaSetDevice(device_id) );
-            internal::set_device_array_element(device_ptr, idx, val); break;
+            // cudaErrchk( cudaSetDevice(device_id) );   /* TODO -- fix MagmaDNN's device selection system */
         case MANAGED:
             host_ptr[idx] = val;
-			cudaErrchk( cudaSetDevice(device_id) );
+            // cudaErrchk( cudaSetDevice(device_id) );   /* TODO -- fix MagmaDNN's device selection system */
             internal::set_device_array_element(device_ptr, idx, val);
             break;
         case CUDA_MANAGED:

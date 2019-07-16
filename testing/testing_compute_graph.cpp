@@ -189,8 +189,10 @@ void test_transpose(memory_t mem, unsigned int size) {
     sync(trans);
 
     MAGMADNN_TEST_ASSERT_DEFAULT(trans->get_size() == x->get_size(), "\"trans->get_size() == x->get_size()\" failed");
-    MAGMADNN_TEST_ASSERT_DEFAULT(trans->get_shape(0) == x->get_shape(1), "\"trans->get_shape(0) == x->get_shape(1)\" failed");
-    MAGMADNN_TEST_ASSERT_DEFAULT(trans->get_shape(1) == x->get_shape(0), "\"trans->get_shape(1) == x->get_shape(0)\" failed");
+    MAGMADNN_TEST_ASSERT_DEFAULT(trans->get_shape(0) == x->get_shape(1),
+                                 "\"trans->get_shape(0) == x->get_shape(1)\" failed");
+    MAGMADNN_TEST_ASSERT_DEFAULT(trans->get_shape(1) == x->get_shape(0),
+                                 "\"trans->get_shape(1) == x->get_shape(0)\" failed");
 
     for (unsigned int i = 0; i < size / 2; i++) {
         for (unsigned int j = 0; j < size; j++) {
@@ -458,7 +460,8 @@ void test_sigmoid(memory_t mem_type, unsigned int size) {
     sync(fin);
 
     for (unsigned int i = 0; i < fin->get_size(); i++) {
-        MAGMADNN_TEST_ASSERT_DEFAULT(fabs(fin->get(i) - (-0.875)) < 1E-8, "\"fabs(fin->get(i) - (-0.875)) < 1E-8\" failed");
+        MAGMADNN_TEST_ASSERT_DEFAULT(fabs(fin->get(i) - (-0.875)) < 1E-8,
+                                     "\"fabs(fin->get(i) - (-0.875)) < 1E-8\" failed");
     }
 
     Tensor<float> *grad = new Tensor<float>({size, size}, {ONE, {}}, mem_type);
@@ -467,7 +470,8 @@ void test_sigmoid(memory_t mem_type, unsigned int size) {
     sync(d_sigmoid_wrt_x);
 
     for (unsigned int i = 0; i < d_sigmoid_wrt_x->get_size(); i++) {
-        MAGMADNN_TEST_ASSERT_DEFAULT(fabs(d_sigmoid_wrt_x->get(i) - (-1.640625)) < 1E-8, "\"fabs(d_sigmoid_wrt_x->get(i) - (-1.640625)) < 1E-8\" failed");
+        MAGMADNN_TEST_ASSERT_DEFAULT(fabs(d_sigmoid_wrt_x->get(i) - (-1.640625)) < 1E-8,
+                                     "\"fabs(d_sigmoid_wrt_x->get(i) - (-1.640625)) < 1E-8\" failed");
     }
 
     show_success();
@@ -494,7 +498,8 @@ void test_tanh(memory_t mem_type, unsigned int size) {
 #endif
 
     for (unsigned int i = 0; i < fin->get_size(); i++) {
-        MAGMADNN_TEST_ASSERT_DEFAULT(fabs(fin->get(i) - tanh(val)) < 1E-6, "\"fabs(fin->get(i) - tanh(val)) < 1E-6\" failed");
+        MAGMADNN_TEST_ASSERT_DEFAULT(fabs(fin->get(i) - tanh(val)) < 1E-6,
+                                     "\"fabs(fin->get(i) - tanh(val)) < 1E-6\" failed");
     }
 
     delete t0;

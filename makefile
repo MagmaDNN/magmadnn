@@ -84,6 +84,8 @@ export CUDA_MACRO
 export USE_CUDA
 export CXXFLAGS
 export NVCCFLAGS
+export USE_HDF5
+export HDF5DIR
 
 
 # default extension for object files

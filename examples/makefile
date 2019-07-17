@@ -9,6 +9,15 @@ RPATH_FLAGS := -Wl,-rpath,$(prefix)/lib
 LIB_PATH := $(prefix)/lib
 DEST = ./bin
 
+USE_HDF5 ?= 0
+ifeq ($(USE_HDF5),1)
+TESTING_FLAGS += -DUSE_HDF5
+HDF5DIR ?= /usr/local/hdf5
+TESTING_FLAGS += -I$(HDF5DIR)/include
+LIBDIRS += -L$(HDF5DIR)/lib
+LIBS += -lhdf5 -lhdf5_cpp -lhdf5_hl
+endif
+
 ifeq ($(HAS_CUDA),1)
 TESTING_FLAGS += -DUSE_GPU
 endif

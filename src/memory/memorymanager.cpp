@@ -59,37 +59,42 @@ void MemoryManager<T>::init_cuda_managed() {
 }
 #endif
 
+/* TODO -- revisit memory manager copy, move, and assignment */
+/*
 template <typename T>
 MemoryManager<T>::MemoryManager(const MemoryManager& that)
     : mem_type(that.mem_type), device_id(that.device_id), size(that.size) {
-    /* TODO -- size issue here */
+    //  TODO -- size issue here
 
     this->copy_from(that);
 }
+*/
 
+/*
 template <typename T>
 MemoryManager<T>::MemoryManager(MemoryManager<T>&& that) {
     this->mem_type = that.mem_type;
     this->device_id = that.device_id;
     this->size = that.size;
 
-    /* TODO -- size issue here */
+    //  TODO -- size issue here
 
     this->copy_from(that);
 }
 
 template <typename T>
-MemoryManager<T>& MemoryManager<T>::operator=(const MemoryManager<T>& that) {
+MemoryManager<T>& MemoryManager<T>::operator=(MemoryManager<T> that) {
     this->mem_type = that.mem_type;
     this->device_id = that.device_id;
     this->size = that.size;
 
-    /* TODO -- size issue here */
+    //  TODO -- size issue here
 
     this->copy_from(that);
 
     return *this;
 }
+*/
 
 template <typename T>
 MemoryManager<T>::~MemoryManager<T>() {
@@ -301,7 +306,7 @@ T MemoryManager<T>::get(unsigned int idx) const {
 }
 
 template <typename T>
-void MemoryManager<T>::set(unsigned int idx, const T& val) {
+void MemoryManager<T>::set(unsigned int idx, T val) {
     assert(idx < size);
 
     // note: don't sync on managed type memories

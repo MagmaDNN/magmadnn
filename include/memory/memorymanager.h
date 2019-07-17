@@ -38,18 +38,18 @@ class MemoryManager {
     /** Copy Constructor
      * @param that
      */
-    MemoryManager(const MemoryManager& that);
+    MemoryManager(const MemoryManager& that) = delete;
 
     /** Move Constructor -- this allows the copying of rvalues
      * @param that some rvalue MemoryManager
      */
-    MemoryManager(MemoryManager&& that);
+    MemoryManager(MemoryManager&& that) = delete;
 
-    /** Copy assignment operator.
+    /** assignment operator.
      * @param that
      * @return MemoryManager&
      */
-    MemoryManager& operator=(const MemoryManager& that);
+    MemoryManager& operator=(MemoryManager that) = delete;
 
     /** Destroys the memory manager object and releases all its data.
      */
@@ -131,7 +131,7 @@ class MemoryManager {
      *  @param idx index to set
      *  @param val value to set at idx
      */
-    void set(unsigned int idx, const T& val);
+    void set(unsigned int idx, T val);
 
     /** returns a CPU pointer to the data.
      *  @return cpu pointer

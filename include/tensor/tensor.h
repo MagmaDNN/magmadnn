@@ -33,16 +33,18 @@ const tensor_filler_t<float> TENSOR_DEFAULT_FILLER = {TENSOR_DEFAULT_FILL_TYPE, 
 template <typename T>
 class Tensor {
    public:
+    Tensor();
+
     /** Initializes tensor with the given shape. Creates a new memory manager for this tensor. Defaults to the cpu.
      *	@param shape a vector of axis sizes
      */
-    Tensor(std::vector<unsigned int> shape);
+    explicit Tensor(const std::vector<unsigned int>& shape);
 
     /** Initializes tensor with the given shape. Creates a new memory manager for this tensor.
      * @param shape
      * @param mem_type
      */
-    Tensor(std::vector<unsigned int> shape, memory_t mem_type);
+    Tensor(const std::vector<unsigned int>& shape, memory_t mem_type);
 
     /** Initializes tensor with the given shape. Creates a new memory manager for this tensor. Uses the given device
      * type and device id.
@@ -50,21 +52,21 @@ class Tensor {
      * @param device the type of device
      * @param device_id the id of the device to be used
      */
-    Tensor(std::vector<unsigned int> shape, memory_t mem_type, device_t device_id);
+    Tensor(const std::vector<unsigned int>& shape, memory_t mem_type, device_t device_id);
 
     /** Initializes tensor with the given shape. Creates a new memory manager for this tensor. Sets every value of
      * tensor to _fill_.
      * @param shape a vector of axis sizes
      * @param fill value to set every element of tensor
      */
-    Tensor(std::vector<unsigned int> shape, tensor_filler_t<T> filler);
+    Tensor(const std::vector<unsigned int>& shape, tensor_filler_t<T> filler);
 
     /**
      * @param shape
      * @param fill
      * @param mem_type
      */
-    Tensor(std::vector<unsigned int> shape, tensor_filler_t<T> filler, memory_t mem_type);
+    Tensor(const std::vector<unsigned int>& shape, tensor_filler_t<T> filler, memory_t mem_type);
 
     /** Initializes tensor with the given shape, fill, device, and device id. Creates a new memory manager.
      * @param shape a vector of axis sizes
@@ -72,13 +74,16 @@ class Tensor {
      * @param device device type tensor will use
      * @param device_id id of device to use
      */
-    Tensor(std::vector<unsigned int> shape, tensor_filler_t<T> filler, memory_t mem_type, device_t device_id);
+    Tensor(const std::vector<unsigned int>& shape, tensor_filler_t<T> filler, memory_t mem_type, device_t device_id);
 
     Tensor(const Tensor& t);
 
     Tensor(Tensor&& t);
 
-    Tensor& operator=(const Tensor& t);
+    template <class N>
+    friend void swap(Tensor<N>& left, Tensor<N>& right);
+
+    Tensor& operator=(Tensor t);
 
     /** Free tensor memory
      */
@@ -147,31 +152,31 @@ class Tensor {
      * @param idx indices to set value at
      * @param val value to write into idx
      */
-    void set(const std::vector<int>& idx, const T& val);
+    void set(const std::vector<int>& idx, T val);
 
     /** sets the value at the given index.
      * @param idx indices to set value at
      * @param val value to write into idx
      */
-    void set(const std::vector<unsigned int>& idx, const T& val);
+    void set(const std::vector<unsigned int>& idx, T val);
 
     /** sets the value at the given index.
      * @param idx indices to set value at
      * @param val value to write into idx
      */
-    void set(const std::initializer_list<int>& idx, const T& val);
+    void set(const std::initializer_list<int>& idx, T val);
 
     /** sets the value at the given index.
      * @param idx indices to set value at
      * @param val value to write into idx
      */
-    void set(const std::initializer_list<unsigned int>& idx, const T& val);
+    void set(const std::initializer_list<unsigned int>& idx, T val);
 
     /** sets the value at the given index.
      * @param idx indices to set value at
      * @param val value to write into idx
      */
-    void set(unsigned int flattened_idx, const T& val);
+    void set(unsigned int flattened_idx, T val);
 
     /** Returns the memory manager used by this tensor
      * @return MemoryManager<T>*
@@ -179,20 +184,47 @@ class Tensor {
     MemoryManager<T>* get_memory_manager() const { return this->memory_manager_ptr.get(); }
 
     /** returns a <i>copy</i> of the shape of this tensor.
+     * @deprecated since v1.2
+     * @see shape()
      * @return std::vector<int>
      */
-    std::vector<unsigned int> get_shape() const { return this->shape; }
+    const std::vector<unsigned int>& get_shape() const { return this->_shape; }
+
+    /** returns the shape of this tensor
+     * @return const std::vector<unsigned int>&
+     */
+    const std::vector<unsigned int>& shape() const { return this->_shape; }
 
     /** returns the axis size at idx of shape (i.e. shape[idx])
+     * @deprecated since v1.2
+     * @see shape(unsigned int)
      * @param idx
      * @return unsigned int
      */
     unsigned int get_shape(unsigned int idx) const;
 
+    /** returns the axis size at idx of shape
+     * @param idx
+     * @return unsigned int
+     */
+    unsigned int shape(unsigned int idx) const;
+
     /** returns the number of elements in tensor
+     * @deprecated since v1.2
+     * @see size()
      * @return unsigned int total number of elements in tensor
      */
-    unsigned int get_size() const { return this->size; }
+    unsigned int get_size() const { return this->_size; }
+
+    /** returns the number of elements in tensor
+     * @return unsigned int
+     */
+    unsigned int size() const { return this->_size; }
+
+    /** returns the strides of this tensor
+     * @return const std::vector<unsigned int>&
+     */
+    const std::vector<unsigned int>& strides() const { return this->_strides; }
 
     /** returns the pointer used by the memory manager.
      * @return T*
@@ -230,7 +262,7 @@ class Tensor {
     void unsqueeze(unsigned int dim = 0);
 
    private:
-    void init(std::vector<unsigned int>& shape, tensor_filler_t<T> filler, memory_t mem_type, device_t device_id);
+    void init(const std::vector<unsigned int>& shape, tensor_filler_t<T> filler, memory_t mem_type, device_t device_id);
     inline unsigned int get_flattened_index(const std::vector<unsigned int>& idx) const;
     unsigned int get_flattened_index_old(const std::vector<unsigned int>& idx) const;
 
@@ -244,11 +276,11 @@ class Tensor {
 
     std::shared_ptr<MemoryManager<T>> memory_manager_ptr; /* allocated by init */
 
-    std::vector<unsigned int> shape;   /* tensor axes (shape) */
-    std::vector<unsigned int> strides; /* axis strides in memory */
-    unsigned int size;                 /* total number of elements in tensor */
-    memory_t mem_type;                 /* the type of memory to use for this tensor */
-    device_t device_id;                /* device number i.e. gpu0 or cpu1 */
+    std::vector<unsigned int> _shape;   /* tensor axes (shape) */
+    std::vector<unsigned int> _strides; /* axis strides in memory */
+    unsigned int _size;                 /* total number of elements in tensor */
+    memory_t mem_type;                  /* the type of memory to use for this tensor */
+    device_t device_id;                 /* device number i.e. gpu0 or cpu1 */
 };
 
 /** Tensor typedefs. Shorthand for Tensors of different types.

@@ -17,6 +17,8 @@ void test_fullyconnected(memory_t mem, unsigned int size);
 void test_activation(memory_t mem, unsigned int size);
 void test_dropout(memory_t mem, unsigned int size);
 void test_flatten(memory_t mem, unsigned int size);
+void test_shortcut(memory_t mem, unsigned int size);
+void test_residual(memory_t mem, unsigned int size);
 void test_layers(memory_t mem, unsigned int size);
 void test_layer_container(memory_t mem, unsigned int size);
 
@@ -32,6 +34,12 @@ int main(int argc, char **argv) {
     test_for_all_mem_types(test_dropout, 15);
 
     test_for_all_mem_types(test_flatten, 15);
+
+    test_for_all_mem_types(test_shortcut, 15);
+
+    test_residual(DEVICE, 30);
+    test_residual(MANAGED, 30);
+    test_residual(CUDA_MANAGED, 30);
 
     test_for_all_mem_types(test_layers, 15);
 
@@ -229,6 +237,56 @@ void test_flatten(memory_t mem, unsigned int size) {
                                  "\"output_tensor->get_shape(0) == size * 5\" failed");
     MAGMADNN_TEST_ASSERT_DEFAULT(output_tensor->get_shape(1) == size * (size * 3) * (size * 2),
                                  "\"output_tensor->get_shape(1) == size * (size * 3) * (size * 2)\" failed");
+
+    show_success();
+}
+
+void test_shortcut(memory_t mem, unsigned int size) {
+    printf("testing %s shortcut...  ", get_memory_type_name(mem));
+
+    Tensor<float> *data_tensor1 = new Tensor<float>({size, size * 3, size * 2}, {CONSTANT, {3}}, mem);
+    Tensor<float> *data_tensor2 = new Tensor<float>({size, size * 3, size * 2}, {CONSTANT, {5}}, mem);
+    op::Variable<float> *data1 = op::var("data", data_tensor1);
+    op::Variable<float> *data2 = op::var("data", data_tensor2);
+
+    layer::ShortcutLayer<float> *shortcut = layer::shortcut(data1, data2);
+
+    op::Operation<float> *output = shortcut->out();
+    Tensor<float> *output_tensor = output->eval();
+
+    sync(output_tensor);
+
+    MAGMADNN_TEST_ASSERT_DEFAULT(output_tensor->get_shape().size() == 3,
+                                 "\"output_tensor->get_shape().size() == 3 \" failed");
+    MAGMADNN_TEST_ASSERT_DEFAULT(output_tensor->get_shape(0) == size, "\"output_tensor->get_shape(0) == size\" failed");
+    MAGMADNN_TEST_ASSERT_DEFAULT(output_tensor->get_shape(1) == size * 3,
+                                 "\"output_tensor->get_shape(1) == size * 3\" failed");
+    MAGMADNN_TEST_ASSERT_DEFAULT(output_tensor->get_shape(2) == size * 2,
+                                 "\"output_tensor->get_shape(2) == size * 2\" failed");
+    for (unsigned int i = 0; i < output_tensor->get_size(); i++) {
+        MAGMADNN_TEST_ASSERT_DEFAULT(output_tensor->get(i) == 8, "\"output_tensor->get(i) == 8 \" failed");
+    }
+
+    show_success();
+}
+
+void test_residual(memory_t mem, unsigned int size) {
+    printf("testing %s residual...  ", get_memory_type_name(mem));
+
+    Tensor<float> *data_tensor = new Tensor<float>({4, 2, 12, 12}, {CONSTANT, {1}}, mem);
+    op::Variable<float> *data = op::var("data", data_tensor);
+
+    layer::ResidualLayer<float> *residual = layer::residual(data, {{3, 3}, {1, 1}}, {6, 5}, 2);
+
+    op::Operation<float> *output = residual->out();
+    Tensor<float> *output_tensor = output->eval();
+
+    MAGMADNN_TEST_ASSERT_DEFAULT(output_tensor->get_shape().size() == 4,
+                                 "\"output_tensor->get_shape().size() == 4 \" failed");
+    MAGMADNN_TEST_ASSERT_DEFAULT(output_tensor->get_shape(0) == 4, "\"output_tensor->get_shape(0) == 4\" failed");
+    MAGMADNN_TEST_ASSERT_DEFAULT(output_tensor->get_shape(1) == 5, "\"output_tensor->get_shape(1) == 5\" failed");
+    MAGMADNN_TEST_ASSERT_DEFAULT(output_tensor->get_shape(2) == 12, "\"output_tensor->get_shape(2) == 12\" failed");
+    MAGMADNN_TEST_ASSERT_DEFAULT(output_tensor->get_shape(3) == 12, "\"output_tensor->get_shape(3) == 12\" failed");
 
     show_success();
 }

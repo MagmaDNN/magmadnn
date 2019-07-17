@@ -98,6 +98,7 @@ magmadnn_error_t build_grad(op::Operation<T> *var, op::Operation<T> *graph, op::
     } else {
         /* Add and sum tensors */
         result = bprops.at(0);
+        bprops.erase(bprops.begin());
         math::sum(bprops, result);
     }
 

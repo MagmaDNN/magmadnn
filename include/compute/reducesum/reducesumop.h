@@ -21,7 +21,7 @@ class ReduceSumOp : public Operation<T> {
 
    protected:
     Tensor<T> *_eval(bool recompute = true);
-    Tensor<T> *_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad);
+    Tensor<T> &_grad(Operation<T> *consumer, Operation<T> *var, const Tensor<T> &grad);
 
     Operation<T> *x;
     Tensor<T> *x_tensor;

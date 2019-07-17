@@ -21,7 +21,7 @@ class Conv2DForwardOp : public Operation<T> {
 
    protected:
     Tensor<T> *_eval(bool recompute);
-    Tensor<T> *_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad);
+    Tensor<T> &_grad(Operation<T> *consumer, Operation<T> *var, const Tensor<T> &grad);
 
     void init_settings();
     void calculate_and_set_output_shape();

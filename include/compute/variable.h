@@ -9,6 +9,7 @@
 #pragma once
 #include <tensor/tensor.h>
 #include <string>
+#include "compute/compute_graph.h"
 #include "operation.h"
 
 namespace magmadnn {
@@ -20,20 +21,17 @@ namespace op {
 template <typename T>
 class Variable : public Operation<T> {
    public:
-    Variable(std::string name, std::vector<unsigned int> shape, tensor_filler_t<T> filler, memory_t mem_type);
-    Variable(std::string name, Tensor<T> *val);
-    ~Variable();
+    Variable(std::string name, const std::vector<unsigned int> &shape, tensor_filler_t<T> filler, memory_t mem_type);
+    Variable(std::string name, Tensor<T> &val);
 
-    std::string to_string() { return name; }
-    std::string get_name() { return name; }
+    std::string to_string() const override { return name; }
+    std::string get_name() const override { return name; }
 
    protected:
-    Tensor<T> *_eval(bool recompute = true);
-    Tensor<T> *_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad);
+    const Tensor<T> &_eval(bool recompute = true);
+    const Tensor<T> &_grad(Operation<T> *consumer, Operation<T> *var, const Tensor<T> &grad);
 
     std::string name;
-    Tensor<T> *val;
-    bool delete_tensor;
 };
 
 /** Returns a new variable operation. The variable wraps around val with name name.
@@ -44,7 +42,7 @@ class Variable : public Operation<T> {
  * @return Variable<T>*
  */
 template <typename T>
-Variable<T> *var(std::string name, Tensor<T> *val);
+Variable<T> *var(std::string name, Tensor<T> &val);
 
 /** Returns a new variable operation. This version constructs a new tensor to store in the variable.
  * @tparam T
@@ -55,7 +53,8 @@ Variable<T> *var(std::string name, Tensor<T> *val);
  * @return Variable<T>*
  */
 template <typename T>
-Variable<T> *var(std::string name, std::vector<unsigned int> shape, tensor_filler_t<T> filler, memory_t mem_type);
+Variable<T> *var(std::string name, const std::vector<unsigned int> &shape, tensor_filler_t<T> filler,
+                 memory_t mem_type);
 
 /** Creates a scalar variable.
  * @tparam T

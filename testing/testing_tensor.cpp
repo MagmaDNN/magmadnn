@@ -6,6 +6,7 @@ using namespace magmadnn;
 void test_indexing(memory_t mem, bool verbose);
 void test_fill(tensor_filler_t<float> filler, memory_t mem, bool verbose);
 void test_copy(memory_t mem, bool verbose);
+void test_big_4(memory_t mem, unsigned int size);
 
 int main(int argc, char **argv) {
     magmadnn_init();
@@ -32,6 +33,8 @@ int main(int argc, char **argv) {
     test_copy(MANAGED, true);
     test_copy(CUDA_MANAGED, true);
 #endif
+
+    test_for_all_mem_types(test_big_4, 10);
 
     magmadnn_finalize();
     return 0;
@@ -125,4 +128,21 @@ void test_copy(memory_t mem, bool verbose) {
     delete t;
 
     if (verbose) show_success();
+}
+
+void test_big_4(memory_t mem, unsigned int size) {
+    printf("Testing big_4 on %s...  ", get_memory_type_name(mem));
+
+    /* test the copy-constructor, move-constructor, destructor, and assignment operator of Tensor */
+
+    Tensor<float> x({size, size}, {CONSTANT, {1.0f}}, mem);
+
+    /* test assignment */
+    Tensor<float> x_assigned = x;
+
+    for (unsigned int i = 0; i < x_assigned.size(); i++) {
+        MAGMADNN_TEST_ASSERT_FEQUAL_DEFAULT(x_assigned.get(i), x.get(i));
+    }
+
+    show_success();
 }

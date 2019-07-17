@@ -51,7 +51,7 @@ template class CrossEntropyOp<double>;
 
 template <typename T>
 Operation<T> *crossentropy(Operation<T> *ground_truth, Operation<T> *predicted, bool copy, bool needs_grad) {
-    return negative(reducesum(reducesum(product(ground_truth, log(predicted)), 1), 0));
+    return negative(reducesum(reducesum(product(ground_truth, log(predicted, true)), 1), 0));
 }
 template Operation<int> *crossentropy(Operation<int> *, Operation<int> *, bool, bool);
 template Operation<float> *crossentropy(Operation<float> *, Operation<float> *, bool, bool);

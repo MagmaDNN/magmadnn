@@ -14,8 +14,11 @@ namespace layer {
 template <typename T>
 ResidualLayer<T>::ResidualLayer(op::Operation<T> *input,
                                 const std::vector<std::pair<unsigned int, unsigned int>> filters,
-                                const std::vector<int> out_channels)
-    : Layer<T>::Layer(input->get_output_shape(), input), filters(filters), out_channels(out_channels) {
+                                const std::vector<int> out_channels, unsigned int downsampling_stride)
+    : Layer<T>::Layer(input->get_output_shape(), input),
+      filters(filters),
+      out_channels(out_channels),
+      downsampling_stride(downsampling_stride) {
     init();
 }
 
@@ -35,8 +38,8 @@ void ResidualLayer<T>::init() {
 
     /* Input and initial conv layer */
     layers.push_back(layer::input<T>(this->input));
-    layers.push_back(layer::conv2d<T>(layers[layers.size() - 1]->out(), {filters[0].first, filters[0].second},
-                                      out_channels[0], layer::SAME, {1, 1}, {1, 1}, true, false));
+    layers.push_back(layer::conv2d<T>(layers[0]->out(), {filters[0].first, filters[0].second}, out_channels[0],
+                                      layer::SAME, {downsampling_stride, downsampling_stride}, {1, 1}, true, false));
 
     /* Block of conv + activation layers */
     for (unsigned int i = 1; i < filters.size(); i++) {
@@ -46,7 +49,14 @@ void ResidualLayer<T>::init() {
     }
 
     /* Shortcut layer */
-    layers.push_back(layer::shortcut(layers[layers.size() - 1]->out(), layers[0]->out()));
+    if (layers[layers.size() - 1]->out()->get_output_shape() == layers[0]->out()->get_output_shape()) {
+        layers.push_back(layer::shortcut<T>(layers[layers.size() - 1]->out(), layers[0]->out()));
+    } else {
+        unsigned int projection_dim = layers[layers.size() - 1]->out()->get_output_shape(1);
+        layers.push_back(
+            layer::conv2d<T>(layers[0]->out(), {1, 1}, projection_dim, layer::SAME, {1, 1}, {1, 1}, true, false));
+        layers.push_back(layer::shortcut<T>(layers[layers.size() - 1]->out(), layers[layers.size() - 2]->out()));
+    }
 
     /* Final activation layer */
     layers.push_back(layer::activation<T>(layers[layers.size() - 1]->out(), layer::RELU));
@@ -66,17 +76,17 @@ template class ResidualLayer<double>;
 
 template <typename T>
 ResidualLayer<T> *residual(op::Operation<T> *input, const std::vector<std::pair<unsigned int, unsigned int>> filters,
-                           const std::vector<int> out_channels) {
-    return new ResidualLayer<T>(input, filters, out_channels);
+                           const std::vector<int> out_channels, unsigned int downsampling_stride) {
+    return new ResidualLayer<T>(input, filters, out_channels, downsampling_stride);
 }
 template ResidualLayer<int> *residual(op::Operation<int> *, const std::vector<std::pair<unsigned int, unsigned int>>,
-                                      const std::vector<int>);
+                                      const std::vector<int>, unsigned int downsampling_stride);
 template ResidualLayer<float> *residual(op::Operation<float> *,
                                         const std::vector<std::pair<unsigned int, unsigned int>>,
-                                        const std::vector<int>);
+                                        const std::vector<int>, unsigned int downsampling_stride);
 template ResidualLayer<double> *residual(op::Operation<double> *,
                                          const std::vector<std::pair<unsigned int, unsigned int>>,
-                                         const std::vector<int>);
+                                         const std::vector<int>, unsigned int downsampling_stride);
 
 }  // namespace layer
 }  // namespace magmadnn

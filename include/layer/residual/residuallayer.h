@@ -23,7 +23,7 @@ template <typename T>
 class ResidualLayer : public Layer<T> {
    public:
     ResidualLayer(op::Operation<T>* input, const std::vector<std::pair<unsigned int, unsigned int>> filters,
-                  const std::vector<int> out_channels);
+                  const std::vector<int> out_channels, unsigned int downsampling_stride);
 
     virtual ~ResidualLayer();
 
@@ -36,11 +36,13 @@ class ResidualLayer : public Layer<T> {
     std::vector<int> out_channels;
     std::vector<layer::Layer<T>*> layers;
     std::vector<op::Operation<T>*> weights;
+
+    unsigned int downsampling_stride;
 };
 
 template <typename T>
 ResidualLayer<T>* residual(op::Operation<T>* input, const std::vector<std::pair<unsigned int, unsigned int>> filters,
-                           const std::vector<int> out_channels);
+                           const std::vector<int> out_channels, unsigned int downsampling_stride);
 
 }  // namespace layer
 }  // namespace magmadnn

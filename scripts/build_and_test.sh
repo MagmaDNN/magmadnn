@@ -6,7 +6,7 @@ set -o errexit -o pipefail -o noclobber -o nounset
 
 OPTIND=1
 verbose=0
-n_threads=4
+n_threads=1
 debug=0
 clean=0
 do_test=1

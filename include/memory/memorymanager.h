@@ -13,6 +13,7 @@
 #include <stdlib.h>
 #include <algorithm>
 #include <vector>
+#include "data_types.h"
 #include "types.h"
 #include "utilities_internal.h"
 
@@ -25,7 +26,6 @@
 
 namespace magmadnn {
 
-template <typename T>
 class MemoryManager {
    public:
     /** MemoryManager class to keep track of a memory address across devices.
@@ -33,7 +33,7 @@ class MemoryManager {
      *  @param mem_type what memory type will this data belong to
      *  @param device_id what device will the data reside on (preferred if mem_type is CUDA_MANAGED)
      */
-    MemoryManager(unsigned int size, memory_t mem_type, device_t device_id);
+    MemoryManager(size_t size, DataType dtype, memory_t mem_type, device_t device_id);
 
     /** Copy Constructor
      * @param that
@@ -60,28 +60,28 @@ class MemoryManager {
      *  @param src the memorymanager to copy data from
      *  @return the error code (0 - no error, 1 - src ptr not allocated)
      */
-    magmadnn_error_t copy_from(const MemoryManager<T>& src, unsigned int begin_idx, unsigned int size);
+    magmadnn_error_t copy_from(const MemoryManager& src, index_t begin_idx, size_t size);
 
     /** Copies the data from src memory manager into the pointer here. Asserts that
      *  src and this have the same size.
      *  @param src the memorymanager to copy data from
      *  @return the error code (0 - no error, 1 - src ptr not allocated)
      */
-    magmadnn_error_t copy_from(const MemoryManager<T>& src, unsigned int size);
+    magmadnn_error_t copy_from(const MemoryManager& src, size_t size);
 
     /** Copies the data from src memory manager into the pointer here. Asserts that
      *  src and this have the same size.
      *  @param src the memorymanager to copy data from
      *  @return the error code (0 - no error, 1 - src ptr not allocated)
      */
-    magmadnn_error_t copy_from(const MemoryManager<T>& src);
+    magmadnn_error_t copy_from(const MemoryManager& src);
 
     /** copies memory from a host ptr into this memorymanager. will throw an error if it
      *  reaches the end of src allocated mem before this is filled.
      *  @param src the array to copy into this.
      *  @return the error code (0 - good, 1 - not enough memory)
      */
-    magmadnn_error_t copy_from_host(T* src, unsigned int begin_idx, unsigned int size);
+    magmadnn_error_t copy_from_host(void* src, index_t begin_idx, size_t size);
 
 #if defined(_HAS_CUDA_)
     /** copies memory from a device ptr into this memorymanager. will throw an error if it
@@ -89,21 +89,21 @@ class MemoryManager {
      *  @param src the array to copy into this.
      *  @return the error code (0 - good, 1 - not enough memory)
      */
-    magmadnn_error_t copy_from_device(T* src, unsigned int begin_idx, unsigned int size);
+    magmadnn_error_t copy_from_device(void* src, index_t begin_idx, size_t size);
 
     /** copies memory from a managed ptr into this memorymanager. will throw an error if it
      *  reaches the end of src allocated mem before this is filled.
      *  @param src the array to copy into this.
      *  @return the error code (0 - good, 1 - not enough memory)
      */
-    magmadnn_error_t copy_from_managed(T* host_src, T* device_src, unsigned int begin_idx, unsigned int size);
+    magmadnn_error_t copy_from_managed(void* host_src, void* device_src, index_t begin_idx, size_t size);
 
     /** copies memory from a cuda managed ptr into this memorymanager. will throw an error if it
      *  reaches the end of src allocated mem before this is filled.
      *  @param src the array to copy into this.
      *  @return the error code (0 - good, 1 - not enough memory)
      */
-    magmadnn_error_t copy_from_cudamanaged(T* src, unsigned int begin_idx, unsigned int size);
+    magmadnn_error_t copy_from_cudamanaged(void* src, index_t begin_idx, size_t size);
 #endif
 
     /** If MANAGED or CUDA_MANAGED this ensures that data is the same on all devices. It
@@ -125,43 +125,51 @@ class MemoryManager {
      *  @param idx index to retrieve
      *  @return the value at index idx.
      */
-    T get(unsigned int idx) const;
+    template <typename T>
+    T get(index_t idx) const;
 
     /** Sets the value at idx to val. Error if idx is out of range.
      *  @param idx index to set
      *  @param val value to set at idx
      */
-    void set(unsigned int idx, T val);
+    template <typename T>
+    void set(index_t idx, T val);
 
     /** returns a CPU pointer to the data.
      *  @return cpu pointer
      */
+    template <typename T>
     T* get_host_ptr();
 
     /** Get a constant pointer to the host memory
      * @return const T*
      */
+    template <typename T>
     const T* get_host_ptr() const;
 
 #if defined(_HAS_CUDA_)
     /** returns a CUDA pointer
      *  @return a pointer to the memory on a cuda device.
      */
+    template <typename T>
     T* get_device_ptr();
 
     /** get a constant pointer to device memory
      * @return const T*
      */
+    template <typename T>
     const T* get_device_ptr() const;
 
     /** returns the managed CUDA memory.
      *  @return pointer to data memory
      */
+    template <typename T>
     T* get_cuda_managed_ptr();
 
     /** get a constant pointer to cuda_managed memory
      * @return const T*
      */
+    template <typename T>
     const T* get_cuda_managed_ptr() const;
 #endif
 
@@ -169,22 +177,26 @@ class MemoryManager {
      *  memory type it returns the device pointer.
      *  @return the data ptr
      */
+    template <typename T>
     T* get_ptr();
 
     /** Get a constant pointer to this MemoryManager's memory.
      * @return const T*
      */
+    template <typename T>
     const T* get_ptr() const;
 
     /** Returns the size of this memorymanager
      * @return unsigned int  the size of this memory manager
      */
-    unsigned int get_size() const { return size; }
+    size_t get_size() const { return size_; }
+
+    size_t size() const { return size_; }
 
     /** Returns the memory type of this memory manager.
      * @return memory_t
      */
-    memory_t get_memory_type() const { return mem_type; }
+    memory_t get_memory_type() const { return mem_type_; }
 
    private:
     /** init with HOST parameters */
@@ -201,15 +213,16 @@ class MemoryManager {
     void init_cuda_managed();
 #endif
 
-    memory_t mem_type;
-    device_t device_id;
+    DataType dtype_;
+    memory_t mem_type_;
+    device_t device_id_;
 
-    unsigned int size;
-    T* host_ptr;
+    size_t size_;
+    void* host_ptr_;
 
 #if defined(_HAS_CUDA_)
-    T* device_ptr;
-    T* cuda_managed_ptr;
+    void* device_ptr_;
+    void* cuda_managed_ptr_;
 #endif
 };
 

@@ -10,9 +10,8 @@
 
 namespace magmadnn {
 
-template <typename T>
-MemoryManager<T>::MemoryManager(unsigned int size, memory_t mem_type, device_t device_id)
-    : mem_type(mem_type), size(size) {
+MemoryManager::MemoryManager(size_t size, DataType dtype, memory_t mem_type, device_t device_id)
+    : dtype_(dtype), mem_type_(mem_type), size_(size) {
     set_device(device_id);
 
     // initialize based on the chosen memory type
@@ -36,26 +35,18 @@ MemoryManager<T>::MemoryManager(unsigned int size, memory_t mem_type, device_t d
     }
 }
 
-template <typename T>
-void MemoryManager<T>::init_host() {
-    host_ptr = (T*) std::malloc(size * sizeof(T));
-}
+void MemoryManager::init_host() { host_ptr_ = (void*) std::malloc(size_ * getDataTypeSize(dtype_)); }
 
 #if defined(_HAS_CUDA_)
-template <typename T>
-void MemoryManager<T>::init_device() {
-    cudaErrchk(cudaMalloc((void**) &device_ptr, size * sizeof(T)));
+void MemoryManager::init_device() { cudaErrchk(cudaMalloc((void**) &device_ptr_, size_ * getDataTypeSize(dtype_))); }
+
+void MemoryManager::init_managed() {
+    host_ptr_ = (void*) std::malloc(size_ * getDataTypeSize(dtype_));
+    cudaErrchk(cudaMalloc((void**) &device_ptr_, size_ * getDataTypeSize(dtype_)));
 }
 
-template <typename T>
-void MemoryManager<T>::init_managed() {
-    host_ptr = (T*) std::malloc(size * sizeof(T));
-    cudaErrchk(cudaMalloc((void**) &device_ptr, size * sizeof(T)));
-}
-
-template <typename T>
-void MemoryManager<T>::init_cuda_managed() {
-    cudaErrchk(cudaMallocManaged((void**) &cuda_managed_ptr, size * sizeof(T)));
+void MemoryManager::init_cuda_managed() {
+    cudaErrchk(cudaMallocManaged((void**) &cuda_managed_ptr_, size_ * getDataTypeSize(dtype_)));
 }
 #endif
 
@@ -96,82 +87,75 @@ MemoryManager<T>& MemoryManager<T>::operator=(MemoryManager<T> that) {
 }
 */
 
-template <typename T>
-MemoryManager<T>::~MemoryManager<T>() {
-    switch (mem_type) {
+MemoryManager::~MemoryManager() {
+    switch (mem_type_) {
         case HOST:
-            std::free(host_ptr);
+            std::free(host_ptr_);
             break;
 #if defined(_HAS_CUDA_)
         case DEVICE:
-            cudaErrchk(cudaFree(device_ptr));
+            cudaErrchk(cudaFree(device_ptr_));
             break;
         case MANAGED:
-            std::free(host_ptr);
+            std::free(host_ptr_);
             break;
-            cudaErrchk(cudaFree(device_ptr));
+            cudaErrchk(cudaFree(device_ptr_));
             break;
         case CUDA_MANAGED:
-            cudaErrchk(cudaFree(cuda_managed_ptr));
+            cudaErrchk(cudaFree(cuda_managed_ptr_));
             break;
 #endif
     }
 }
 
-template <typename T>
-magmadnn_error_t MemoryManager<T>::copy_from(const MemoryManager<T>& src, unsigned int begin_idx,
-                                             unsigned int copy_size) {
-    assert(this->size >= copy_size);
-    assert(src.size >= (begin_idx + copy_size));
+magmadnn_error_t MemoryManager::copy_from(const MemoryManager& src, index_t begin_idx, size_t copy_size) {
+    assert(this->size_ >= copy_size);
+    assert(src.size_ >= (begin_idx + copy_size));
 
     if (copy_size == 0) return (magmadnn_error_t) 0;
 
-    if (src.mem_type == HOST) {
-        return copy_from_host(src.host_ptr, begin_idx, copy_size);
+    if (src.mem_type_ == HOST) {
+        return copy_from_host(src.host_ptr_, begin_idx, copy_size);
     }
 #if defined(_HAS_CUDA_)
-    else if (src.mem_type == DEVICE) {
-        return copy_from_device(src.device_ptr, begin_idx, copy_size);
-    } else if (src.mem_type == MANAGED) {
-        return copy_from_managed(src.host_ptr, src.device_ptr, begin_idx, copy_size);
-    } else if (src.mem_type == CUDA_MANAGED) {
-        return copy_from_cudamanaged(src.cuda_managed_ptr, begin_idx, copy_size);
+    else if (src.mem_type_ == DEVICE) {
+        return copy_from_device(src.device_ptr_, begin_idx, copy_size);
+    } else if (src.mem_type_ == MANAGED) {
+        return copy_from_managed(src.host_ptr_, src.device_ptr_, begin_idx, copy_size);
+    } else if (src.mem_type_ == CUDA_MANAGED) {
+        return copy_from_cudamanaged(src.cuda_managed_ptr_, begin_idx, copy_size);
     }
 #endif
 
     return (magmadnn_error_t) 1;
 }
 
-template <typename T>
-magmadnn_error_t MemoryManager<T>::copy_from(const MemoryManager<T>& src) {
-    return copy_from(src, 0, size);
-}
+magmadnn_error_t MemoryManager::copy_from(const MemoryManager& src) { return copy_from(src, 0, size_); }
 
-template <typename T>
-magmadnn_error_t MemoryManager<T>::copy_from(const MemoryManager<T>& src, unsigned int copy_size) {
+magmadnn_error_t MemoryManager::copy_from(const MemoryManager& src, size_t copy_size) {
     return copy_from(src, 0, copy_size);
 }
 
-template <typename T>
-magmadnn_error_t MemoryManager<T>::copy_from_host(T* src, unsigned int begin_idx, unsigned int copy_size) {
-    switch (mem_type) {
+magmadnn_error_t MemoryManager::copy_from_host(void* src, index_t begin_idx, size_t copy_size) {
+    switch (mem_type_) {
         case HOST:
             // host --> host
-            std::copy(src + begin_idx, (src + begin_idx) + copy_size, host_ptr);
+            std::copy(src + begin_idx, (src + begin_idx) + copy_size, host_ptr_);
             return (magmadnn_error_t) 0;
 #if defined(_HAS_CUDA_)
         case DEVICE:
             // host --> device
-            cudaErrchk(cudaMemcpy(device_ptr, src + begin_idx, copy_size * sizeof(T), cudaMemcpyHostToDevice));
+            cudaErrchk(
+                cudaMemcpy(device_ptr_, src + begin_idx, copy_size * getDataTypeSize(dtype_), cudaMemcpyHostToDevice));
             return (magmadnn_error_t) 0;
         case MANAGED:
             // host --> managed
-            std::copy(src + begin_idx, (src + begin_idx) + copy_size, host_ptr);
+            std::copy(src + begin_idx, (src + begin_idx) + copy_size, host_ptr_);
             sync(false);
             return (magmadnn_error_t) 0;
         case CUDA_MANAGED:
             // host --> cmanaged
-            std::copy(src + begin_idx, (src + begin_idx) + copy_size, cuda_managed_ptr);
+            std::copy(src + begin_idx, (src + begin_idx) + copy_size, cuda_managed_ptr_);
             sync(false);
             return (magmadnn_error_t) 0;
 #endif

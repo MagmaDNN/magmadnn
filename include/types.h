@@ -28,6 +28,9 @@ typedef enum memory_t {
 typedef unsigned int device_t;
 typedef unsigned int magmadnn_error_t;
 
+typedef int64_t index_t;
+typedef size_t size_t;
+
 struct magmadnn_settings_t {
     unsigned int n_devices;
 #if defined(_HAS_CUDA_)

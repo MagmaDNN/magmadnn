@@ -28,7 +28,7 @@ typedef enum memory_t {
 typedef unsigned int device_t;
 typedef unsigned int magmadnn_error_t;
 
-typedef int64_t index_t;
+typedef size_t index_t;
 typedef size_t size_t;
 
 struct magmadnn_settings_t {
@@ -50,10 +50,9 @@ enum tensor_fill_t { UNIFORM, GLOROT, MASK, CONSTANT, ZERO, ONE, DIAGONAL, IDENT
  * fill_type: use UNIFORM, GLOROT, MASK, CONSTANT, ZERO, ONE, or NONE @see tensor_fill_t
  * values: the parameters for the fill_type
  */
-template <typename T>
 struct tensor_filler_t {
     tensor_fill_t fill_type;
-    std::vector<T> values;
+    std::vector<double> values;
 };
 
 }  // namespace magmadnn

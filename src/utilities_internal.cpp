@@ -180,6 +180,23 @@ cudnnDataType_t get_cudnn_data_type(double v) {
     return CUDNN_DATA_DOUBLE;
 }
 
+template <>
+cudnnDataType_t get_cudnn_data_type(DataType t) {
+    switch (t) {
+        case FLOAT:
+            return CUDNN_DATA_FLOAT;
+        case DOUBLE:
+            return CUDNN_DATA_DOUBLE;
+        case INT32:
+            return CUDNN_DATA_INT32;
+        case HALF:
+            return CUDNN_DATA_HALF;
+        default:
+            LOG(ERROR) << "Cannot convert to CuDNN type (" << t << ")\n";
+            return CUDNN_DATA_FLOAT;
+    }
+}
+
 #endif
 
 }  // namespace internal

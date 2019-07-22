@@ -25,13 +25,13 @@ __global__ void kernel_fill_constant(T *arr, unsigned int size, T val) {
 }
 
 template <typename T>
-void fill_constant_device(MemoryManager<T> &m, T val) {
+void fill_constant_device(MemoryManager &m, T val) {
     unsigned int size = m.get_size();
-    kernel_fill_constant<<<(size + BLK_SIZE - 1) / BLK_SIZE, BLK_SIZE>>>(m.get_device_ptr(), size, val);
+    kernel_fill_constant<<<(size + BLK_SIZE - 1) / BLK_SIZE, BLK_SIZE>>>(m.get_device_ptr<T>(), size, val);
 }
-template void fill_constant_device(MemoryManager<int> &m, int val);
-template void fill_constant_device(MemoryManager<float> &m, float val);
-template void fill_constant_device(MemoryManager<double> &m, double val);
+#define COMPILE_FILLCONSTANT_DEVICE(type) template void fill_constant_device(MemoryManager&, type);
+CALL_FOR_ALL_TYPES(COMPILE_FILLCONSTANT_DEVICE)
+#undef COMPILE_FILLCONSTANT_DEVICE
 
 }  // namespace internal
 }  // namespace magmadnn

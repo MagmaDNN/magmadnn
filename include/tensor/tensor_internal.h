@@ -19,8 +19,7 @@ namespace internal {
  * @param m memorymanager to be filled
  * @param filler how to fill m
  */
-template <typename T>
-void fill_memory(MemoryManager<T> &m, tensor_filler_t<T> filler);
+void fill_memory(MemoryManager &m, tensor_filler_t filler);
 
 }  // namespace internal
 }  // namespace magmadnn

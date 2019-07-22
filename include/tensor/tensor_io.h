@@ -23,8 +23,7 @@ namespace io {
  * @param delim the delimiter of the csv (assumed to be a comma)
  * @return magmadnn_error_t 0 if successful, otherwise anything else
  */
-template <typename T>
-magmadnn_error_t read_csv_to_tensor(Tensor<T>& t, const std::string& file_name, char delim = ',');
+magmadnn_error_t read_csv_to_tensor(Tensor& t, const std::string& file_name, char delim = ',');
 
 /** Writes the tensor t to the file "file_name". It writes a flattened version of the file that is readable
  * by read_csv_to_tensor. @see read_csv_to_tensor .
@@ -35,8 +34,7 @@ magmadnn_error_t read_csv_to_tensor(Tensor<T>& t, const std::string& file_name, 
  * @param create create file if it does not exist.
  * @return magmadnn_error_t returns 0 if successful, otherwise something else
  */
-template <typename T>
-magmadnn_error_t write_tensor_to_csv(const Tensor<T>& t, const std::string& file_name, char delim = ',',
+magmadnn_error_t write_tensor_to_csv(const Tensor& t, const std::string& file_name, char delim = ',',
                                      bool create = true);
 
 }  // namespace io

@@ -8,6 +8,9 @@
  */
 #pragma once
 
+#include "data_types.h"
+#include "types.h"
+
 #if defined(_HAS_CUDA_)
 
 namespace magmadnn {
@@ -20,7 +23,7 @@ namespace internal {
         @return T the value of arr[idx] on the device
 */
 template <typename T>
-T get_device_array_element(T *arr, unsigned int idx);
+T get_device_array_element(T *arr, index_t idx);
 
 /** Sets an element on a device. Note: This is slow. Favor copy_from for faster
     setting of large chunks of memory.
@@ -29,7 +32,7 @@ T get_device_array_element(T *arr, unsigned int idx);
         @param val value to set arr[idx]
 */
 template <typename T>
-void set_device_array_element(T *arr, unsigned int idx, T val);
+void set_device_array_element(T *arr, index_t idx, T val);
 
 }  // namespace internal
 }  // namespace magmadnn

@@ -19,12 +19,12 @@ namespace internal {
 	@param result set to arr[idx]. Must be a device allocated variable with size=sizeof(T). 
 */
 template <typename T>
-__global__ void kernel_get_device_array_element(T *arr, unsigned int idx, T *result) {
+__global__ void kernel_get_device_array_element(T *arr, index_t idx, T *result) {
 	*result = arr[idx];
 }
 
 template <typename T>
-T get_device_array_element(T *arr, unsigned int idx) {
+T get_device_array_element(T *arr, index_t idx) {
 	T host_value;
 	T *device_value;
 	cudaMalloc(&device_value, sizeof(T));
@@ -35,9 +35,9 @@ T get_device_array_element(T *arr, unsigned int idx) {
 
 	return host_value;
 }
-template int get_device_array_element(int *arr, unsigned int idx);
-template float get_device_array_element(float *arr, unsigned int idx);
-template double get_device_array_element(double *arr, unsigned int idx);
+#define COMPILE_GETDEVICEARRAYELEMENT(type) template type get_device_array_element(type *arr, index_t idx);
+CALL_FOR_ALL_TYPES(COMPILE_GETDEVICEARRAYELEMENT)
+#undef COMPILE_GETDEVICEARRAYELEMENT
 
 
 /** Sets an element on a device.
@@ -46,17 +46,17 @@ template double get_device_array_element(double *arr, unsigned int idx);
 	@param val value to set arr[idx]
 */
 template <typename T>
-__global__ void kernel_set_device_array_element(T *arr, unsigned int idx, T val) {
+__global__ void kernel_set_device_array_element(T *arr, index_t idx, T val) {
 	arr[idx] = val;
 }
 
 template <typename T>
-void set_device_array_element(T *arr, unsigned int idx, T val) {
+void set_device_array_element(T *arr, index_t idx, T val) {
 	kernel_set_device_array_element <<<1, 1>>> (arr, idx, val);
 }
-template void set_device_array_element(int *arr, unsigned int idx, int val);
-template void set_device_array_element(float *arr, unsigned int idx, float val);
-template void set_device_array_element(double *arr, unsigned int idx, double val);
+#define COMPILE_SETDEVICEARRAYELEMENT(type) template void set_device_array_element(type *arr, index_t idx, type val);
+CALL_FOR_ALL_TYPES(COMPILE_SETDEVICEARRAYELEMENT)
+#undef COMPILE_SETDEVICEARRAYELEMENT
 
 } // namespace internal
 } // namespace magmadnn

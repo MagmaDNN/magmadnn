@@ -111,21 +111,26 @@ MemoryManager::~MemoryManager() {
 magmadnn_error_t MemoryManager::copy_from(const MemoryManager& src, index_t begin_idx, size_t copy_size) {
     assert(this->size_ >= copy_size);
     assert(src.size_ >= (begin_idx + copy_size));
+    assert(src.dtype_ == dtype_);
 
     if (copy_size == 0) return (magmadnn_error_t) 0;
 
-    if (src.mem_type_ == HOST) {
-        return copy_from_host(src.host_ptr_, begin_idx, copy_size);
-    }
+    FOR_ALL_DTYPES(dtype_, Dtype, {
+        switch (src.mem_type_) {
+            case HOST:
+                return copy_from_host(src.get_host_ptr<Dtype>(), begin_idx, copy_size);
 #if defined(_HAS_CUDA_)
-    else if (src.mem_type_ == DEVICE) {
-        return copy_from_device(src.device_ptr_, begin_idx, copy_size);
-    } else if (src.mem_type_ == MANAGED) {
-        return copy_from_managed(src.host_ptr_, src.device_ptr_, begin_idx, copy_size);
-    } else if (src.mem_type_ == CUDA_MANAGED) {
-        return copy_from_cudamanaged(src.cuda_managed_ptr_, begin_idx, copy_size);
-    }
+            case DEVICE:
+                return copy_from_device(src.get_device_ptr<Dtype>(), begin_idx, copy_size);
+            case MANAGED:
+                return copy_from_managed(src.get_host_ptr<Dtype>(), src.get_device_ptr<Dtype>(), begin_idx, copy_size);
+            case CUDA_MANAGED:
+                return copy_from_cudamanaged(src.get_cuda_managed_ptr<Dtype>(), begin_idx, copy_size);
 #endif
+            default:
+                return (magmadnn_error_t) 1;
+        }
+    });
 
     return (magmadnn_error_t) 1;
 }
@@ -136,26 +141,26 @@ magmadnn_error_t MemoryManager::copy_from(const MemoryManager& src, size_t copy_
     return copy_from(src, 0, copy_size);
 }
 
-magmadnn_error_t MemoryManager::copy_from_host(void* src, index_t begin_idx, size_t copy_size) {
+template <typename T>
+magmadnn_error_t MemoryManager::copy_from_host(const T* src, index_t begin_idx, size_t copy_size) {
     switch (mem_type_) {
         case HOST:
             // host --> host
-            std::copy(src + begin_idx, (src + begin_idx) + copy_size, host_ptr_);
+            std::copy(src + begin_idx, (src + begin_idx) + copy_size, reinterpret_cast<T*>(host_ptr_));
             return (magmadnn_error_t) 0;
 #if defined(_HAS_CUDA_)
         case DEVICE:
             // host --> device
-            cudaErrchk(
-                cudaMemcpy(device_ptr_, src + begin_idx, copy_size * getDataTypeSize(dtype_), cudaMemcpyHostToDevice));
+            cudaErrchk(cudaMemcpy(device_ptr_, src + begin_idx, copy_size * sizeof(T), cudaMemcpyHostToDevice));
             return (magmadnn_error_t) 0;
         case MANAGED:
             // host --> managed
-            std::copy(src + begin_idx, (src + begin_idx) + copy_size, host_ptr_);
+            std::copy(src + begin_idx, (src + begin_idx) + copy_size, reinterpret_cast<T*>(host_ptr_));
             sync(false);
             return (magmadnn_error_t) 0;
         case CUDA_MANAGED:
             // host --> cmanaged
-            std::copy(src + begin_idx, (src + begin_idx) + copy_size, cuda_managed_ptr_);
+            std::copy(src + begin_idx, (src + begin_idx) + copy_size, reinterpret_cast<T*>(cuda_managed_ptr_));
             sync(false);
             return (magmadnn_error_t) 0;
 #endif
@@ -166,26 +171,26 @@ magmadnn_error_t MemoryManager::copy_from_host(void* src, index_t begin_idx, siz
 
 #if defined(_HAS_CUDA_)
 template <typename T>
-magmadnn_error_t MemoryManager<T>::copy_from_device(T* src, unsigned int begin_idx, unsigned int copy_size) {
+magmadnn_error_t MemoryManager::copy_from_device(const T* src, index_t begin_idx, size_t copy_size) {
     magmadnn_error_t err = (magmadnn_error_t) 0;
 
-    switch (mem_type) {
+    switch (mem_type_) {
         case HOST:
             // device --> host
-            cudaErrchk(cudaMemcpy(host_ptr, src + begin_idx, copy_size * sizeof(T), cudaMemcpyDeviceToHost));
+            cudaErrchk(cudaMemcpy(host_ptr_, src + begin_idx, copy_size * sizeof(T), cudaMemcpyDeviceToHost));
             break;
         case DEVICE:
             // device --> device
-            cudaErrchk(cudaMemcpy(device_ptr, src + begin_idx, copy_size * sizeof(T), cudaMemcpyDeviceToDevice));
+            cudaErrchk(cudaMemcpy(device_ptr_, src + begin_idx, copy_size * sizeof(T), cudaMemcpyDeviceToDevice));
             break;
         case MANAGED:
             // device --> managed
-            cudaErrchk(cudaMemcpy(device_ptr, src + begin_idx, copy_size * sizeof(T), cudaMemcpyDeviceToDevice));
+            cudaErrchk(cudaMemcpy(device_ptr_, src + begin_idx, copy_size * sizeof(T), cudaMemcpyDeviceToDevice));
             sync(true);
             return err;
         case CUDA_MANAGED:
             // device --> cmanaged
-            cudaErrchk(cudaMemcpy(cuda_managed_ptr, src + begin_idx, copy_size * sizeof(T), cudaMemcpyDeviceToDevice));
+            cudaErrchk(cudaMemcpy(cuda_managed_ptr_, src + begin_idx, copy_size * sizeof(T), cudaMemcpyDeviceToDevice));
             sync(true);
             return err;
     }
@@ -194,25 +199,27 @@ magmadnn_error_t MemoryManager<T>::copy_from_device(T* src, unsigned int begin_i
 }
 
 template <typename T>
-magmadnn_error_t MemoryManager<T>::copy_from_managed(T* host_src, T* device_src, unsigned int begin_idx,
-                                                     unsigned int copy_size) {
-    switch (mem_type) {
+magmadnn_error_t MemoryManager::copy_from_managed(const T* host_src, const T* device_src, index_t begin_idx,
+                                                  size_t copy_size) {
+    switch (mem_type_) {
         case HOST:
             // managed --> host
-            std::copy(host_src + begin_idx, (host_src + begin_idx) + copy_size, host_ptr);
+            std::copy(host_src + begin_idx, (host_src + begin_idx) + copy_size, reinterpret_cast<T*>(host_ptr_));
             return (magmadnn_error_t) 0;
         case DEVICE:
             // managed --> device
-            cudaErrchk(cudaMemcpy(device_ptr, device_src + begin_idx, copy_size * sizeof(T), cudaMemcpyDeviceToDevice));
+            cudaErrchk(
+                cudaMemcpy(device_ptr_, device_src + begin_idx, copy_size * sizeof(T), cudaMemcpyDeviceToDevice));
             return (magmadnn_error_t) 0;
         case MANAGED:
             // managed --> managed
-            std::copy(host_src + begin_idx, (host_src + begin_idx) + copy_size, host_ptr);
+            std::copy(host_src + begin_idx, (host_src + begin_idx) + copy_size, reinterpret_cast<T*>(host_ptr_));
             sync(false);
             return (magmadnn_error_t) 0;
         case CUDA_MANAGED:
             // managed --> cmanaged
-            std::copy(host_src + begin_idx, (host_src + begin_idx) + copy_size, cuda_managed_ptr);
+            std::copy(host_src + begin_idx, (host_src + begin_idx) + copy_size,
+                      reinterpret_cast<T*>(cuda_managed_ptr_));
             sync(false);
             return (magmadnn_error_t) 0;
     }
@@ -221,23 +228,23 @@ magmadnn_error_t MemoryManager<T>::copy_from_managed(T* host_src, T* device_src,
 }
 
 template <typename T>
-magmadnn_error_t MemoryManager<T>::copy_from_cudamanaged(T* src, unsigned int begin_idx, unsigned int copy_size) {
-    switch (mem_type) {
+magmadnn_error_t MemoryManager::copy_from_cudamanaged(const T* src, index_t begin_idx, size_t copy_size) {
+    switch (mem_type_) {
         case HOST:
             // cmanaged --> host
-            std::copy(src + begin_idx, (src + begin_idx) + copy_size, host_ptr);
+            std::copy(src + begin_idx, (src + begin_idx) + copy_size, reinterpret_cast<T*>(host_ptr_));
             return (magmadnn_error_t) 0;
         case DEVICE:
             // cmanaged --> device
-            cudaErrchk(cudaMemcpy(device_ptr, src + begin_idx, copy_size * sizeof(T), cudaMemcpyDeviceToDevice));
+            cudaErrchk(cudaMemcpy(device_ptr_, src + begin_idx, copy_size * sizeof(T), cudaMemcpyDeviceToDevice));
             return (magmadnn_error_t) 0;
         case MANAGED:
             // cmanaged --> managed
-            std::copy(src + begin_idx, (src + begin_idx) + copy_size, host_ptr);
+            std::copy(src + begin_idx, (src + begin_idx) + copy_size, reinterpret_cast<T*>(host_ptr_));
             sync(false);
             return (magmadnn_error_t) 0;
         case CUDA_MANAGED:
-            std::copy(src + begin_idx, (src + begin_idx) + copy_size, cuda_managed_ptr);
+            std::copy(src + begin_idx, (src + begin_idx) + copy_size, reinterpret_cast<T*>(cuda_managed_ptr_));
             sync(false);
             return (magmadnn_error_t) 0;
     }
@@ -246,18 +253,17 @@ magmadnn_error_t MemoryManager<T>::copy_from_cudamanaged(T* src, unsigned int be
 }
 #endif
 
-template <typename T>
-magmadnn_error_t MemoryManager<T>::sync(bool gpu_was_modified) {
+magmadnn_error_t MemoryManager::sync(bool gpu_was_modified) {
 #if defined(_HAS_CUDA_)
     cudaError_t err = (cudaError_t) 0;
 
-    if (mem_type == CUDA_MANAGED) {
+    if (mem_type_ == CUDA_MANAGED) {
         cudaErrchk(cudaDeviceSynchronize());
-    } else if (mem_type == MANAGED) {
+    } else if (mem_type_ == MANAGED) {
         if (gpu_was_modified) {
-            cudaErrchk(cudaMemcpy(host_ptr, device_ptr, size * sizeof(T), cudaMemcpyDeviceToHost));
+            cudaErrchk(cudaMemcpy(host_ptr_, device_ptr_, size_ * getDataTypeSize(dtype_), cudaMemcpyDeviceToHost));
         } else {
-            cudaErrchk(cudaMemcpy(device_ptr, host_ptr, size * sizeof(T), cudaMemcpyHostToDevice));
+            cudaErrchk(cudaMemcpy(device_ptr_, host_ptr_, size_ * getDataTypeSize(dtype_), cudaMemcpyHostToDevice));
         }
     }
     return (magmadnn_error_t) err;
@@ -270,53 +276,58 @@ magmadnn_error_t MemoryManager<T>::sync(bool gpu_was_modified) {
 }
 
 template <typename T>
-T MemoryManager<T>::get(unsigned int idx) const {
-    assert(idx < size);
+T MemoryManager::get(index_t idx) const {
+    assert(idx < size_);
 
-    switch (mem_type) {
+    switch (mem_type_) {
         case HOST:
-            return host_ptr[idx];
+            return reinterpret_cast<T*>(host_ptr_)[idx];
 #if defined(_HAS_CUDA_)
         case DEVICE:
-            cudaErrchk(cudaSetDevice(device_id));
-            return internal::get_device_array_element(device_ptr, idx);
+            // cudaErrchk(cudaSetDevice(device_id));
+            return internal::get_device_array_element(reinterpret_cast<T*>(device_ptr_), idx);
         case MANAGED:
-            return host_ptr[idx];
+            return reinterpret_cast<T*>(host_ptr_)[idx];
         case CUDA_MANAGED:
-            return cuda_managed_ptr[idx];
+            return reinterpret_cast<T*>(cuda_managed_ptr_)[idx];
 #endif
     }
     return (T) 0;
 }
+#define COMPILE_MEMORYMANAGER_GET(type) template type MemoryManager::get<type>(index_t idx) const;
+CALL_FOR_ALL_TYPES(COMPILE_MEMORYMANAGER_GET)
+#undef COMPILE_MEMORYMANAGER_GET
 
 template <typename T>
-void MemoryManager<T>::set(unsigned int idx, T val) {
-    assert(idx < size);
+void MemoryManager::set(index_t idx, T val) {
+    assert(idx < size_);
 
     // note: don't sync on managed type memories
-    switch (mem_type) {
+    switch (mem_type_) {
         case HOST:
-            host_ptr[idx] = val;
+            reinterpret_cast<T*>(host_ptr_)[idx] = val;
             break;
 #if defined(_HAS_CUDA_)
         case DEVICE:
-            cudaErrchk(cudaSetDevice(device_id));
-            internal::set_device_array_element(device_ptr, idx, val);
+            // cudaErrchk(cudaSetDevice(device_id));
+            internal::set_device_array_element(reinterpret_cast<T*>(device_ptr_), idx, val);
             break;
         case MANAGED:
-            host_ptr[idx] = val;
-            cudaErrchk(cudaSetDevice(device_id));
-            internal::set_device_array_element(device_ptr, idx, val);
+            reinterpret_cast<T*>(host_ptr_)[idx] = val;
+            // cudaErrchk(cudaSetDevice(device_id));
+            internal::set_device_array_element(reinterpret_cast<T*>(device_ptr_), idx, val);
             break;
         case CUDA_MANAGED:
-            cuda_managed_ptr[idx] = val;
+            reinterpret_cast<T*>(cuda_managed_ptr_)[idx] = val;
             break;
 #endif
     }
 }
+#define COMPILE_MEMORYMANAGER_SET(type) template void MemoryManager::set<type>(index_t idx, type val);
+CALL_FOR_ALL_TYPES(COMPILE_MEMORYMANAGER_SET)
+#undef COMPILE_MEMORYMANAGER_SET
 
-template <typename T>
-magmadnn_error_t MemoryManager<T>::set_device(device_t device_id) {
+magmadnn_error_t MemoryManager::set_device(device_t device_id) {
 #if defined(_HAS_CUDA_)
     int n_devices = 0;
     cudaErrchk(cudaGetDeviceCount(&n_devices));
@@ -326,83 +337,102 @@ magmadnn_error_t MemoryManager<T>::set_device(device_t device_id) {
     }
 #endif
 
-    this->device_id = device_id;
+    this->device_id_ = device_id;
     return (magmadnn_error_t) 0;
 }
 
 template <typename T>
-T* MemoryManager<T>::get_host_ptr() {
-    return host_ptr;
+T* MemoryManager::get_host_ptr() {
+    return reinterpret_cast<T*>(host_ptr_);
 }
+#define COMPILE_GETPTR(type) template type* MemoryManager::get_host_ptr();
+CALL_FOR_ALL_TYPES(COMPILE_GETPTR)
+#undef COMPILE_GETPTR
 
 template <typename T>
-const T* MemoryManager<T>::get_host_ptr() const {
-    return host_ptr;
+const T* MemoryManager::get_host_ptr() const {
+    return reinterpret_cast<const T*>(host_ptr_);
 }
+#define COMPILE_GETPTR(type) template const type* MemoryManager::get_host_ptr() const;
+CALL_FOR_ALL_TYPES(COMPILE_GETPTR)
+#undef COMPILE_GETPTR
 
 #if defined(_HAS_CUDA_)
 template <typename T>
-T* MemoryManager<T>::get_device_ptr() {
-    return device_ptr;
+T* MemoryManager::get_device_ptr() {
+    return reinterpret_cast<T*>(device_ptr_);
 }
+#define COMPILE_GETPTR(type) template type* MemoryManager::get_device_ptr();
+CALL_FOR_ALL_TYPES(COMPILE_GETPTR)
+#undef COMPILE_GETPTR
 
 template <typename T>
-const T* MemoryManager<T>::get_device_ptr() const {
-    return device_ptr;
+const T* MemoryManager::get_device_ptr() const {
+    return reinterpret_cast<const T*>(device_ptr_);
 }
+#define COMPILE_GETPTR(type) template const type* MemoryManager::get_device_ptr() const;
+CALL_FOR_ALL_TYPES(COMPILE_GETPTR)
+#undef COMPILE_GETPTR
 
 template <typename T>
-T* MemoryManager<T>::get_cuda_managed_ptr() {
-    return cuda_managed_ptr;
+T* MemoryManager::get_cuda_managed_ptr() {
+    return reinterpret_cast<T*>(cuda_managed_ptr_);
 }
+#define COMPILE_GETPTR(type) template type* MemoryManager::get_cuda_managed_ptr();
+CALL_FOR_ALL_TYPES(COMPILE_GETPTR)
+#undef COMPILE_GETPTR
 
 template <typename T>
-const T* MemoryManager<T>::get_cuda_managed_ptr() const {
-    return cuda_managed_ptr;
+const T* MemoryManager::get_cuda_managed_ptr() const {
+    return reinterpret_cast<const T*>(cuda_managed_ptr_);
 }
+#define COMPILE_GETPTR(type) template const type* MemoryManager::get_cuda_managed_ptr() const;
+CALL_FOR_ALL_TYPES(COMPILE_GETPTR)
+#undef COMPILE_GETPTR
 #endif
 
 template <typename T>
-T* MemoryManager<T>::get_ptr() {
-    switch (mem_type) {
+T* MemoryManager::get_ptr() {
+    switch (mem_type_) {
         case HOST:
-            return get_host_ptr();
+            return get_host_ptr<T>();
 #if defined(_HAS_CUDA_)
         case DEVICE:
-            return get_device_ptr();
+            return get_device_ptr<T>();
         case MANAGED:
             // returns device by default for managed
-            return get_device_ptr();
+            return get_device_ptr<T>();
         case CUDA_MANAGED:
-            return get_cuda_managed_ptr();
+            return get_cuda_managed_ptr<T>();
 #endif
         default:
-            return (T*) NULL;
+            return nullptr;
     }
 }
+#define COMPILE_GETPTR(type) template type* MemoryManager::get_ptr();
+CALL_FOR_ALL_TYPES(COMPILE_GETPTR)
+#undef COMPILE_GETPTR
 
 template <typename T>
-const T* MemoryManager<T>::get_ptr() const {
-    switch (mem_type) {
+const T* MemoryManager::get_ptr() const {
+    switch (mem_type_) {
         case HOST:
-            return get_host_ptr();
+            return get_host_ptr<T>();
 #if defined(_HAS_CUDA_)
         case DEVICE:
-            return get_device_ptr();
+            return get_device_ptr<T>();
         case MANAGED:
             // returns device by default for managed
-            return get_device_ptr();
+            return get_device_ptr<T>();
         case CUDA_MANAGED:
-            return get_cuda_managed_ptr();
+            return get_cuda_managed_ptr<T>();
 #endif
         default:
-            return (T*) NULL;
+            return nullptr;
     }
 }
-
-/* COMPILE FOR INT, FLOAT, AND DOUBLE */
-template class MemoryManager<int>;
-template class MemoryManager<float>;
-template class MemoryManager<double>;
+#define COMPILE_GETPTR(type) template const type* MemoryManager::get_ptr() const;
+CALL_FOR_ALL_TYPES(COMPILE_GETPTR)
+#undef COMPILE_GETPTR
 
 }  // namespace magmadnn

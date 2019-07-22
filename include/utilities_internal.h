@@ -14,6 +14,7 @@
 #include <deque>
 #include <set>
 #include <vector>
+#include "data_types.h"
 
 #if defined(_HAS_CUDA_)
 #include <cuda.h>
@@ -60,6 +61,32 @@ inline void curandAssert(curandStatus_t code, const char *file, int line, bool a
 
 #define T_IS_SAME_MEMORY_TYPE(x_ptr, y_ptr) ((x_ptr)->get_memory_type() == (y_ptr)->get_memory_type())
 #define OP_IS_SAME_MEMORY_TYPE(x_ptr, y_ptr) ((x_ptr)->get_memory_type() == (y_ptr)->get_memory_type())
+
+#if defined(NDEBUG)
+#define MAGMADNN_ASSERT(ans, message) ((void) 0)
+#else
+#define MAGMADNN_ASSERT(ans, message) \
+    { magmadnn_assert_((ans), (message), __FILE__, __LINE__, __func__); }
+#endif
+
+inline void magmadnn_assert_(bool ans, const char *message, const char *file, int line, const char *func,
+                             bool abort = true) {
+    if (!ans) {
+        std::cerr << "[ERROR](" << file << ":" << line << " in " << func << ") -- " << message << "\n";
+        if (abort) std::exit(1);
+    }
+}
+
+#define LOG(type) magmadnn_log_(#type, __FILE__, __LINE__)
+inline std::ostream &magmadnn_log_(const std::string &type, const char *file, int line) {
+    if (type == "ERROR") {
+        return std::cerr << "[ERROR](" << file << ":" << line << ") -- ";
+    } else if (type == "OK") {
+        return std::cout << "[OK](" << file << ":" << line << ") -- ";
+    } else {
+        return std::cerr << "INVALID LOG TYPE ---- ";
+    }
+}
 
 namespace magmadnn {
 namespace internal {

@@ -2,7 +2,8 @@
 
 SRC_FILES := $(wildcard *.cpp)
 OBJ_FILES := $(patsubst %.cpp, %.o, $(SRC_FILES))
-TARGETS := $(patsubst %.cpp, %.out, $(SRC_FILES))
+#TARGETS := $(patsubst %.cpp, %.out, $(SRC_FILES))
+TARGETS = testing_memorymanager.out testing_tensor.out
 
 TESTING_FLAGS := $(OPTIMIZATION_LEVEL) $(WARNINGS) $(CXX_VERSION) $(CUDA_MACRO)
 RPATH_FLAGS := -Wl,-rpath,$(prefix)/lib

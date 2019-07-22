@@ -10,48 +10,43 @@ MAGMADNN_TEST_ASSERT_DEFAULT(mm->get(i) == i * val, "\"mm->get(i) == i * val\" f
 
 using namespace magmadnn;
 
-void test_get_set(memory_t mem, int size, bool verbose) {
+void test_get_set(memory_t mem, size_t size, bool verbose) {
     float val = 1.125f;
 
     if (verbose) printf("Testing %s get/set...  ", get_memory_type_name(mem));
 
-    MemoryManager<float> *mm = new MemoryManager<float>(size, mem, (device_t) 0);
+    MemoryManager mm(size, FLOAT, mem, (device_t) 0);
 
     // set
     for (int i = 0; i < (int) size; i++) {
-        mm->set(i, i * val);
+        mm.set<float>(i, i * val);
     }
 
     // test
     for (int i = 0; i < (int) size; i++) {
-        MAGMADNN_TEST_ASSERT_DEFAULT(mm->get(i) == i * val, "\"mm->get(i) == i * val\" failed");
+        MAGMADNN_TEST_ASSERT_DEFAULT(mm.get<float>(i) == i * val, "\"mm->get(i) == i * val\" failed");
     }
-
-    delete mm;
 
     if (verbose) show_success();
 }
 
-void test_copy(memory_t src_mem, memory_t dst_mem, int size, bool verbose) {
+void test_copy(memory_t src_mem, memory_t dst_mem, size_t size, bool verbose) {
     if (verbose) printf("Testing %s->%s copy...  ", get_memory_type_name(src_mem), get_memory_type_name(dst_mem));
 
     // create
-    MemoryManager<float> *mm_src = new MemoryManager<float>(size, src_mem, (device_t) 0);
-    MemoryManager<float> *mm_dst = new MemoryManager<float>(size, dst_mem, (device_t) 0);
+    MemoryManager mm_src(size, FLOAT, src_mem, (device_t) 0);
+    MemoryManager mm_dst(size, FLOAT, dst_mem, (device_t) 0);
 
     // fill in mm_src
-    for (int i = 0; i < size; i++) mm_src->set(i, 2 * i + 1);
+    for (size_t i = 0; i < size; i++) mm_src.set<float>(i, 2 * i + 1);
 
     // copy mm_src into mm_dst
-    mm_dst->copy_from(*mm_src);
+    mm_dst.copy_from(mm_src);
 
     // test for success
-    for (int i = 0; i < size; i++)
-        MAGMADNN_TEST_ASSERT_DEFAULT(mm_src->get(i) == mm_src->get(i), "\"mm_src->get(i) == mm_src->get(i)\" failed");
-
-    // free
-    delete mm_src;
-    delete mm_dst;
+    for (size_t i = 0; i < size; i++)
+        MAGMADNN_TEST_ASSERT_DEFAULT(mm_src.get<float>(i) == mm_src.get<float>(i),
+                                     "\"mm_src->get(i) == mm_src->get(i)\" failed");
 
     if (verbose) show_success();
 }

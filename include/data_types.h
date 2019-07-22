@@ -9,6 +9,7 @@
 #pragma once
 
 #include <cstdint>
+#include <iostream>
 
 namespace magmadnn {
 
@@ -50,6 +51,8 @@ COMBINE_CPP_TYPE_AND_ENUM_TYPE(int64_t, INT64);
 #undef COMBINE_CPP_TYPE_AND_ENUM_TYPE
 
 #define CALL_FOR_ALL_TYPES(func) func(float) func(double) func(int32_t) func(int64_t)
+#define CALL_FOR_ALL_FLOAT_TYPES(func) func(float) func(double)
+#define CALL_FOR_ALL_INT_TYPES(func) func(int32_t) func(int64_t)
 
 inline int getDataTypeSize(DataType dtype) {
 #define EACH(type)                 \
@@ -65,26 +68,26 @@ inline int getDataTypeSize(DataType dtype) {
 #undef EACH
 }
 
-#define FOR_ALL_DTYPES(enum_type, Dtype, ...)                        \
-    switch (enum_type) {                                             \
-        case FLOAT: {                                                \
-            typedef float Dtype;                                     \
-            { __VA_ARGS__ }                                          \
-        } break;                                                     \
-        case DOUBLE: {                                               \
-            typedef double Dtype;                                    \
-            { __VA_ARGS__ }                                          \
-        } break;                                                     \
-        case INT32: {                                                \
-            typedef int32_t Dtype;                                   \
-            { __VA_ARGS__ }                                          \
-        } break;                                                     \
-        case INT64: {                                                \
-            typedef int64_t Dtype;                                   \
-            { __VA_ARGS__ }                                          \
-        } break;                                                     \
-        default:                                                     \
-            std::cerr << "Unsupported type:  " << enum_type << "\n"; \
+#define FOR_ALL_DTYPES(enum_type, Dtype, ...)                             \
+    switch (enum_type) {                                                  \
+        case FLOAT: {                                                     \
+            typedef float Dtype;                                          \
+            { __VA_ARGS__ }                                               \
+        } break;                                                          \
+        case DOUBLE: {                                                    \
+            typedef double Dtype;                                         \
+            { __VA_ARGS__ }                                               \
+        } break;                                                          \
+        case INT32: {                                                     \
+            typedef int32_t Dtype;                                        \
+            { __VA_ARGS__ }                                               \
+        } break;                                                          \
+        case INT64: {                                                     \
+            typedef int64_t Dtype;                                        \
+            { __VA_ARGS__ }                                               \
+        } break;                                                          \
+        default:                                                          \
+            std::cerr << "Unsupported data type:  " << enum_type << "\n"; \
     }
 
 }  // namespace magmadnn

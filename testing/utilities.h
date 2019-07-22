@@ -70,6 +70,7 @@ const char* get_memory_type_name(magmadnn::memory_t mem) {
     }
 }
 
+/*
 template <typename T>
 void sync(magmadnn::Tensor<T>* t) {
 #if defined(_HAS_CUDA_)
@@ -79,3 +80,4 @@ void sync(magmadnn::Tensor<T>* t) {
         t->get_memory_manager()->sync(true);
 #endif
 }
+*/

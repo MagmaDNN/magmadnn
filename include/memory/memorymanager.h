@@ -81,7 +81,8 @@ class MemoryManager {
      *  @param src the array to copy into this.
      *  @return the error code (0 - good, 1 - not enough memory)
      */
-    magmadnn_error_t copy_from_host(void* src, index_t begin_idx, size_t size);
+    template <typename T>
+    magmadnn_error_t copy_from_host(const T* src, index_t begin_idx, size_t size);
 
 #if defined(_HAS_CUDA_)
     /** copies memory from a device ptr into this memorymanager. will throw an error if it
@@ -89,21 +90,24 @@ class MemoryManager {
      *  @param src the array to copy into this.
      *  @return the error code (0 - good, 1 - not enough memory)
      */
-    magmadnn_error_t copy_from_device(void* src, index_t begin_idx, size_t size);
+    template <typename T>
+    magmadnn_error_t copy_from_device(const T* src, index_t begin_idx, size_t size);
 
     /** copies memory from a managed ptr into this memorymanager. will throw an error if it
      *  reaches the end of src allocated mem before this is filled.
      *  @param src the array to copy into this.
      *  @return the error code (0 - good, 1 - not enough memory)
      */
-    magmadnn_error_t copy_from_managed(void* host_src, void* device_src, index_t begin_idx, size_t size);
+    template <typename T>
+    magmadnn_error_t copy_from_managed(const T* host_src, const T* device_src, index_t begin_idx, size_t size);
 
     /** copies memory from a cuda managed ptr into this memorymanager. will throw an error if it
      *  reaches the end of src allocated mem before this is filled.
      *  @param src the array to copy into this.
      *  @return the error code (0 - good, 1 - not enough memory)
      */
-    magmadnn_error_t copy_from_cudamanaged(void* src, index_t begin_idx, size_t size);
+    template <typename T>
+    magmadnn_error_t copy_from_cudamanaged(const T* src, index_t begin_idx, size_t size);
 #endif
 
     /** If MANAGED or CUDA_MANAGED this ensures that data is the same on all devices. It
@@ -192,6 +196,8 @@ class MemoryManager {
     size_t get_size() const { return size_; }
 
     size_t size() const { return size_; }
+
+    DataType dtype() const { return dtype_; }
 
     /** Returns the memory type of this memory manager.
      * @return memory_t

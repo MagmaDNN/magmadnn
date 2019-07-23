@@ -20,24 +20,25 @@ inline static void launchMappedKernelCPU(const size_t SIZE, Args... args) {
     const int n_threads = 1; /* TODO -- calculate num threads */
     if (n_threads < 2) {
         for (size_t i = 0; i < SIZE; i++) {
-            Mapper::map(i, args);
+            Mapper::map(i, args...);
         }
     } else {
 #pragma omp parallel for num_threads(n_threads)
         for (size_t i = 0; i < SIZE; i++) {
-            Mapper::map(i, args);
+            Mapper::map(i, args...);
         }
     }
 #else
     for (size_t i = 0; i < SIZE; i++) {
-        Mapper::map(i, args);
+        Mapper::map(i, args...);
     }
 #endif
 }
 
-
+#if defined(_HAS_CUDA_)
 template <typename Mapper, typename Dtype, typename... Args>
 inline static void launchMappedKernelGPU(const size_t SIZE, Args... args);
+#endif
 
 }  // namespace math
 }  // namespace magmadnn

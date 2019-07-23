@@ -59,8 +59,15 @@ inline void curandAssert(curandStatus_t code, const char *file, int line, bool a
 #define OP_IS_MATRIX(op_ptr) ((op_ptr)->get_output_shape().size() == 2)
 #define OP_IS_N_DIMENSIONAL(op_ptr, N) ((op_ptr)->get_output_shape().size() == N)
 
+/* TODO -- change T_IS_SAME_MEMORY_TYPE to T_PTR_IS_SAME_MEMORY_TYPE
+    not changed yet, so as not to break things
+*/
 #define T_IS_SAME_MEMORY_TYPE(x_ptr, y_ptr) ((x_ptr)->get_memory_type() == (y_ptr)->get_memory_type())
+#define T_SAME_MEM_TYPE(x, y) ((x).get_memory_type() == (y).get_memory_type())
 #define OP_IS_SAME_MEMORY_TYPE(x_ptr, y_ptr) ((x_ptr)->get_memory_type() == (y_ptr)->get_memory_type())
+
+#define T_IS_SAME_DTYPE(x, y) ((x).dtype() == (y).dtype())
+#define TYPES_MATCH(type, type_enum) (GetDataType<type>::value == type_enum)
 
 #if defined(NDEBUG)
 #define MAGMADNN_ASSERT(ans, message) ((void) 0)

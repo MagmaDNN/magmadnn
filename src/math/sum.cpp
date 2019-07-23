@@ -12,32 +12,33 @@ namespace magmadnn {
 namespace math {
 
 template <typename T>
-void sum(const std::vector<Tensor<T>*>& tensors, Tensor<T>* out) {
+void sum(const std::vector<std::reference_wrapper<const Tensor>>& tensors, Tensor& out) {
     /* early exit */
     if (tensors.size() == 0) return;
 
     /* iterate over all the tensors and ensure the same memory type */
     for (const auto& t : tensors) {
-        assert(T_IS_SAME_MEMORY_TYPE(out, t));
+        MAGMADNN_ASSERT(T_SAME_MEM_TYPE(out, t), "memory types must be equal");
     }
 
-    if (out->get_memory_type() == HOST) {
+    if (out.get_memory_type() == HOST) {
         T* out_ptr = out->get_ptr();
-        T* t_ptr;
-        unsigned int size = out->get_size();
+        size_t size = out->get_size();
 
         /* iterate over tensors first for cache efficiency */
-        for (typename std::vector<Tensor<T>*>::const_iterator it = tensors.begin(); it != tensors.end(); it++) {
-            t_ptr = (*it)->get_ptr(); /* get the pointer to this tensors memory */
+        bool first = true;
+        for (const auto& t : tensors) {
+            const T* t_ptr = t.get().get_ptr<T>();
 
-            if (it == tensors.begin()) {
+            if (first) {
                 /* assign if we're the first element */
-                for (unsigned int i = 0; i < size; i++) {
+                for (index_t i = 0; i < size; i++) {
                     out_ptr[i] = t_ptr[i];
                 }
+                first = false;
             } else {
                 /* continue to accumulate after first element */
-                for (unsigned int i = 0; i < size; i++) {
+                for (index_t i = 0; i < size; i++) {
                     out_ptr[i] += t_ptr[i];
                 }
             }
@@ -49,9 +50,9 @@ void sum(const std::vector<Tensor<T>*>& tensors, Tensor<T>* out) {
     }
 #endif
 }
-template void sum(const std::vector<Tensor<int>*>& tensors, Tensor<int>* out);
-template void sum(const std::vector<Tensor<float>*>& tensors, Tensor<float>* out);
-template void sum(const std::vector<Tensor<double>*>& tensors, Tensor<double>* out);
+#define COMPILE_SUM(type) template void sum<type>(const std::vector<std::reference_wrapper<const Tensor>>&, Tensor&);
+CALL_FOR_ALL_TYPES(COMPILE_SUM)
+#undef COMPILE_SUM
 
 }  // namespace math
 }  // namespace magmadnn

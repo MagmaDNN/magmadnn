@@ -12,24 +12,31 @@ namespace magmadnn {
 namespace math {
 
 template <typename T>
-void dropout(Tensor<T> *x, Tensor<T> *out, Tensor<T> *mask, float dropout_rate) {
-    if (out->get_memory_type() == HOST) {
-        float p = 1.0f - dropout_rate;
-        Tensor<T> a(mask->get_shape(), {MASK, {static_cast<T>(p), static_cast<T>(1.0f / p)}}, mask->get_memory_type());
-        mask->copy_from(a);
-        math::product(mask, x, out);
+void dropout(const Tensor &x, Tensor &out, const Tensor &mask, float dropout_rate) {
+    if (out.get_memory_type() == HOST) {
+        // float p = 1.0f - dropout_rate;
+        /* TODO -- generate mask in dropout op */
+        // Tensor<T> a(mask->get_shape(), {MASK, {static_cast<double>(p), static_cast<T>(1.0f / p)}},
+        // mask->get_memory_type()); mask->copy_from(a);
+        // math::product<T>(mask, x, out);
+
+        /* compute the product between x and mask into out */
+        math::launchMappedKernelCPU<product_map, T>(out.size(), x.get_ptr<T>(), mask.get_ptr<T>(), out.get_ptr<T>());
     } else {
-        fprintf(stderr, "For dropout on GPU, please use dropout_device\n");
+        LOG(ERROR) << "For dropout on GPU, please use dropout_device\n";
     }
 }
-template void dropout(Tensor<int> *x, Tensor<int> *out, Tensor<int> *mask, float dropout_rate);
-template void dropout(Tensor<float> *x, Tensor<float> *out, Tensor<float> *mask, float dropout_rate);
-template void dropout(Tensor<double> *x, Tensor<double> *out, Tensor<double> *mask, float dropout_rate);
+#define COMPILE_DROPOUT(type) template void dropout<type>(const Tensor &, Tensor &, const Tensor &, float);
+CALL_FOR_ALL_TYPES(COMPILE_DROPOUT)
+#undef COMPILE_DROPOUT
 
 template <typename T>
-void dropout_grad(Tensor<T> *grad, Tensor<T> *out, Tensor<T> *mask) {
-    if (out->get_memory_type() == HOST) {
-        math::product(mask, grad, out);
+void dropout_grad(const Tensor &grad, Tensor &out, const Tensor &mask) {
+    if (out.get_memory_type() == HOST) {
+        // math::product<T>(mask, grad, out);
+
+        /* compute the product between grad and mask into out */
+        math::launchMappedKernelCPU<product_map, T>(out.size(), grad.get_ptr<T>(), mask.get_ptr<T>(), out.get_ptr<T>());
     }
 #if defined(_HAS_CUDA_)
     else {
@@ -37,38 +44,36 @@ void dropout_grad(Tensor<T> *grad, Tensor<T> *out, Tensor<T> *mask) {
     }
 #endif
 }
-template void dropout_grad(Tensor<int> *grad, Tensor<int> *out, Tensor<int> *mask);
-template void dropout_grad(Tensor<float> *grad, Tensor<float> *out, Tensor<float> *mask);
-template void dropout_grad(Tensor<double> *grad, Tensor<double> *out, Tensor<double> *mask);
+#define COMPILE_DROPOUTGRAD(type) template void dropout_grad<type>(const Tensor &, Tensor &, const Tensor &);
+CALL_FOR_ALL_TYPES(COMPILE_DROPOUTGRAD)
+#undef COMPILE_DROPOUTGRAD
 
 #if defined(_HAS_CUDA_)
 template <typename T>
-void dropout_device(Tensor<T> *x, Tensor<T> *out, cudnn_dropout_settings_t settings,
+void dropout_device(const Tensor &x, Tensor &out, cudnn_dropout_settings_t settings,
                     cudnn_dropout_shared_settings_t shared) {
-    cudnnErrchk(cudnnDropoutForward(settings.handle, shared.dropoutDesc, settings.xdesc, (void *) x->get_ptr(),
-                                    settings.ydesc, (void *) out->get_ptr(), shared.reserveSpace,
+    cudnnErrchk(cudnnDropoutForward(settings.handle, shared.dropoutDesc, settings.xdesc, (void *) x.get_ptr<T>(),
+                                    settings.ydesc, (void *) out.get_ptr<T>(), shared.reserveSpace,
                                     shared.reserveSpaceSizeInBytes));
 }
-template void dropout_device(Tensor<int> *x, Tensor<int> *out, cudnn_dropout_settings_t settings,
-                             cudnn_dropout_shared_settings_t shared);
-template void dropout_device(Tensor<float> *x, Tensor<float> *out, cudnn_dropout_settings_t settings,
-                             cudnn_dropout_shared_settings_t shared);
-template void dropout_device(Tensor<double> *x, Tensor<double> *out, cudnn_dropout_settings_t settings,
-                             cudnn_dropout_shared_settings_t shared);
+#define COMPILE_DROPOUT_DEVICE(type)                                                       \
+    template void dropout_device<type>(const Tensor &, Tensor &, cudnn_dropout_settings_t, \
+                                       cudnn_dropout_shared_settings_t);
+CALL_FOR_ALL_TYPES(COMPILE_DROPOUT_DEVICE)
+#undef COMPILE_DROPOUT_DEVICE
 
 template <typename T>
-void dropout_grad_device(Tensor<T> *grad, Tensor<T> *out, cudnn_dropout_grad_settings_t settings,
+void dropout_grad_device(const Tensor &grad, Tensor &out, cudnn_dropout_grad_settings_t settings,
                          cudnn_dropout_shared_settings_t shared) {
-    cudnnErrchk(cudnnDropoutBackward(settings.handle, shared.dropoutDesc, settings.dydesc, (void *) grad->get_ptr(),
-                                     settings.dxdesc, (void *) out->get_ptr(), shared.reserveSpace,
+    cudnnErrchk(cudnnDropoutBackward(settings.handle, shared.dropoutDesc, settings.dydesc, (void *) grad.get_ptr<T>(),
+                                     settings.dxdesc, (void *) out.get_ptr<T>(), shared.reserveSpace,
                                      shared.reserveSpaceSizeInBytes));
 }
-template void dropout_grad_device(Tensor<int> *grad, Tensor<int> *out, cudnn_dropout_grad_settings_t settings,
-                                  cudnn_dropout_shared_settings_t shared);
-template void dropout_grad_device(Tensor<float> *grad, Tensor<float> *out, cudnn_dropout_grad_settings_t settings,
-                                  cudnn_dropout_shared_settings_t shared);
-template void dropout_grad_device(Tensor<double> *grad, Tensor<double> *out, cudnn_dropout_grad_settings_t settings,
-                                  cudnn_dropout_shared_settings_t shared);
+#define COMPILE_DROPOUTGRAD_DEVICE(type)                                                             \
+    template void dropout_grad_device<type>(const Tensor &, Tensor &, cudnn_dropout_grad_settings_t, \
+                                            cudnn_dropout_shared_settings_t);
+CALL_FOR_ALL_TYPES(COMPILE_DROPOUTGRAD_DEVICE)
+#undef COMPILE_DROPOUTGRAD_DEVICE
 
 #endif
 

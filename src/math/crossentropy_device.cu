@@ -33,16 +33,15 @@ __device__ double atomicAdd(double *address, double val) {
 #endif
 
 template <typename T>
-__device__ T log_device(T val) {
+__device__ __forceinline__ T log_device(T val) {
     return log(val);
 }
-template <>
-__device__ int log_device(int val) {
-    return (int) log((float) val);
-}
+#define SPECIALIZE_LOGDEVICE_INT(int_type) template <> __device__ __forceinline__ int_type log_device(int_type val) { return (int_type) log((float)val); }
+CALL_FOR_ALL_INT_TYPES(SPECIALIZE_LOGDEVICE_INT)
+#undef SPECIALIZE_LOGDEVICE_INT
 
 template <typename T>
-__global__ void kernel_crossentropy_device(T *predicted, T *ground_truth, T *_partial_out, unsigned int n_samples,
+__global__ void kernel_crossentropy_device(const T *predicted, const T *ground_truth, T *_partial_out, unsigned int n_samples,
                                            unsigned int n_classes) {
     __shared__ T cache[BLK_SIZE];
     unsigned int idx = blockDim.x * blockIdx.x + threadIdx.x;
@@ -75,10 +74,10 @@ __global__ void kernel_crossentropy_device(T *predicted, T *ground_truth, T *_pa
 }
 
 template <typename T>
-void crossentropy_device(Tensor<T> *predicted, Tensor<T> *ground_truth, Tensor<T> *out) {
-    unsigned int n_classes = predicted->get_shape(1);
-    unsigned int n_samples = predicted->get_shape(0);
-    unsigned int size = n_samples * n_classes;
+void crossentropy_device(const Tensor& predicted, const Tensor& ground_truth, Tensor &out) {
+    index_t n_classes = predicted.shape(1);
+    index_t n_samples = predicted.shape(0);
+    size_t size = n_samples * n_classes;
 
     T *_partial_sum, *_dev_partial_sum;
     T sum;
@@ -88,24 +87,25 @@ void crossentropy_device(Tensor<T> *predicted, Tensor<T> *ground_truth, Tensor<T
     cudaMalloc((void **) &_dev_partial_sum, BLK_SIZE * sizeof(T));
 
     kernel_crossentropy_device<<<(size + BLK_SIZE - 1) / BLK_SIZE, BLK_SIZE>>>(
-        predicted->get_ptr(), ground_truth->get_ptr(), _dev_partial_sum, n_samples, n_classes);
+        predicted.get_ptr<T>(), ground_truth.get_ptr<T>(), _dev_partial_sum, n_samples, n_classes);
 
     /* copy values from device to host and sum the individual block sums */
     cudaMemcpy(_partial_sum, _dev_partial_sum, BLK_SIZE * sizeof(T), cudaMemcpyDeviceToHost);
     sum = (T) 0;
+    
     for (unsigned int i = 0; i < BLK_SIZE; i++) {
         sum += _partial_sum[i];
     }
     sum /= (T) n_samples;
 
-    out->set(0, -sum);
+    out.set<T>(0, -sum);
 
     delete _partial_sum;
     cudaFree(_dev_partial_sum);
 }
-template void crossentropy_device(Tensor<int> *predicted, Tensor<int> *ground_truth, Tensor<int> *out);
-template void crossentropy_device(Tensor<float> *predicted, Tensor<float> *ground_truth, Tensor<float> *out);
-template void crossentropy_device(Tensor<double> *predicted, Tensor<double> *ground_truth, Tensor<double> *out);
+#define COMPILE_CROSSENTROPY_DEVICE(type) template void crossentropy_device<type>(const Tensor&, const Tensor&, Tensor&);
+CALL_FOR_ALL_TYPES(COMPILE_CROSSENTROPY_DEVICE)
+#undef COMPILE_CROSSENTROPY_DEVICE
 
 }  // namespace math
 }  // namespace magmadnn

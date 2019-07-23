@@ -24,6 +24,6 @@ namespace magmadnn {
 namespace math {
 
 template <typename T>
-void matmul(T alpha, bool trans_A, Tensor<T> *A, bool trans_B, Tensor<T> *B, T beta, Tensor<T> *C);
+void matmul(T alpha, bool trans_A, const Tensor &A, bool trans_B, const Tensor &B, T beta, Tensor &C);
 }
 }  // namespace magmadnn

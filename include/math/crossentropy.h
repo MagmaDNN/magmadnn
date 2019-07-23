@@ -22,11 +22,11 @@ namespace math {
  * @param out scalar tensor
  */
 template <typename T>
-void crossentropy(Tensor<T> *predicted, Tensor<T> *ground_truth, Tensor<T> *out);
+void crossentropy(const Tensor &predicted, const Tensor &ground_truth, Tensor &out);
 
 #if defined(_HAS_CUDA_)
 template <typename T>
-void crossentropy_device(Tensor<T> *predicted, Tensor<T> *ground_truth, Tensor<T> *out);
+void crossentropy_device(const Tensor &predicted, const Tensor &ground_truth, Tensor &out);
 #endif
 
 }  // namespace math

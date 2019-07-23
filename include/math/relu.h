@@ -19,10 +19,10 @@ namespace magmadnn {
 namespace math {
 
 template <typename T>
-void relu(Tensor<T> *x, Tensor<T> *out);
+void relu(const Tensor &x, Tensor &out);
 
 template <typename T>
-void relu_grad(Tensor<T> *x, Tensor<T> *relu_out, Tensor<T> *grad, Tensor<T> *out);
+void relu_grad(const Tensor &x, const Tensor &relu_out, const Tensor &grad, Tensor &out);
 
 #if defined(_HAS_CUDA_)
 
@@ -31,10 +31,10 @@ struct relu_cudnn_settings_t {
 };
 
 template <typename T>
-void relu_device(Tensor<T> *x, Tensor<T> *out, relu_cudnn_settings_t settings);
+void relu_device(const Tensor &x, Tensor &out, relu_cudnn_settings_t settings);
 
 template <typename T>
-void relu_grad_device(Tensor<T> *x, Tensor<T> *relu_out, Tensor<T> *grad, Tensor<T> *out,
+void relu_grad_device(const Tensor &x, const Tensor &relu_out, const Tensor &grad, Tensor &out,
                       relu_cudnn_settings_t settings);
 #endif
 

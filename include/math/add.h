@@ -14,11 +14,11 @@ namespace magmadnn {
 namespace math {
 
 template <typename T>
-void add_in_place(T alpha, Tensor<T> *x, T beta, Tensor<T> *out);
+void add_in_place(T alpha, const Tensor &x, T beta, Tensor &out);
 
 #if defined(_HAS_CUDA_)
 template <typename T>
-void add_in_place_device(T alpha, Tensor<T> *x, T beta, Tensor<T> *out);
+void add_in_place_device(T alpha, const Tensor &x, T beta, Tensor &out);
 #endif
 
 }  // namespace math

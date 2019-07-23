@@ -15,11 +15,11 @@ namespace magmadnn {
 namespace math {
 
 template <typename T>
-void sum(const std::vector<Tensor<T>*>& tensors, Tensor<T>* out);
+void sum(const std::vector<std::reference_wrapper<const Tensor>>& tensors, Tensor& out);
 
 #if defined(_HAS_CUDA_)
 template <typename T>
-void sum_device(const std::vector<Tensor<T>*>& tensors, Tensor<T>* out);
+void sum_device(const std::vector<std::reference_wrapper<const Tensor>>& tensors, Tensor& out);
 #endif
 
 }  // namespace math

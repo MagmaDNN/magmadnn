@@ -20,7 +20,7 @@ namespace math {
  * @param C axis dim size should equal sum of A and B axis dim size
  */
 template <typename T>
-void concat(Tensor<T> *A, Tensor<T> *B, Tensor<T> *C, unsigned int axis);
+void concat(const Tensor &A, const Tensor &B, Tensor &C, index_t axis);
 
 }  // namespace math
 }  // namespace magmadnn

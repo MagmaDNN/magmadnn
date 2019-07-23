@@ -8,7 +8,8 @@
  */
 #pragma once
 
-#include "math/product.h"
+#include "math/binary_math_operations.h"
+#include "math/launch_math_kernel.h"
 #include "tensor/tensor.h"
 #include "types.h"
 #include "utilities_internal.h"
@@ -43,18 +44,18 @@ struct cudnn_dropout_shared_settings_t {
 #endif
 
 template <typename T>
-void dropout(Tensor<T> *x, Tensor<T> *out, Tensor<T> *mask, float dropout_rate);
+void dropout(const Tensor &x, Tensor &out, const Tensor &mask, float dropout_rate);
 
 template <typename T>
-void dropout_grad(Tensor<T> *grad, Tensor<T> *out, Tensor<T> *mask);
+void dropout_grad(const Tensor &grad, Tensor &out, const Tensor &mask);
 
 #if defined(_HAS_CUDA_)
 template <typename T>
-void dropout_device(Tensor<T> *x, Tensor<T> *out, cudnn_dropout_settings_t settings,
+void dropout_device(const Tensor &x, Tensor &out, cudnn_dropout_settings_t settings,
                     cudnn_dropout_shared_settings_t shared);
 
 template <typename T>
-void dropout_grad_device(Tensor<T> *grad, Tensor<T> *out, cudnn_dropout_grad_settings_t settings,
+void dropout_grad_device(const Tensor &grad, Tensor &out, cudnn_dropout_grad_settings_t settings,
                          cudnn_dropout_shared_settings_t shared);
 #endif
 

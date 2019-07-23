@@ -39,17 +39,18 @@ struct cudnn_softmax_grad_settings_t {
 #endif
 
 template <typename T>
-void softmax(Tensor<T> *x, Tensor<T> *out);
+void softmax(const Tensor &x, Tensor &out);
 
 template <typename T>
-void softmax_grad(Tensor<T> *softmax, Tensor<T> *grad, Tensor<T> *out);
+void softmax_grad(const Tensor &softmax, const Tensor &grad, Tensor &out);
 
 #if defined(_HAS_CUDA_)
 template <typename T>
-void softmax_device(Tensor<T> *x, Tensor<T> *out, cudnn_softmax_settings_t settings);
+void softmax_device(const Tensor &x, Tensor &out, cudnn_softmax_settings_t settings);
 
 template <typename T>
-void softmax_grad_device(Tensor<T> *y, Tensor<T> *grad, Tensor<T> *out, cudnn_softmax_grad_settings_t settings);
+void softmax_grad_device(const Tensor &softmax, const Tensor &grad, Tensor &out,
+                         cudnn_softmax_grad_settings_t settings);
 #endif
 
 }  // namespace math

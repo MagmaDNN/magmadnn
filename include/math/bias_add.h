@@ -15,11 +15,11 @@ namespace magmadnn {
 namespace math {
 
 template <typename T>
-void bias_add(Tensor<T> *x, Tensor<T> *bias, Tensor<T> *out);
+void bias_add(const Tensor &x, const Tensor &bias, Tensor &out);
 
 #if defined(_HAS_CUDA_)
 template <typename T>
-void bias_add_device(Tensor<T> *x, Tensor<T> *bias, Tensor<T> *out);
+void bias_add_device(const Tensor &x, const Tensor &bias, Tensor &out);
 #endif
 
 }  // namespace math

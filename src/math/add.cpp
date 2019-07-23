@@ -12,16 +12,18 @@ namespace magmadnn {
 namespace math {
 
 template <typename T>
-void add_in_place(T alpha, Tensor<T> *x, T beta, Tensor<T> *out) {
-    assert(x->get_size() == out->get_size());
-    assert(T_IS_SAME_MEMORY_TYPE(x, out));
+void add_in_place(T alpha, const Tensor &x, T beta, Tensor &out) {
+    MAGMADNN_ASSERT(T_IS_SAME_DTYPE(x, out), "data type mismatch");
+    MAGMADNN_ASSERT(TYPES_MATCH(T, x.dtype()), "data type mismatch");
+    MAGMADNN_ASSERT(x->get_size() == out->get_size(), "sizes must match");
+    MAGMADNN_ASSERT(T_IS_SAME_MEMORY_TYPE(x, out), "memory type mismatch");
 
-    if (out->get_memory_type() == HOST) {
-        T *x_ptr = x->get_ptr();
-        T *out_ptr = out->get_ptr();
-        unsigned int size = out->get_size();
+    if (out.get_memory_type() == HOST) {
+        const T *x_ptr = x.get_ptr<T>();
+        T *out_ptr = out.get_ptr<T>();
+        size_t size = out.size();
 
-        for (unsigned int i = 0; i < size; i++) {
+        for (index_t i = 0; i < size; i++) {
             out_ptr[i] = alpha * x_ptr[i] + beta * out_ptr[i];
         }
     }
@@ -31,16 +33,16 @@ void add_in_place(T alpha, Tensor<T> *x, T beta, Tensor<T> *out) {
     }
 #endif
 }
-template void add_in_place(int alpha, Tensor<int> *x, int beta, Tensor<int> *out);
-template void add_in_place(float alpha, Tensor<float> *x, float beta, Tensor<float> *out);
-template void add_in_place(double alpha, Tensor<double> *x, double beta, Tensor<double> *out);
+#define COMPILE_ADDINPLACE(type) template void add_in_place(type, const Tensor &, type, Tensor &);
+CALL_FOR_ALL_TYPES(COMPILE_ADDINPLACE)
+#undef COMPILE_ADDINPLACE
 
 #if defined(_HAS_CUDA_)
 template <typename T>
-void add_in_place_device(T alpha, Tensor<T> *x, T beta, Tensor<T> *out) {
+void add_in_place_device(T alpha, const Tensor &x, T beta, Tensor &out) {
     cudnnErrchk(cudnnAddTensor(::magmadnn::internal::MAGMADNN_SETTINGS->cudnn_handle, &alpha,
-                               x->get_cudnn_tensor_descriptor(), x->get_ptr(), &beta,
-                               out->get_cudnn_tensor_descriptor(), out->get_ptr()));
+                               x.get_cudnn_tensor_descriptor(), x.get_ptr<T>(), &beta,
+                               out.get_cudnn_tensor_descriptor(), out.get_ptr<T>()));
 }
 #endif
 

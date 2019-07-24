@@ -1,6 +1,6 @@
 
 #include "compute/batchnorm/batchnormop.h"
-#include <iostream>
+
 namespace magmadnn {
 namespace op {
 

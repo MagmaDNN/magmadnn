@@ -632,11 +632,6 @@ void test_batchnorm(memory_t mem_type, unsigned int size) {
     sync(grad);
     sync(d_flatten_wrt_x);
 
-    for (int i = 0; i < 10; i++) printf("%.6g ", grad->get(i));
-    printf("\n");
-    for (int i = 0; i < 10; i++) printf("%.6g ", d_flatten_wrt_x->get(i));
-    printf("\n");
-
     show_success();
 }
 

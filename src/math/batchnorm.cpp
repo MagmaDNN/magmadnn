@@ -53,7 +53,6 @@ void batchnorm_device(Tensor<T> *x, Tensor<T> *out, Tensor<T> *bn_scale, Tensor<
     T alpha = static_cast<T>(1), beta = static_cast<T>(0);
     double epsilon = 1E-8;
     num_calls++;
-    printf("num calls: %d \n", num_calls);
 
     cudnnErrchk(cudnnBatchNormalizationForwardTraining(
         settings.handle, settings.mode, &alpha, &beta, x->get_cudnn_tensor_descriptor(), x->get_ptr(),
@@ -82,36 +81,11 @@ void batchnorm_grad_device(Tensor<T> *x, Tensor<T> *grad, Tensor<T> *out, Tensor
     T beta_data = static_cast<T>(0), beta_params = static_cast<T>(0);
     double epsilon = 1E-8;
 
-    printf("before: \n");
-    for (int i = 0; i < 5; i++) printf("%.6g ", x->get(i));
-    printf("\n");
-    for (int i = 0; i < 5; i++) printf("%.6g ", grad->get(i));
-    printf("\n");
-    for (int i = 0; i < 5; i++) printf("%.6g ", out->get(i));
-    printf("\n");
-
-    for (int i = 0; i < 3; i++) printf("%.6g ", bn_scale_diff->get(i));
-    printf("\n");
-    for (int i = 0; i < 3; i++) printf("%.6g ", bn_bias_diff->get(i));
-    printf("\n");
     cudnnErrchk(cudnnBatchNormalizationBackward(
         settings.handle, settings.mode, &alpha_data, &beta_data, &alpha_params, &beta_params,
         x->get_cudnn_tensor_descriptor(), x->get_ptr(), grad->get_cudnn_tensor_descriptor(), grad->get_ptr(),
         out->get_cudnn_tensor_descriptor(), out->get_ptr(), settings.bn_tensor_desc, bn_scale->get_ptr(),
         bn_scale_diff->get_ptr(), bn_bias_diff->get_ptr(), epsilon, saved_mean->get_ptr(), saved_variance->get_ptr()));
-
-    printf("after: \n");
-    for (int i = 0; i < 5; i++) printf("%.6g ", x->get(i));
-    printf("\n");
-    for (int i = 0; i < 5; i++) printf("%.6g ", grad->get(i));
-    printf("\n");
-    for (int i = 0; i < 5; i++) printf("%.6g ", out->get(i));
-    printf("\n");
-
-    for (int i = 0; i < 3; i++) printf("%.6g ", bn_scale_diff->get(i));
-    printf("\n");
-    for (int i = 0; i < 3; i++) printf("%.6g ", bn_bias_diff->get(i));
-    printf("\n");
 }
 template void batchnorm_grad_device(Tensor<int> *x, Tensor<int> *grad, Tensor<int> *out, Tensor<int> *bn_scale,
                                     Tensor<int> *bn_scale_diff, Tensor<int> *bn_bias_diff, Tensor<int> *saved_mean,

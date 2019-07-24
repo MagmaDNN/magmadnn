@@ -90,4 +90,14 @@ inline int getDataTypeSize(DataType dtype) {
             std::cerr << "Unsupported data type:  " << enum_type << "\n"; \
     }
 
+#if defined(GENERIC_INLINE)
+#error "GENERIC_INLINE macro is used by magmadnn"
+#else
+#if defined(__CUDACC__) && defined(_HAS_CUDA_)
+#define GENERIC_INLINE inline __attribute__((always_inline)) __device__ __host__
+#else
+#define GENERIC_INLINE inline __attribute__((always_inline))
+#endif
+#endif
+
 }  // namespace magmadnn

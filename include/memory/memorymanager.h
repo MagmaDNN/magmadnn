@@ -117,7 +117,7 @@ class MemoryManager {
      * By default true.
      * @return an error code
      */
-    magmadnn_error_t sync(bool gpu_was_modified = true);
+    magmadnn_error_t sync(bool gpu_was_modified = true) const;
 
     /** Changes the device this memory manager points to. Note that the memory type
      *  is still the same, but the device_id will be different.

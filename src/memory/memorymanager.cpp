@@ -253,7 +253,7 @@ magmadnn_error_t MemoryManager::copy_from_cudamanaged(const T* src, index_t begi
 }
 #endif
 
-magmadnn_error_t MemoryManager::sync(bool gpu_was_modified) {
+magmadnn_error_t MemoryManager::sync(bool gpu_was_modified) const {
 #if defined(_HAS_CUDA_)
     cudaError_t err = (cudaError_t) 0;
 

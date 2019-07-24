@@ -24,11 +24,11 @@
 
 #include "memory/memorymanager.h"
 #include "tensor/tensor.h"
-/*#include "tensor/tensor_io.h"
+#include "tensor/tensor_io.h"
 
 #include "math/tensor_math.h"
 
-#include "compute/gradients.h"
+/*#include "compute/gradients.h"
 #include "compute/tensor_operations.h"
 #include "compute/variable.h"
 

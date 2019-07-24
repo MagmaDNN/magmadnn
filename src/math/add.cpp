@@ -15,8 +15,8 @@ template <typename T>
 void add_in_place(T alpha, const Tensor &x, T beta, Tensor &out) {
     MAGMADNN_ASSERT(T_IS_SAME_DTYPE(x, out), "data type mismatch");
     MAGMADNN_ASSERT(TYPES_MATCH(T, x.dtype()), "data type mismatch");
-    MAGMADNN_ASSERT(x->get_size() == out->get_size(), "sizes must match");
-    MAGMADNN_ASSERT(T_IS_SAME_MEMORY_TYPE(x, out), "memory type mismatch");
+    MAGMADNN_ASSERT(x.size() == out.size(), "sizes must match");
+    // MAGMADNN_ASSERT(T_IS_SAME_MEMORY_TYPE(x, out), "memory type mismatch");
 
     if (out.get_memory_type() == HOST) {
         const T *x_ptr = x.get_ptr<T>();

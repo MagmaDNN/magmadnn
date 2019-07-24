@@ -13,7 +13,7 @@
 namespace magmadnn {
 namespace math {
 
-
+/*
 template <typename Mapper, typename... Args>
 __global__ void kernel_mapped(size_t SIZE, Args... args) {
     unsigned int idx = blockIdx.x * blockDim.x + threadIdx.x;
@@ -24,11 +24,11 @@ __global__ void kernel_mapped(size_t SIZE, Args... args) {
     }
 }
 
-
 template <typename Mapper, typename Dtype, typename... Args>
-inline static void launchMappedKernelGPU(const size_t SIZE, Args... args) {
-    kernel_mapped<<<(SIZE + BLK_SIZE-1) / BLK_SIZE, BLK_SIZE>>>(SIZE, args...);
+static void launchMappedKernelGPU(const size_t SIZE, Args... args) {
+    kernel_mapped<<<(SIZE + BLK_SIZE - 1) / BLK_SIZE, BLK_SIZE>>>(SIZE, args...);
 }
+*/
 
 }  // namespace math
 }  // namespace magmadnn

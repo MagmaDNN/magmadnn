@@ -9,6 +9,7 @@
 #pragma once
 
 #include "tensor/tensor.h"
+#include "tensor/tensor_utilities.h"
 
 namespace magmadnn {
 namespace math {
@@ -20,7 +21,7 @@ namespace math {
  * @param out
  */
 template <typename T>
-void argmax(Tensor<T> *x, int axis, Tensor<T> *out);
+void argmax(const Tensor &x, int axis, Tensor &out);
 
 }  // namespace math
 }  // namespace magmadnn

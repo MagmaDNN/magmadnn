@@ -6,18 +6,19 @@
  *
  * @copyright Copyright (c) 2019
  */
-
+#pragma once
+#include "data_types.h"
 #include "types.h"
 
 namespace magmadnn {
 namespace math {
 
-#define NEW_BINARY_KERNEL(name, expr)                                                     \
-    struct name##_map {                                                                   \
-        template <typename Dtype>                                                         \
-        inline static void map(index_t idx, const Dtype *a, const Dtype *b, Dtype *out) { \
-            expr;                                                                         \
-        }                                                                                 \
+#define NEW_BINARY_KERNEL(name, expr)                                                             \
+    struct name##_map {                                                                           \
+        template <typename Dtype>                                                                 \
+        GENERIC_INLINE static void map(index_t idx, const Dtype *a, const Dtype *b, Dtype *out) { \
+            expr;                                                                                 \
+        }                                                                                         \
     }
 
 NEW_BINARY_KERNEL(add, out[idx] = a[idx] + b[idx]);
@@ -30,12 +31,12 @@ NEW_BINARY_KERNEL(pow, out[idx] = std::pow(a[idx], b[idx]));
 
 #undef NEW_BINARY_KERNEL
 
-#define NEW_SCALAR_TENSOR_KERNEL(name, expr)                                      \
-    struct name##_map {                                                           \
-        template <typename Dtype>                                                 \
-        static void map(index_t idx, const Dtype a, const Dtype *b, Dtype *out) { \
-            expr;                                                                 \
-        }                                                                         \
+#define NEW_SCALAR_TENSOR_KERNEL(name, expr)                                                     \
+    struct name##_map {                                                                          \
+        template <typename Dtype>                                                                \
+        GENERIC_INLINE static void map(index_t idx, const Dtype a, const Dtype *b, Dtype *out) { \
+            expr;                                                                                \
+        }                                                                                        \
     }
 
 NEW_SCALAR_TENSOR_KERNEL(scalar_tensor_product, out[idx] = a * b[idx]);

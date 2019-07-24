@@ -12,23 +12,25 @@ namespace magmadnn {
 namespace math {
 
 template <typename T>
-void argmax(Tensor<T> *x, int axis, Tensor<T> *out) {
-    const std::vector<unsigned int> &x_shape = x->get_shape();
-    const std::vector<unsigned int> &out_shape = out->get_shape();
+void argmax(const Tensor &x, int axis, Tensor &out) {
+    const std::vector<index_t> &x_shape = x.shape();
+    const std::vector<index_t> &out_shape = out.shape();
     unsigned int x_n_axes = x_shape.size();
 
     assert(out_shape.size() == (x_n_axes - 1));
-    assert(out->get_size() == x_shape[axis]);
-    assert(T_IS_SAME_MEMORY_TYPE(x, out));
+    assert(out.size() == x_shape[axis]);
+    // assert(T_IS_SAME_MEMORY_TYPE(x, out));
+    MAGMADNN_ASSERT(::magmadnn::utilities::do_tensors_match(GetDataType<T>::value, out.get_memory_type(), {x, out}),
+                    "invalid tensors");
 
-    if (out->get_memory_type() == HOST) {
+    if (out.get_memory_type() == HOST) {
         T max, val, arg_max;
-        T *x_ptr = x->get_ptr();
-        T *out_ptr = out->get_ptr();
+        const T *x_ptr = x.get_ptr<T>();
+        T *out_ptr = out.get_ptr<T>();
 
         if (x_n_axes > 2) {
             /* TODO -- implement this */
-            fprintf(stderr, "argmax for tensors with more than 2 axes not supported.\n");
+            LOG(ERROR) << "argmax for tensors with more than 2 axes not supported.\n";
             return;
         } else if (x_n_axes == 2) {
             /* ARG_MAX OF EACH ROW */
@@ -68,13 +70,13 @@ void argmax(Tensor<T> *x, int axis, Tensor<T> *out) {
     }
 #if defined(_HAS_CUDA_)
     else {
-        fprintf(stderr, "Argmax on GPU not yet defined.\n");
+        LOG(ERROR) << "Argmax on GPU not yet defined.\n";
     }
 #endif
 }
-template void argmax(Tensor<int> *x, int axis, Tensor<int> *out);
-template void argmax(Tensor<float> *x, int axis, Tensor<float> *out);
-template void argmax(Tensor<double> *x, int axis, Tensor<double> *out);
+#define comp(type) template void argmax<type>(const Tensor &, int, Tensor &);
+CALL_FOR_ALL_TYPES(comp)
+#undef comp
 
 }  // namespace math
 }  // namespace magmadnn

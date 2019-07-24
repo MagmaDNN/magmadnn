@@ -5,7 +5,7 @@ OBJ_FILES = $(patsubst %.cpp,%.o,$(SRC_FILES))
 
 ifeq ($(USE_CUDA),1)
 CU_FILES = $(wildcard *.cu)
-CU_OBJ_FILES = $(patsubst %.cu,%.o,$(CU_FILES))
+CU_OBJ_FILES = $(patsubst %.cu,%_device.o,$(CU_FILES))
 endif
 
 SUB_DIRS =
@@ -15,7 +15,7 @@ all: $(SUB_DIRS) $(CU_OBJ_FILES) $(OBJ_FILES)
 $(SUB_DIRS):
 	$(MAKE) -C $@
 
-$(CU_OBJ_FILES): %.o: %.cu
+$(CU_OBJ_FILES): %_device.o: %.cu
 	$(NVCC) $(NVCCFLAGS) -o $@ -c $< $(INC) -I../../include
 
 

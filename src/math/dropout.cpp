@@ -21,7 +21,8 @@ void dropout(const Tensor &x, Tensor &out, const Tensor &mask, float dropout_rat
         // math::product<T>(mask, x, out);
 
         /* compute the product between x and mask into out */
-        math::launchMappedKernelCPU<product_map, T>(out.size(), x.get_ptr<T>(), mask.get_ptr<T>(), out.get_ptr<T>());
+        ParallelLauncher<CPU, product_map>::launchMappedKernel(out.size(), x.get_ptr<T>(), mask.get_ptr<T>(),
+                                                               out.get_ptr<T>());
     } else {
         LOG(ERROR) << "For dropout on GPU, please use dropout_device\n";
     }
@@ -36,7 +37,9 @@ void dropout_grad(const Tensor &grad, Tensor &out, const Tensor &mask) {
         // math::product<T>(mask, grad, out);
 
         /* compute the product between grad and mask into out */
-        math::launchMappedKernelCPU<product_map, T>(out.size(), grad.get_ptr<T>(), mask.get_ptr<T>(), out.get_ptr<T>());
+        ParallelLauncher<CPU, product_map>::launchMappedKernel(out.size(), grad.get_ptr<T>(), mask.get_ptr<T>(),
+                                                               out.get_ptr<T>());
+
     }
 #if defined(_HAS_CUDA_)
     else {

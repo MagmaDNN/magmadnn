@@ -19,13 +19,13 @@ namespace magmadnn {
 namespace math {
 
 template <typename T>
-void conv2d(Tensor<T> *x, Tensor<T> *w, Tensor<T> *out);
+void conv2d(const Tensor &x, const Tensor &w, Tensor &out);
 
 template <typename T>
-void conv2d_grad_data(Tensor<T> *w, Tensor<T> *grad, Tensor<T> *out);
+void conv2d_grad_data(const Tensor &w, const Tensor &grad, Tensor &out);
 
 template <typename T>
-void conv2d_grad_filter(Tensor<T> *x, Tensor<T> *grad, Tensor<T> *out);
+void conv2d_grad_filter(const Tensor &x, const Tensor &grad, Tensor &out);
 
 #if defined(_HAS_CUDA_)
 
@@ -44,13 +44,13 @@ struct conv2d_cudnn_settings {
 };
 
 template <typename T>
-void conv2d_device(Tensor<T> *x, Tensor<T> *w, Tensor<T> *out, conv2d_cudnn_settings settings);
+void conv2d_device(const Tensor &x, const Tensor &w, Tensor &out, conv2d_cudnn_settings settings);
 
 template <typename T>
-void conv2d_grad_data_device(Tensor<T> *w, Tensor<T> *grad, Tensor<T> *out, conv2d_cudnn_settings settings);
+void conv2d_grad_data_device(const Tensor &w, const Tensor &grad, Tensor &out, conv2d_cudnn_settings settings);
 
 template <typename T>
-void conv2d_grad_filter_device(Tensor<T> *x, Tensor<T> *grad, Tensor<T> *out, conv2d_cudnn_settings settings);
+void conv2d_grad_filter_device(const Tensor &x, const Tensor &grad, Tensor &out, conv2d_cudnn_settings settings);
 
 #endif
 

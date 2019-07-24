@@ -9,6 +9,7 @@
 #pragma once
 
 #include "tensor/tensor.h"
+#include "tensor/tensor_utilities.h"
 
 namespace magmadnn {
 namespace math {
@@ -19,7 +20,7 @@ namespace math {
  * @param B axis dim should equal A axis dim * t
  */
 template <typename T>
-void tile(Tensor<T> *A, Tensor<T> *B, unsigned int t, unsigned int axis);
+void tile(const Tensor &A, Tensor &B, index_t t, index_t axis);
 
 }  // namespace math
 }  // namespace magmadnn

@@ -14,7 +14,6 @@
 using namespace magmadnn;
 
 void test_matmul(memory_t mem, unsigned int size);
-void test_pow(memory_t mem, unsigned int size);
 void test_relu(memory_t mem, unsigned int size);
 void test_crossentropy(memory_t mem, unsigned int size);
 void test_reduce_sum(memory_t mem, unsigned int size);
@@ -28,7 +27,6 @@ int main(int argc, char **argv) {
     magmadnn_init();
 
     test_for_all_mem_types(test_matmul, 50);
-    test_for_all_mem_types(test_pow, 15);
     test_for_all_mem_types(test_relu, 50);
     test_for_all_mem_types(test_crossentropy, 10);
     test_for_all_mem_types(test_reduce_sum, 10);
@@ -47,40 +45,18 @@ int main(int argc, char **argv) {
 void test_matmul(memory_t mem, unsigned int size) {
     printf("Testing %s matmul...  ", get_memory_type_name(mem));
 
-    Tensor<float> *A = new Tensor<float>({size, size / 2}, {CONSTANT, {1.0f}}, mem);
-    Tensor<float> *B = new Tensor<float>({size, size - 5}, {CONSTANT, {6.0f}}, mem);
-    Tensor<float> *C = new Tensor<float>({size / 2, size - 5}, {ZERO, {}}, mem);
+    Tensor A({size, size / 2}, FLOAT, {CONSTANT, {1.0f}}, mem);
+    Tensor B({size, size - 5}, FLOAT, {CONSTANT, {6.0f}}, mem);
+    Tensor C({size / 2, size - 5}, FLOAT, {ZERO, {}}, mem);
 
-    math::matmul(1.0f, true, A, false, B, 1.0f, C);
+    math::matmul<float>(1.0f, true, A, false, B, 1.0f, C);
 
     sync(C);
 
     for (unsigned int i = 0; i < size / 2; i++) {
         for (unsigned int j = 0; j < size - 5; j++) {
-            MAGMADNN_TEST_ASSERT_FEQUAL_DEFAULT(C->get({i, j}), 300.0f);
+            MAGMADNN_TEST_ASSERT_FEQUAL_DEFAULT(C.get<float>({i, j}), 300.0f);
         }
-    }
-
-    delete A;
-    delete B;
-    delete C;
-    show_success();
-}
-
-void test_pow(memory_t mem, unsigned int size) {
-    printf("Testing %s pow...  ", get_memory_type_name(mem));
-
-    float val = 3.0f;
-
-    Tensor<float> *x = new Tensor<float>({size, size}, {CONSTANT, {val}}, mem);
-    Tensor<float> *out = new Tensor<float>({size, size}, {NONE, {}}, mem);
-
-    math::pow(x, 3, out);
-
-    sync(out);
-
-    for (unsigned int i = 0; i < size * size; i++) {
-        MAGMADNN_TEST_ASSERT_FEQUAL_DEFAULT(out->get(i), 3.0f * 3.0f * 3.0f);
     }
 
     show_success();
@@ -89,13 +65,13 @@ void test_pow(memory_t mem, unsigned int size) {
 void test_relu(memory_t mem, unsigned int size) {
     printf("Testing %s relu...  ", get_memory_type_name(mem));
 
-    Tensor<float> *x = new Tensor<float>({size}, {UNIFORM, {-1.0f, 1.0f}}, mem);
-    Tensor<float> *relu_out = new Tensor<float>({size}, {NONE, {}}, mem);
-    Tensor<float> *grad = new Tensor<float>({size}, {UNIFORM, {0.0f, 1.0f}}, mem);
-    Tensor<float> *relu_grad = new Tensor<float>({size}, {NONE, {}}, mem);
+    Tensor x({size}, FLOAT, {UNIFORM, {-1.0f, 1.0f}}, mem);
+    Tensor relu_out({size}, FLOAT, {NONE, {}}, mem);
+    Tensor grad({size}, FLOAT, {UNIFORM, {0.0f, 1.0f}}, mem);
+    Tensor relu_grad({size}, FLOAT, {NONE, {}}, mem);
 
     if (mem == HOST) {
-        math::relu(x, relu_out);
+        math::relu<float>(x, relu_out);
     }
 #if defined(_HAS_CUDA_)
     else {
@@ -103,7 +79,7 @@ void test_relu(memory_t mem, unsigned int size) {
         cudnnErrchk(cudnnCreateActivationDescriptor(&settings.descriptor));
         cudnnErrchk(
             cudnnSetActivationDescriptor(settings.descriptor, CUDNN_ACTIVATION_RELU, CUDNN_NOT_PROPAGATE_NAN, 1.0));
-        math::relu_device(x, relu_out, settings);
+        math::relu_device<float>(x, relu_out, settings);
         cudnnErrchk(cudnnDestroyActivationDescriptor(settings.descriptor));
     }
 #endif
@@ -112,12 +88,12 @@ void test_relu(memory_t mem, unsigned int size) {
 
     float x_val;
     for (unsigned int i = 0; i < size; i++) {
-        x_val = x->get(i);
-        MAGMADNN_TEST_ASSERT_FEQUAL_DEFAULT(relu_out->get(i), (x_val > 0) ? x_val : 0.0f);
+        x_val = x.get<float>(i);
+        MAGMADNN_TEST_ASSERT_FEQUAL_DEFAULT(relu_out.get<float>(i), (x_val > 0) ? x_val : 0.0f);
     }
 
     if (mem == HOST) {
-        math::relu_grad(x, relu_out, grad, relu_grad);
+        math::relu_grad<float>(x, relu_out, grad, relu_grad);
     }
 #if defined(_HAS_CUDA_)
     else {
@@ -125,7 +101,7 @@ void test_relu(memory_t mem, unsigned int size) {
         cudnnErrchk(cudnnCreateActivationDescriptor(&settings.descriptor));
         cudnnErrchk(
             cudnnSetActivationDescriptor(settings.descriptor, CUDNN_ACTIVATION_RELU, CUDNN_NOT_PROPAGATE_NAN, 1.0));
-        math::relu_grad_device(x, relu_out, grad, relu_grad, settings);
+        math::relu_grad_device<float>(x, relu_out, grad, relu_grad, settings);
         cudnnErrchk(cudnnDestroyActivationDescriptor(settings.descriptor));
     }
 #endif
@@ -133,14 +109,9 @@ void test_relu(memory_t mem, unsigned int size) {
     sync(relu_grad);
 
     for (unsigned int i = 0; i < size; i++) {
-        x_val = x->get(i);
-        MAGMADNN_TEST_ASSERT_FEQUAL_DEFAULT(relu_grad->get(i), (x_val > 0) ? grad->get(i) : 0.0f);
+        x_val = x.get<float>(i);
+        MAGMADNN_TEST_ASSERT_FEQUAL_DEFAULT(relu_grad.get<float>(i), (x_val > 0) ? grad.get<float>(i) : 0.0f);
     }
-
-    delete x;
-    delete relu_out;
-    delete grad;
-    delete relu_grad;
 
     show_success();
 }
@@ -151,11 +122,11 @@ void test_crossentropy(memory_t mem, unsigned int size) {
     unsigned int n_samples = size;
     unsigned int n_classes = size;
 
-    Tensor<float> *ground_truth = new Tensor<float>({n_samples, n_classes}, {IDENTITY, {}}, mem);
-    Tensor<float> *predicted = new Tensor<float>({n_samples, n_classes}, {DIAGONAL, {0.2f}}, mem);
-    Tensor<float> *out = new Tensor<float>({1}, {NONE, {}}, mem);
+    Tensor ground_truth({n_samples, n_classes}, FLOAT, {IDENTITY, {}}, mem);
+    Tensor predicted({n_samples, n_classes}, FLOAT, {DIAGONAL, {0.2f}}, mem);
+    Tensor out({1}, FLOAT, {NONE, {}}, mem);
 
-    math::crossentropy(predicted, ground_truth, out);
+    math::crossentropy<float>(predicted, ground_truth, out);
 
     sync(out);
 
@@ -165,12 +136,12 @@ void test_crossentropy(memory_t mem, unsigned int size) {
 void test_reduce_sum(memory_t mem, unsigned int size) {
     printf("Testing %s reduce_sum...  ", get_memory_type_name(mem));
 
-    Tensor<float> x({size, size}, {IDENTITY, {}}, mem);
-    Tensor<float> reduced({size}, {CONSTANT, {5.0f}}, mem);
+    Tensor x({size, size}, FLOAT, {IDENTITY, {}}, mem);
+    Tensor reduced({size}, FLOAT, {CONSTANT, {5.0f}}, mem);
 
     if (mem == HOST) {
-        Tensor<float> ones({size}, {ONE, {}}, mem);
-        math::reduce_sum(&x, 1, &ones, &reduced);
+        Tensor ones({size}, FLOAT, {ONE, {}}, mem);
+        math::reduce_sum<float>(x, 1, ones, reduced);
     }
 #if defined(_HAS_CUDA_)
     else {
@@ -184,14 +155,14 @@ void test_reduce_sum(memory_t mem, unsigned int size) {
                                        &settings.workspace_size);
         cudaErrchk(cudaMalloc((void **) &settings.workspace, settings.workspace_size * sizeof(float)));
 
-        math::reduce_sum_device(&x, 1, &reduced, settings);
+        math::reduce_sum_device<float>(x, 1, reduced, settings);
     }
 #endif
 
-    sync(&reduced);
+    sync(reduced);
 
     for (unsigned int i = 0; i < size; i++) {
-        MAGMADNN_TEST_ASSERT_FEQUAL_DEFAULT(reduced.get(i), 1.0f);
+        MAGMADNN_TEST_ASSERT_FEQUAL_DEFAULT(reduced.get<float>(i), 1.0f);
     }
 
     show_success();
@@ -200,18 +171,18 @@ void test_reduce_sum(memory_t mem, unsigned int size) {
 void test_argmax(memory_t mem, unsigned int size) {
     printf("Testing %s argmax...   ", get_memory_type_name(mem));
 
-    Tensor<float> x({size, size}, {IDENTITY, {}}, mem);
-    Tensor<float> out_0({size}, mem);
-    Tensor<float> out_1({size}, mem);
-    math::argmax(&x, 0, &out_0);
-    math::argmax(&x, 1, &out_1);
+    Tensor x({size, size}, FLOAT, {IDENTITY, {}}, mem);
+    Tensor out_0({size}, FLOAT, {NONE, {}}, mem);
+    Tensor out_1({size}, FLOAT, {NONE, {}}, mem);
+    math::argmax<float>(x, 0, out_0);
+    math::argmax<float>(x, 1, out_1);
 
-    sync(&out_0);
-    sync(&out_1);
+    sync(out_0);
+    sync(out_1);
 
     for (unsigned int i = 0; i < size; i++) {
-        MAGMADNN_TEST_ASSERT_FEQUAL_DEFAULT(out_0.get(i), (float) i);
-        MAGMADNN_TEST_ASSERT_FEQUAL_DEFAULT(out_1.get(i), (float) i);
+        MAGMADNN_TEST_ASSERT_FEQUAL_DEFAULT(out_0.get<float>(i), (float) i);
+        MAGMADNN_TEST_ASSERT_FEQUAL_DEFAULT(out_1.get<float>(i), (float) i);
     }
 
     show_success();
@@ -220,18 +191,18 @@ void test_argmax(memory_t mem, unsigned int size) {
 void test_bias_add(memory_t mem, unsigned int size) {
     printf("Testing %s bias_add...  ", get_memory_type_name(mem));
 
-    Tensor<float> x({size, size / 2}, {UNIFORM, {-1.0f, 1.0f}}, mem);
-    Tensor<float> bias({size}, {UNIFORM, {0.0f, 1.0f}}, mem);
-    Tensor<float> out({size, size / 2}, {NONE, {}}, mem);
+    Tensor x({size, size / 2}, FLOAT, {UNIFORM, {-1.0f, 1.0f}}, mem);
+    Tensor bias({size}, FLOAT, {UNIFORM, {0.0f, 1.0f}}, mem);
+    Tensor out({size, size / 2}, FLOAT, {NONE, {}}, mem);
 
-    math::bias_add(&x, &bias, &out);
+    math::bias_add<float>(x, bias, out);
 
-    sync(&out);
+    sync(out);
 
     for (unsigned int i = 0; i < out.get_shape(0); i++) {
         for (unsigned int j = 0; j < out.get_shape(1); j++) {
-            MAGMADNN_TEST_ASSERT_FEQUAL_DEFAULT(out.get({i, j}), x.get({i, j}) + bias.get({i}));
-            MAGMADNN_TEST_ASSERT_FEQUAL_DEFAULT(out.get({i, j}), x.get({i, j}) + bias.get({i}));
+            MAGMADNN_TEST_ASSERT_FEQUAL_DEFAULT(out.get<float>({i, j}), x.get<float>({i, j}) + bias.get<float>({i}));
+            MAGMADNN_TEST_ASSERT_FEQUAL_DEFAULT(out.get<float>({i, j}), x.get<float>({i, j}) + bias.get<float>({i}));
         }
     }
 
@@ -241,29 +212,29 @@ void test_bias_add(memory_t mem, unsigned int size) {
 void test_sum(memory_t mem, unsigned int size) {
     printf("Testing %s sum...  ", get_memory_type_name(mem));
 
-    Tensor<float> a({size, size}, {UNIFORM, {-1.0f, 1.0f}}, mem);
-    Tensor<float> b({size, size}, {UNIFORM, {-1.0f, 1.0f}}, mem);
-    Tensor<float> c({size, size}, {UNIFORM, {-1.0f, 1.0f}}, mem);
-    Tensor<float> out({size, size}, {ZERO, {}}, mem);
+    Tensor a({size, size}, FLOAT, {UNIFORM, {-1.0f, 1.0f}}, mem);
+    Tensor b({size, size}, FLOAT, {UNIFORM, {-1.0f, 1.0f}}, mem);
+    Tensor c({size, size}, FLOAT, {UNIFORM, {-1.0f, 1.0f}}, mem);
+    Tensor out({size, size}, FLOAT, {ZERO, {}}, mem);
 
-    math::sum({&a, &b, &c}, &out);
+    math::sum<float>({a, b, c}, out);
 
-    std::vector<Tensor<float> *> tensors = {&a, &b, &c};
-    Tensor<float> actual_out({size, size}, {ZERO, {}}, mem);
+    std::vector<Tensor> tensors = {a, b, c};
+    Tensor actual_out({size, size}, FLOAT, {ZERO, {}}, mem);
 
     for (unsigned int i = 0; i < size * size; i++) {
         float sum = 0.0f;
         for (const auto &t : tensors) {
-            sum += t->get(i);
+            sum += t.get<float>(i);
         }
-        actual_out.set(i, sum);
+        actual_out.set<float>(i, sum);
     }
 
-    sync(&out);
-    sync(&actual_out);
+    sync(out);
+    sync(actual_out);
 
     for (unsigned int i = 0; i < size * size; i++) {
-        MAGMADNN_TEST_ASSERT_FEQUAL_DEFAULT(out.get(i), actual_out.get(i));
+        MAGMADNN_TEST_ASSERT_FEQUAL_DEFAULT(out.get<float>(i), actual_out.get<float>(i));
     }
 
     show_success();
@@ -272,20 +243,20 @@ void test_sum(memory_t mem, unsigned int size) {
 void test_concat(memory_t mem, unsigned int size) {
     printf("Testing %s concat...  ", get_memory_type_name(mem));
 
-    Tensor<float> *A = new Tensor<float>({size, size / 2, size * 2}, {CONSTANT, {1.0f}}, mem);
-    Tensor<float> *B = new Tensor<float>({size, size, size * 2}, {CONSTANT, {2.0f}}, mem);
-    Tensor<float> *C = new Tensor<float>({size, size * 3 / 2, size * 2});
+    Tensor A({size, size / 2, size * 2}, FLOAT, {CONSTANT, {1.0f}}, mem);
+    Tensor B({size, size, size * 2}, FLOAT, {CONSTANT, {2.0f}}, mem);
+    Tensor C({size, size * 3 / 2, size * 2});
 
-    math::concat(A, B, C, 1);
+    math::concat<float>(A, B, C, 1);
     sync(C);
 
     for (unsigned int i = 0; i < size; i++) {
         for (unsigned int j = 0; j < size * 3 / 2; j++) {
             for (unsigned int k = 0; k < size * 2; k++) {
                 if (j < size / 2)
-                    MAGMADNN_TEST_ASSERT_FEQUAL_DEFAULT(C->get({i, j, k}), 1.0f);
+                    MAGMADNN_TEST_ASSERT_FEQUAL_DEFAULT(C.get<float>({i, j, k}), 1.0f);
                 else
-                    MAGMADNN_TEST_ASSERT_FEQUAL_DEFAULT(C->get({i, j, k}), 2.0f);
+                    MAGMADNN_TEST_ASSERT_FEQUAL_DEFAULT(C.get<float>({i, j, k}), 2.0f);
             }
         }
     }
@@ -296,16 +267,17 @@ void test_concat(memory_t mem, unsigned int size) {
 void test_tile(memory_t mem, unsigned int size) {
     printf("Testing %s tile...  ", get_memory_type_name(mem));
 
-    Tensor<float> *D = new Tensor<float>({size, 1, size * 2}, {CONSTANT, {2.0f}}, mem);
-    Tensor<float> *E = new Tensor<float>({size, size, size * 2});
+    Tensor D({size, 1, size * 2}, FLOAT, {CONSTANT, {2.0f}}, mem);
+    Tensor E({size, size, size * 2}, FLOAT, {NONE, {}}, mem);
 
-    math::tile(D, E, size, 1);
+    math::tile<float>(D, E, size, 1);
     sync(E);
 
     for (unsigned int i = 0; i < size; i++) {
         for (unsigned int j = 0; j < size; j++) {
             for (unsigned int k = 0; k < size * 2; k++) {
-                MAGMADNN_TEST_ASSERT_DEFAULT(E->get({i, j, k}) == 2.0f, "\"E->get({i, j, k}) == 2.0f\" failed");
+                MAGMADNN_TEST_ASSERT_DEFAULT(E.get<float>({i, j, k}) == 2.0f,
+                                             "\"E.get<float>({i, j, k}) == 2.0f\" failed");
             }
         }
     }

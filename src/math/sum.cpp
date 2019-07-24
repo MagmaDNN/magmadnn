@@ -16,14 +16,13 @@ void sum(const std::vector<std::reference_wrapper<const Tensor>>& tensors, Tenso
     /* early exit */
     if (tensors.size() == 0) return;
 
-    /* iterate over all the tensors and ensure the same memory type */
-    for (const auto& t : tensors) {
-        MAGMADNN_ASSERT(T_SAME_MEM_TYPE(out, t), "memory types must be equal");
-    }
+    MAGMADNN_ASSERT(::magmadnn::utilities::do_tensors_match(GetDataType<T>::value,
+                                                            tensors.front().get().get_memory_type(), tensors),
+                    "tensors memory types and data types must match");
 
     if (out.get_memory_type() == HOST) {
-        T* out_ptr = out->get_ptr();
-        size_t size = out->get_size();
+        T* out_ptr = out.get_ptr<T>();
+        size_t size = out.size();
 
         /* iterate over tensors first for cache efficiency */
         bool first = true;
@@ -46,7 +45,7 @@ void sum(const std::vector<std::reference_wrapper<const Tensor>>& tensors, Tenso
     }
 #if defined(_HAS_CUDA_)
     else {
-        sum_device(tensors, out);
+        sum_device<T>(tensors, out);
     }
 #endif
 }

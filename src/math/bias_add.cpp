@@ -14,7 +14,8 @@ namespace math {
 template <typename T>
 void bias_add(const Tensor &x, const Tensor &bias, Tensor &out) {
     // assert(T_IS_SAME_MEMORY_TYPE(x, bias) && T_IS_SAME_MEMORY_TYPE(bias, out));
-    MAGMADNN_ASSERT(TYPES_MATCH(T, x.dtype()) && TYPES_MATCH(T, bias.dtype()) && TYPES_MATCH(T, out.dtype()));
+    MAGMADNN_ASSERT(TYPES_MATCH(T, x.dtype()) && TYPES_MATCH(T, bias.dtype()) && TYPES_MATCH(T, out.dtype()),
+                    "invalid tensor types");
 
     if (out.get_memory_type() == HOST) {
         const T *x_ptr = x.get_ptr<T>();
@@ -34,7 +35,7 @@ void bias_add(const Tensor &x, const Tensor &bias, Tensor &out) {
     }
 #if defined(_HAS_CUDA_)
     else {
-        bias_add_device(x, bias, out);
+        bias_add_device<T>(x, bias, out);
     }
 #endif
 }

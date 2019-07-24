@@ -10,6 +10,7 @@
 
 #include "math/binary_math_operations.h"
 #include "math/launch_math_kernel.h"
+#include "mdnn_device_types.h"
 #include "tensor/tensor.h"
 #include "types.h"
 #include "utilities_internal.h"

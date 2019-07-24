@@ -9,6 +9,7 @@
 #pragma once
 
 #include "tensor/tensor.h"
+#include "tensor/tensor_utilities.h"
 #include "utilities_internal.h"
 
 namespace magmadnn {

@@ -1,5 +1,5 @@
 /**
- * @file dot.cpp
+ * @file dot.cu
  * @author Daniel Nichols
  * @version 0.1
  * @date 2019-06-07
@@ -11,9 +11,9 @@
 namespace magmadnn {
 namespace math {
 
-#define comp_cpu(type) template void dot<CPU, type>(type, bool, const Tensor &, bool, const Tensor &, type, Tensor &);
-CALL_FOR_ALL_TYPES(comp_cpu)
-#undef comp_cpu
+#define comp_gpu(type) template void dot<GPU, type>(type, bool, const Tensor &, bool, const Tensor &, type, Tensor &);
+CALL_FOR_ALL_TYPES(comp_gpu)
+#undef comp_gpu
 
 }  // namespace math
 }  // namespace magmadnn

@@ -30,6 +30,7 @@
 #include "pow/powop.h"
 #include "softmax/softmaxop.h"
 
+#include "batchnorm/batchnormop.h"
 #include "dropout/dropoutop.h"
 #include "flatten/flattenop.h"
 #include "pooling/poolingop.h"

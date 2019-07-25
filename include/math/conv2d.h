@@ -8,7 +8,9 @@
  */
 #pragma once
 
+#include "mdnn_device_types.h"
 #include "tensor/tensor.h"
+#include "tensor/tensor_utilities.h"
 #include "utilities_internal.h"
 
 #if defined(_HAS_CUDA_)
@@ -18,6 +20,16 @@
 namespace magmadnn {
 namespace math {
 
+template <DeviceType dev, typename... Args>
+void conv2d(const Tensor &x, const Tensor &w, Tensor &out, Args... args);
+
+template <DeviceType dev, typename... Args>
+void conv2d_grad_data(const Tensor &w, const Tensor &grad, Tensor &out, Args... args);
+
+template <DeviceType dev, typename... Args>
+void conv2d_grad_filter(const Tensor &x, const Tensor &grad, Tensor &out, Args... args);
+
+/*
 template <typename T>
 void conv2d(const Tensor &x, const Tensor &w, Tensor &out);
 
@@ -26,6 +38,7 @@ void conv2d_grad_data(const Tensor &w, const Tensor &grad, Tensor &out);
 
 template <typename T>
 void conv2d_grad_filter(const Tensor &x, const Tensor &grad, Tensor &out);
+*/
 
 #if defined(_HAS_CUDA_)
 
@@ -43,6 +56,7 @@ struct conv2d_cudnn_settings {
     size_t grad_filter_workspace_size;
 };
 
+/*
 template <typename T>
 void conv2d_device(const Tensor &x, const Tensor &w, Tensor &out, conv2d_cudnn_settings settings);
 
@@ -51,6 +65,7 @@ void conv2d_grad_data_device(const Tensor &w, const Tensor &grad, Tensor &out, c
 
 template <typename T>
 void conv2d_grad_filter_device(const Tensor &x, const Tensor &grad, Tensor &out, conv2d_cudnn_settings settings);
+*/
 
 #endif
 

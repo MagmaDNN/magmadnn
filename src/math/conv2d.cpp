@@ -13,6 +13,8 @@ namespace math {
 
 template <>
 void conv2d<CPU>(const Tensor &x, const Tensor &w, Tensor &out) {
+    MAGMADNN_ASSERT(::magmadnn::utilities::do_tensors_match(out.dtype(), out.get_memory_type(), {x, w, out}),
+                    "invalid input tensors");
     if (out.get_memory_type() == HOST) {
         LOG(ERROR) << "__Conv2d CPU not supported yet.\n";
     }
@@ -20,7 +22,8 @@ void conv2d<CPU>(const Tensor &x, const Tensor &w, Tensor &out) {
 
 template <>
 void conv2d_grad_data<CPU>(const Tensor &w, const Tensor &grad, Tensor &out) {
-    // assert(T_IS_SAME_MEMORY_TYPE(w, grad) && T_IS_SAME_MEMORY_TYPE(grad, out));
+    MAGMADNN_ASSERT(::magmadnn::utilities::do_tensors_match(out.dtype(), out.get_memory_type(), {w, grad, out}),
+                    "invalid input tensors");
 
     if (out.get_memory_type() == HOST) {
         LOG(ERROR) << "__Conv2d_grad_data CPU not supported yet.\n";
@@ -29,7 +32,8 @@ void conv2d_grad_data<CPU>(const Tensor &w, const Tensor &grad, Tensor &out) {
 
 template <>
 void conv2d_grad_filter<CPU>(const Tensor &x, const Tensor &grad, Tensor &out) {
-    // assert(T_IS_SAME_MEMORY_TYPE(w, grad) && T_IS_SAME_MEMORY_TYPE(grad, out));
+    MAGMADNN_ASSERT(::magmadnn::utilities::do_tensors_match(out.dtype(), out.get_memory_type(), {x, grad, out}),
+                    "invalid input tensors");
 
     if (out.get_memory_type() == HOST) {
         LOG(ERROR) << "__Conv2d_grad_filter CPU not supported yet.\n";
@@ -39,9 +43,9 @@ void conv2d_grad_filter<CPU>(const Tensor &x, const Tensor &grad, Tensor &out) {
 #if defined(_HAS_CUDA_)
 
 template <>
-void conv2d_device<GPU>(const Tensor &x, const Tensor &w, Tensor &out, conv2d_cudnn_settings settings) {
-    T alpha = static_cast<T>(1), beta = static_cast<T>(0);
+void conv2d<GPU>(const Tensor &x, const Tensor &w, Tensor &out, conv2d_cudnn_settings settings) {
     FOR_ALL_DTYPES(out.dtype(), T, {
+        T alpha = static_cast<T>(1), beta = static_cast<T>(0);
         cudnnErrchk(cudnnConvolutionForward(
             ::magmadnn::internal::MAGMADNN_SETTINGS->cudnn_handle, &alpha, x.get_cudnn_tensor_descriptor(),
             x.get_ptr<T>(), settings.filter_desc, w.get_ptr<T>(), settings.conv_desc, settings.algo, settings.workspace,
@@ -51,8 +55,8 @@ void conv2d_device<GPU>(const Tensor &x, const Tensor &w, Tensor &out, conv2d_cu
 
 template <>
 void conv2d_grad_data<GPU>(const Tensor &w, const Tensor &grad, Tensor &out, conv2d_cudnn_settings settings) {
-    T alpha = static_cast<T>(1), beta = static_cast<T>(0);
     FOR_ALL_DTYPES(out.dtype(), T, {
+        T alpha = static_cast<T>(1), beta = static_cast<T>(0);
         cudnnErrchk(cudnnConvolutionBackwardData(
             ::magmadnn::internal::MAGMADNN_SETTINGS->cudnn_handle, &alpha, settings.filter_desc, w.get_ptr<T>(),
             grad.get_cudnn_tensor_descriptor(), grad.get_ptr<T>(), settings.conv_desc, settings.bwd_data_algo,
@@ -62,9 +66,9 @@ void conv2d_grad_data<GPU>(const Tensor &w, const Tensor &grad, Tensor &out, con
 }
 
 template <>
-    void conv2d_grad_filter < GPU(const Tensor &x, const Tensor &grad, Tensor &out, conv2d_cudnn_settings settings) {
-    T alpha = static_cast<T>(1), beta = static_cast<T>(0);
+void conv2d_grad_filter<GPU>(const Tensor &x, const Tensor &grad, Tensor &out, conv2d_cudnn_settings settings) {
     FOR_ALL_DTYPES(out.dtype(), T, {
+        T alpha = static_cast<T>(1), beta = static_cast<T>(0);
         cudnnErrchk(cudnnConvolutionBackwardFilter(
             ::magmadnn::internal::MAGMADNN_SETTINGS->cudnn_handle, &alpha, x.get_cudnn_tensor_descriptor(),
             x.get_ptr<T>(), grad.get_cudnn_tensor_descriptor(), grad.get_ptr<T>(), settings.conv_desc,

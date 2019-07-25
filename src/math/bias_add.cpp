@@ -11,20 +11,18 @@
 namespace magmadnn {
 namespace math {
 
-template <typename T>
-void bias_add(const Tensor &x, const Tensor &bias, Tensor &out) {
-    // assert(T_IS_SAME_MEMORY_TYPE(x, bias) && T_IS_SAME_MEMORY_TYPE(bias, out));
-    MAGMADNN_ASSERT(TYPES_MATCH(T, x.dtype()) && TYPES_MATCH(T, bias.dtype()) && TYPES_MATCH(T, out.dtype()),
-                    "invalid tensor types");
+template <>
+void bias_add<CPU>(const Tensor &x, const Tensor &bias, Tensor &out) {
+    MAGMADNN_ASSERT(::magmadnn::utilities::do_tensors_match(out.dtype(), GetMemoryType<CPU>::value, {x, bias, out}),
+                    "bias_add: tensors must have same dtype and memory type.");
 
-    if (out.get_memory_type() == HOST) {
+    FOR_ALL_DTYPES(out.dtype(), T, {
         const T *x_ptr = x.get_ptr<T>();
         const T *bias_ptr = bias.get_ptr<T>();
         T *out_ptr = out.get_ptr<T>();
 
         index_t x_rows = x.shape(0);
         index_t x_cols = x.shape(1);
-        // unsigned int x_size = x_rows*x_cols;
 
         /* TODO -- test openmp here */
         for (unsigned int r = 0; r < x_rows; r++) {
@@ -32,20 +30,12 @@ void bias_add(const Tensor &x, const Tensor &bias, Tensor &out) {
                 out_ptr[r * x_cols + c] = x_ptr[r * x_cols + c] + bias_ptr[r];
             }
         }
-    }
-#if defined(_HAS_CUDA_)
-    else {
-        bias_add_device<T>(x, bias, out);
-    }
-#endif
+    })
 }
-#define COMPILE_BIASADD(type) template void bias_add<type>(const Tensor &, const Tensor &, Tensor &out);
-CALL_FOR_ALL_TYPES(COMPILE_BIASADD)
-#undef COMPILE_BIASADD
 
 #if defined(_USE_CUDNN_BIAS_)
 /* temporarily undefined this until cudnn works */
-
+/* TODO -- investigate using CuDNN for this */
 #if defined(_HAS_CUDA_)
 template <typename T>
 void bias_add_device(const Tensor &x, const Tensor &bias, Tensor &out) {

@@ -8,12 +8,15 @@
  */
 #pragma once
 
+#include "mdnn_device_types.h"
 #include "tensor/tensor.h"
+#include "tensor/tensor_utilities.h"
 #include "utilities_internal.h"
 
 namespace magmadnn {
 namespace math {
 
+/*
 template <typename T>
 void bias_add(const Tensor &x, const Tensor &bias, Tensor &out);
 
@@ -21,6 +24,10 @@ void bias_add(const Tensor &x, const Tensor &bias, Tensor &out);
 template <typename T>
 void bias_add_device(const Tensor &x, const Tensor &bias, Tensor &out);
 #endif
+*/
+
+template <DeviceType dev>
+void bias_add(const Tensor &x, const Tensor &bias, Tensor &out);
 
 }  // namespace math
 }  // namespace magmadnn

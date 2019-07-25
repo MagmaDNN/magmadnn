@@ -14,7 +14,7 @@ namespace magmadnn {
 namespace math {
 
 template <typename T>
-__global__ void kernel_bias_add_device(const T *x, const T *bias, T *out, unsigned int x_rows, unsigned int x_cols) {
+__global__ void kernel_bias_add(const T *x, const T *bias, T *out, unsigned int x_rows, unsigned int x_cols) {
     unsigned int idx = blockDim.x * blockIdx.x + threadIdx.x;
     unsigned int stride = blockDim.x * gridDim.x;
 
@@ -23,17 +23,16 @@ __global__ void kernel_bias_add_device(const T *x, const T *bias, T *out, unsign
     }
 }
 
-template <typename T>
-void bias_add_device(const Tensor &x, const Tensor &bias, Tensor &out) {
-    unsigned int x_rows = x.shape(0);
-    unsigned int x_cols = x.shape(1);
+template <>
+void bias_add<GPU>(const Tensor &x, const Tensor &bias, Tensor &out) {
+    size_t x_rows = x.shape(0);
+    size_t x_cols = x.shape(1);
 
-    kernel_bias_add_device<<<(x_rows * x_cols + BLK_SIZE - 1) / BLK_SIZE, BLK_SIZE>>>(x.get_ptr<T>(), bias.get_ptr<T>(),
-                                                                                      out.get_ptr<T>(), x_rows, x_cols);
+    FOR_ALL_DTYPES(out.dtype(), T, {
+        kernel_bias_add<<<(x_rows * x_cols + BLK_SIZE - 1) / BLK_SIZE, BLK_SIZE>>>(x.get_ptr<T>(), bias.get_ptr<T>(),
+                                                                                   out.get_ptr<T>(), x_rows, x_cols);
+    })
 }
-#define COMPILE_BIASADD_DEVICE(type) template void bias_add_device<type>(const Tensor&, const Tensor&, Tensor&);
-CALL_FOR_ALL_TYPES(COMPILE_BIASADD_DEVICE)
-#undef COMPILE_BIASADD_DEVICE
 
 }  // namespace math
 }  // namespace magmadnn

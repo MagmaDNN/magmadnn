@@ -26,7 +26,6 @@ NEW_BINARY_KERNEL(sub, out[idx] = a[idx] - b[idx]);
 NEW_BINARY_KERNEL(product, out[idx] = a[idx] * b[idx]);
 NEW_BINARY_KERNEL(div, out[idx] = a[idx] / b[idx]);
 
-NEW_BINARY_KERNEL(dive, out[idx] = std::modf(a[idx], b[idx]));
 NEW_BINARY_KERNEL(pow, out[idx] = std::pow(a[idx], b[idx]));
 
 #undef NEW_BINARY_KERNEL

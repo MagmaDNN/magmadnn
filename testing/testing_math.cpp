@@ -195,7 +195,11 @@ void test_bias_add(memory_t mem, unsigned int size) {
     Tensor bias({size}, FLOAT, {UNIFORM, {0.0f, 1.0f}}, mem);
     Tensor out({size, size / 2}, FLOAT, {NONE, {}}, mem);
 
-    math::bias_add<float>(x, bias, out);
+    if (mem == HOST) {
+        math::bias_add<CPU>(x, bias, out);
+    } else {
+        math::bias_add<GPU>(x, bias, out);
+    }
 
     sync(out);
 
@@ -247,7 +251,11 @@ void test_concat(memory_t mem, unsigned int size) {
     Tensor B({size, size, size * 2}, FLOAT, {CONSTANT, {2.0f}}, mem);
     Tensor C({size, size * 3 / 2, size * 2});
 
-    math::concat<float>(A, B, C, 1);
+    if (mem == HOST) {
+        math::concat<CPU>(A, B, C, 1);
+    } else {
+        math::concat<GPU>(A, B, C, 1);
+    }
     sync(C);
 
     for (unsigned int i = 0; i < size; i++) {

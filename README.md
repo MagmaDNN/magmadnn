@@ -25,6 +25,14 @@ For examples of what MagmaDNN code looks like see the [examples/ folder](/exampl
 -----------------------
 All development takes place on the [github site](https://github.com/MagmaDNN/magmadnn).
 
+
+| Pipeline | Status                                                                                                                                                                                       |
+|----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Lint     | [![Build Status](https://dev.azure.com/magmadnn/MagmaDNN/_apis/build/status/Lint?branchName=master)](https://dev.azure.com/magmadnn/MagmaDNN/_build/latest?definitionId=1&branchName=master) |
+| Build    | N/A                                                                                                                                                                                          |
+| Release  | N/A                                                                                                                                                                                          |
+
+
 ![GitHub issues](https://img.shields.io/github/issues/MagmaDNN/magmadnn.svg)
 ![GitHub closed issues](https://img.shields.io/github/issues-closed/MagmaDNN/magmadnn.svg)
 ![GitHub pull requests](https://img.shields.io/github/issues-pr/MagmaDNN/magmadnn.svg)

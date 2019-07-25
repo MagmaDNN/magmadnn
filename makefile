@@ -192,15 +192,25 @@ ifneq ($(shell which doxygen),)
 endif
 
 LINT_SRC_FILES = $(patsubst %.cpp, %.cpp_lint, $(wildcard $(TARGET_DIRS)/*.cpp $(TARGET_DIRS)/*/*.cpp $(TARGET_DIRS)/*/*/*.cpp))
-LINT_H_FILES = $(patsubst %.h, %.h_lint, $(wildcard $(TARGET_DIRS)/*.h $(TARGET_DIRS)/*/*.h $(TARGET_DIRS)/*/*/*.h))
-LINT_FILES = $(LINT_SRC_FILES) $(LINT_H_FILES)
+LINT_FILES = $(LINT_SRC_FILES) 
+FIX_LINT_ISSUES ?= 1
+QUIET_LINT ?= 1
+LINTER_FLAGS ?= --config=
+LINTER ?= clang-tidy
 lint: $(LINT_FILES)
 
-$(LINT_SRC_FILES): %.cpp_lint: %.cpp
-	clang-tidy $< --config= --quiet --fix -- $(CXXFLAGS) $(INC)
+ifeq ($(FIX_LINT_ISSUES),1)
+LINTER_FLAGS += --fix
+endif
 
-$(LINT_H_FILES): %.h_lint: %.h
-	clang-tidy $< --config= -- $(CXXFLAGS) $(INC)
+ifeq ($(QUIET_LINT),1)
+LINTER_FLAGS += --quiet
+endif
+
+LINTER_FLAGS += -- $(CXXFLAGS) $(INC)
+
+$(LINT_SRC_FILES): %.cpp_lint: %.cpp
+	$(LINTER) $< $(LINTER_FLAGS)
 
 # TODO: change to call clean on subdirectory makefiles
 clean:

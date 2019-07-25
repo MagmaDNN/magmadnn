@@ -11,5 +11,7 @@ pool:
 
 steps:
 - script: |
+    echo "Beginning Linting"
+    cp ./make.inc-examples/make.inc-standard ./make.inc
     make lint
   displayName: 'lint'

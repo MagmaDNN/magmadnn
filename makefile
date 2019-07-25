@@ -191,12 +191,15 @@ ifneq ($(shell which doxygen),)
 	$(MAKE) -C $(DOCS_DIR)/latex
 endif
 
+
+# LINTER information (TODO -- )
 LINT_SRC_FILES = $(patsubst %.cpp, %.cpp_lint, $(wildcard $(TARGET_DIRS)/*.cpp $(TARGET_DIRS)/*/*.cpp $(TARGET_DIRS)/*/*/*.cpp))
 LINT_FILES = $(LINT_SRC_FILES) 
 FIX_LINT_ISSUES ?= 1
 QUIET_LINT ?= 1
 LINTER_FLAGS ?= --config=
 LINTER ?= clang-tidy
+
 lint: $(LINT_FILES)
 
 ifeq ($(FIX_LINT_ISSUES),1)
@@ -211,6 +214,8 @@ LINTER_FLAGS += -- $(CXXFLAGS) $(INC)
 
 $(LINT_SRC_FILES): %.cpp_lint: %.cpp
 	$(LINTER) $< $(LINTER_FLAGS)
+
+
 
 # TODO: change to call clean on subdirectory makefiles
 clean:

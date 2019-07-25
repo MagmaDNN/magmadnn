@@ -4,12 +4,18 @@
 # https://docs.microsoft.com/azure/devops/pipelines/apps/c-cpp/gcc
 
 trigger:
-- dev
+  branches:
+    include:
+      - master
+      - dev
+      - memory-fixes
 
 pool:
   vmImage: 'ubuntu-latest'
 
 steps:
 - script: |
+    echo "Beginning Linting"
+    cp ./make.inc-examples/make.inc-standard ./make.inc
     make lint
   displayName: 'lint'

@@ -11,10 +11,8 @@
 namespace magmadnn {
 namespace math {
 
-template <typename T>
+template <DeviceType dev>
 void concat(const Tensor &A, const Tensor &B, Tensor &C, index_t axis) {
-    // assert(A->get_shape().size() == B->get_shape().size());
-    // assert(A->get_shape().size() == C->get_shape().size());
     MAGMADNN_ASSERT(A.shape().size() == B.shape().size(), "invalid shapes");
     MAGMADNN_ASSERT(A.shape().size() == C.shape().size(), "invalid shapes");
 
@@ -45,29 +43,31 @@ void concat(const Tensor &A, const Tensor &B, Tensor &C, index_t axis) {
     MAGMADNN_ASSERT(C.shape(axis) == A.shape(axis) + B.shape(axis), "invalid shapes");
 
     // actual concatenation
-    std::vector<index_t> target_shape(dims, 0);
-    std::vector<index_t> target_shape_copy(dims, 0);
-    int curr_pos = target_shape.size() - 1;
-    while (curr_pos >= 0) {
-        curr_pos = target_shape.size() - 1;
-        if (target_shape[axis] < A.shape(axis)) {
-            C.set<T>(target_shape, A.get<T>(target_shape));
-        } else {
-            target_shape_copy = target_shape;
-            target_shape_copy[axis] -= A.shape(axis);
-            C.set<T>(target_shape, B.get<T>(target_shape_copy));
-        }
-        target_shape[curr_pos]++;
-        while (target_shape[curr_pos] == C.shape(curr_pos)) {
-            target_shape[curr_pos] = 0;
-            curr_pos--;
-            if (curr_pos < 0) break;
+    FOR_ALL_DTYPES(B.dtype(), T, {
+        std::vector<index_t> target_shape(dims, 0);
+        std::vector<index_t> target_shape_copy(dims, 0);
+        int curr_pos = target_shape.size() - 1;
+        while (curr_pos >= 0) {
+            curr_pos = target_shape.size() - 1;
+            if (target_shape[axis] < A.shape(axis)) {
+                C.set<T>(target_shape, A.get<T>(target_shape));
+            } else {
+                target_shape_copy = target_shape;
+                target_shape_copy[axis] -= A.shape(axis);
+                C.set<T>(target_shape, B.get<T>(target_shape_copy));
+            }
             target_shape[curr_pos]++;
+            while (target_shape[curr_pos] == C.shape(curr_pos)) {
+                target_shape[curr_pos] = 0;
+                curr_pos--;
+                if (curr_pos < 0) break;
+                target_shape[curr_pos]++;
+            }
         }
-    }
+    })
 }
 #define COMPILE_CONCAT(type) template void concat<type>(const Tensor &, const Tensor &, Tensor &, index_t);
-CALL_FOR_ALL_TYPES(COMPILE_CONCAT)
+CALL_FOR_ALL_DEVICES(COMPILE_CONCAT)
 #undef COMPILE_CONCAT
 
 }  // namespace math

@@ -8,7 +8,9 @@
  */
 #pragma once
 
+#include "mdnn_device_types.h"
 #include "tensor/tensor.h"
+#include "tensor/tensor_utilities.h"
 
 namespace magmadnn {
 namespace math {
@@ -19,7 +21,7 @@ namespace math {
  * @param B
  * @param C axis dim size should equal sum of A and B axis dim size
  */
-template <typename T>
+template <DeviceType dev>
 void concat(const Tensor &A, const Tensor &B, Tensor &C, index_t axis);
 
 }  // namespace math

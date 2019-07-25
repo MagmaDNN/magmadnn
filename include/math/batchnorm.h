@@ -20,10 +20,10 @@ namespace magmadnn {
 namespace math {
 
 template <typename T>
-void batchnorm(Tensor<T> *x, Tensor<T> *out);
+void batchnorm(const Tensor &x, Tensor &out);
 
 template <typename T>
-void batchnorm_grad(Tensor<T> *grad, Tensor<T> *out);
+void batchnorm_grad(const Tensor &grad, Tensor &out);
 
 #if defined(_HAS_CUDA_)
 
@@ -34,12 +34,12 @@ struct cudnn_batchnorm_settings_t {
 };
 
 template <typename T>
-void batchnorm_device(Tensor<T> *x, Tensor<T> *out, Tensor<T> *bn_scale, Tensor<T> *bn_bias, Tensor<T> *running_mean,
-                      Tensor<T> *running_variance, Tensor<T> *saved_mean, Tensor<T> *saved_variance,
-                      unsigned int &num_calls, cudnn_batchnorm_settings_t settings);
+void batchnorm_device(const Tensor &x, Tensor &out, Tensor &bn_scale, Tensor &bn_bias, Tensor &running_mean,
+                      Tensor &running_variance, Tensor &saved_mean, Tensor &saved_variance, unsigned int &num_calls,
+                      cudnn_batchnorm_settings_t settings);
 template <typename T>
-void batchnorm_grad_device(Tensor<T> *x, Tensor<T> *grad, Tensor<T> *out, Tensor<T> *bn_scale, Tensor<T> *bn_scale_diff,
-                           Tensor<T> *bn_bias_diff, Tensor<T> *saved_mean, Tensor<T> *saved_variance,
+void batchnorm_grad_device(const Tensor &x, const Tensor &grad, Tensor &out, Tensor &bn_scale, Tensor &bn_scale_diff,
+                           Tensor &bn_bias_diff, Tensor &saved_mean, Tensor &saved_variance,
                            cudnn_batchnorm_settings_t settings);
 
 #endif

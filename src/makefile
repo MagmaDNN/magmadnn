@@ -10,7 +10,7 @@ CU_OBJ_FILES = $(patsubst %.cu,%.o,$(CU_FILES))
 endif
 
 #SUB_DIRS = memory tensor compute layer optimizer model math dataloader
-SUB_DIRS = memory tensor math
+SUB_DIRS = memory tensor math compute
 
 all: $(SUB_DIRS) $(CU_OBJ_FILES) $(OBJ_FILES)
 

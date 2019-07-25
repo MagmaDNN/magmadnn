@@ -11,68 +11,34 @@
 namespace magmadnn {
 namespace op {
 
-template <typename T>
-Variable<T>::Variable(std::string name, const std::vector<unsigned int>& shape, tensor_filler_t<T> filler,
-                      memory_t mem_type)
-    : Operation<T>::Operation(), name(name) {
-    this->output_tensor = Tensor<T>(shape, filler, mem_type);
+Variable::Variable(std::string name, const std::vector<index_t>& shape, DataType dtype, tensor_filler_t filler,
+                   memory_t mem_type)
+    : Operation::Operation(), name_(name) {
+    this->output_tensor_ = Tensor(shape, dtype, filler, mem_type);
 
-    this->output_shape = shape;
-    this->mem_type = mem_type;
+    this->output_shape_ = shape;
+    this->mem_type_ = mem_type;
+    this->dtype_ = dtype;
 
-    this->has_been_computed = true;
-}
-template <typename T>
-Variable<T>::Variable(std::string name, Tensor<T>& val) : Operation<T>::Operation(), name(name) {
-    this->output_tensor = val;
-
-    this->output_shape = val.get_shape();
-    this->mem_type = val.get_memory_type();
-
-    this->has_been_computed = true;
+    this->has_been_computed_ = true;
 }
 
-template <typename T>
-const Tensor<T>& Variable<T>::_eval(bool recompute) {
-    return this->output_tensor;
+Variable::Variable(std::string name, Tensor& val) : Operation::Operation(), name_(name) {
+    this->output_tensor_ = val;
+
+    use_tensor_settings(val);
+
+    this->has_been_computed_ = true;
 }
 
-template <typename T>
-const Tensor<T>& Variable<T>::_grad(Operation<T>* consumer, Operation<T>* var, const Tensor<T>& grad) {
-    /* TODO : if (var == this) return 1; */
+Tensor& Variable::_eval(bool recompute) { return this->output_tensor_; }
 
-    return grad;
-}
-// compile for int, float, double
-template class Variable<int>;
-template class Variable<float>;
-template class Variable<double>;
+Tensor& Variable::_grad(Operation* consumer, Operation* var, const Tensor& grad) {
+    /* TODO -- if (var == this) return 1; */
 
-template <typename T>
-Variable<T>* var(std::string name, Tensor<T>& val) {
-    return get_graph<T>().add_operation<Variable>(name, val);
+    /* TODO -- find a better way to do this without const_cast */
+    return const_cast<Tensor&>(grad);
 }
-template Variable<int>* var(std::string name, Tensor<int>& val);
-template Variable<float>* var(std::string name, Tensor<float>& val);
-template Variable<double>* var(std::string name, Tensor<double>& val);
-
-template <typename T>
-Variable<T>* var(std::string name, const std::vector<unsigned int>& shape, tensor_filler_t<T> filler,
-                 memory_t mem_type) {
-    return get_graph<T>().add_operation<Variable>(name, shape, filler, mem_type);
-}
-template Variable<int>* var(std::string, const std::vector<unsigned int>&, tensor_filler_t<int>, memory_t mem_type);
-template Variable<float>* var(std::string, const std::vector<unsigned int>&, tensor_filler_t<float>, memory_t mem_type);
-template Variable<double>* var(std::string, const std::vector<unsigned int>&, tensor_filler_t<double>,
-                               memory_t mem_type);
-
-template <typename T>
-Variable<T>* scalar(std::string name, T val, memory_t mem_type) {
-    return get_graph<T>().add_operation<Variable>(name, val, mem_type);
-}
-template Variable<int>* scalar(std::string, int, memory_t mem_type);
-template Variable<float>* scalar(std::string, float, memory_t mem_type);
-template Variable<double>* scalar(std::string, double, memory_t mem_type);
 
 }  // namespace op
 }  // namespace magmadnn

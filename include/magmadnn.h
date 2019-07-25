@@ -28,9 +28,9 @@
 
 #include "math/tensor_math.h"
 
-/*#include "compute/gradients.h"
+#include "compute/gradients.h"
 #include "compute/tensor_operations.h"
-#include "compute/variable.h"
+/*#include "compute/variable.h"
 
 #include "layer/layers.h"
 

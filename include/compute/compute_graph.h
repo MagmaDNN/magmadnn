@@ -12,26 +12,38 @@
 #include <vector>
 
 #include "compute/operation.h"
+#include "utilities_internal.h"
 
 namespace magmadnn {
 namespace op {
 
-template <typename T>
 class Graph {
    public:
-    template <template <typename M> typename op_type, typename... Args>
-    Operation<T>* add_operation(Args... args);
+    template <typename op_type, typename... Args>
+    inline Operation* add_operation(Args... args);
+
+    /* TODO -- add graph statistics and manipulation functions */
 
    protected:
-    std::vector<std::unique_ptr<Operation<T>>> nodes; /* operations in the graph */
+    std::vector<std::unique_ptr<Operation>> nodes; /* operations in the graph */
 };
 
-Graph<int> DEFAULT_I_GRAPH;
-Graph<float> DEFAULT_F_GRAPH;
-Graph<double> DEFAULT_D_GRAPH;
+template <typename op_type, typename... Args>
+inline Operation* Graph::add_operation(Args... args) {
+    // std::unique_ptr<Operation> tmp_ptr{new op_type(args)};
+    std::unique_ptr<Operation> tmp_ptr = ::magmadnn::internal::make_unique<op_type>(args);
 
-template <typename T>
-Graph<T>& get_graph();
+    /* use std::move to transfer ownership */
+    this->nodes.push_back(std::move(tmp_ptr));
+
+    /*  Return the raw pointer
+        This is ok since only the graph will have owenership of the operations.
+        We want pointers, because operations use them _algorithmically_ for graph operations
+     */
+    return nodes.back().get();
+}
+
+Graph default_graph;
 
 }  // namespace op
 }  // namespace magmadnn

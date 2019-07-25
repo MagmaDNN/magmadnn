@@ -12,8 +12,10 @@
 #include <cstdint>
 #include <cstdio>
 #include <deque>
+#include <memory>
 #include <set>
 #include <vector>
+
 #include "data_types.h"
 
 #if defined(_HAS_CUDA_)
@@ -120,6 +122,11 @@ void print_compute_graph(op::Operation<T> *node, bool debug=true);
 template <typename T>
 cudnnDataType_t get_cudnn_data_type(T val);
 #endif
+
+template <typename T, typename... Args>
+std::unique_ptr<T> make_unique(Args &&... args) {
+    return std::unique_ptr<T>(new T(std::forward<Args>(args)...));  // NOLINT
+}
 
 }  // namespace internal
 }  // namespace magmadnn

@@ -191,6 +191,16 @@ ifneq ($(shell which doxygen),)
 	$(MAKE) -C $(DOCS_DIR)/latex
 endif
 
+LINT_SRC_FILES = $(patsubst %.cpp, %.cpp_lint, $(wildcard $(TARGET_DIRS)/*.cpp $(TARGET_DIRS)/*/*.cpp $(TARGET_DIRS)/*/*/*.cpp))
+LINT_H_FILES = $(patsubst %.h, %.h_lint, $(wildcard $(TARGET_DIRS)/*.h $(TARGET_DIRS)/*/*.h $(TARGET_DIRS)/*/*/*.h))
+LINT_FILES = $(LINT_SRC_FILES) $(LINT_H_FILES)
+lint: $(LINT_FILES)
+
+$(LINT_SRC_FILES): %.cpp_lint: %.cpp
+	clang-tidy $< --config= --quiet --fix -- $(CXXFLAGS) $(INC)
+
+$(LINT_H_FILES): %.h_lint: %.h
+	clang-tidy $< --config= -- $(CXXFLAGS) $(INC)
 
 # TODO: change to call clean on subdirectory makefiles
 clean:

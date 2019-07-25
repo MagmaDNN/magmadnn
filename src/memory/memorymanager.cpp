@@ -396,9 +396,7 @@ T* MemoryManager::get_ptr() {
     switch (mem_type_) {
         case HOST:
             return get_host_ptr<T>();
-#if defined(_HAS_CUDA_)
-        case DEVICE:
-            return get_device_ptr<T>();
+#if defined(_HAS_CUDA_) case DEVICE : return get_device_ptr <T>();
         case MANAGED:
             // returns device by default for managed
             return get_device_ptr<T>();

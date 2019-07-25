@@ -25,6 +25,7 @@ void test_sigmoid(memory_t mem_type, unsigned int size);
 void test_tanh(memory_t mem_type, unsigned int size);
 void test_conv2d(memory_t mem_type, unsigned int size);
 void test_pooling(memory_t mem_type, unsigned int size);
+void test_batchnorm(memory_t mem_type, unsigned int size);
 void test_crossentropy(memory_t mem_type, unsigned int size);
 void test_meansquarederror(memory_t mem_type, unsigned int size);
 
@@ -53,6 +54,10 @@ int main(int argc, char **argv) {
     test_pooling(DEVICE, 30);
     test_pooling(MANAGED, 30);
     test_pooling(CUDA_MANAGED, 30);
+
+    test_batchnorm(DEVICE, 30);
+    test_batchnorm(MANAGED, 30);
+    test_batchnorm(CUDA_MANAGED, 30);
 #endif
 
     test_for_all_mem_types(test_crossentropy, 10);
@@ -189,8 +194,10 @@ void test_transpose(memory_t mem, unsigned int size) {
     sync(trans);
 
     MAGMADNN_TEST_ASSERT_DEFAULT(trans->get_size() == x->get_size(), "\"trans->get_size() == x->get_size()\" failed");
-    MAGMADNN_TEST_ASSERT_DEFAULT(trans->get_shape(0) == x->get_shape(1), "\"trans->get_shape(0) == x->get_shape(1)\" failed");
-    MAGMADNN_TEST_ASSERT_DEFAULT(trans->get_shape(1) == x->get_shape(0), "\"trans->get_shape(1) == x->get_shape(0)\" failed");
+    MAGMADNN_TEST_ASSERT_DEFAULT(trans->get_shape(0) == x->get_shape(1),
+                                 "\"trans->get_shape(0) == x->get_shape(1)\" failed");
+    MAGMADNN_TEST_ASSERT_DEFAULT(trans->get_shape(1) == x->get_shape(0),
+                                 "\"trans->get_shape(1) == x->get_shape(0)\" failed");
 
     for (unsigned int i = 0; i < size / 2; i++) {
         for (unsigned int j = 0; j < size; j++) {
@@ -458,7 +465,8 @@ void test_sigmoid(memory_t mem_type, unsigned int size) {
     sync(fin);
 
     for (unsigned int i = 0; i < fin->get_size(); i++) {
-        MAGMADNN_TEST_ASSERT_DEFAULT(fabs(fin->get(i) - (-0.875)) < 1E-8, "\"fabs(fin->get(i) - (-0.875)) < 1E-8\" failed");
+        MAGMADNN_TEST_ASSERT_DEFAULT(fabs(fin->get(i) - (-0.875)) < 1E-8,
+                                     "\"fabs(fin->get(i) - (-0.875)) < 1E-8\" failed");
     }
 
     Tensor<float> *grad = new Tensor<float>({size, size}, {ONE, {}}, mem_type);
@@ -467,7 +475,8 @@ void test_sigmoid(memory_t mem_type, unsigned int size) {
     sync(d_sigmoid_wrt_x);
 
     for (unsigned int i = 0; i < d_sigmoid_wrt_x->get_size(); i++) {
-        MAGMADNN_TEST_ASSERT_DEFAULT(fabs(d_sigmoid_wrt_x->get(i) - (-1.640625)) < 1E-8, "\"fabs(d_sigmoid_wrt_x->get(i) - (-1.640625)) < 1E-8\" failed");
+        MAGMADNN_TEST_ASSERT_DEFAULT(fabs(d_sigmoid_wrt_x->get(i) - (-1.640625)) < 1E-8,
+                                     "\"fabs(d_sigmoid_wrt_x->get(i) - (-1.640625)) < 1E-8\" failed");
     }
 
     show_success();
@@ -494,7 +503,8 @@ void test_tanh(memory_t mem_type, unsigned int size) {
 #endif
 
     for (unsigned int i = 0; i < fin->get_size(); i++) {
-        MAGMADNN_TEST_ASSERT_DEFAULT(fabs(fin->get(i) - tanh(val)) < 1E-6, "\"fabs(fin->get(i) - tanh(val)) < 1E-6\" failed");
+        MAGMADNN_TEST_ASSERT_DEFAULT(fabs(fin->get(i) - tanh(val)) < 1E-6,
+                                     "\"fabs(fin->get(i) - tanh(val)) < 1E-6\" failed");
     }
 
     delete t0;
@@ -601,13 +611,37 @@ void test_pooling(memory_t mem_type, unsigned int size) {
     show_success();
 }
 
+void test_batchnorm(memory_t mem_type, unsigned int size) {
+    printf("Testing %s batchnorm...  ", get_memory_type_name(mem_type));
+
+    /* basic batch norm test */
+    unsigned int batch_size = 5;
+    unsigned int channels = 3;
+    unsigned int h = size;
+    unsigned int w = size;
+
+    op::Operation<float> *x = op::var<float>("data", {batch_size, channels, h, w}, {UNIFORM, {3.0f, 6.0f}}, mem_type);
+    op::Operation<float> *batchnorm = op::batchnorm(x);
+
+    Tensor<float> *out = batchnorm->eval();
+    sync(out);
+
+    /* testing grad */
+    Tensor<float> *grad = new Tensor<float>(out->get_shape(), {ONE, {}}, mem_type);
+    Tensor<float> *d_flatten_wrt_x = batchnorm->grad(NULL, x, grad);
+    sync(grad);
+    sync(d_flatten_wrt_x);
+
+    show_success();
+}
+
 void test_crossentropy(memory_t mem_type, unsigned int size) {
     printf("Testing %s crossentropy...  ", get_memory_type_name(mem_type));
 
     Tensor<double> *actual = new Tensor<double>({3, 3}, {ZERO, {}}, mem_type);
     Tensor<double> *predicted = new Tensor<double>({3, 3}, {ZERO, {}}, mem_type);
 
-    double expected_loss = -(log(0.5) + log(0.5) + log(0.1));
+    double expected_loss = -(log(0.5 + 1E-8) + log(0.5 + 1E-8) + log(0.1 + 1E-8));
 
     /* 	0 0 1
             0 0 1

@@ -8,12 +8,13 @@
  */
 #pragma once
 
-/* Named mdnn_device_types.h so as not to interfere with cuda's device_types.h 
+/* Named mdnn_device_types.h so as not to interfere with cuda's device_types.h
     TODO -- refactor/rename this file
 */
 
 #include <cstdint>
 #include <iostream>
+
 #include "types.h"
 
 namespace magmadnn {
@@ -37,8 +38,10 @@ struct GetDeviceType {};
     }
 
 combine(HOST, CPU);
+#if defined(_HAS_CUDA_)
 combine(DEVICE, GPU);
 combine(MANAGED, COMBINED);
+#endif
 
 #undef combine
 
@@ -69,8 +72,10 @@ inline DeviceType getDeviceType(memory_t mem_type) {
 
     switch (mem_type) {
         CASE(HOST)
+#if defined(_HAS_CUDA_)
         CASE(DEVICE)
         CASE(MANAGED)
+#endif
         default:
             return CPU;
     }

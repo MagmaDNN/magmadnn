@@ -8,7 +8,9 @@
  */
 #pragma once
 
-/* Named mdnn_device_types.h so as not to interfere with cuda's device_types.h */
+/* Named mdnn_device_types.h so as not to interfere with cuda's device_types.h 
+    TODO -- refactor/rename this file
+*/
 
 #include <cstdint>
 #include <iostream>

@@ -22,5 +22,5 @@ steps:
     sudo update-alternatives --install /usr/bin/clang-format clang-format /usr/bin/clang-format-8 100
     echo "Beginning Linting"
     cp ./make.inc-examples/make.inc-standard ./make.inc
-    make lint
+    make lint LINTER=clang-tidy-8
   displayName: 'lint'

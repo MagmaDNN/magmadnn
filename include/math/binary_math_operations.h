@@ -7,6 +7,8 @@
  * @copyright Copyright (c) 2019
  */
 #pragma once
+#include <cmath>
+
 #include "data_types.h"
 #include "types.h"
 

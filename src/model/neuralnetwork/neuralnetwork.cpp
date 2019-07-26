@@ -72,7 +72,9 @@ NeuralNetwork<T>::NeuralNetwork(std::vector<layer::Layer<T> *> layers, optimizer
                                           static_cast<T>(params.decaying_factor));
             break;
         case optimizer::ADAM:
-            std::fprintf(stderr, "Adam optimizer not yet implemented.\n");
+            this->optim =
+                new optimizer::Adam<T>(static_cast<T>(params.learning_rate) / static_cast<T>(params.batch_size),
+                                       static_cast<T>(params.beta1), static_cast<T>(params.beta2));
             break;
         default:
             std::fprintf(stderr, "Unknown optimizer.\n");

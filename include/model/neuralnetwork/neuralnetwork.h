@@ -26,6 +26,8 @@ struct nn_params_t {
     double learning_rate;         /**<initial learning rate */
     double momentum = 0.9;        /**<momentum rate */
     double decaying_factor = 0.9; /**<decaying factor for RMSProp */
+    double beta1 = 0.9;           /**<beta1 for Adam */
+    double beta2 = 0.999;         /**<beta2 for Adam */
 };
 
 template <typename T>

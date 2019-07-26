@@ -66,6 +66,11 @@ NeuralNetwork<T>::NeuralNetwork(std::vector<layer::Layer<T> *> layers, optimizer
             this->optim =
                 new optimizer::AdaGrad<T>(static_cast<T>(params.learning_rate) / static_cast<T>(params.batch_size));
             break;
+        case optimizer::RMSPROP:
+            this->optim =
+                new optimizer::RMSProp<T>(static_cast<T>(params.learning_rate) / static_cast<T>(params.batch_size),
+                                          static_cast<T>(params.decaying_factor));
+            break;
         case optimizer::ADAM:
             std::fprintf(stderr, "Adam optimizer not yet implemented.\n");
             break;

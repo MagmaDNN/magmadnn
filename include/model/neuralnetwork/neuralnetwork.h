@@ -25,6 +25,7 @@ struct nn_params_t {
     unsigned int batch_size;      /**<batch_size the size of the batch */
     double learning_rate;         /**<initial learning rate */
     double momentum = 0.9;        /**<momentum rate */
+    double decaying_factor = 0.9; /**<decaying factor for RMSProp */
 };
 
 template <typename T>

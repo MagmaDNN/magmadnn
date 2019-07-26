@@ -24,4 +24,5 @@
 #include "reduce_sum.h"
 
 #include "math/optimizer_math/adagrad.h"
+#include "math/optimizer_math/rmsprop.h"
 #include "math/optimizer_math/sgd_momentum.h"

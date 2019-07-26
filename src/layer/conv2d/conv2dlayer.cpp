@@ -127,10 +127,8 @@ Conv2dLayer<T>* conv2d(op::Operation<T>* input, const std::vector<unsigned int>&
     unsigned int padding_h, padding_w;
 
     if (padding == layer::SAME) {
-        unsigned int tempval_h =
-            (input->get_output_shape(2) - 1) * (strides[0] - 1) + (filter_shape[0] - 1) * dilation_rates[0] + 1;
-        unsigned int tempval_w =
-            (input->get_output_shape(3) - 1) * (strides[1] - 1) + (filter_shape[1] - 1) * dilation_rates[1] + 1;
+        unsigned int tempval_h = (filter_shape[0] - 1) * (dilation_rates[0]) - strides[0] + 2;
+        unsigned int tempval_w = (filter_shape[1] - 1) * (dilation_rates[1]) - strides[1] + 2;
         padding_h = tempval_h / 2;
         padding_w = tempval_w / 2;
     } else {

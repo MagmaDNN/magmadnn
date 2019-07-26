@@ -25,6 +25,7 @@ void test_sigmoid(memory_t mem_type, unsigned int size);
 void test_tanh(memory_t mem_type, unsigned int size);
 void test_conv2d(memory_t mem_type, unsigned int size);
 void test_pooling(memory_t mem_type, unsigned int size);
+void test_batchnorm(memory_t mem_type, unsigned int size);
 void test_crossentropy(memory_t mem_type, unsigned int size);
 void test_meansquarederror(memory_t mem_type, unsigned int size);
 
@@ -53,6 +54,10 @@ int main(int argc, char **argv) {
     test_pooling(DEVICE, 30);
     test_pooling(MANAGED, 30);
     test_pooling(CUDA_MANAGED, 30);
+
+    test_batchnorm(DEVICE, 30);
+    test_batchnorm(MANAGED, 30);
+    test_batchnorm(CUDA_MANAGED, 30);
 #endif
 
     test_for_all_mem_types(test_crossentropy, 10);
@@ -602,6 +607,30 @@ void test_pooling(memory_t mem_type, unsigned int size) {
     sync(d_flatten_wrt_x);
 
     delete pool;
+
+    show_success();
+}
+
+void test_batchnorm(memory_t mem_type, unsigned int size) {
+    printf("Testing %s batchnorm...  ", get_memory_type_name(mem_type));
+
+    /* basic batch norm test */
+    unsigned int batch_size = 5;
+    unsigned int channels = 3;
+    unsigned int h = size;
+    unsigned int w = size;
+
+    op::Operation<float> *x = op::var<float>("data", {batch_size, channels, h, w}, {UNIFORM, {3.0f, 6.0f}}, mem_type);
+    op::Operation<float> *batchnorm = op::batchnorm(x);
+
+    Tensor<float> *out = batchnorm->eval();
+    sync(out);
+
+    /* testing grad */
+    Tensor<float> *grad = new Tensor<float>(out->get_shape(), {ONE, {}}, mem_type);
+    Tensor<float> *d_flatten_wrt_x = batchnorm->grad(NULL, x, grad);
+    sync(grad);
+    sync(d_flatten_wrt_x);
 
     show_success();
 }

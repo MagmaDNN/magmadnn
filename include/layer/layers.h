@@ -11,6 +11,7 @@
 /* Load in all the layer headers */
 
 #include "activation/activationlayer.h"
+#include "batchnorm/batchnormlayer.h"
 #include "conv2d/conv2dlayer.h"
 #include "dropout/dropoutlayer.h"
 #include "flatten/flattenlayer.h"

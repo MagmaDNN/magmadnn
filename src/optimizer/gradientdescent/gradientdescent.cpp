@@ -12,7 +12,8 @@ namespace magmadnn {
 namespace optimizer {
 
 template <typename T>
-GradientDescent<T>::GradientDescent(T learning_rate) : Optimizer<T>::Optimizer(), learning_rate(learning_rate) {
+GradientDescent<T>::GradientDescent(T learning_rate, T momentum)
+    : Optimizer<T>::Optimizer(), learning_rate(learning_rate), momentum(momentum) {
     /* set the name of this Optimizer */
     this->_name = "GradientDescentOptimizer";
 }
@@ -38,11 +39,16 @@ void GradientDescent<T>::minimize(op::Operation<T> *obj_func, const std::vector<
 
 template <typename T>
 void GradientDescent<T>::update(op::Operation<T> *var, Tensor<T> *grad) {
+    /* Initialize momentum value to 0 if doesn't exist */
+    if (!this->momentum_table.count(var)) {
+        this->momentum_table[var] = new Tensor<T>(grad->get_shape(), {ZERO, {}}, grad->get_memory_type());
+    }
+
     Tensor<T> *var_tensor;
 
     var_tensor = var->eval(false);
 
-    math::add_in_place(-this->learning_rate, grad, static_cast<T>(1), var_tensor);
+    math::sgd_momentum(this->learning_rate, this->momentum, momentum_table[var], grad, var_tensor);
 }
 
 template class GradientDescent<int>;

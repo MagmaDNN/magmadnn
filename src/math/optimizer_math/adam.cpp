@@ -33,7 +33,7 @@ void adam(T learning_rate, T beta1, T beta2, T running_beta1, T running_beta2, T
     }
 #if defined(_HAS_CUDA_)
     else {
-        adam_device(learning_rate, beta1, beta2, running_beta1, running_beta2, first_moment, second_moment grad, out);
+        adam_device(learning_rate, beta1, beta2, running_beta1, running_beta2, first_moment, second_moment, grad, out);
     }
 #endif
 }

@@ -15,7 +15,8 @@
  
  template <typename T>
  __global__ void kernel_adam_device(T learning_rate, T beta1, T beta2, T running_beta1, T running_beta2, 
-     T *first_moment, T *second_moment, T *grad, T *out) {
+     T *first_moment, T *second_moment, T *grad, T *out, unsigned int size) {
+
      unsigned int idx = blockIdx.x * blockDim.x + threadIdx.x;
      unsigned int stride = blockDim.x * gridDim.x;
  
@@ -24,7 +25,7 @@
          second_moment[i] = (beta2 * second_moment[i]) + (1 - beta2) * (grad[i] * grad[i]);
          T m_temp = first_moment[i] / (1 - running_beta1);
          T v_temp = second_moment[i] / (1 - running_beta2);
-         out[i] = out[i] - (learning_rate / (sqrt(v_temp) + 1e-8)) * m_temp;
+         out[i] = out[i] - (learning_rate / (sqrt(static_cast<double>(v_temp)) + 1e-8)) * m_temp;
      }
  }
  
@@ -33,7 +34,7 @@
     Tensor<T> *first_moment, Tensor<T> *second_moment, Tensor<T> *grad, Tensor<T> *out) {
      unsigned int size = out->get_size();
      kernel_adam_device<<<(size + BLK_SIZE - 1) / BLK_SIZE, BLK_SIZE>>>(learning_rate, beta1, beta2, running_beta1,
-                                                                        running_beta2, first_moment->get_ptr, second_moment->get_ptr(), 
+                                                                        running_beta2, first_moment->get_ptr(), second_moment->get_ptr(), 
                                                                         grad->get_ptr(), out->get_ptr(), size);
  }
  template void adam_device(int learning_rate, int beta1, int beta2, int running_beta1, int running_beta2, 

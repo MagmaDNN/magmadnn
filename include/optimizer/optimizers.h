@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include "optimizer/adagrad/adagrad.h"
 #include "optimizer/gradientdescent/gradientdescent.h"
 #include "optimizer/optimizer.h"
 
@@ -16,6 +17,7 @@ namespace optimizer {
 
 enum optimizer_t {
     SGD,
+    ADAGRAD,
     ADAM,
 };
 

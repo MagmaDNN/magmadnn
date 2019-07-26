@@ -58,8 +58,9 @@ NeuralNetwork<T>::NeuralNetwork(std::vector<layer::Layer<T> *> layers, optimizer
     /* init optimizer */
     switch (optimizer) {
         case optimizer::SGD:
-            this->optim = new optimizer::GradientDescent<T>(static_cast<T>(params.learning_rate) /
-                                                            static_cast<T>(params.batch_size));
+            this->optim = new optimizer::GradientDescent<T>(
+                static_cast<T>(params.learning_rate) / static_cast<T>(params.batch_size),
+                static_cast<T>(params.momentum));
             break;
         case optimizer::ADAM:
             std::fprintf(stderr, "Adam optimizer not yet implemented.\n");

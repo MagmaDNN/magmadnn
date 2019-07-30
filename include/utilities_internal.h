@@ -20,6 +20,7 @@
 #include <cuda_runtime_api.h>
 #include <curand.h>
 #include "cudnn.h"
+#include "cusparse.h"
 
 #define cudaErrchk(ans) \
     { cudaAssert((ans), __FILE__, __LINE__); }
@@ -44,6 +45,18 @@ inline void cudnnAssert(cudnnStatus_t code, const char *file, int line, bool abo
 inline void curandAssert(curandStatus_t code, const char *file, int line, bool abort = true) {
     if (code != CURAND_STATUS_SUCCESS) {
         fprintf(stderr, "CuRandAssert: %d %s %d\n", code, file, line);
+    }
+}
+
+#define cusparseErrchk(ans) \
+    { cusparseAssert((ans), __FILE__, __LINE__); }
+inline void cusparseAssert(cusparseStatus_t code, const char *file, int line, bool abort = true) {
+    if (code != CUSPARSE_STATUS_SUCCESS) {
+#if (CUDART_VERSION >= 10010)
+        fprintf(stderr, "CuSparseAssert: %s %s %d\n", cusparseGetErrorString(code), file, line);
+#else 
+		fprintf(stderr, "CuSparseAssert: %d %s %d\n", code, file, line);
+#endif
     }
 }
 

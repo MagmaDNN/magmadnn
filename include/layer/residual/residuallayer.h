@@ -10,6 +10,7 @@
 #include "compute/operation.h"
 #include "compute/tensor_operations.h"
 #include "layer/activation/activationlayer.h"
+#include "layer/batchnorm/batchnormlayer.h"
 #include "layer/conv2d/conv2dlayer.h"
 #include "layer/input/inputlayer.h"
 #include "layer/layer.h"

@@ -43,6 +43,7 @@ void ResidualLayer<T>::init() {
 
     /* Block of conv + activation layers */
     for (unsigned int i = 1; i < filters.size(); i++) {
+        layers.push_back(layer::batchnorm<T>(layers[layers.size() - 1]->out()));
         layers.push_back(layer::activation<T>(layers[layers.size() - 1]->out(), layer::RELU));
         layers.push_back(layer::conv2d<T>(layers[layers.size() - 1]->out(), {filters[i].first, filters[i].second},
                                           out_channels[i], layer::SAME, {1, 1}, {1, 1}, true, false));
@@ -53,8 +54,8 @@ void ResidualLayer<T>::init() {
         layers.push_back(layer::shortcut<T>(layers[layers.size() - 1]->out(), layers[0]->out()));
     } else {
         unsigned int projection_dim = layers[layers.size() - 1]->out()->get_output_shape(1);
-        layers.push_back(
-            layer::conv2d<T>(layers[0]->out(), {1, 1}, projection_dim, layer::SAME, {1, 1}, {1, 1}, true, false));
+        layers.push_back(layer::conv2d<T>(layers[0]->out(), {1, 1}, projection_dim, layer::SAME,
+                                          {downsampling_stride, downsampling_stride}, {1, 1}, true, false));
         layers.push_back(layer::shortcut<T>(layers[layers.size() - 1]->out(), layers[layers.size() - 2]->out()));
     }
 

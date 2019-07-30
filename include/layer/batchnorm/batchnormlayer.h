@@ -6,6 +6,8 @@
  *
  * @copyright Copyright (c) 2019
  */
+#pragma once
+
 #include <vector>
 #include "compute/batchnorm/batchnormop.h"
 #include "compute/operation.h"

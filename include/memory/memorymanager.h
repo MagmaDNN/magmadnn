@@ -55,14 +55,14 @@ class MemoryManager {
      *  @param src the memorymanager to copy data from
      *  @return the error code (0 - no error, 1 - src ptr not allocated)
      */
-    magmadnn_error_t copy_from(const MemoryManager<T>& src, unsigned int begin_idx, unsigned int size);
+    magmadnn_error_t copy_from(const MemoryManager<T>& src, unsigned int begin_idx, unsigned int size, unsigned int write_from = 0);
 
     /** Copies the data from src memory manager into the pointer here. Asserts that
      *  src and this have the same size.
      *  @param src the memorymanager to copy data from
      *  @return the error code (0 - no error, 1 - src ptr not allocated)
      */
-    magmadnn_error_t copy_from(const MemoryManager<T>& src, unsigned int size);
+    magmadnn_error_t copy_from(const MemoryManager<T>& src, unsigned int size, unsigned int write_from = 0);
 
     /** Copies the data from src memory manager into the pointer here. Asserts that
      *  src and this have the same size.
@@ -76,7 +76,7 @@ class MemoryManager {
      *  @param src the array to copy into this.
      *  @return the error code (0 - good, 1 - not enough memory)
      */
-    magmadnn_error_t copy_from_host(T* src, unsigned int begin_idx, unsigned int size);
+    magmadnn_error_t copy_from_host(T* src, unsigned int begin_idx, unsigned int size, unsigned int write_from = 0);
 
 #if defined(_HAS_CUDA_)
     /** copies memory from a device ptr into this memorymanager. will throw an error if it
@@ -84,21 +84,21 @@ class MemoryManager {
      *  @param src the array to copy into this.
      *  @return the error code (0 - good, 1 - not enough memory)
      */
-    magmadnn_error_t copy_from_device(T* src, unsigned int begin_idx, unsigned int size);
+    magmadnn_error_t copy_from_device(T* src, unsigned int begin_idx, unsigned int size, unsigned int write_from = 0);
 
     /** copies memory from a managed ptr into this memorymanager. will throw an error if it
      *  reaches the end of src allocated mem before this is filled.
      *  @param src the array to copy into this.
      *  @return the error code (0 - good, 1 - not enough memory)
      */
-    magmadnn_error_t copy_from_managed(T* host_src, T* device_src, unsigned int begin_idx, unsigned int size);
+    magmadnn_error_t copy_from_managed(T* host_src, T* device_src, unsigned int begin_idx, unsigned int size, unsigned int write_from = 0);
 
     /** copies memory from a cuda managed ptr into this memorymanager. will throw an error if it
      *  reaches the end of src allocated mem before this is filled.
      *  @param src the array to copy into this.
      *  @return the error code (0 - good, 1 - not enough memory)
      */
-    magmadnn_error_t copy_from_cudamanaged(T* src, unsigned int begin_idx, unsigned int size);
+    magmadnn_error_t copy_from_cudamanaged(T* src, unsigned int begin_idx, unsigned int size, unsigned int write_from = 0);
 #endif
 
     /** If MANAGED or CUDA_MANAGED this ensures that data is the same on all devices. It

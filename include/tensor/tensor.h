@@ -81,9 +81,10 @@ class Tensor {
      * @param src
      * @param begin_idx
      * @param size
+	 * @param write_from
      * @return magmadnn_error_t non-zero if error
      */
-    magmadnn_error_t copy_from(const Tensor<T>& src, unsigned int begin_idx, unsigned int size);
+    magmadnn_error_t copy_from(const Tensor<T>& src, unsigned int begin_idx, unsigned int size, unsigned int write_from = 0);
 
     /** Copies the tensor src into this tensor.
      * @param src

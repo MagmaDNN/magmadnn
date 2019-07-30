@@ -100,22 +100,22 @@ MemoryManager<T>::~MemoryManager<T>() {
 
 template <typename T>
 magmadnn_error_t MemoryManager<T>::copy_from(const MemoryManager<T>& src, unsigned int begin_idx,
-                                             unsigned int copy_size) {
-    assert(this->size >= copy_size);
+                                             unsigned int copy_size, unsigned int write_from) {
+    assert(this->size >= copy_size + write_from);
     assert(src.size >= (begin_idx + copy_size));
 
     if (copy_size == 0) return (magmadnn_error_t) 0;
 
     if (src.mem_type == HOST) {
-        return copy_from_host(src.host_ptr, begin_idx, copy_size);
+        return copy_from_host(src.host_ptr, begin_idx, copy_size, write_from);
     }
 #if defined(_HAS_CUDA_)
     else if (src.mem_type == DEVICE) {
-        return copy_from_device(src.device_ptr, begin_idx, copy_size);
+        return copy_from_device(src.device_ptr, begin_idx, copy_size, write_from);
     } else if (src.mem_type == MANAGED) {
-        return copy_from_managed(src.host_ptr, src.device_ptr, begin_idx, copy_size);
+        return copy_from_managed(src.host_ptr, src.device_ptr, begin_idx, copy_size, write_from);
     } else if (src.mem_type == CUDA_MANAGED) {
-        return copy_from_cudamanaged(src.cuda_managed_ptr, begin_idx, copy_size);
+        return copy_from_cudamanaged(src.cuda_managed_ptr, begin_idx, copy_size, write_from);
     }
 #endif
 
@@ -124,34 +124,34 @@ magmadnn_error_t MemoryManager<T>::copy_from(const MemoryManager<T>& src, unsign
 
 template <typename T>
 magmadnn_error_t MemoryManager<T>::copy_from(const MemoryManager<T>& src) {
-    return copy_from(src, 0, size);
+    return copy_from(src, 0, size, 0);
 }
 
 template <typename T>
-magmadnn_error_t MemoryManager<T>::copy_from(const MemoryManager<T>& src, unsigned int copy_size) {
-    return copy_from(src, 0, copy_size);
+magmadnn_error_t MemoryManager<T>::copy_from(const MemoryManager<T>& src, unsigned int copy_size, unsigned int write_from) {
+    return copy_from(src, 0, copy_size, write_from);
 }
 
 template <typename T>
-magmadnn_error_t MemoryManager<T>::copy_from_host(T* src, unsigned int begin_idx, unsigned int copy_size) {
+magmadnn_error_t MemoryManager<T>::copy_from_host(T* src, unsigned int begin_idx, unsigned int copy_size, unsigned int write_from) {
     switch (mem_type) {
         case HOST:
             // host --> host
-            std::copy(src + begin_idx, (src + begin_idx) + copy_size, host_ptr);
+            std::copy(src + begin_idx, (src + begin_idx) + copy_size, host_ptr + write_from);
             return (magmadnn_error_t) 0;
 #if defined(_HAS_CUDA_)
         case DEVICE:
             // host --> device
-            cudaErrchk(cudaMemcpy(device_ptr, src + begin_idx, copy_size * sizeof(T), cudaMemcpyHostToDevice));
+            cudaErrchk(cudaMemcpy(device_ptr + write_from, src + begin_idx, copy_size * sizeof(T), cudaMemcpyHostToDevice));
             return (magmadnn_error_t) 0;
         case MANAGED:
             // host --> managed
-            std::copy(src + begin_idx, (src + begin_idx) + copy_size, host_ptr);
+            std::copy(src + begin_idx, (src + begin_idx) + copy_size, host_ptr + write_from);
             sync(false);
             return (magmadnn_error_t) 0;
         case CUDA_MANAGED:
             // host --> cmanaged
-            std::copy(src + begin_idx, (src + begin_idx) + copy_size, cuda_managed_ptr);
+            std::copy(src + begin_idx, (src + begin_idx) + copy_size, cuda_managed_ptr + write_from);
             sync(false);
             return (magmadnn_error_t) 0;
 #endif
@@ -162,26 +162,26 @@ magmadnn_error_t MemoryManager<T>::copy_from_host(T* src, unsigned int begin_idx
 
 #if defined(_HAS_CUDA_)
 template <typename T>
-magmadnn_error_t MemoryManager<T>::copy_from_device(T* src, unsigned int begin_idx, unsigned int copy_size) {
+magmadnn_error_t MemoryManager<T>::copy_from_device(T* src, unsigned int begin_idx, unsigned int copy_size, unsigned int write_from) {
     magmadnn_error_t err = (magmadnn_error_t) 0;
 
     switch (mem_type) {
         case HOST:
             // device --> host
-            cudaErrchk(cudaMemcpy(host_ptr, src + begin_idx, copy_size * sizeof(T), cudaMemcpyDeviceToHost));
+            cudaErrchk(cudaMemcpy(host_ptr + write_from, src + begin_idx, copy_size * sizeof(T), cudaMemcpyDeviceToHost));
             break;
         case DEVICE:
             // device --> device
-            cudaErrchk(cudaMemcpy(device_ptr, src + begin_idx, copy_size * sizeof(T), cudaMemcpyDeviceToDevice));
+            cudaErrchk(cudaMemcpy(device_ptr + write_from, src + begin_idx, copy_size * sizeof(T), cudaMemcpyDeviceToDevice));
             break;
         case MANAGED:
             // device --> managed
-            cudaErrchk(cudaMemcpy(device_ptr, src + begin_idx, copy_size * sizeof(T), cudaMemcpyDeviceToDevice));
+            cudaErrchk(cudaMemcpy(device_ptr + write_from, src + begin_idx, copy_size * sizeof(T), cudaMemcpyDeviceToDevice));
             sync(true);
             return err;
         case CUDA_MANAGED:
             // device --> cmanaged
-            cudaErrchk(cudaMemcpy(cuda_managed_ptr, src + begin_idx, copy_size * sizeof(T), cudaMemcpyDeviceToDevice));
+            cudaErrchk(cudaMemcpy(cuda_managed_ptr + write_from, src + begin_idx, copy_size * sizeof(T), cudaMemcpyDeviceToDevice));
             sync(true);
             return err;
     }
@@ -191,24 +191,24 @@ magmadnn_error_t MemoryManager<T>::copy_from_device(T* src, unsigned int begin_i
 
 template <typename T>
 magmadnn_error_t MemoryManager<T>::copy_from_managed(T* host_src, T* device_src, unsigned int begin_idx,
-                                                     unsigned int copy_size) {
+                                                     unsigned int copy_size, unsigned int write_from) {
     switch (mem_type) {
         case HOST:
             // managed --> host
-            std::copy(host_src + begin_idx, (host_src + begin_idx) + copy_size, host_ptr);
+            std::copy(host_src + begin_idx, (host_src + begin_idx) + copy_size, host_ptr + write_from);
             return (magmadnn_error_t) 0;
         case DEVICE:
             // managed --> device
-            cudaErrchk(cudaMemcpy(device_ptr, device_src + begin_idx, copy_size * sizeof(T), cudaMemcpyDeviceToDevice));
+            cudaErrchk(cudaMemcpy(device_ptr + write_from, device_src + begin_idx, copy_size * sizeof(T), cudaMemcpyDeviceToDevice));
             return (magmadnn_error_t) 0;
         case MANAGED:
             // managed --> managed
-            std::copy(host_src + begin_idx, (host_src + begin_idx) + copy_size, host_ptr);
+            std::copy(host_src + begin_idx, (host_src + begin_idx) + copy_size, host_ptr + write_from);
             sync(false);
             return (magmadnn_error_t) 0;
         case CUDA_MANAGED:
             // managed --> cmanaged
-            std::copy(host_src + begin_idx, (host_src + begin_idx) + copy_size, cuda_managed_ptr);
+            std::copy(host_src + begin_idx, (host_src + begin_idx) + copy_size, cuda_managed_ptr + write_from);
             sync(false);
             return (magmadnn_error_t) 0;
     }
@@ -217,23 +217,23 @@ magmadnn_error_t MemoryManager<T>::copy_from_managed(T* host_src, T* device_src,
 }
 
 template <typename T>
-magmadnn_error_t MemoryManager<T>::copy_from_cudamanaged(T* src, unsigned int begin_idx, unsigned int copy_size) {
+magmadnn_error_t MemoryManager<T>::copy_from_cudamanaged(T* src, unsigned int begin_idx, unsigned int copy_size, unsigned int write_from) {
     switch (mem_type) {
         case HOST:
             // cmanaged --> host
-            std::copy(src + begin_idx, (src + begin_idx) + copy_size, host_ptr);
+            std::copy(src + begin_idx, (src + begin_idx) + copy_size, host_ptr + write_from);
             return (magmadnn_error_t) 0;
         case DEVICE:
             // cmanaged --> device
-            cudaErrchk(cudaMemcpy(device_ptr, src + begin_idx, copy_size * sizeof(T), cudaMemcpyDeviceToDevice));
+            cudaErrchk(cudaMemcpy(device_ptr + write_from, src + begin_idx, copy_size * sizeof(T), cudaMemcpyDeviceToDevice));
             return (magmadnn_error_t) 0;
         case MANAGED:
             // cmanaged --> managed
-            std::copy(src + begin_idx, (src + begin_idx) + copy_size, host_ptr);
+            std::copy(src + begin_idx, (src + begin_idx) + copy_size, host_ptr + write_from);
             sync(false);
             return (magmadnn_error_t) 0;
         case CUDA_MANAGED:
-            std::copy(src + begin_idx, (src + begin_idx) + copy_size, cuda_managed_ptr);
+            std::copy(src + begin_idx, (src + begin_idx) + copy_size, cuda_managed_ptr + write_from);
             sync(false);
             return (magmadnn_error_t) 0;
     }

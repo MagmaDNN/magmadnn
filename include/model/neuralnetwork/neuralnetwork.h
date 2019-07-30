@@ -28,6 +28,7 @@ struct nn_params_t {
     double decaying_factor = 0.9; /**<decaying factor for RMSProp */
     double beta1 = 0.9;           /**<beta1 for Adam */
     double beta2 = 0.999;         /**<beta2 for Adam */
+    nn_params_t(unsigned n_epochs, unsigned batch_size, double learning_rate) : n_epochs(n_epochs), batch_size(batch_size), learning_rate(learning_rate), momentum(.9), decaying_factor(.9), beta1(.9), beta2(.999) {}
 };
 
 template <typename T>

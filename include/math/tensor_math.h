@@ -22,6 +22,7 @@
 #include "math/sum.h"
 #include "math/tile.h"
 #include "reduce_sum.h"
+#include "math/abs.h"
 
 #include "math/optimizer_math/adagrad.h"
 #include "math/optimizer_math/adam.h"

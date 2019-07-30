@@ -35,6 +35,14 @@ layerContainer<T> &layerContainer<T>::appendLayer(layer::Layer<T> *layerPtr) {
 }
 
 template <typename T>
+void layerContainer<T>::summary(void) const {
+    std::printf("Layers summary: \n");
+    for (typename layerContainer<T>::size_type idx = 0; idx != this->size(); ++idx) {
+        std::printf("Layer %zu: %s\n", idx, (this->operator[](idx)->get_name()).c_str());
+    }
+}
+
+template <typename T>
 void layerContainer<T>::destroyLayers(void) {
     for (auto ptr = this->rbegin(); ptr != this->rend(); ++ptr) {
         delete *ptr;

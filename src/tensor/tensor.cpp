@@ -86,16 +86,16 @@ void Tensor<T>::init(std::vector<unsigned int>& shape, tensor_filler_t<T> filler
 }
 
 template <typename T>
-magmadnn_error_t Tensor<T>::copy_from(const Tensor<T>& src, unsigned int begin_idx, unsigned int size) {
-    assert(this->size >= size);
+magmadnn_error_t Tensor<T>::copy_from(const Tensor<T>& src, unsigned int begin_idx, unsigned int size, unsigned int write_from) {
+    assert(this->size >= size + write_from);
     assert(src.size >= (begin_idx + size));
 
-    return this->mem_manager->copy_from(*src.get_memory_manager(), begin_idx, size);
+    return this->mem_manager->copy_from(*src.get_memory_manager(), begin_idx, size, write_from);
 }
 
 template <typename T>
 magmadnn_error_t Tensor<T>::copy_from(const Tensor<T>& src) {
-    return copy_from(src, 0, src.get_size());
+    return copy_from(src, 0, src.get_size(), 0);
 }
 
 template <typename T>

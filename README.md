@@ -1,39 +1,17 @@
-# MagmaDNN
+# MagmaDNN GCN
 
-A neural network library in c++ aimed at providing a simple, modularized framework for deep learning that is accelerated for heterogeneous architectures. MagmaDNN's releases are located at [https://bitbucket.org/icl/magmadnn](https://bitbucket.org/icl/magmadnn) (and [here](https://icl.cs.utk.edu/magma/)), while active development occurs at [https://github.com/MagmaDNN/magmadnn/tree/dev](https://github.com/MagmaDNN/magmadnn/tree/dev). If you're looking to contribute or submit a pull-requests/issues, then please do so on the github development repository.
+This repo is forked from the C++ neural network library [MagmaDNN](https://github.com/MagmaDNN/magmadnn) (commit hash [8e80c066ee52aa07b0f73eb0e9e55e22fcb857a2](https://github.com/MagmaDNN/magmadnn/commit/8e80c066ee52aa07b0f73eb0e9e55e22fcb857a2)). 
 
-![GitHub tag (latest by date)](https://img.shields.io/github/tag-date/MagmaDNN/magmadnn.svg?label=Latest%20Version)
+In this repo, a graph convolution layer (or to be more specific the one developed by [Kipf & Welling](https://arxiv.org/abs/1609.02907)) is implemented. The GPU implementation relies on CUDA CuBlas library. 
 
-In version 1.0 MagmaDNN offers a strong tensor core with standard machine learning and DNN functionalities built around it. For nightly development builds use the github repository linked above.
+At the moment the implementation uses dense matrix multiplications in batches and hence supports only graphs in dense format. Sparse graphs may be supported if Magma/CuSparse/other libraries have the corresponding routines or native routines are implemented. 
 
-MagmaDNN is optimized towards heterogeneous architectures (multi-core CPU and GPU), so it is advised to use with a modern NVIDIA GPU. However, MagmaDNN does support a CPU only install. This is mainly meant for testing and is not nearly as optimized as the GPU version.
+Other graph convolution layers and pooling layers may be added in the future. 
 
+As this is forked from the dev branch of MagmaDNN, bugs may exist and features in this repo may be removed in upcoming MagmaDNN versions. 
 
-The documentation can be found on the [docs site](https://magmadnn.github.io/magmadnn/html). For the most recent version of the documentation see the [build & install tutorial](/docs/tutorials/00_installing.md) on how to build the docs from source. The [todo page](/docs/todo.md) contains information on the future of the package and the [troubleshooting page](/docs/troubleshooting.md) walks through common issues and there solution.
+_author:_ Kam Fai Chan
 
+_original author:_ Daniel Nichols
 
-### Tutorials
--------------
-There are several tutorials in [docs/tutorials](/docs/tutorials). These give an introduction into installing and using the library.
-
-
-### Examples
------------
-For examples of what MagmaDNN code looks like see the [examples/ folder](/examples). If MagmaDNN is downloaded and installed, then the examples can be made and run with `make examples`.
-
-### Development Activity
------------------------
-All development takes place on the [github site](https://github.com/MagmaDNN/magmadnn).
-
-![GitHub issues](https://img.shields.io/github/issues/MagmaDNN/magmadnn.svg)
-![GitHub closed issues](https://img.shields.io/github/issues-closed/MagmaDNN/magmadnn.svg)
-![GitHub pull requests](https://img.shields.io/github/issues-pr/MagmaDNN/magmadnn.svg)
-![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed/MagmaDNN/magmadnn.svg)
-
-![GitHub commit activity](https://img.shields.io/github/commit-activity/m/MagmaDNN/magmadnn.svg)
-![GitHub contributors](https://img.shields.io/github/contributors/MagmaDNN/magmadnn.svg)
-
-
-_author:_ Daniel Nichols
-
-_co-author:_ Sedrick Keh
+_original co-author:_ Sedrick Keh

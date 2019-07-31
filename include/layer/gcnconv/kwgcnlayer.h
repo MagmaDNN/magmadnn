@@ -11,7 +11,7 @@ namespace magmadnn {
 namespace layer {
 //  layer for doing GCNConv as defined by Kipf and Welling in "Semi-Supervised Classification with Graph Convolutional
 //  Networks" (arXiv:1609.02907)
-//  input:           operation pointer, output shape batch_size * n_vertex * n_channelIn
+//  input:           operation pointer, channel-last, output shape batch_size * n_vertex * n_channelIn
 //  output_channel:  number of output channels, n_channelOut
 //  output shape:    batch_size * n_vertex * n_channelOut
 /**

@@ -1,5 +1,5 @@
 #include "compute/gcnconv/gcnconvop.h"
-
+#include <iostream>
 namespace magmadnn {
 namespace op {
 
@@ -49,7 +49,7 @@ void GCNConvOp<T>::init_bTaTg_cublas(void) {
 template <typename T>
 void GCNConvOp<T>::init_eval(void) {
     this->output_tensor = new Tensor<T>(this->output_shape, this->mem_type);
-    b_tensor_slice = new Tensor<T>(input_sample_size, this->mem_type);
+    b_tensor_slice = new Tensor<T>({n_vert_in, n_channel_in}, this->mem_type);
     ab_tensor_slice = new Tensor<T>({n_vert_out, n_channel_in}, this->mem_type);
     abc_tensor_slice = new Tensor<T>({n_vert_out, n_channel_out}, this->mem_type);
 }
@@ -213,7 +213,8 @@ Tensor<T>* GCNConvOp<T>::_grad(Operation<T>* consumer, Operation<T>* var, Tensor
         if (grad_tensor_slice == nullptr) {
             init_grad();
         }
-        for (unsigned sample_idx = 0; sample_idx < n_samples; ++input_sample_size) {
+        for (unsigned sample_idx = 0; sample_idx < n_samples; ++sample_idx) {
+
             b_tensor_slice->copy_from(*b_tensor, sample_idx * input_sample_size, input_sample_size);
             grad_tensor_slice->copy_from(*grad, sample_idx * output_sample_size, output_sample_size);
             math::matmul(const_one, true, a, false, grad_tensor_slice, const_zero, aTg_tensor_slice);
@@ -230,15 +231,15 @@ template class GCNConvOp<float>;
 template class GCNConvOp<double>;
 
 /**
- * @brief 
- * 
- * @tparam T 
- * @param a 
- * @param b 
- * @param c 
- * @param copy 
- * @param needs_grad 
- * @return GCNConvOp<T>* 
+ * @brief
+ *
+ * @tparam T
+ * @param a
+ * @param b
+ * @param c
+ * @param copy
+ * @param needs_grad
+ * @return GCNConvOp<T>*
  */
 template <typename T>
 GCNConvOp<T>* gcnconvop(Tensor<T>* a, Operation<T>* b, Operation<T>* c, bool copy, bool needs_grad) {

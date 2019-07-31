@@ -7,8 +7,18 @@
 #include "math/matmul.h"
 #include <cublas_v2.h>
 
+//  to do:
+//  add support for using sparse matrix input for a
+//  use MAGMA for routine?
+
 namespace magmadnn {
 namespace op {
+/**
+ * Compute X^{i}_{jk} = a_{jm} * b^{i}_{mn} * c_{nk} where a is a constant tensor, b, c are opearations
+ * 
+ * @tparam T 
+ * @param a Tensor pointer to the constant tensor
+ */
 template <typename T>
 class GCNConvOp : public Operation<T> {
    public:

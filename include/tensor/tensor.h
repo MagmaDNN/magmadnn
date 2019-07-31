@@ -77,7 +77,7 @@ class Tensor {
      */
     ~Tensor();
 
-    /** Copies data from src[begin_idx] to src[begin_idx+size] into this tensor.
+    /** Copies data from src[begin_idx] to src[begin_idx+size] into this[write_from] to this[write_from+size].
      * @param src
      * @param begin_idx
      * @param size

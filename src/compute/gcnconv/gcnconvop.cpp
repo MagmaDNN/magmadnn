@@ -134,6 +134,7 @@ Tensor<T>* GCNConvOp<T>::_eval(bool recompute) {
         init_eval();
     }
     for (unsigned sample_idx = 0; sample_idx < n_samples; ++sample_idx) {  //  for each sample
+        //  compute a * b_tensor_slice * c, put into output
         b_tensor_slice->copy_from(*b_tensor, sample_idx * input_sample_size, input_sample_size);
         math::matmul(const_one, false, a, false, b_tensor_slice, const_zero, ab_tensor_slice);
         math::matmul(const_one, false, ab_tensor_slice, false, c_tensor, const_zero, abc_tensor_slice);
@@ -151,7 +152,7 @@ Tensor<T>* GCNConvOp<T>::_grad(Operation<T>* consumer, Operation<T>* var, Tensor
     Tensor<T>* out = this->_grad_cache[(uintptr_t) var];
     if (var == b) {
         //  out_{i} = a^T * grad_{i} * c^T
-        c_tensor = c->eval(false);
+        this->c_tensor = c->eval(false);
         if (out == NULL) {
             out = new Tensor<T>(b->get_output_shape(), {NONE, {}}, this->mem_type);
             this->_grad_cache[(uintptr_t) b] = out;
@@ -183,7 +184,7 @@ Tensor<T>* GCNConvOp<T>::_grad(Operation<T>* consumer, Operation<T>* var, Tensor
 #endif
     } else {
         //  out = \sum_{i} (a * b_{i})^T * grad_{i}
-        b_tensor = b->eval(false);
+        this->b_tensor = b->eval(false);
         if (out == NULL) {
             out = new Tensor<T>(c->get_output_shape(), {NONE, {}}, this->mem_type);
             this->_grad_cache[(uintptr_t) c] = out;
@@ -228,6 +229,17 @@ template class GCNConvOp<int>;
 template class GCNConvOp<float>;
 template class GCNConvOp<double>;
 
+/**
+ * @brief 
+ * 
+ * @tparam T 
+ * @param a 
+ * @param b 
+ * @param c 
+ * @param copy 
+ * @param needs_grad 
+ * @return GCNConvOp<T>* 
+ */
 template <typename T>
 GCNConvOp<T>* gcnconvop(Tensor<T>* a, Operation<T>* b, Operation<T>* c, bool copy, bool needs_grad) {
     return new GCNConvOp<T>(a, b, c, copy, needs_grad);

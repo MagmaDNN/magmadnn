@@ -11,43 +11,22 @@
 namespace magmadnn {
 namespace op {
 
-template <typename T>
-GradTable<T>::GradTable() {
+GradTable::GradTable() {
     // init
 }
 
-template <typename T>
-unsigned int GradTable<T>::get_size() {
-    return _table.size();
+unsigned int GradTable::get_size() { return _table.size(); }
+
+std::pair<bool, std::reference_wrapper<Tensor>> GradTable::get(Operation *var) { return *_table.find(var); }
+
+void GradTable::set(Operation *var, Tensor &grad) {
+    if (var == nullptr) return;
+
+    /* add this gradient into the table */
+    _table.insert(std::make_pair(var, std::ref(grad)));
 }
 
-template <typename T>
-Tensor<T> *GradTable<T>::get(Operation<T> *var) {
-    tmp_map_iterator = _table.find(var);
-
-    // return NULL if not found
-    if (tmp_map_iterator == _table.end()) {
-        return (Tensor<T> *) NULL;
-    }
-
-    return tmp_map_iterator->second;
-}
-
-template <typename T>
-void GradTable<T>::set(Operation<T> *var, Tensor<T> *grad) {
-    if (var == NULL) return;
-
-    _table[var] = grad;
-}
-
-template <typename T>
-void GradTable<T>::clear() {
-    this->_table.clear();
-}
-
-template class GradTable<int>;
-template class GradTable<float>;
-template class GradTable<double>;
+void GradTable::clear() { this->_table.clear(); }
 
 }  // namespace op
 }  // namespace magmadnn

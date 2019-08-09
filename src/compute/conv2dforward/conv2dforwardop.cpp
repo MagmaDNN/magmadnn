@@ -4,11 +4,10 @@
 namespace magmadnn {
 namespace op {
 
-template <typename T>
-Conv2DForwardOp<T>::Conv2DForwardOp(Operation<T> *input, Operation<T> *filter, int pad_h, int pad_w,
-                                    int vertical_stride, int horizontal_stride, int dilation_h, int dilation_w,
-                                    bool use_cross_correlation, bool needs_grad)
-    : Operation<T>::Operation({input, filter}, needs_grad),
+Conv2DForwardOp::Conv2DForwardOp(Operation *input, Operation *filter, int pad_h, int pad_w, int vertical_stride,
+                                 int horizontal_stride, int dilation_h, int dilation_w, bool use_cross_correlation,
+                                 bool needs_grad)
+    : Operation::Operation({input, filter}, needs_grad),
       input(input),
       filter(filter),
       pad_h(pad_h),
@@ -19,16 +18,16 @@ Conv2DForwardOp<T>::Conv2DForwardOp(Operation<T> *input, Operation<T> *filter, i
       dilation_w(dilation_w),
       use_cross_correlation(use_cross_correlation) {
     /* setup code in here */
-    this->mem_type = input->get_memory_type();
+    this->mem_type_ = input->get_memory_type();
 
     /* initialize all the conv settings */
-    this->input_tensor = this->input->get_output_tensor();
+    this->dtype_ = this->input->dtype();
     this->init_settings();
 }
 
-template <typename T>
-Conv2DForwardOp<T>::~Conv2DForwardOp() {
-    if (this->mem_type == HOST) {
+Conv2DForwardOp::~Conv2DForwardOp() {
+    if (this->mem_type_ == HOST) {
+        /* delete CPU workspace here */
     }
 #if defined(_HAS_CUDA_)
     else {
@@ -43,73 +42,77 @@ Conv2DForwardOp<T>::~Conv2DForwardOp() {
 #endif
 }
 
-template <typename T>
-Tensor<T> *Conv2DForwardOp<T>::_eval(bool recompute) {
-    input_tensor = input->eval(recompute);
-    filter_tensor = filter->eval(recompute);
+Tensor &Conv2DForwardOp::_eval(bool recompute) {
+    Tensor &input_tensor = input->eval(recompute);
+    Tensor &filter_tensor = filter->eval(recompute);
 
-    if (this->mem_type == HOST) {
-        std::fprintf(stderr, "Error: Conv2dForward::_eval requires GPU\n");
-    }
+    switch (getDeviceType(this->mem_type_)) {
+        case CPU:
+            ::magmadnn::math::conv2d<CPU>(input_tensor, filter_tensor, this->output_tensor_);
 #if defined(_HAS_CUDA_)
-    else {
-        ::magmadnn::math::conv2d_device(this->input_tensor, this->filter_tensor, this->output_tensor,
-                                        this->cudnn_settings);
-    }
+        case GPU: /* only wrap this in a macro, because cudnn_settings won't be defined on host */
+            ::magmadnn::math::conv2d<GPU>(input_tensor, filter_tensor, this->output_tensor_, this->cudnn_settings);
 #endif
+        default:
+            ::magmadnn::math::conv2d<CPU>(input_tensor, filter_tensor, this->output_tensor_);
+    }
 
-    return this->output_tensor;
+    return this->output_tensor_;
 }
 
-template <typename T>
-Tensor<T> *Conv2DForwardOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad) {
+Tensor &Conv2DForwardOp::_grad(Operation *consumer, Operation *var, const Tensor &grad) {
     /* return gradient in here ... */
-    Tensor<T> *out = this->_grad_cache[(uintptr_t) var];
+
+    auto ret = this->_grad_cache.find(var);
+    Tensor out;
 
     if (var == this->input) {
-        if (out == NULL) {
-            out = new Tensor<T>(this->input->get_output_shape(), {NONE, {}}, this->mem_type);
-            this->_grad_cache[(uintptr_t) var] = out;
+        if (!ret->first) {
+            out = Tensor(this->input->get_output_shape(), this->dtype_, {NONE, {}}, this->mem_type_);
+            this->_grad_cache.insert(std::make_pair(var, out));
         }
 
-        this->filter_tensor = this->filter->eval(false);
+        Tensor &filter_tensor = this->filter->eval(false);
 
-        if (this->mem_type == HOST) {
-            ::magmadnn::math::conv2d_grad_data(this->filter_tensor, grad, out);
-        }
+        switch (getDeviceType(this->mem_type_)) {
+            case CPU:
+                ::magmadnn::math::conv2d_grad_data<CPU>(filter_tensor, grad, out);
 #if defined(_HAS_CUDA_)
-        else {
-            ::magmadnn::math::conv2d_grad_data_device(this->filter_tensor, grad, out, this->cudnn_settings);
-        }
+            case GPU:
+                ::magmadnn::math::conv2d_grad_data<GPU>(filter_tensor, grad, out, this->cudnn_settings);
 #endif
+            default:
+                LOG(ERROR) << "Unsupported conv2D type.\n";
+        }
 
     } else if (var == this->filter) {
-        if (out == NULL) {
-            out = new Tensor<T>(this->filter->get_output_shape(), {NONE, {}}, this->mem_type);
-            this->_grad_cache[(uintptr_t) var] = out;
+        if (!ret->first) {
+            out = Tensor(this->filter->get_output_shape(), this->dtype_, {NONE, {}}, this->mem_type_);
+            this->_grad_cache.insert(std::make_pair(var, out));
         }
 
-        this->input_tensor = this->input->eval(false);
+        Tensor &input_tensor = this->input->eval(false);
 
-        if (this->mem_type == HOST) {
-            ::magmadnn::math::conv2d_grad_filter(this->input_tensor, grad, out);
-        }
+        switch (getDeviceType(this->mem_type_)) {
+            case CPU:
+                ::magmadnn::math::conv2d_grad_filter<CPU>(input_tensor, grad, out);
 #if defined(_HAS_CUDA_)
-        else {
-            ::magmadnn::math::conv2d_grad_filter_device(this->input_tensor, grad, out, this->cudnn_settings);
-        }
+            case GPU:
+                ::magmadnn::math::conv2d_grad_filter<GPU>(input_tensor, grad, out, this->cudnn_settings);
 #endif
+            default:
+                LOG(ERROR) << "Unsupported conv2D type.\n";
+        }
 
     } else {
         std::fprintf(stderr, "Error: bad conv2d grad\n");
     }
 
-    return out;
+    return this->_grad_cache[var];
 }
 
-template <typename T>
-void Conv2DForwardOp<T>::init_settings() {
-    if (this->mem_type == HOST) {
+void Conv2DForwardOp::init_settings() {
+    if (this->mem_type_ == HOST) {
         std::fprintf(stderr, "Error: Conv2DForward::init_settings requires GPU.\n");
     }
 #if defined(_HAS_CUDA_)
@@ -187,12 +190,11 @@ void Conv2DForwardOp<T>::init_settings() {
 #endif
 }
 
-template <typename T>
-void Conv2DForwardOp<T>::calculate_and_set_output_shape() {
+void Conv2DForwardOp::calculate_and_set_output_shape() {
     /* calculate the correct output shape here */
-    if (this->mem_type == HOST) {
+    if (this->mem_type_ == HOST) {
         std::fprintf(stderr, "Error: Conv2dForward::output_shape requires GPU.\n");
-        this->output_shape = this->input->get_output_shape();
+        this->output_shape_ = this->input->get_output_shape();
     }
 #if defined(_HAS_CUDA_)
     else {
@@ -201,34 +203,13 @@ void Conv2DForwardOp<T>::calculate_and_set_output_shape() {
         cudnnErrchk(cudnnGetConvolution2dForwardOutputDim(this->cudnn_settings.conv_desc,
                                                           this->input_tensor->get_cudnn_tensor_descriptor(),
                                                           this->cudnn_settings.filter_desc, &n, &c, &h, &w));
-        this->output_shape = {static_cast<unsigned int>(n), static_cast<unsigned int>(c), static_cast<unsigned int>(h),
-                              static_cast<unsigned int>(w)};
+        this->output_shape_ = {static_cast<unsigned int>(n), static_cast<unsigned int>(c), static_cast<unsigned int>(h),
+                               static_cast<unsigned int>(w)};
     }
 #endif
 
-    this->output_tensor = new Tensor<T>(this->output_shape, {NONE, {}}, this->mem_type);
+    this->output_tensor_ = Tensor(this->output_shape_, this->dtype_, {NONE, {}}, this->mem_type_);
 }
-
-template class Conv2DForwardOp<int>;
-template class Conv2DForwardOp<float>;
-template class Conv2DForwardOp<double>;
-
-template <typename T>
-Conv2DForwardOp<T> *conv2dforward(Operation<T> *input, Operation<T> *filter, int pad_h, int pad_w, int vertical_stride,
-                                  int horizontal_stride, int dilation_h, int dilation_w, bool use_cross_correlation,
-                                  bool needs_grad) {
-    return new Conv2DForwardOp<T>(input, filter, pad_h, pad_w, vertical_stride, horizontal_stride, dilation_h,
-                                  dilation_w, use_cross_correlation, needs_grad);
-}
-template Conv2DForwardOp<int> *conv2dforward(Operation<int> *input, Operation<int> *filter, int pad_h, int pad_w,
-                                             int vertical_stride, int horizontal_stride, int dilation_h, int dilation_w,
-                                             bool use_cross_correlation, bool needs_grad);
-template Conv2DForwardOp<float> *conv2dforward(Operation<float> *input, Operation<float> *filter, int pad_h, int pad_w,
-                                               int vertical_stride, int horizontal_stride, int dilation_h,
-                                               int dilation_w, bool use_cross_correlation, bool needs_grad);
-template Conv2DForwardOp<double> *conv2dforward(Operation<double> *input, Operation<double> *filter, int pad_h,
-                                                int pad_w, int vertical_stride, int horizontal_stride, int dilation_h,
-                                                int dilation_w, bool use_cross_correlation, bool needs_grad);
 
 }  // namespace op
 }  // namespace magmadnn

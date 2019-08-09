@@ -16,8 +16,7 @@ namespace magmadnn {
 namespace op {
 namespace utility {
 
-template <typename T>
-magmadnn_error_t print_compute_graph(::magmadnn::op::Operation<T> *_root, bool debug = true);
+magmadnn_error_t print_compute_graph(::magmadnn::op::Operation *_root, bool debug = true);
 }
 }  // namespace op
 }  // namespace magmadnn

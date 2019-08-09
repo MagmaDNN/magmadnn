@@ -20,7 +20,6 @@ namespace op {
 /** GradTable class.
  * @tparam T Numeric
  */
-template <typename T>
 class GradTable {
    public:
     /** Constructs a new grad table.
@@ -36,21 +35,21 @@ class GradTable {
      * @param var
      * @return Operation<T>*
      */
-    Tensor<T>* get(Operation<T>* var);
+    std::pair<bool, std::reference_wrapper<Tensor>> get(Operation* var);
 
     /** Sets var's gradient to grad.
      * @param var
      * @param grad
      */
-    void set(Operation<T>* var, Tensor<T>* grad);
+    void set(Operation* var, Tensor& grad);
 
     /** Removes all entries.
      */
     void clear();
 
    protected:
-    std::map<Operation<T>*, Tensor<T>*> _table;  // the underlying table to store data
-    typename std::map<Operation<T>*, Tensor<T>*>::iterator tmp_map_iterator;
+    std::map<Operation*, std::reference_wrapper<Tensor>> _table;  // the underlying table to store data
+    typename std::map<Operation*, std::reference_wrapper<Tensor>>::iterator tmp_map_iterator;
 };
 
 }  // namespace op

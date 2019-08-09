@@ -2,6 +2,7 @@
 #pragma once
 
 #include <vector>
+#include "compute/compute_graph.h"
 #include "compute/operation.h"
 #include "math/batchnorm.h"
 #include "tensor/tensor.h"
@@ -13,31 +14,27 @@
 namespace magmadnn {
 namespace op {
 
-template <typename T>
-class BatchNormOp : public Operation<T> {
+class BatchNormOp : public Operation {
    public:
-    BatchNormOp(Operation<T> *input, bool needs_grad = true);
+    BatchNormOp(Operation *input);
 
-    virtual ~BatchNormOp();
-
-    std::string to_string() { return "BatchNorm(" + input->to_string() + ")"; }
+    std::string to_string() const override { return "BatchNorm(" + input->to_string() + ")"; }
 
    protected:
-    Tensor<T> *_eval(bool recompute);
-    Tensor<T> *_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad);
+    Tensor &_eval(bool recompute) override;
+    Tensor &_grad(Operation *consumer, Operation *var, const Tensor &grad) override;
 
-    Operation<T> *input;
-    Tensor<T> *input_tensor;
+    Operation *input;
 
     unsigned int num_calls;
-    Tensor<T> *bn_scale;
-    Tensor<T> *bn_scale_diff;
-    Tensor<T> *bn_bias;
-    Tensor<T> *bn_bias_diff;
-    Tensor<T> *running_mean;
-    Tensor<T> *running_variance;
-    Tensor<T> *saved_mean;
-    Tensor<T> *saved_variance;
+    Tensor bn_scale;
+    Tensor bn_scale_diff;
+    Tensor bn_bias;
+    Tensor bn_bias_diff;
+    Tensor running_mean;
+    Tensor running_variance;
+    Tensor saved_mean;
+    Tensor saved_variance;
 
 #if defined(_HAS_CUDA_)
     void init_settings();
@@ -48,8 +45,7 @@ class BatchNormOp : public Operation<T> {
     bool copy;
 };
 
-template <typename T>
-BatchNormOp<T> *batchnorm(Operation<T> *input, bool needs_grad = true);
+inline Operation *batchnorm(Operation *input) { return default_graph.add_operation<BatchNormOp>(input); }
 
 }  // namespace op
 }  // namespace magmadnn

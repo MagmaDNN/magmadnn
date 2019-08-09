@@ -10,7 +10,7 @@
 #pragma once
 
 #include <vector>
-#include "compute/add/addop.h"
+#include "compute/binaryop/binaryop.h"
 #include "compute/gradtable.h"
 #include "compute/operation.h"
 #include "compute/sum/sumop.h"
@@ -27,8 +27,7 @@ namespace op {
  * @param table GradTable to be filled in
  * @return magmadnn_error_t non-zero on error
  */
-template <typename T>
-magmadnn_error_t get_grad_table(const std::vector<Operation<T> *> &vars, Operation<T> *graph, GradTable<T> &table);
+magmadnn_error_t get_grad_table(const std::vector<Operation *> &vars, Operation *graph, GradTable &table);
 
 }  // namespace op
 
@@ -42,8 +41,7 @@ namespace internal {
  * @param table GradTable to put gradients in
  * @return magmadnn_error_t non-zero on error
  */
-template <typename T>
-magmadnn_error_t build_grad(op::Operation<T> *var, op::Operation<T> *graph, op::GradTable<T> &table, Tensor<T> **grad);
+magmadnn_error_t build_grad(op::Operation *var, op::Operation *graph, op::GradTable &table, Tensor &grad);
 
 }  // namespace internal
 }  // namespace magmadnn

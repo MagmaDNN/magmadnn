@@ -29,6 +29,8 @@ class Operation {
         }
     }
 
+    virtual ~Operation() {}
+
     virtual Operation &operator=(const Operation &o) = delete;
 
     /** Returns the expected output shape of this operation.
@@ -76,6 +78,8 @@ class Operation {
      * @return memory_t
      */
     virtual memory_t get_memory_type() const { return this->mem_type_; }
+
+    virtual DataType dtype() const { return this->dtype_; };
 
     /** Returns the operation's evaluated tensor.
      * @param recompute whether to use previous value or recalculate
@@ -174,6 +178,17 @@ class Operation {
         }
     }
 
+    inline void use_operation_settings(const Operation *o, bool use_shape = true) {
+        if (o == nullptr) {
+            return;
+        }
+        this->mem_type_ = o->get_memory_type();
+        this->dtype_ = o->dtype();
+        if (use_shape) {
+            this->output_shape_ = o->get_output_shape();
+        }
+    }
+
     std::vector<Operation *> inputs_;    /* children */
     std::vector<Operation *> consumers_; /* parents */
 
@@ -182,8 +197,7 @@ class Operation {
     DataType dtype_;
 
     /* TODO -- get rid of _grad_cache */
-    std::map<Operation *, std::reference_wrapper<Tensor>>
-        _grad_cache; /* this will cache the tensors for the gradient computation */
+    std::map<Operation *, Tensor> _grad_cache; /* this will cache the tensors for the gradient computation */
     std::string name_ = "DefaultOpName";
 
     Tensor output_tensor_; /* the return tensor */

@@ -10,6 +10,7 @@
 
 #include <cstdio>
 #include <vector>
+#include "compute/compute_graph.h"
 #include "compute/operation.h"
 #include "compute/sum/sum_internal.h"
 #include "tensor/tensor.h"
@@ -18,23 +19,20 @@
 namespace magmadnn {
 namespace op {
 
-template <typename T>
-class SumOp : public Operation<T> {
+class SumOp : public Operation {
    public:
-    SumOp(std::vector<Operation<T> *> ops, bool copy = true);
+    SumOp(std::vector<Operation *> ops);
 
-    std::string to_string();
+    std::string to_string() const override;
 
    protected:
-    Tensor<T> *_eval(bool recompute = true);
-    Tensor<T> &_grad(Operation<T> *consumer, Operation<T> *var, const Tensor<T> &grad);
+    Tensor &_eval(bool recompute = true) override;
+    Tensor &_grad(Operation *consumer, Operation *var, const Tensor &grad) override;
 
-    std::vector<Operation<T> *> ops;
-    bool copy;
+    std::vector<Operation *> ops;
 };
 
-template <typename T>
-Operation<T> *sum(std::vector<Operation<T> *> ops, bool copy = true);
+inline Operation *sum(std::vector<Operation *> ops) { return default_graph.add_operation<SumOp>(ops); }
 
 }  // namespace op
 }  // namespace magmadnn

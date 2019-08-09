@@ -21,7 +21,7 @@ class SoftmaxOp : public Operation<T> {
     std::string to_string() { return "Softmax(" + input->to_string() + ")"; }
 
    protected:
-    Tensor<T> *_eval(bool recompute);
+    Tensor &_eval(bool recompute);
     Tensor<T> &_grad(Operation<T> *consumer, Operation<T> *var, const Tensor<T> &grad);
 
     Operation<T> *input;

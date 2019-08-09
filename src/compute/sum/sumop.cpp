@@ -11,13 +11,12 @@
 namespace magmadnn {
 namespace op {
 
-template <typename T>
-SumOp<T>::SumOp(std::vector<Operation<T> *> ops, bool copy) : Operation<T>::Operation(ops), ops(ops), copy(copy) {
+SumOp::SumOp(std::vector<Operation *> ops) : Operation<T>::Operation(ops), ops(ops) {
     if (ops.empty()) {
         return;
     }
 
-    typename std::vector<Operation<T> *>::const_iterator it = ops.begin();
+    std::vector<Operation *>::const_iterator it = ops.begin();
     unsigned int first_size = (*it)->get_output_size();
     for (it++; it != ops.end(); it++) {
         assert((*it)->get_output_size() == first_size);
@@ -26,37 +25,27 @@ SumOp<T>::SumOp(std::vector<Operation<T> *> ops, bool copy) : Operation<T>::Oper
     this->output_shape = ops.at(0)->get_output_shape();
     this->mem_type = ops.at(0)->get_memory_type();
 
-    if (copy) {
-        this->output_tensor = new Tensor<T>(ops.at(0)->get_output_shape(), {ZERO, {}}, ops.at(0)->get_memory_type());
-    } else {
-        std::fprintf(stderr, "no_copy sum not supported yet.\n");
-    }
+    this->output_tensor =
+        Tensor(ops.at(0)->get_output_shape(), ops.at(0).dtype(), {ZERO, {}}, ops.at(0)->get_memory_type());
 }
 
-template <typename T>
-Tensor<T> *SumOp<T>::_eval(bool recompute) {
-    std::vector<Tensor<T> *> vals(ops.size());
+Tensor &SumOp::_eval(bool recompute) {
+    std::vector<Tensor *> vals(ops.size());
 
     for (unsigned int i = 0; i < ops.size(); i++) {
-        vals[i] = ops[i]->eval();
+        vals[i] = ops[i]->eval(recompute);
     }
 
-    /* TODO sum into first OR last element for non-copy */
-    assert(this->output_tensor != NULL);
-    internal::sum_full(vals, *this->output_tensor);
+    internal::sum_full(vals, this->output_tensor);
 
     return this->output_tensor;
 }
 
-template <typename T>
-Tensor<T> *SumOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad) {
-    return grad;
-}
+Tensor &SumOp::_grad(Operation *consumer, Operation *var, Tensor &grad) { return grad; }
 
-template <typename T>
-std::string SumOp<T>::to_string() {
+std::string SumOp::to_string() override {
     std::string ret = "(";
-    for (typename std::vector<Operation<T> *>::iterator vit = this->ops.begin(); vit != this->ops.end(); vit++) {
+    for (typename std::vector<Operation *>::iterator vit = this->ops.begin(); vit != this->ops.end(); vit++) {
         if (vit != ops.begin()) {
             ret += "+";
         }
@@ -64,18 +53,6 @@ std::string SumOp<T>::to_string() {
     }
     return ret + ")";
 }
-
-template class SumOp<int>;
-template class SumOp<float>;
-template class SumOp<double>;
-
-template <typename T>
-Operation<T> *sum(std::vector<Operation<T> *> ops, bool copy) {
-    return new SumOp<T>(ops, copy);
-}
-template Operation<int> *sum(std::vector<Operation<int> *> ops, bool copy);
-template Operation<float> *sum(std::vector<Operation<float> *> ops, bool copy);
-template Operation<double> *sum(std::vector<Operation<double> *> ops, bool copy);
 
 }  // namespace op
 }  // namespace magmadnn

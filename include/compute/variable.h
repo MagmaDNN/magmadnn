@@ -68,8 +68,8 @@ inline Operation *var(std::string name, const std::vector<index_t> &shape, DataT
  */
 template <typename T>
 inline Operation *scalar(std::string name, T val, memory_t mem_type) {
-    return default_graph.add_operation<Variable>(name, 1, ::GetDataType<T>::value, {CONSTANT, static_cast<double>(val)},
-                                                 mem_type);
+    return default_graph.add_operation<Variable>(name, 1, ::magmadnn::GetDataType<T>::value,
+                                                 {CONSTANT, static_cast<double>(val)}, mem_type);
 }
 }  // namespace op
 }  // namespace magmadnn

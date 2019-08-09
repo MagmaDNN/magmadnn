@@ -31,7 +31,7 @@ class Graph {
 template <typename op_type, typename... Args>
 inline Operation* Graph::add_operation(Args... args) {
     // std::unique_ptr<Operation> tmp_ptr{new op_type(args)};
-    std::unique_ptr<Operation> tmp_ptr = ::magmadnn::internal::make_unique<op_type>(args);
+    std::unique_ptr<Operation> tmp_ptr = ::magmadnn::internal::make_unique<op_type>(args...);
 
     /* use std::move to transfer ownership */
     this->nodes.push_back(std::move(tmp_ptr));

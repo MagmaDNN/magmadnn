@@ -32,7 +32,7 @@ class ProductOp : public Operation<T> {
     std::string to_string() { return "(" + a->to_string() + " * " + b->to_string() + ")"; }
 
    protected:
-    Tensor<T> *_eval(bool recompute = true);
+    Tensor &_eval(bool recompute = true);
     Tensor<T> &_grad(Operation<T> *consumer, Operation<T> *var, const Tensor<T> &grad);
 
     T alpha;

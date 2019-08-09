@@ -4,55 +4,47 @@
 namespace magmadnn {
 namespace op {
 
-template <typename T>
-BatchNormOp<T>::BatchNormOp(Operation<T> *input, bool needs_grad)
-    : Operation<T>::Operation({input}, needs_grad), input(input), num_calls(0) {
+BatchNormOp::BatchNormOp(Operation *input) : Operation::Operation({input}), input(input), num_calls(0) {
     /* setup code in here */
-    this->output_shape = input->get_output_shape();
-    this->mem_type = input->get_memory_type();
-    this->name = "BatchNorm";
+    this->use_operation_settings(input, true);
+    this->name_ = "BatchNorm";
 
-    this->input_tensor = input->get_output_tensor();
-    this->output_tensor = new Tensor<T>(this->output_shape, {NONE, {}}, this->mem_type);
+    this->output_tensor_ = Tensor(this->output_shape_, this->dtype_, {NONE}, this->mem_type_);
 
 #if defined(_HAS_CUDA_)
     init_settings();
 #endif
 }
 
-template <typename T>
-BatchNormOp<T>::~BatchNormOp() {}
-
-template <typename T>
-Tensor<T> *BatchNormOp<T>::_eval(bool recompute) {
+Tensor &BatchNormOp::_eval(bool recompute) {
     /* eval code in here ... */
 
-    input_tensor = input->eval(recompute);
+    Tensor &input_tensor = input->eval(recompute);
 
-    if (this->mem_type == HOST) {
-        math::batchnorm(input_tensor, this->output_tensor);
+    if (this->mem_type_ == HOST) {
+        math::batchnorm(input_tensor, this->output_tensor_);
     }
 #if defined(_HAS_CUDA_)
     else {
-        math::batchnorm_device(input_tensor, this->output_tensor, bn_scale, bn_bias, running_mean, running_variance,
+        math::batchnorm_device(input_tensor, this->output_tensor_, bn_scale, bn_bias, running_mean, running_variance,
                                saved_mean, saved_variance, num_calls, this->settings);
     }
 #endif
 
-    return this->output_tensor;
+    return this->output_tensor_;
 }
 
-template <typename T>
-Tensor<T> *BatchNormOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad) {
+Tensor &BatchNormOp::_grad(Operation *consumer, Operation *var, const Tensor &grad) {
     /* return gradient in here ... */
-    Tensor<T> *out = this->_grad_cache[(uintptr_t) var];
+    auto res = this->_grad_cache.find(var);
+    Tensor out;
 
-    if (out == NULL) {
-        out = new Tensor<T>(this->output_shape, {NONE, {}}, this->mem_type);
-        this->_grad_cache[(uintptr_t) var] = out;
+    if (!res->first) {
+        out = Tensor(this->output_shape_, this->dtype_, {NONE, {}}, this->mem_type_);
+        this->_grad_cache.insert(std::make_pair(var, std::ref(out)));
     }
 
-    if (this->mem_type == HOST) {
+    if (this->mem_type_ == HOST) {
         math::batchnorm_grad(grad, out);
     }
 #if defined(_HAS_CUDA_)
@@ -62,12 +54,11 @@ Tensor<T> *BatchNormOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tens
     }
 #endif
 
-    return out;
+    return this->_grad_cache[var];
 }
 
 #if defined(_HAS_CUDA_)
-template <typename T>
-void BatchNormOp<T>::init_settings() {
+void BatchNormOp::init_settings() {
     settings.handle = ::magmadnn::internal::MAGMADNN_SETTINGS->cudnn_handle;
 
     /* Use spatial if 4D (conv layer), and use per activation if 2D (fully connected layer) */
@@ -84,29 +75,17 @@ void BatchNormOp<T>::init_settings() {
         bn_tensor_shape[3] = 1;
     }
 
-    bn_scale = new Tensor<T>(bn_tensor_shape, {ONE, {}}, this->mem_type);
-    bn_bias = new Tensor<T>(bn_tensor_shape, {ONE, {}}, this->mem_type);
-    bn_scale_diff = new Tensor<T>(bn_tensor_shape, {ONE, {}}, this->mem_type);
-    bn_bias_diff = new Tensor<T>(bn_tensor_shape, {ONE, {}}, this->mem_type);
-    running_mean = new Tensor<T>(bn_tensor_shape, {ZERO, {}}, this->mem_type);
-    running_variance = new Tensor<T>(bn_tensor_shape, {ZERO, {}}, this->mem_type);
-    saved_mean = new Tensor<T>(bn_tensor_shape, {ZERO, {}}, this->mem_type);
-    saved_variance = new Tensor<T>(bn_tensor_shape, {ZERO, {}}, this->mem_type);
+    bn_scale = Tensor(bn_tensor_shape, {ONE, {}}, this->mem_type);
+    bn_bias = Tensor(bn_tensor_shape, {ONE, {}}, this->mem_type);
+    bn_scale_diff = Tensor(bn_tensor_shape, {ONE, {}}, this->mem_type);
+    bn_bias_diff = Tensor(bn_tensor_shape, {ONE, {}}, this->mem_type);
+    running_mean = Tensor(bn_tensor_shape, {ZERO, {}}, this->mem_type);
+    running_variance = Tensor(bn_tensor_shape, {ZERO, {}}, this->mem_type);
+    saved_mean = Tensor(bn_tensor_shape, {ZERO, {}}, this->mem_type);
+    saved_variance = Tensor(bn_tensor_shape, {ZERO, {}}, this->mem_type);
 }
 
 #endif
-
-template class BatchNormOp<int>;
-template class BatchNormOp<float>;
-template class BatchNormOp<double>;
-
-template <typename T>
-BatchNormOp<T> *batchnorm(Operation<T> *input, bool needs_grad) {
-    return new BatchNormOp<T>(input, needs_grad);
-}
-template BatchNormOp<int> *batchnorm(Operation<int> *input, bool needs_grad);
-template BatchNormOp<float> *batchnorm(Operation<float> *input, bool needs_grad);
-template BatchNormOp<double> *batchnorm(Operation<double> *input, bool needs_grad);
 
 }  // namespace op
 }  // namespace magmadnn

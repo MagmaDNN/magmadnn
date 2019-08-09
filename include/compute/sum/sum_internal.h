@@ -18,12 +18,11 @@ namespace internal {
  * @tparam T
  * @param vals
  */
-template <typename T>
-void sum_full(std::vector<Tensor<T> *> &vals, Tensor<T> &out);
+void sum_full(const std::vector<std::reference_wrapper<const Tensor>> &vals, Tensor &out);
 
 #if defined(_HAS_CUDA_)
 template <typename T>
-void sum_full_device(std::vector<Tensor<T> *> &vals, Tensor<T> &out);
+void sum_full_device(const std::vector<std::reference_wrapper<const Tensor>> &vals, Tensor &out);
 #endif
 
 }  // namespace internal

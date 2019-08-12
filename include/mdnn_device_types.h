@@ -50,15 +50,15 @@ combine(MANAGED, COMBINED);
 #define FOR_ALL_DEVICE_TYPES(enum_type, dev_type, ...)                      \
     switch (enum_type) {                                                    \
         case CPU: {                                                         \
-            const DeviceType dev_type = ::magmadnn::CPU;                    \
+            constexpr DeviceType dev_type = ::magmadnn::CPU;                \
             { __VA_ARGS__ }                                                 \
         } break;                                                            \
         case GPU: {                                                         \
-            const DeviceType dev_type = ::magmadnn::GPU;                    \
+            constexpr DeviceType dev_type = ::magmadnn::GPU;                \
             { __VA_ARGS__ }                                                 \
         } break;                                                            \
         case COMBINED: {                                                    \
-            const DeviceType dev_type = ::magmadnn::COMBINED;               \
+            constexpr DeviceType dev_type = ::magmadnn::COMBINED;           \
             { __VA_ARGS__ }                                                 \
         } break;                                                            \
         default:                                                            \

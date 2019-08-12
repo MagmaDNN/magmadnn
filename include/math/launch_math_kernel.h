@@ -18,7 +18,13 @@ namespace magmadnn {
 namespace math {
 
 template <DeviceType dev, typename Mapper>
-struct ParallelLauncher {};
+struct ParallelLauncher {
+   public:
+    template <typename... Args>
+    inline static void launchMappedKernel(const size_t SIZE, Args... args) {
+        LOG(ERROR) << "ParallelLauncher not defined for this device type.\n";
+    }
+};
 
 template <typename Mapper>
 struct ParallelLauncher<CPU, Mapper> {

@@ -11,7 +11,7 @@
 #include "compute/compute_graph.h"
 #include "compute/operation.h"
 
-#include "magmadnn_device_types.h"
+#include "mdnn_device_types.h"
 
 #include "math/binary_math_operations.h"
 #include "math/launch_math_kernel.h"
@@ -23,7 +23,7 @@ template <typename BinaryOpType>
 class BinaryOp : public Operation {
    public:
     BinaryOp(Operation *x, Operation *y) {
-        this->use_tensor_settings(x, true);
+        this->use_tensor_settings(x->get_output_tensor(), true);
 
         this->output_tensor_ = Tensor(this->output_shape_, this->dtype_, {NONE}, this->mem_type_);
     }
@@ -35,12 +35,19 @@ class BinaryOp : public Operation {
         Tensor &x_tensor = x->eval(recompute);
         Tensor &y_tensor = y->eval(recompute);
 
-        FOR_ALL_DEVICE_TYPES(getDeviceType(this->mem_type_), DEV_TYPE, {
-            ::magmadnn::math::ParallelLauncher<DEV_TYPE, BinaryOpType>(x_tensor, y_tensor, this->output_tensor_);
-        })
+        FOR_ALL_DEVICE_TYPES(getDeviceType(this->mem_type_), DEV_TYPE,
+                             {/* now for all data types */
+                              FOR_ALL_DTYPES(this->dtype_, DTYPE, {
+                                  ::magmadnn::math::ParallelLauncher<DEV_TYPE, BinaryOpType>::launchMappedKernel(
+                                      this->output_tensor_.size(), x_tensor.template get_ptr<DTYPE>(),
+                                      y_tensor.template get_ptr<DTYPE>(),
+                                      this->output_tensor_.template get_ptr<DTYPE>());
+                              })})
     }
 
-    Tensor &_grad(Operation *consumer, Operation *var, const Tensor &grad) override {}
+    Tensor &_grad(Operation *consumer, Operation *var, const Tensor &grad) override {
+        /* TODO -- take a second, template arg to calc gradient */
+    }
 
     Operation *x, *y;
 };

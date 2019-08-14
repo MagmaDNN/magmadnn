@@ -21,9 +21,13 @@ namespace magmadnn {
 namespace model {
 
 struct nn_params_t {
-    unsigned int n_epochs;   /**<n_epochs number of epochs to train for */
-    unsigned int batch_size; /**<batch_size the size of the batch */
-    double learning_rate;    /**<initial learning rate */
+    unsigned int n_epochs;        /**<n_epochs number of epochs to train for */
+    unsigned int batch_size;      /**<batch_size the size of the batch */
+    double learning_rate;         /**<initial learning rate */
+    double momentum = 0.9;        /**<momentum rate */
+    double decaying_factor = 0.9; /**<decaying factor for RMSProp */
+    double beta1 = 0.9;           /**<beta1 for Adam */
+    double beta2 = 0.999;         /**<beta2 for Adam */
 };
 
 template <typename T>

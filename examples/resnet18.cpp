@@ -29,8 +29,8 @@ int main(int argc, char **argv) {
     /* these functions read-in and return tensors holding the mnist data set
         to use them, please change the string to the path to your local copy of the mnist dataset.
         it can be downloaded from http://yann.lecun.com/exdb/mnist */
-    images_host = read_mnist_images("/opt/data/mmist/train-images-idx3-ubyte", n_images, n_rows, n_cols);
-    labels_host = read_mnist_labels("/opt/data/mmist/train-labels-idx1-ubyte", n_labels, n_classes);
+    images_host = read_mnist_images("/opt/data/mnist/train-images-idx3-ubyte", n_images, n_rows, n_cols);
+    labels_host = read_mnist_labels("/opt/data/mnist/train-labels-idx1-ubyte", n_labels, n_classes);
 
     if (images_host == NULL || labels_host == NULL) {
         return 1;

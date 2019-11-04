@@ -69,11 +69,12 @@ class DistributedGradientDescent : public Optimizer<T> {
         for (vit = wrt.begin(); vit != wrt.end(); vit++) {
             Tensor<T> *grad = this->table.get(*vit);
 
-            this->update((*vit), grad);
-
 #if defined(_HAS_MPI_)
-            MPI_Allreduce(MPI_IN_PLACE, grad->get_ptr(), grad->get_size(), MPI_FLOAT, this->avg, MPI_COMM_WORLD);
+            MPI_Allreduce(MPI_IN_PLACE, grad->get_ptr(), grad->get_size(), MPI_FLOAT, MPI_SUM, MPI_COMM_WORLD);
+            math::scalar_tensor_product(static_cast<T>(1) / static_cast<T>(N), grad, grad);
 #endif
+
+            this->update((*vit), grad);
         }
     }
 

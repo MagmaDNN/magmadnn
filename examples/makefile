@@ -1,8 +1,9 @@
 # makes the example files
 
 SRC_FILES := $(wildcard *.cpp)
+SRC_FILES := $(filter-out distributed.cpp, $(SRC_FILES))
 OBJ_FILES := $(patsubst %.cpp, %.o, $(SRC_FILES))
-TARGETS := $(patsubst %.cpp, %.out, $(SRC_FILES))
+TARGETS := $(patsubst %.cpp, %.out, $(SRC_FILES)) distributed
 
 TESTING_FLAGS := $(OPTIMIZATION_LEVEL) $(WARNINGS) $(CXX_VERSION) $(CUDA_MACRO)
 RPATH_FLAGS := -Wl,-rpath,$(prefix)/lib
@@ -27,6 +28,10 @@ $(DEST):
 
 %.o: %.cpp
 	$(CXX) $(TESTING_FLAGS) -o $@ -c $< $(INC) -I../include
+
+
+distributed: distributed.cpp
+	mpicxx $(TESTING_FLAGS) -o ./bin/$@ $< $(INC) -I../include -D_HAS_MPI_ -L$(LIB_PATH) -lmagmadnn $(LIBDIRS) $(LIBS)
 
 clean:
 	rm *.o

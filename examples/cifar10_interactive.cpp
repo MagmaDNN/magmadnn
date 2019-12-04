@@ -39,7 +39,8 @@ void switch_batch(Tensor<float>** data, Tensor<float>** labels, uint32_t& cur_ba
                   uint32_t& n_classes, bool normalize = true);
 
 int main(int argc, char** argv) {
-    magmadnn_init();
+
+   magmadnn_init();
 
     Tensor<float>*host_data, *host_labels, *data, *labels;
     uint32_t n_images, image_width, image_height, n_channels, n_classes;

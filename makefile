@@ -9,6 +9,9 @@ NVCC ?= nvcc
 
 # locations of cuda and magma installations
 CUDADIR ?= /usr/local/cuda
+# Location of cuDNN library
+CUDNN_INC_DIR ?=
+CUDNN_LIB_DIR ?=
 MAGMADIR ?= /usr/local/magma
 BLASDIR ?= /usr/local/openblas
 BLASINC ?= $(BLASDIR)/include
@@ -21,9 +24,19 @@ prefix ?= /usr/local/magmadnn
 # headers needed for library compilation
 INC := -I./include -I$(BLASINC)
 
+# Add cuDNN include directory
+ifneq ($(CUDNN_INC_DIR),)
+INC += -I$(CUDNN_INC_DIR)
+endif
+
 # libs to link with
 LIBDIRS := -L$(BLASLIB_PATH)
 LIBS = -l$(BLASLIB)
+
+# Add cuDNN lib directory
+ifneq ($(CUDNN_LIB_DIR),)
+LIBDIRS += -L$(CUDNN_LIB_DIR)
+endif
 
 # use nvcc to determine if we should compile for gpu or not
 USE_CUDA = 0

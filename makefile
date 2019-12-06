@@ -97,6 +97,8 @@ export CUDA_MACRO
 export USE_CUDA
 export CXXFLAGS
 export NVCCFLAGS
+export LIBDIRS
+export LIBS
 
 
 # default extension for object files

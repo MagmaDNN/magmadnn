@@ -16,7 +16,8 @@ void matmul(int alpha, bool trans_A, Tensor<int> *A, bool trans_B, Tensor<int> *
 
 template <>
 void matmul(float alpha, bool trans_A, Tensor<float> *A, bool trans_B, Tensor<float> *B, float beta, Tensor<float> *C) {
-    unsigned int M, N, K, ldda, lddb, lddc;
+    // unsigned int M, N, K, ldda, lddb, lddc;
+    int M, N, K, ldda, lddb, lddc;
 
     /* op(A) : MxK ; op(B) : KxN ; C : MxN */
 
@@ -54,7 +55,8 @@ void matmul(float alpha, bool trans_A, Tensor<float> *A, bool trans_B, Tensor<fl
 template <>
 void matmul(double alpha, bool trans_A, Tensor<double> *A, bool trans_B, Tensor<double> *B, double beta,
             Tensor<double> *C) {
-    unsigned int M, N, K, ldda, lddb, lddc;
+    // unsigned int M, N, K, ldda, lddb, lddc;
+   int M, N, K, ldda, lddb, lddc;
 
     /* op(A) : MxK ; op(B) : KxN ; C : MxN */
     /* lddX is the leading dimension of X or the number of elements between rows.  */

@@ -6,6 +6,7 @@
  *
  * @copyright Copyright (c) 2019
  */
+#include "math/wrappers.h"
 #include "math/matmul.h"
 
 namespace magmadnn {

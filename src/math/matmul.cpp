@@ -33,12 +33,19 @@ void matmul(float alpha, bool trans_A, Tensor<float> *A, bool trans_B, Tensor<fl
     // (MxR)(RxN) + (MxN) = (MxN) + (MxN) = (MxN)
 
     if (A->get_memory_type() == HOST) {
-        CBLAS_TRANSPOSE a_trans = (trans_A) ? CblasTrans : CblasNoTrans;
-        CBLAS_TRANSPOSE b_trans = (trans_B) ? CblasTrans : CblasNoTrans;
+        // CBLAS_TRANSPOSE a_trans = (trans_A) ? CblasTrans : CblasNoTrans;
+        // CBLAS_TRANSPOSE b_trans = (trans_B) ? CblasTrans : CblasNoTrans;
 
         // specify ROW MAJOR, since tensors are stored in row-major
-        cblas_sgemm(CblasRowMajor, a_trans, b_trans, M, N, K, alpha, A->get_ptr(), ldda, B->get_ptr(), lddb, beta,
-                    C->get_ptr(), lddc);
+        // cblas_sgemm(CblasRowMajor, a_trans, b_trans, M, N, K, alpha, A->get_ptr(), ldda, B->get_ptr(), lddb, beta,
+        //             C->get_ptr(), lddc);
+
+       // Assuming row-major storage 
+       operation a_trans = (trans_A) ? OP_T : OP_N;
+       operation b_trans = (trans_B) ? OP_T : OP_N;
+       
+       gemm(b_trans, a_trans, N, M, K, alpha, B->get_ptr(), lddb, A->get_ptr(), ldda, beta, C->get_ptr(), lddc);
+
     }
 #if defined(_HAS_CUDA_)
     else {
@@ -73,12 +80,18 @@ void matmul(double alpha, bool trans_A, Tensor<double> *A, bool trans_B, Tensor<
     // (MxR)(RxN) + (MxN) = (MxN) + (MxN) = (MxN)
 
     if (A->get_memory_type() == HOST) {
-        CBLAS_TRANSPOSE a_trans = (trans_A) ? CblasTrans : CblasNoTrans;
-        CBLAS_TRANSPOSE b_trans = (trans_B) ? CblasTrans : CblasNoTrans;
+        // CBLAS_TRANSPOSE a_trans = (trans_A) ? CblasTrans : CblasNoTrans;
+        // CBLAS_TRANSPOSE b_trans = (trans_B) ? CblasTrans : CblasNoTrans;
 
-        // specify ROW MAJOR, since tensors are stored in row-major
-        cblas_dgemm(CblasRowMajor, a_trans, b_trans, M, N, K, alpha, A->get_ptr(), ldda, B->get_ptr(), lddb, beta,
-                    C->get_ptr(), lddc);
+        // // specify ROW MAJOR, since tensors are stored in row-major
+        // cblas_dgemm(CblasRowMajor, a_trans, b_trans, M, N, K, alpha, A->get_ptr(), ldda, B->get_ptr(), lddb, beta,
+        //             C->get_ptr(), lddc);
+
+        operation a_trans = (trans_A) ? OP_T : OP_N;
+        operation b_trans = (trans_B) ? OP_T : OP_N;
+       
+        gemm(b_trans, a_trans, N, M, K, alpha, B->get_ptr(), lddb, A->get_ptr(), ldda, beta, C->get_ptr(), lddc);
+
     }
 #if defined(_HAS_CUDA_)
     else {

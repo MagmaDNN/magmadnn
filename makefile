@@ -18,6 +18,9 @@ BLASINC ?= $(BLASDIR)/include
 BLASLIB_PATH ?= $(BLASDIR)/lib
 BLASLIB ?= openblas
 
+# Distributed memory version
+USE_MPI ?= 0
+
 # where to install magmadnn (make must have sudo access if prefix is root privileged)
 prefix ?= /usr/local/magmadnn
 
@@ -99,7 +102,7 @@ export CXXFLAGS
 export NVCCFLAGS
 export LIBDIRS
 export LIBS
-
+export USE_MPI
 
 # default extension for object files
 o_ext ?= o

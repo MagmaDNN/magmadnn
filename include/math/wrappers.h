@@ -27,5 +27,10 @@ namespace math {
              enum operation transb,
              int m, int n, int k, T alpha, const T* a, int lda, const T* b,
              int ldb, T beta, T* c, int ldc);
-   
+
+   // GEMV
+   template <typename T>
+   void gemv(enum operation trans, int m, int n, T alpha, T const* a, int lda,
+                  T const* x, int incx, T beta, T *y, int incy);
+
 }}  // namespace magmadnn::math

@@ -6,6 +6,7 @@
  *
  * @copyright Copyright (c) 2019
  */
+#include "math/wrappers.h"
 #include "compute/matmul/gemm_internal.h"
 
 namespace magmadnn {
@@ -38,7 +39,8 @@ bool gemm_check(Tensor<T> *A, Tensor<T> *B, Tensor<T> *C, /*unsigned*/ int &M, /
 /* INT */
 template <>
 void gemm_full(int alpha, Tensor<int> *A, Tensor<int> *B, int beta, Tensor<int> *C) {
-    unsigned int M, N, K;
+    // unsigned int M, N, K;
+    int M, N, K;
     if (!gemm_check(A, B, C, M, N, K)) return;
 
     // standard O(MNK) gemm algorithm
@@ -66,8 +68,16 @@ void gemm_full(float alpha, Tensor<float> *A, Tensor<float> *B, float beta, Tens
 
     if (A->get_memory_type() == HOST) {
         // specify ROW MAJOR, since tensors are stored in row-major
-        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, M, N, K, alpha, A->get_ptr(), K, B->get_ptr(), N, beta,
-                    C->get_ptr(), N);
+        // cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, M, N, K, alpha, A->get_ptr(), K, B->get_ptr(), N, beta,
+        //             C->get_ptr(), N);
+
+        int lda = K;
+        int ldb = N;
+        int ldc = N;
+        
+        gemm(magmadnn::math::OP_N, magmadnn::math::OP_N,
+             N, M, K, alpha, B->get_ptr(), ldb, A->get_ptr(), lda, beta, C->get_ptr(), ldc);
+
     }
 #if defined(_HAS_CUDA_)
     else {
@@ -88,8 +98,16 @@ void gemm_full(double alpha, Tensor<double> *A, Tensor<double> *B, double beta, 
 
     if (A->get_memory_type() == HOST) {
         // specify ROW MAJOR, since tensors are stored in row-major
-        cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, M, N, K, alpha, A->get_ptr(), K, B->get_ptr(), N, beta,
-                    C->get_ptr(), N);
+        // cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, M, N, K, alpha, A->get_ptr(), K, B->get_ptr(), N, beta,
+        //             C->get_ptr(), N);
+
+        int lda = K;
+        int ldb = N;
+        int ldc = N;
+        
+        gemm(magmadnn::math::OP_N, magmadnn::math::OP_N,
+             N, M, K, alpha, B->get_ptr(), ldb, A->get_ptr(), lda, beta, C->get_ptr(), ldc);
+
     }
 #if defined(_HAS_CUDA_)
     else {

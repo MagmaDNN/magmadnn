@@ -6,6 +6,7 @@
  *
  * @copyright Copyright (c) 2019
  */
+#include <iostream>
 #include "tensor/tensor.h"
 
 namespace magmadnn {
@@ -73,7 +74,8 @@ void Tensor<T>::init(std::vector<unsigned int>& shape, tensor_filler_t<T> filler
     for (unsigned int i = 0; i < shape.size(); i++) {
         this->size *= shape[i];
     }
-
+    // std::cout << "Tensor<T>::init, tensor mem (MB) = "
+    //           << (float) (( (float) this->size * sizeof(T) ) / ((float) 1024.0*1024.0) ) << std::endl;
     // create memory manager
     this->mem_manager = new MemoryManager<T>(size, mem_type, device_id);
 

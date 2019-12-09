@@ -69,6 +69,10 @@ class Layer {
      */
     std::string get_name() const { return this->name; }
 
+   // Return an estimate of the memory needed to store the data for
+   // this layer
+   std::size_t get_memory_size() const { return 0; }
+   
    protected:
     Layer(std::vector<unsigned int> input_shape, op::Operation<T> *input) : input_shape(input_shape), input(input) {}
 

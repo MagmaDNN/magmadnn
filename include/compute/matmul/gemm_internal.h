@@ -7,7 +7,7 @@
  * @copyright Copyright (c) 2019
  */
 #pragma once
-#include "cblas.h"
+// #include "cblas.h"
 #include "tensor/tensor.h"
 
 #if defined(_HAS_CUDA_)

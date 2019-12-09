@@ -1,3 +1,4 @@
+#include <iostream>
 
 #include "compute/conv2dforward/conv2dforwardop.h"
 
@@ -152,6 +153,8 @@ void Conv2DForwardOp<T>::init_settings() {
             this->input->get_output_tensor()->get_cudnn_tensor_descriptor(), this->cudnn_settings.filter_desc,
             this->cudnn_settings.conv_desc, this->output_tensor->get_cudnn_tensor_descriptor(),
             this->cudnn_settings.algo, &this->cudnn_settings.workspace_size));
+        // std::cout << "Conv2DForwardOp<T>::init_settings, forward workspace size (MB) = "
+        //           << (float) ((float) this->cudnn_settings.workspace_size / ((float) 1024.0 * 1024.0))  << std::endl;
         cudaErrchk(cudaMalloc((void **) &this->cudnn_settings.workspace, this->cudnn_settings.workspace_size));
 
         /* INIT the grad settings */
@@ -173,6 +176,9 @@ void Conv2DForwardOp<T>::init_settings() {
             this->output_tensor->get_cudnn_tensor_descriptor(), this->cudnn_settings.conv_desc,
             this->input_tensor->get_cudnn_tensor_descriptor(), this->cudnn_settings.bwd_data_algo,
             &this->cudnn_settings.grad_data_workspace_size));
+        // std::cout << "Conv2DForwardOp<T>::init_settings, backward workspace size (MB) = "
+        //           << (float) ((float) this->cudnn_settings.grad_data_workspace_size / ((float) 1024.0 * 1024.0))
+        //           << std::endl;
         cudaErrchk(cudaMalloc((void **) &this->cudnn_settings.grad_data_workspace,
                               this->cudnn_settings.grad_data_workspace_size));
 
@@ -181,8 +187,18 @@ void Conv2DForwardOp<T>::init_settings() {
             this->output_tensor->get_cudnn_tensor_descriptor(), this->cudnn_settings.conv_desc,
             this->cudnn_settings.filter_desc, this->cudnn_settings.bwd_filter_algo,
             &this->cudnn_settings.grad_filter_workspace_size));
+        // std::cout << "Conv2DForwardOp<T>::init_settings, filter workspace size (MB) = "
+        //           << (float) ((float) this->cudnn_settings.grad_filter_workspace_size / ((float) 1024.0 * 1024.0))
+        //           << std::endl;
         cudaErrchk(cudaMalloc((void **) &this->cudnn_settings.grad_filter_workspace,
                               this->cudnn_settings.grad_filter_workspace_size));
+
+        // std::cout << "Conv2DForwardOp<T>::init_settings, cuDNN workspace size (MB) = "
+        //           << (float) ((float) (this->cudnn_settings.grad_filter_workspace_size
+        //                                + this->cudnn_settings.grad_data_workspace_size
+        //                                + this->cudnn_settings.workspace_size) / ((float) 1024.0 * 1024.0))
+        //           << std::endl;
+
     }
 #endif
 }

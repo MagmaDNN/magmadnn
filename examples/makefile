@@ -35,7 +35,7 @@ $(DEST):
 	$(CXX) $(TESTING_FLAGS) -o $@ -c $< $(INC) -I../include
 
 distributed: distributed.cpp
-	mpicxx $(TESTING_FLAGS) -o ./bin/$@ $< $(INC) -I../include -D_HAS_MPI_ -L$(LIB_PATH) -lmagmadnn $(LIBDIRS) $(LIBS)
+	mpicxx $(TESTING_FLAGS) $(RPATH_FLAGS) -o ./bin/$@ $< $(INC) -I../include -D_HAS_MPI_ -L$(LIB_PATH) -lmagmadnn $(LIBDIRS) $(LIBS)
 
 clean:
 	rm *.o

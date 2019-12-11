@@ -9,6 +9,7 @@
 #include <cstdint>
 #include <cstdio>
 #include <vector>
+#include <iostream>
 
 /* we must include magmadnn as always */
 #include "magmadnn.h"
@@ -34,8 +35,8 @@ int main(int argc, char **argv) {
     /* these functions read-in and return tensors holding the mnist data set
         to use them, please change the string to the path to your local copy of the mnist dataset.
         it can be downloaded from http://yann.lecun.com/exdb/mnist */
-    images_host = read_mnist_images("/opt/data/mnist/train-images-idx3-ubyte", n_images, n_rows, n_cols);
-    labels_host = read_mnist_labels("/opt/data/mnist/train-labels-idx1-ubyte", n_labels, n_classes);
+    images_host = read_mnist_images("./train-images-idx3-ubyte", n_images, n_rows, n_cols);
+    labels_host = read_mnist_labels("./train-labels-idx1-ubyte", n_labels, n_classes);
 
     n_features = n_rows * n_cols;
 
@@ -60,8 +61,10 @@ int main(int argc, char **argv) {
     to the x_batch constructor. */
 #if defined(USE_GPU)
     training_memory_type = DEVICE;
+    std::cout << "Training on GPUs" << std::endl;
 #else
     training_memory_type = HOST;
+    std::cout << "Training on CPUs" << std::endl;
 #endif
 
     /* INITIALIZING THE NETWORK */

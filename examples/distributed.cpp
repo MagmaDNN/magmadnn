@@ -26,11 +26,16 @@ Tensor<float> *read_mnist_images(const char *file_name, uint32_t &n_images, uint
 Tensor<float> *read_mnist_labels(const char *file_name, uint32_t &n_labels, uint32_t n_classes);
 void print_image(uint32_t image_idx, Tensor<float> *images, Tensor<float> *labels, uint32_t n_rows, uint32_t n_cols);
 
-int main(int argc, char **argv) {
-/* every magmadnn program must begin with magmadnn_init. This allows magmadnn to test the environment
-    and initialize some GPU data. */
+int main(int argc, char **argv) 
+{
+    // Using one node by default, if there is no MPI 
+    int nnodes = 1;
+
+    /* every magmadnn program must begin with magmadnn_init. This allows magmadnn to test the environment
+       and initialize some GPU data. */
 #if defined(_HAS_MPI_)
     MPI_Init(&argc, &argv);
+    MPI_Comm_size(MPI_COMM_WORLD, &nnodes);
 #endif
     magmadnn_init();
 
@@ -99,9 +104,9 @@ int main(int argc, char **argv) {
         loss_func: use cross entropy as our loss function
         optimizer: use stochastic gradient descent to optimize our network
         params: the parameter struct created earlier with our network settings */
-
-    /* here use 2 processors */
-    optimizer::Optimizer<float> *optim = new optimizer::DistributedGradientDescent<float, 2>(0.05);
+    
+    /* here use nnodes processors */
+    optimizer::Optimizer<float> *optim = new optimizer::DistributedGradientDescent<float>(params.learning_rate);
 
     model::NeuralNetwork<float> model(layers, optimizer::CROSS_ENTROPY, optim, params);
 
@@ -119,7 +124,7 @@ int main(int argc, char **argv) {
     delete images_host;
     delete labels_host;
     delete output;
-
+    
     /* every magmadnn program should call magmadnn_finalize before exiting */
     magmadnn_finalize();
 
@@ -169,7 +174,22 @@ Tensor<float> *read_mnist_images(const char *file_name, uint32_t &n_images, uint
     FREAD_CHECK(fread(&n_cols, sizeof(uint32_t), 1, file), 1);
     endian_swap(n_cols);
 
+#if defined(_HAS_MPI_)
+    int rank, nnodes;
+    MPI_Comm_size(MPI_COMM_WORLD, &nnodes);
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    uint32_t end = n_images;
+    n_images = n_images/nnodes;
+    uint32_t start = rank*n_images;
+    if (start+n_images < end)
+        end = start+n_images;
+    n_images = end-start;
+    printf("[rank %3d] Preparing to read %5d images [%5d .. %5d] with size %u x %u ...\n", 
+           rank, n_images, start, end, n_rows, n_cols);
+    fseek(file, sizeof(char)*start*n_rows*n_cols, SEEK_CUR);
+#else
     printf("Preparing to read %u images with size %u x %u ...\n", n_images, n_rows, n_cols);
+#endif
 
     char bytes[n_rows * n_cols];
 
@@ -217,12 +237,25 @@ Tensor<float> *read_mnist_labels(const char *file_name, uint32_t &n_labels, uint
     FREAD_CHECK(fread(&n_labels, sizeof(uint32_t), 1, file), 1);
     endian_swap(n_labels);
 
+#if defined(_HAS_MPI_)
+    int rank, nnodes;
+    MPI_Comm_size(MPI_COMM_WORLD, &nnodes);
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    uint32_t end = n_labels;
+    n_labels = n_labels/nnodes;
+    uint32_t start = rank*n_labels;
+    if (start+n_labels < end)
+        end = start+n_labels;
+    n_labels = end-start;
+    printf("[rank %3d] Preparing to read %5d labels [%5d .. %5d] with %u classes ...\n",
+           rank, n_labels, start, end, n_classes);
+    fseek(file, sizeof(char)*start, SEEK_CUR);
+#else
     printf("Preparing to read %u labels with %u classes ...\n", n_labels, n_classes);
+#endif
 
     /* allocate tensor */
     labels = new Tensor<float>({n_labels, n_classes}, {ZERO, {}}, HOST);
-
-    printf("finished reading labels.\n");
 
     for (unsigned int i = 0; i < n_labels; i++) {
         FREAD_CHECK(fread(&val, sizeof(char), 1, file), 1);
@@ -230,6 +263,7 @@ Tensor<float> *read_mnist_labels(const char *file_name, uint32_t &n_labels, uint
         labels->set(i * n_classes + val, 1.0f);
     }
 
+    printf("finished reading labels.\n");
     fclose(file);
 
     return labels;

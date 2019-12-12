@@ -6,6 +6,7 @@
  *
  * @copyright Copyright (c) 2019
  */
+
 #include "optimizer/gradientdescent/gradientdescent.h"
 
 namespace magmadnn {

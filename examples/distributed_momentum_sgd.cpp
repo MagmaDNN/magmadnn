@@ -1,8 +1,8 @@
 /**
- * @file simple_network.cpp
- * @author Daniel Nichols
+ * @file distributed_momentum_sgd.cpp
+ * @author Florent Lopez
  * @version 0.1
- * @date 2019-05-30
+ * @date 2019-12-11
  *
  * @copyright Copyright (c) 2019
  */
@@ -13,8 +13,9 @@
 
 #if defined(_HAS_MPI_)
 #include "mpi.h"
-#include "optimizer/distributedsgd/distributedsgd.h"
 #endif
+
+#include "optimizer/distributed_momentum_sgd.h"
 
 /* we must include magmadnn as always */
 #include "magmadnn.h"
@@ -67,7 +68,8 @@ int main(int argc, char **argv)
     model::nn_params_t params;
     params.batch_size = 32; /* batch size: the number of samples to process in each mini-batch */
     params.n_epochs = 5;    /* # of epochs: the number of passes over the entire training set */
-    params.learning_rate = 0.05;
+    params.learning_rate = 0.01;
+    params.momentum = 0.90;
 
 /* this is only necessary for a general example which can handle all install types. Typically,
     When you write your own MagmaDNN code you will not need macros as you can simply pass DEVICE
@@ -109,9 +111,13 @@ int main(int argc, char **argv)
         params: the parameter struct created earlier with our network settings */
     
     /* here use nnodes processors */
-    optimizer::Optimizer<float> *optim = new optimizer::DistributedGradientDescent<float>(params.learning_rate);
+    optimizer::Optimizer<float> *optim = new optimizer::DistMomentumSGD<float>(
+          params.learning_rate,
+          // static_cast<float>(params.learning_rate) / static_cast<float>(params.batch_size),
+          params.momentum);
 
     model::NeuralNetwork<float> model(layers, optimizer::CROSS_ENTROPY, optim, params);
+    // model::NeuralNetwork<float> model(layers, optimizer::CROSS_ENTROPY, optimizer::SGD, params);
 
     /* metric_t records the model metrics such as accuracy, loss, and training time */
     model::metric_t metrics;
@@ -150,72 +156,125 @@ inline void endian_swap(uint32_t &val) {
 }
 
 Tensor<float> *read_mnist_images(const char *file_name, uint32_t &n_images, uint32_t &n_rows, uint32_t &n_cols) {
-    FILE *file;
-    unsigned char magic[4];
-    Tensor<float> *data;
-    uint8_t val;
+   FILE *file;
+   unsigned char magic[4];
+   Tensor<float> *data;
+   uint8_t val;
 
-    file = std::fopen(file_name, "r");
+   file = std::fopen(file_name, "r");
 
-    if (file == NULL) {
-        std::fprintf(stderr, "Could not open %s for reading.\n", file_name);
-        return NULL;
-    }
+   if (file == NULL) {
+      std::fprintf(stderr, "Could not open %s for reading.\n", file_name);
+      return NULL;
+   }
 
-    FREAD_CHECK(fread(magic, sizeof(char), 4, file), 4);
-    if (magic[2] != 0x08 || magic[3] != 0x03) {
-        std::fprintf(stderr, "Bad file magic.\n");
-        return NULL;
-    }
+   FREAD_CHECK(fread(magic, sizeof(char), 4, file), 4);
+   if (magic[2] != 0x08 || magic[3] != 0x03) {
+      std::fprintf(stderr, "Bad file magic.\n");
+      return NULL;
+   }
 
-    FREAD_CHECK(fread(&n_images, sizeof(uint32_t), 1, file), 1);
-    endian_swap(n_images);
+   FREAD_CHECK(fread(&n_images, sizeof(uint32_t), 1, file), 1);
+   endian_swap(n_images);
 
-    FREAD_CHECK(fread(&n_rows, sizeof(uint32_t), 1, file), 1);
-    endian_swap(n_rows);
+   FREAD_CHECK(fread(&n_rows, sizeof(uint32_t), 1, file), 1);
+   endian_swap(n_rows);
 
-    FREAD_CHECK(fread(&n_cols, sizeof(uint32_t), 1, file), 1);
-    endian_swap(n_cols);
+   FREAD_CHECK(fread(&n_cols, sizeof(uint32_t), 1, file), 1);
+   endian_swap(n_cols);
 
 #if defined(_HAS_MPI_)
-    int rank, nnodes;
-    MPI_Comm_size(MPI_COMM_WORLD, &nnodes);
-    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-    uint32_t end = n_images;
-    n_images = n_images/nnodes;
-    uint32_t start = rank*n_images;
-    if (start+n_images < end)
-        end = start+n_images;
-    n_images = end-start;
-    printf("[rank %3d] Preparing to read %5d images [%5d .. %5d] with size %u x %u ...\n", 
-           rank, n_images, start, end, n_rows, n_cols);
-    fseek(file, sizeof(char)*start*n_rows*n_cols, SEEK_CUR);
+   int rank, nnodes;
+   MPI_Comm_size(MPI_COMM_WORLD, &nnodes);
+   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+   uint32_t end = n_images;
+   n_images = n_images/nnodes;
+   uint32_t start = rank*n_images;
+   if (start+n_images < end)
+      end = start+n_images;
+   n_images = end-start;
+   printf("[rank %3d] Preparing to read %5d images [%5d .. %5d] with size %u x %u ...\n", 
+          rank, n_images, start, end, n_rows, n_cols);
+   fseek(file, sizeof(char)*start*n_rows*n_cols, SEEK_CUR);
 #else
-    printf("Preparing to read %u images with size %u x %u ...\n", n_images, n_rows, n_cols);
+   printf("Preparing to read %u images with size %u x %u ...\n", n_images, n_rows, n_cols);
 #endif
 
-    char bytes[n_rows * n_cols];
+   char bytes[n_rows * n_cols];
 
-    /* allocate tensor */
-    data = new Tensor<float>({n_images, n_rows, n_cols}, {NONE, {}}, HOST);
+   /* allocate tensor */
+   data = new Tensor<float>({n_images, n_rows, n_cols}, {NONE, {}}, HOST);
 
-    for (uint32_t i = 0; i < n_images; i++) {
-        FREAD_CHECK(fread(bytes, sizeof(char), n_rows * n_cols, file), n_rows * n_cols);
+   for (uint32_t i = 0; i < n_images; i++) {
+      FREAD_CHECK(fread(bytes, sizeof(char), n_rows * n_cols, file), n_rows * n_cols);
 
-        for (uint32_t r = 0; r < n_rows; r++) {
-            for (uint32_t c = 0; c < n_cols; c++) {
-                val = bytes[r * n_cols + c];
+      for (uint32_t r = 0; r < n_rows; r++) {
+         for (uint32_t c = 0; c < n_cols; c++) {
+            val = bytes[r * n_cols + c];
 
-                data->set(i * n_rows * n_cols + r * n_cols + c, (val / 128.0f) - 1.0f);
-            }
-        }
-    }
-    printf("finished reading images.\n");
+            data->set(i * n_rows * n_cols + r * n_cols + c, (val / 128.0f) - 1.0f);
+         }
+      }
+   }
+   printf("finished reading images.\n");
 
-    fclose(file);
+   fclose(file);
 
-    return data;
+   return data;
 }
+
+// Tensor<float> *read_mnist_images(const char *file_name, uint32_t &n_images, uint32_t &n_rows, uint32_t &n_cols) {
+//     FILE *file;
+//     unsigned char magic[4];
+//     Tensor<float> *data;
+//     uint8_t val;
+
+//     file = std::fopen(file_name, "r");
+
+//     if (file == NULL) {
+//         std::fprintf(stderr, "Could not open %s for reading.\n", file_name);
+//         return NULL;
+//     }
+
+//     FREAD_CHECK(fread(magic, sizeof(char), 4, file), 4);
+//     if (magic[2] != 0x08 || magic[3] != 0x03) {
+//         std::fprintf(stderr, "Bad file magic.\n");
+//         return NULL;
+//     }
+
+//     FREAD_CHECK(fread(&n_images, sizeof(uint32_t), 1, file), 1);
+//     endian_swap(n_images);
+
+//     FREAD_CHECK(fread(&n_rows, sizeof(uint32_t), 1, file), 1);
+//     endian_swap(n_rows);
+
+//     FREAD_CHECK(fread(&n_cols, sizeof(uint32_t), 1, file), 1);
+//     endian_swap(n_cols);
+
+//     printf("Preparing to read %u images with size %u x %u ...\n", n_images, n_rows, n_cols);
+
+//     char bytes[n_rows * n_cols];
+
+//     /* allocate tensor */
+//     data = new Tensor<float>({n_images, n_rows, n_cols}, {NONE, {}}, HOST);
+
+//     for (uint32_t i = 0; i < n_images; i++) {
+//         FREAD_CHECK(fread(bytes, sizeof(char), n_rows * n_cols, file), n_rows * n_cols);
+
+//         for (uint32_t r = 0; r < n_rows; r++) {
+//             for (uint32_t c = 0; c < n_cols; c++) {
+//                 val = bytes[r * n_cols + c];
+
+//                 data->set(i * n_rows * n_cols + r * n_cols + c, (val / 128.0f) - 1.0f);
+//             }
+//         }
+//     }
+//     printf("finished reading images.\n");
+
+//     fclose(file);
+
+//     return data;
+// }
 
 Tensor<float> *read_mnist_labels(const char *file_name, uint32_t &n_labels, uint32_t n_classes) {
     FILE *file;

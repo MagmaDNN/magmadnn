@@ -2,12 +2,14 @@
 
 SRC_FILES := $(wildcard *.cpp)
 SRC_FILES := $(filter-out distributed.cpp, $(SRC_FILES))
+SRC_FILES := $(filter-out distributed_momentum_sgd.cpp, $(SRC_FILES))
 OBJ_FILES := $(patsubst %.cpp, %.o, $(SRC_FILES))
 
 TARGETS := $(patsubst %.cpp, %.out, $(SRC_FILES)) #distributed
 
 ifeq ($(USE_MPI),1)
 TARGETS += distributed
+TARGETS += distributed_momentum_sgd
 endif
 
 TESTING_FLAGS := $(OPTIMIZATION_LEVEL) $(WARNINGS) $(CXX_VERSION) $(CUDA_MACRO)
@@ -35,6 +37,9 @@ $(DEST):
 	$(CXX) $(TESTING_FLAGS) -o $@ -c $< $(INC) -I../include
 
 distributed: distributed.cpp
+	mpicxx $(TESTING_FLAGS) $(RPATH_FLAGS) -o ./bin/$@ $< $(INC) -I../include -D_HAS_MPI_ -L$(LIB_PATH) -lmagmadnn $(LIBDIRS) $(LIBS)
+
+distributed_momentum_sgd: distributed_momentum_sgd.cpp
 	mpicxx $(TESTING_FLAGS) $(RPATH_FLAGS) -o ./bin/$@ $< $(INC) -I../include -D_HAS_MPI_ -L$(LIB_PATH) -lmagmadnn $(LIBDIRS) $(LIBS)
 
 clean:

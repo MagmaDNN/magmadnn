@@ -52,7 +52,7 @@ class DistributedGradientDescent : public Optimizer<T> {
         cudaError_t err;
         err = cudaGetDeviceCount( &num_devices );
         assert( err == 0 || err == cudaErrorNoDevice );
-        cudaErrchk(cudaSetDevice(this->rank%num_devices));
+        // cudaErrchk(cudaSetDevice(this->rank%num_devices));
 #endif
 #endif
     }

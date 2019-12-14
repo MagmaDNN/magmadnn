@@ -44,7 +44,12 @@ namespace optimizer {
 
       /* now update each one */
       for (vit = wrt.begin(); vit != wrt.end(); vit++) {
-         this->update((*vit), table.get(*vit));
+
+         Tensor<T> *grad = this->table.get(*vit);
+
+         // MPI_Allreduce(MPI_IN_PLACE, grad->get_ptr(), grad->get_size(), MPI_FLOAT, MPI_SUM, MPI_COMM_WORLD);
+
+         this->update((*vit), grad);
       }
    }
 

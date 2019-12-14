@@ -8,6 +8,10 @@
  */
 #include "init_finalize.h"
 
+#if defined(_HAS_CUDA_)
+#include <cuda.h>
+#endif
+
 namespace magmadnn {
 
 namespace internal {
@@ -30,6 +34,18 @@ magmadnn_error_t magmadnn_init() {
     cublasCreate(&internal::MAGMADNN_SETTINGS->cublas_handle);
 
     internal::MAGMADNN_SETTINGS->n_devices = 1; /* TODO : read in number of devices */
+
+    int rank = 0;
+    #if defined(_HAS_MPI_)
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    #endif
+    int num_devices;
+
+    // query number of devices                                                                  
+    cudaError_t cuerr;
+    cuerr = cudaGetDeviceCount( &num_devices );
+    assert( cuerr == 0 || cuerr == cudaErrorNoDevice );
+    cudaSetDevice(rank%num_devices); 
 #endif
 
     return err;

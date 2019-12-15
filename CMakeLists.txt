@@ -8,6 +8,7 @@ option(MAGMADNN_ENABLE_CUDA "Enable use of CUDA library and compilation of CUDA 
 option(MAGMADNN_ENABLE_MPI "Enable distributed memory routines using MPI" OFF)
 option(MAGMADNN_ENABLE_OMP "Enable parallelization using OpenMP library" OFF)
 option(MAGMADNN_BUILD_DOC "Generate documentation" OFF)
+option(MAGMADNN_BUILD_EXAMPLES "Build Ginkgo's examples" ON)
 
 ########################################
 # BLAS
@@ -110,3 +111,6 @@ include(cmake/build_helpers.cmake)
 
 add_subdirectory(src)
 
+if(MAGMADNN_BUILD_EXAMPLES)
+    add_subdirectory(examples)
+endif()

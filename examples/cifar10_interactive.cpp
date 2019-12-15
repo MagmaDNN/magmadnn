@@ -70,8 +70,18 @@ int main(int argc, char** argv) {
         std::exit(1);
     }
 
-    data = new Tensor<float>(host_data->get_shape(), {NONE, {}}, DEVICE);
-    labels = new Tensor<float>(host_labels->get_shape(), {NONE, {}}, DEVICE);
+    memory_t training_memory_type;
+
+#if defined(MAGMADNN_HAVE_CUDA)
+    training_memory_type = DEVICE;
+    std::cout << "Training on GPUs" << std::endl;
+#else
+    training_memory_type = HOST;
+    std::cout << "Training on CPUs" << std::endl;
+#endif
+    
+    data = new Tensor<float>(host_data->get_shape(), {NONE, {}}, training_memory_type);
+    labels = new Tensor<float>(host_labels->get_shape(), {NONE, {}}, training_memory_type);
 
     data->copy_from(*host_data);
     labels->copy_from(*host_labels);
@@ -86,7 +96,7 @@ int main(int argc, char** argv) {
     params.n_epochs = 30;
     params.learning_rate = 0.05;
 
-    auto x_batch = op::var<float>("x_batch", {params.batch_size, 3, image_height, image_width}, {NONE, {}}, DEVICE);
+    auto x_batch = op::var<float>("x_batch", {params.batch_size, 3, image_height, image_width}, {NONE, {}}, training_memory_type);
 
     auto input_layer = layer::input<float>(x_batch);
     auto conv2d1 = layer::conv2d<float>(input_layer->out(), {5, 5}, 32, {0, 0}, {1, 1}, {1, 1}, true, false);

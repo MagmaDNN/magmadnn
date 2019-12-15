@@ -13,3 +13,12 @@ function(magmadnn_compile_features name)
   target_compile_features("${name}" PUBLIC cxx_std_11)
   set_target_properties("${name}" PROPERTIES POSITION_INDEPENDENT_CODE ON)
 endfunction()
+
+function(magmadnn_add_example tests_driver)
+
+  get_filename_component(tests_driver_name ${tests_driver} NAME_WE)
+  add_executable(${tests_driver_name} ${tests_driver})
+  target_link_libraries(${tests_driver_name} PRIVATE magmadnn)
+  target_link_libraries(${tests_driver_name} PRIVATE ${LIBS})
+  
+endfunction()

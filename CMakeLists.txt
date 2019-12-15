@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.9)
 
 project(MagmaDNN LANGUAGES C CXX VERSION 1.0.0 DESCRIPTION "A simple deep learning framework in C++")
 
+########################################
 # MagmaDNN options
 option(MAGMADNN_ENABLE_CUDA "Enable use of CUDA library and compilation of CUDA kernel" OFF)
 option(MAGMADNN_ENABLE_MPI "Enable distributed memory routines using MPI" OFF)
@@ -99,4 +100,13 @@ if (MAGMADNN_ENABLE_OMP)
 
 endif()
 
+########################################
+
+# Load CMake helpers
+include(cmake/build_helpers.cmake)
+
+########################################
+# Subdirectories
+
+add_subdirectory(src)
 

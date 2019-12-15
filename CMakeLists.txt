@@ -3,12 +3,26 @@ cmake_minimum_required(VERSION 3.9)
 project(MagmaDNN LANGUAGES C CXX VERSION 1.0.0 DESCRIPTION "A simple deep learning framework in C++")
 
 ########################################
+
+set(default_build_type "RelWithDebInfo")
+
+if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+  message(STATUS "Using default build type '${default_build_type}' because none was specified")
+  set(CMAKE_BUILD_TYPE "${default_build_type}" CACHE
+    STRING "Choose the type of build (Debug, Release, MinSizeRel, RelWithDebInfo)" FORCE)
+  # Set the possible values of build type for cmake-gui
+  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS
+    "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
+endif()
+
+########################################
 # MagmaDNN options
 option(MAGMADNN_ENABLE_CUDA "Enable use of CUDA library and compilation of CUDA kernel" OFF)
 option(MAGMADNN_ENABLE_MPI "Enable distributed memory routines using MPI" OFF)
 option(MAGMADNN_ENABLE_OMP "Enable parallelization using OpenMP library" OFF)
 option(MAGMADNN_BUILD_DOC "Generate documentation" OFF)
 option(MAGMADNN_BUILD_EXAMPLES "Build Ginkgo's examples" ON)
+option(MAGMADNN_BUILD_SHARED_LIBS "Build shared (.so, .dylib, .dll) libraries" ON)
 
 ########################################
 # BLAS
@@ -105,6 +119,7 @@ endif()
 
 # Load CMake helpers
 include(cmake/build_helpers.cmake)
+include(cmake/install_helpers.cmake)
 
 ########################################
 # Subdirectories
@@ -114,3 +129,5 @@ add_subdirectory(src)
 if(MAGMADNN_BUILD_EXAMPLES)
     add_subdirectory(examples)
 endif()
+
+magmadnn_install()

@@ -1,4 +1,8 @@
-add_library(magmadnn "")
+if (MAGMADNN_BUILD_SHARED_LIBS)
+  add_library(magmadnn SHARED "")
+else()
+  add_library(magmadnn STATIC "")
+endif()
 
 target_sources(magmadnn
   PRIVATE
@@ -135,3 +139,5 @@ target_sources(magmadnn
 
 magmadnn_compile_features(magmadnn)
 magmadnn_default_includes(magmadnn)
+
+magmadnn_install_library(magmadnn)

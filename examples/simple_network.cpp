@@ -59,7 +59,7 @@ int main(int argc, char **argv) {
 /* this is only necessary for a general example which can handle all install types. Typically,
     When you write your own MagmaDNN code you will not need macros as you can simply pass DEVICE
     to the x_batch constructor. */
-#if defined(USE_GPU)
+#if defined(MAGMADNN_HAVE_CUDA)
     training_memory_type = DEVICE;
     std::cout << "Training on GPUs" << std::endl;
 #else

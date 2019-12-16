@@ -57,6 +57,14 @@ target_sources(magmadnn
   compute/transpose/transposeop.cpp
   compute/variable.cpp)
 
+if (MAGMADNN_ENABLE_CUDA)
+  target_sources(magmadnn
+    PRIVATE
+    compute/add/geadd_internal_device.cu
+    compute/crossentropy/crossentropy_internal_device.cu
+    )
+endif()
+
 # dataloader
 target_sources(magmadnn
   PRIVATE

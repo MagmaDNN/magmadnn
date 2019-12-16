@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.9)
 project(MagmaDNN LANGUAGES C CXX VERSION 1.0.0 DESCRIPTION "A simple deep learning framework in C++")
 
 ########################################
+# Compiling options
 
 set(default_build_type "RelWithDebInfo")
 
@@ -23,6 +24,8 @@ option(MAGMADNN_ENABLE_OMP "Enable parallelization using OpenMP library" OFF)
 option(MAGMADNN_BUILD_DOC "Generate documentation" OFF)
 option(MAGMADNN_BUILD_EXAMPLES "Build Ginkgo's examples" ON)
 option(MAGMADNN_BUILD_SHARED_LIBS "Build shared (.so, .dylib, .dll) libraries" ON)
+
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
 ########################################
 # BLAS
@@ -85,17 +88,103 @@ endif (LAPACK_FOUND)
 if (MAGMADNN_ENABLE_CUDA)
 
   enable_language(CUDA)
+  # find_library(CUDA REQUIRED)
 
+  set(CUDA_INCLUDE_DIRS ${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES})
+
+  message(STATUS "CUDA include dir: ${CUDA_INCLUDE_DIRS}")
+  
   add_definitions(-DHAVE_CUDA)
+  add_definitions(-D_HAS_CUDA_)
   add_definitions(-DMAGMADNN_HAVE_CUDA)
 
   set(MAGMADNN_NVCC_ARCHS "60;61;70;75" CACHE STRING "The SM architectures to build code for.")
   
   # Set NVCC arguments
   foreach(ARCH ${REMIFA_NVCC_ARCHS})
-    # string(APPEND CUDA_NVCC_FLAGS " -gencode arch=compute_${ARCH},code=sm_${ARCH}")
-    string(APPEND CMAKE_CUDA_FLAGS " -gencode arch=compute_${ARCH},code=sm_${ARCH}")
+    string(APPEND CUDA_NVCC_FLAGS " -gencode arch=compute_${ARCH},code=sm_${ARCH}")
+    # string(APPEND CMAKE_CUDA_FLAGS " -gencode arch=compute_${ARCH},code=sm_${ARCH}")
   endforeach()
+
+  # MESSAGE( STATUS "CUDA found:         " ${CUDA_FOUND} )
+  # MESSAGE( STATUS "CUDA host compiler: " ${CUDA_HOST_COMPILER} )
+  # MESSAGE( STATUS "CUDA nvcc compiler: " ${CUDA_NVCC_EXECUTABLE})
+  # MESSAGE( STATUS "NVCC FLAGS:         " ${CMAKE_CUDA_FLAGS} )
+
+  ########################################
+  # Find cuBLAS library
+  find_library(CUBLAS cublas)
+
+  message(STATUS "cuBLAS: ${CUBLAS}")
+
+  set(LIBS ${LIBS} ${CUBLAS})
+
+  ########################################
+  # Find Magma library
+
+  set(MAGMA_DIR "" CACHE STRING "Magam install directory")
+
+  # message(STATUS "ENV{MAGMA_DIR}: $ENV{MAGMA_DIR}")
+  
+  if(DEFINED ENV{MAGMA_DIR})
+    set(MAGMA_DIR $ENV{MAGMA_DIR})
+    # message(STATUS "Magma directory: ${MAGMA_DIR}")
+  elseif(DEFINED ENV{MAGMADIR})
+    set(MAGMA_DIR $ENV{MAGMADIR})
+  endif()
+
+  find_library(MAGMA_LIBRARIES magma 
+    HINTS ${MAGMA_DIR} /usr/local/magma
+    PATH_SUFFIXES lib)
+
+  find_path(MAGMA_INCLUDE_DIRS magma.h 
+    HINTS ${MAGMA_DIR} /usr/local/magma
+    PATH_SUFFIXES include)
+
+  # find_library(MAGMA)
+
+  if (MAGMA_LIBRARIES)
+    set(MAGMA_FOUND TRUE)
+  else ()
+    SET(MAGMA_FOUND FALSE)
+  endif ()
+  
+  if(MAGMA_FOUND)
+    message(STATUS "Magma include dirs: ${MAGMA_INCLUDE_DIRS}")
+  else()  
+    message(FATAL_ERROR " Magma NOT found")
+  endif()
+
+  set(LIBS ${LIBS} ${MAGMA_LIBRARIES})
+
+  ########################################
+  # Find cuDNN library
+
+  set(CUDNN_DIR "" CACHE STRING "cuDNN install directory")
+
+  find_library(CUDNN_LIBRARIES cudnn 
+    HINTS ${CUDNN_DIR}
+    PATH_SUFFIXES lib64)
+
+
+  find_path(CUDNN_INCLUDE_DIRS cudnn.h 
+    HINTS ${CUDNN_DIR}
+    PATH_SUFFIXES include)
+
+  if (CUDNN_LIBRARIES)
+    set(CUDNN_FOUND TRUE)
+  else ()
+    SET(CUDNN_FOUND FALSE)
+  endif ()
+  
+  if(CUDNN_FOUND)
+    message(STATUS "cuDNN libraries: ${CUDNN_LIBRARIES}")
+  message(STATUS "cuDNN include directories: ${CUDNN_INCLUDE_DIRS}")
+  else()  
+    message(FATAL_ERROR " cuDNN NOT found")
+  endif()
+
+  set(LIBS ${LIBS} ${CUDNN_LIBRARIES})
 
 endif()
 

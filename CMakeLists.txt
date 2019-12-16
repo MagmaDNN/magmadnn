@@ -101,9 +101,9 @@ if (MAGMADNN_ENABLE_CUDA)
   set(MAGMADNN_NVCC_ARCHS "60;61;70;75" CACHE STRING "The SM architectures to build code for.")
   
   # Set NVCC arguments
-  foreach(ARCH ${REMIFA_NVCC_ARCHS})
-    string(APPEND CUDA_NVCC_FLAGS " -gencode arch=compute_${ARCH},code=sm_${ARCH}")
-    # string(APPEND CMAKE_CUDA_FLAGS " -gencode arch=compute_${ARCH},code=sm_${ARCH}")
+  foreach(ARCH ${MAGMADNN_NVCC_ARCHS})
+    # string(APPEND CUDA_NVCC_FLAGS " -gencode arch=compute_${ARCH},code=sm_${ARCH}")
+    string(APPEND CMAKE_CUDA_FLAGS " -gencode arch=compute_${ARCH},code=sm_${ARCH}")
   endforeach()
 
   # MESSAGE( STATUS "CUDA found:         " ${CUDA_FOUND} )

@@ -62,7 +62,18 @@ if (MAGMADNN_ENABLE_CUDA)
     PRIVATE
     compute/add/geadd_internal_device.cu
     compute/crossentropy/crossentropy_internal_device.cu
-    )
+    compute/div/div_internal_device.cu
+    compute/log/log_internal_device.cu
+    compute/negative/negative_internal_device.cu
+    compute/pow/pow_internal_device.cu
+    compute/product/product_internal_device.cu
+    compute/reducesum/reducesum_internal_device.cu
+    compute/relu/relu_internal_device.cu
+    compute/scalarproduct/scalarproduct_internal_device.cu
+    compute/sigmoid/sigmoid_internal_device.cu
+    compute/sum/sum_internal_device.cu
+    compute/tanh/tanh_internal_device.cu
+    compute/transpose/transpose_internal_device.cu)
 endif()
 
 # dataloader
@@ -114,12 +125,32 @@ target_sources(magmadnn
   math/tile.cpp
   math/wrappers.cpp)
 
+if (MAGMADNN_ENABLE_CUDA)
+  target_sources(magmadnn
+    PRIVATE
+    math/bias_add_device.cu
+    math/crossentropy_device.cu
+    math/optimizer_math/adagrad_device.cu
+    math/optimizer_math/adam_device.cu
+    math/optimizer_math/rmsprop_device.cu
+    math/optimizer_math/sgd_momentum_device.cu
+    math/pow_device.cu
+    math/scalar_tensor_product_device.cu
+    math/sum_device.cu)
+endif ()
+
 # memory
 target_sources(magmadnn
   PRIVATE
   memory/memorymanager.cpp
   )
 
+if (MAGMADNN_ENABLE_CUDA)
+  target_sources(magmadnn
+    PRIVATE
+    memory/memory_internal_device.cu)
+endif ()
+    
 # model
 target_sources(magmadnn
   PRIVATE
@@ -130,12 +161,18 @@ target_sources(magmadnn
 # optimizer
 target_sources(magmadnn
   PRIVATE
- optimizer/adagrad/adagrad.cpp
- optimizer/adam/adam.cpp
- optimizer/distributed_momentum_sgd.cpp
- optimizer/gradientdescent/gradientdescent.cpp
- optimizer/gradientdescent/gradientdescent_internal.cpp
- optimizer/rmsprop/rmsprop.cpp)
+  optimizer/adagrad/adagrad.cpp
+  optimizer/adam/adam.cpp
+  optimizer/distributed_momentum_sgd.cpp
+  optimizer/gradientdescent/gradientdescent.cpp
+  optimizer/gradientdescent/gradientdescent_internal.cpp
+  optimizer/rmsprop/rmsprop.cpp)
+
+if (MAGMADNN_ENABLE_CUDA)
+  target_sources(magmadnn
+    PRIVATE
+    optimizer/gradientdescent/gradientdescent_internal_device.cu)
+endif ()
 
 # tensor
 target_sources(magmadnn
@@ -144,6 +181,12 @@ target_sources(magmadnn
   tensor/tensor.cpp
   tensor/tensor_internal.cpp
   tensor/tensor_io.cpp)
+
+if (MAGMADNN_ENABLE_CUDA)
+  target_sources(magmadnn
+    PRIVATE
+    tensor/fill_internal_device.cu)
+endif ()
 
 magmadnn_compile_features(magmadnn)
 magmadnn_default_includes(magmadnn)

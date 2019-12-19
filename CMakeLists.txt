@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.9)
 
 project(MagmaDNN LANGUAGES C CXX VERSION 1.0.0 DESCRIPTION "A simple deep learning framework in C++")
 
+# include(CheckSymbolExists)
+include(CheckFunctionExists)
+
 ########################################
 # Compiling options
 
@@ -22,7 +25,7 @@ option(MAGMADNN_ENABLE_CUDA "Enable use of CUDA library and compilation of CUDA 
 option(MAGMADNN_ENABLE_MPI "Enable distributed memory routines using MPI" OFF)
 option(MAGMADNN_ENABLE_OMP "Enable parallelization using OpenMP library" OFF)
 option(MAGMADNN_BUILD_DOC "Generate documentation" OFF)
-option(MAGMADNN_BUILD_EXAMPLES "Build Ginkgo's examples" ON)
+option(MAGMADNN_BUILD_EXAMPLES "Build MagmaDNN examples" ON)
 option(MAGMADNN_BUILD_SHARED_LIBS "Build shared (.so, .dylib, .dll) libraries" ON)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules/")
@@ -39,8 +42,9 @@ elseif(DEFINED ENV{BLAS_LIB})
 endif()
 
 if(DEFINED BLAS_LIBRARIES)
+  message(STATUS "BLAS libraries: ${BLAS_LIBRARIES}")
   set(CMAKE_REQUIRED_LIBRARIES ${BLAS_LIBRARIES})
-  CHECK_FORTRAN_FUNCTION_EXISTS("dgemm" BLAS_FOUND)
+  check_function_exists("dgemm" BLAS_FOUND)
   unset(CMAKE_REQUIRED_LIBRARIES)
   if(NOT BLAS_FOUND)
     message(ERROR "User supplied BLAS is NOT working")
@@ -66,7 +70,7 @@ elseif(DEFINED ENV{LAPACK_LIB})
 endif()
 if(DEFINED LAPACK_LIBRARIES)
   set(CMAKE_REQUIRED_LIBRARIES ${LAPACK_LIBRARIES} ${BLAS_LIBRARIES})
-  CHECK_FORTRAN_FUNCTION_EXISTS("dpotrf" LAPACK_FOUND)
+  check_function_exists("dpotrf" LAPACK_FOUND)
   unset(CMAKE_REQUIRED_LIBRARIES)
   if(NOT LAPACK_FOUND)
     message(ERROR "User supplied LAPACK is NOT working")

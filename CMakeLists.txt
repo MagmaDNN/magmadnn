@@ -166,7 +166,6 @@ if (MAGMADNN_ENABLE_CUDA)
     HINTS ${CUDNN_DIR}
     PATH_SUFFIXES lib64)
 
-
   find_path(CUDNN_INCLUDE_DIRS cudnn.h 
     HINTS ${CUDNN_DIR}
     PATH_SUFFIXES include)

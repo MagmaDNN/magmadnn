@@ -8,13 +8,21 @@
  */
 #pragma once
 
+#include <cstdint>
+#include <cmath>
 #include <vector>  // for tensor_filler_t
+
 #if defined(_HAS_CUDA_)
 #include "cublas_v2.h"
 #include "cudnn.h"
 #endif
 
 namespace magmadnn {
+
+   /**
+    * 64-bit signed integral type.
+    */
+   using int64 = std::int64_t;
 
 typedef enum memory_t {
     HOST,

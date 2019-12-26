@@ -94,10 +94,18 @@ if (MAGMADNN_ENABLE_CUDA)
   enable_language(CUDA)
   # find_library(CUDA REQUIRED)
 
+  # CUDA headers directory
   set(CUDA_INCLUDE_DIRS ${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES})
-
   message(STATUS "CUDA include dir: ${CUDA_INCLUDE_DIRS}")
+  # include_directories(${CUDA_INCLUDE_DIRS})
   
+  # Find cudart library
+  find_library(CUDA_RUNTIME_LIBS_DYNAMIC cudart
+    HINT ${CMAKE_CUDA_IMPLICIT_LINK_DIRECTORIES})
+  set(CUDA_RUNTIME_LIBS "${CUDA_RUNTIME_LIBS_DYNAMIC}" CACHE STRING "Path to a library" FORCE)
+  message(STATUS "CUDA runtime library: ${CUDA_RUNTIME_LIBS}")
+  set(LIBS ${LIBS} ${CUDA_RUNTIME_LIBS})
+
   add_definitions(-DHAVE_CUDA)
   add_definitions(-D_HAS_CUDA_)
   add_definitions(-DMAGMADNN_HAVE_CUDA)

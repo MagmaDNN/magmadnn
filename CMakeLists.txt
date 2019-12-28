@@ -91,13 +91,20 @@ endif (LAPACK_FOUND)
 
 if (MAGMADNN_ENABLE_CUDA)
 
-  enable_language(CUDA)
   # find_library(CUDA REQUIRED)
+
+  # MESSAGE( STATUS "CUDA found:         " ${CUDA_FOUND} )
+  # MESSAGE( STATUS "CUDA host compiler: " ${CUDA_HOST_COMPILER} )
+  # MESSAGE( STATUS "CUDA nvcc compiler: " ${CUDA_NVCC_EXECUTABLE})
+  # MESSAGE( STATUS "NVCC FLAGS:         " ${CMAKE_CUDA_FLAGS} )
+  # set(LIBS ${LIBS} ${CUDA_LIBRARIES})
+  # set(LIBS ${LIBS} ${CUDA_CUBLAS_LIBRARIES})
+
+  enable_language(CUDA)
 
   # CUDA headers directory
   set(CUDA_INCLUDE_DIRS ${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES})
   message(STATUS "CUDA include dir: ${CUDA_INCLUDE_DIRS}")
-  # include_directories(${CUDA_INCLUDE_DIRS})
   
   # Find cudart library
   find_library(CUDA_RUNTIME_LIBS_DYNAMIC cudart
@@ -110,18 +117,14 @@ if (MAGMADNN_ENABLE_CUDA)
   add_definitions(-D_HAS_CUDA_)
   add_definitions(-DMAGMADNN_HAVE_CUDA)
 
-  set(MAGMADNN_NVCC_ARCHS "60;61;70;75" CACHE STRING "The SM architectures to build code for.")
+  # set(MAGMADNN_NVCC_ARCHS "60;61;70;75" CACHE STRING "The SM architectures to build code for.")
+  set(MAGMADNN_NVCC_ARCHS "70" CACHE STRING "The SM architectures to build code for.")
   
   # Set NVCC arguments
   foreach(ARCH ${MAGMADNN_NVCC_ARCHS})
-    # string(APPEND CUDA_NVCC_FLAGS " -gencode arch=compute_${ARCH},code=sm_${ARCH}")
-    string(APPEND CMAKE_CUDA_FLAGS " -gencode arch=compute_${ARCH},code=sm_${ARCH}")
+    string(APPEND CUDA_NVCC_FLAGS " -gencode arch=compute_${ARCH},code=sm_${ARCH}")
+    # string(APPEND CMAKE_CUDA_FLAGS " -gencode arch=compute_${ARCH},code=sm_${ARCH}")
   endforeach()
-
-  # MESSAGE( STATUS "CUDA found:         " ${CUDA_FOUND} )
-  # MESSAGE( STATUS "CUDA host compiler: " ${CUDA_HOST_COMPILER} )
-  # MESSAGE( STATUS "CUDA nvcc compiler: " ${CUDA_NVCC_EXECUTABLE})
-  # MESSAGE( STATUS "NVCC FLAGS:         " ${CMAKE_CUDA_FLAGS} )
 
   ########################################
   # Find cuBLAS library
@@ -190,7 +193,7 @@ if (MAGMADNN_ENABLE_CUDA)
   
   if(CUDNN_FOUND)
     message(STATUS "cuDNN libraries: ${CUDNN_LIBRARIES}")
-  message(STATUS "cuDNN include directories: ${CUDNN_INCLUDE_DIRS}")
+    message(STATUS "cuDNN include directories: ${CUDNN_INCLUDE_DIRS}")
   else()  
     message(FATAL_ERROR " cuDNN NOT found")
   endif()

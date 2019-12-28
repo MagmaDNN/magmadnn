@@ -6,7 +6,8 @@
  *
  * @copyright Copyright (c) 2019
  */
-#include "compute/add/geadd_internal.h"
+
+#include "tensor/tensor.h"
 
 #define BLK_SIZE 1024
 

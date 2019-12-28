@@ -192,3 +192,10 @@ magmadnn_compile_features(magmadnn)
 magmadnn_default_includes(magmadnn)
 
 magmadnn_install_library(magmadnn)
+
+# if (MAGMADNN_ENABLE_CUDA)
+# magmadnn_compile_features(magmadnn_cuda)
+# magmadnn_default_includes(magmadnn_cuda)
+
+# magmadnn_install_library(magmadnn_cuda)
+# endif ()

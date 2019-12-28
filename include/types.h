@@ -8,7 +8,7 @@
  */
 #pragma once
 
-#include <cstdint>
+// #include <cstdint>
 #include <cmath>
 #include <vector>  // for tensor_filler_t
 
@@ -19,10 +19,10 @@
 
 namespace magmadnn {
 
-   /**
-    * 64-bit signed integral type.
-    */
-   using int64 = std::int64_t;
+   // /**
+   //  * 64-bit signed integral type.
+   //  */
+   // using int64 = std::int64_t;
 
 typedef enum memory_t {
     HOST,

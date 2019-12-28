@@ -20,9 +20,10 @@ namespace magmadnn {
     *
     * @return returns the ceiled quotient.
     */
-   inline constexpr int ceildiv(int num, int den)
-   {
-      return (num + den - 1) / den;
-   }
+   // inline constexpr int ceildiv(int num, int den)
+   // int ceildiv(int num, int den)
+   // {
+   //    return (num + den - 1) / den;
+   // }
 
 }

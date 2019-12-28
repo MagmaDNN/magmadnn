@@ -1,11 +1,14 @@
 /**
  * @file argmax.cpp
  * @author Daniel Nichols
+ * @author Florent Lopez
  * @version 0.1
  * @date 2019-06-11
  *
  * @copyright Copyright (c) 2019
  */
+#include <cassert>
+
 #include "math/argmax.h"
 
 namespace magmadnn {

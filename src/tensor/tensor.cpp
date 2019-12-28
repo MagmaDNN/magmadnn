@@ -6,8 +6,10 @@
  *
  * @copyright Copyright (c) 2019
  */
-#include <iostream>
 #include "tensor/tensor.h"
+
+#include <cassert>
+#include <iostream>
 
 namespace magmadnn {
 

@@ -1,11 +1,14 @@
 /**
  * @file add.cpp
  * @author Daniel Nichols
+ * @author Florent Lopez
  * @version 1.0
  * @date 2019-06-24
  *
  * @copyright Copyright (c) 2019
  */
+#include <cassert>
+
 #include "math/add.h"
 
 namespace magmadnn {

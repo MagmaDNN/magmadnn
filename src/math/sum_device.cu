@@ -6,7 +6,9 @@
  *
  * @copyright Copyright (c) 2019
  */
-#include "math/sum.h"
+// #include "math/sum.h"
+#include "tensor/tensor.h"
+#include "utilities_internal.h"
 
 #define BLK_DIM 1024
 #define BLK2D_DIM 32

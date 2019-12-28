@@ -8,6 +8,8 @@
  */
 #include "math/product.h"
 
+#include <cassert>
+
 namespace magmadnn {
 namespace math {
 

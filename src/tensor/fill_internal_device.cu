@@ -7,7 +7,8 @@
  * @copyright Copyright (c) 2019
  */
 
-#include "tensor/fill_internal.h"
+// #include "tensor/fill_internal.h"
+#include "memory/memorymanager.h"
 
 #define BLK_SIZE 1024
 

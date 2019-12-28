@@ -8,6 +8,12 @@
  */
 
 #include "tensor/tensor.h"
+// template<typename T> class Tensor
+// {
+// public:
+//    T* get_ptr() { return nullptr; }
+//    int get_size() { return 0; }
+// };
 
 #define BLK_SIZE 1024
 

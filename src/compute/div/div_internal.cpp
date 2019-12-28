@@ -1,3 +1,4 @@
+#include <cassert>
 
 #include "compute/div/div_internal.h"
 

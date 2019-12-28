@@ -1,12 +1,15 @@
 /**
  * @file bias_add.cpp
  * @author Daniel Nichols
+ * @author Florent Lopez
  * @version 0.1
  * @date 2019-06-23
  *
  * @copyright Copyright (c) 2019
  */
 #include "math/bias_add.h"
+
+#include <cassert>
 
 namespace magmadnn {
 namespace math {

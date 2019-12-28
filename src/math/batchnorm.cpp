@@ -1,12 +1,15 @@
 /**
  * @file batchnorm.cpp
  * @author Sedrick Keh
+ * @author Florent Lopez
  * @version 1.0
  * @date 2019-07-24
  *
  * @copyright Copyright (c) 2019
  */
 #include "math/batchnorm.h"
+
+#include <cassert>
 
 namespace magmadnn {
 namespace math {

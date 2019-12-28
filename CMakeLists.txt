@@ -91,15 +91,22 @@ endif (LAPACK_FOUND)
 
 if (MAGMADNN_ENABLE_CUDA)
 
-  # find_library(CUDA REQUIRED)
+  # find_package(CUDA)
 
   # MESSAGE( STATUS "CUDA found:         " ${CUDA_FOUND} )
   # MESSAGE( STATUS "CUDA host compiler: " ${CUDA_HOST_COMPILER} )
   # MESSAGE( STATUS "CUDA nvcc compiler: " ${CUDA_NVCC_EXECUTABLE})
   # MESSAGE( STATUS "NVCC FLAGS:         " ${CMAKE_CUDA_FLAGS} )
+
+  # include_directories( ${CUDA_INCLUDE_DIRS} )
+  # set(CUDA_SEPARABLE_COMPILATION ON)
+
   # set(LIBS ${LIBS} ${CUDA_LIBRARIES})
   # set(LIBS ${LIBS} ${CUDA_CUBLAS_LIBRARIES})
 
+  include(CheckLanguage)
+  check_language(CUDA)
+  
   enable_language(CUDA)
 
   # CUDA headers directory
@@ -109,16 +116,22 @@ if (MAGMADNN_ENABLE_CUDA)
   # Find cudart library
   find_library(CUDA_RUNTIME_LIBS_DYNAMIC cudart
     HINT ${CMAKE_CUDA_IMPLICIT_LINK_DIRECTORIES})
+  # find_library(CUDA_RUNTIME_LIBS_STATIC cudart_static
+  #   HINT ${CMAKE_CUDA_IMPLICIT_LINK_DIRECTORIES})
   set(CUDA_RUNTIME_LIBS "${CUDA_RUNTIME_LIBS_DYNAMIC}" CACHE STRING "Path to a library" FORCE)
+  # set(CUDA_RUNTIME_LIBS "${CUDA_RUNTIME_LIBS_STATIC}" CACHE STRING "Path to a library" FORCE)
   message(STATUS "CUDA runtime library: ${CUDA_RUNTIME_LIBS}")
   set(LIBS ${LIBS} ${CUDA_RUNTIME_LIBS})
 
+  set(CMAKE_CUDA_STANDARD 11)
+  set(CMAKE_CUDA_EXTENSIONS OFF)
+  
   add_definitions(-DHAVE_CUDA)
   add_definitions(-D_HAS_CUDA_)
   add_definitions(-DMAGMADNN_HAVE_CUDA)
-
-  # set(MAGMADNN_NVCC_ARCHS "60;61;70;75" CACHE STRING "The SM architectures to build code for.")
-  set(MAGMADNN_NVCC_ARCHS "70" CACHE STRING "The SM architectures to build code for.")
+  
+  set(MAGMADNN_NVCC_ARCHS "60;61;70;75" CACHE STRING "The SM architectures to build code for.")
+  # set(MAGMADNN_NVCC_ARCHS "70" CACHE STRING "The SM architectures to build code for.")
   
   # Set NVCC arguments
   foreach(ARCH ${MAGMADNN_NVCC_ARCHS})

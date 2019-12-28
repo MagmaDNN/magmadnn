@@ -8,6 +8,8 @@
  */
 #include "math/tile.h"
 
+#include <cassert>
+
 namespace magmadnn {
 namespace math {
 

@@ -6,6 +6,8 @@
  *
  * @copyright Copyright (c) 2019
  */
+#include <cassert>
+
 #include "math/wrappers.h"
 #include "compute/matmul/gemm_internal.h"
 

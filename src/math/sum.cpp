@@ -8,6 +8,8 @@
  */
 #include "math/sum.h"
 
+#include <cassert>
+
 namespace magmadnn {
 namespace math {
 

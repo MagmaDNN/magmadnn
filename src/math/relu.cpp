@@ -8,6 +8,8 @@
  */
 #include "math/relu.h"
 
+#include <cassert>
+
 namespace magmadnn {
 namespace math {
 

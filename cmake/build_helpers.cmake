@@ -21,6 +21,7 @@ function(magmadnn_compile_features name)
   set_target_properties("${name}" PROPERTIES POSITION_INDEPENDENT_CODE ON)
   # if (MAGMADNN_ENABLE_CUDA)
   #   set_target_properties("${name}" PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
+  #   set_target_properties("${name}" PROPERTIES CUDA_RESOLVE_DEVICE_SYMBOLS OFF)
   # endif ()
 endfunction()
 

@@ -8,6 +8,8 @@
  */
 #include "math/pooling.h"
 
+#include <cassert>
+
 namespace magmadnn {
 namespace math {
 

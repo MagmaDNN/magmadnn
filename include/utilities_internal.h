@@ -15,7 +15,8 @@
 #include <set>
 #include <vector>
 
-#if defined(_HAS_CUDA_)
+// #if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
 #include <cuda.h>
 #include <cuda_runtime_api.h>
 #include <curand.h>
@@ -82,10 +83,28 @@ template <typename T>
 void print_compute_graph(op::Operation<T> *node, bool debug=true);
 */
 
-#if defined(_HAS_CUDA_)
+// #if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
 template <typename T>
 cudnnDataType_t get_cudnn_data_type(T val);
 #endif
 
 }  // namespace internal
+
+   // mathematical functions
+
+   /**
+    * Performs integer division with rounding up.
+    *
+    * @param num  numerator
+    * @param den  denominator
+    *
+    * @return returns the ceiled quotient.
+    */
+   // inline constexpr int ceildiv(int num, int den)
+   // int ceildiv(int num, int den)
+   // {
+   //    return (num + den - 1) / den;
+   // }
+
 }  // namespace magmadnn

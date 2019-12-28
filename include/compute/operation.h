@@ -7,6 +7,8 @@
  * @copyright Copyright (c) 2019
  */
 #pragma once
+
+#include <cassert>
 #include <map>
 #include <string>
 #include "tensor/tensor.h"

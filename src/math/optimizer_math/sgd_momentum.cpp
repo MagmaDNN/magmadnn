@@ -8,6 +8,8 @@
  */
 #include "math/optimizer_math/sgd_momentum.h"
 
+#include <cassert>
+
 namespace magmadnn {
 namespace math {
 

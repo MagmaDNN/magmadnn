@@ -9,6 +9,8 @@
 
 #include "tensor/fill_internal.h"
 
+#include <cassert>
+
 namespace magmadnn {
 namespace internal {
 

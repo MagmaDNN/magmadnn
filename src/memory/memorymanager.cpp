@@ -8,6 +8,15 @@
  */
 #include "memory/memorymanager.h"
 
+#include <cstdio>
+#include <cstdlib>
+#include <cassert>
+
+#include "utilities_internal.h"
+#if defined(MAGMADNN_HAVE_CUDA)
+#include "memory/memory_internal_device.h"
+#endif
+
 namespace magmadnn {
 
 template <typename T>
@@ -38,7 +47,8 @@ MemoryManager<T>::MemoryManager(unsigned int size, memory_t mem_type, device_t d
 
 template <typename T>
 void MemoryManager<T>::init_host() {
-    host_ptr = (T*) std::malloc(size * sizeof(T));
+   // TODO: replace use of `malloc` with `new`
+   host_ptr = (T*) std::malloc(size * sizeof(T));
 }
 
 #if defined(_HAS_CUDA_)
@@ -49,6 +59,7 @@ void MemoryManager<T>::init_device() {
 
 template <typename T>
 void MemoryManager<T>::init_managed() {
+   // TODO: replace use of `malloc` with `new`
     host_ptr = (T*) std::malloc(size * sizeof(T));
     cudaErrchk(cudaMalloc((void**) &device_ptr, size * sizeof(T)));
 }
@@ -80,14 +91,16 @@ template <typename T>
 MemoryManager<T>::~MemoryManager<T>() {
     switch (mem_type) {
         case HOST:
-            std::free(host_ptr);
+           // TODO: replace use of `free` with `delete`
+           std::free(host_ptr);
             break;
 #if defined(_HAS_CUDA_)
         case DEVICE:
             cudaErrchk(cudaFree(device_ptr));
             break;
         case MANAGED:
-            std::free(host_ptr);
+           // TODO: replace use of `free` with `delete`
+           std::free(host_ptr);
             break;
             cudaErrchk(cudaFree(device_ptr));
             break;

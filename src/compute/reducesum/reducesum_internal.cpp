@@ -1,5 +1,9 @@
-
 #include "compute/reducesum/reducesum_internal.h"
+
+#include <cassert>
+
+#include "math/tile.h"
+#include "tensor/tensor.h"
 
 namespace magmadnn {
 namespace internal {

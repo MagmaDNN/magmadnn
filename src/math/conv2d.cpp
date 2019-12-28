@@ -1,12 +1,15 @@
 /**
  * @file conv2d.cpp
  * @author Daniel Nichols
+ * @author Florent Lopez
  * @version 1.0
  * @date 2019-06-24
  *
  * @copyright Copyright (c) 2019
  */
 #include "math/conv2d.h"
+
+#include <cassert>
 
 namespace magmadnn {
 namespace math {

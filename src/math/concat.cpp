@@ -8,6 +8,8 @@
  */
 #include "math/concat.h"
 
+#include <cassert>
+
 namespace magmadnn {
 namespace math {
 

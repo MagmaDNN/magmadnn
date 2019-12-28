@@ -8,6 +8,8 @@
  */
 #include "math/optimizer_math/rmsprop.h"
 
+#include <cassert>
+
 namespace magmadnn {
 namespace math {
 

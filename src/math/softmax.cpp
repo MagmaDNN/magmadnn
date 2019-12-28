@@ -8,6 +8,8 @@
  */
 #include "math/softmax.h"
 
+#include <cassert>
+
 namespace magmadnn {
 namespace math {
 

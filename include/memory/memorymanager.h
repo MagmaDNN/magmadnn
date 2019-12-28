@@ -8,20 +8,21 @@
  */
 #pragma once
 
-#include <assert.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <algorithm>
-#include <vector>
+// #include <assert.h>
+// #include <stdio.h>
+// #include <stdlib.h>
+// #include <algorithm>
+// #include <vector>
 #include "types.h"
-#include "utilities_internal.h"
+// #include "utilities_internal.h"
 
 // include cuda files if on GPU
-#if defined(_HAS_CUDA_)
-#include <cuda.h>
-#include <cuda_runtime_api.h>
-#include "memory_internal_device.h"
-#endif
+// #if defined(_HAS_CUDA_)
+// #if defined(MAGMADNN_HAVE_CUDA)
+// #include <cuda.h>
+// #include <cuda_runtime_api.h>
+// #include "memory_internal_device.h"
+// #endif
 
 namespace magmadnn {
 
@@ -78,7 +79,8 @@ class MemoryManager {
      */
     magmadnn_error_t copy_from_host(T* src, unsigned int begin_idx, unsigned int size);
 
-#if defined(_HAS_CUDA_)
+// #if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     /** copies memory from a device ptr into this memorymanager. will throw an error if it
      *  reaches the end of src allocated mem before this is filled.
      *  @param src the array to copy into this.
@@ -133,7 +135,8 @@ class MemoryManager {
      */
     T* get_host_ptr();
 
-#if defined(_HAS_CUDA_)
+// #if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     /** returns a CUDA pointer
      *  @return a pointer to the memory on a cuda device.
      */
@@ -165,7 +168,8 @@ class MemoryManager {
     /** init with HOST parameters */
     void init_host();
 
-#if defined(_HAS_CUDA_)
+// #if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     /** init with DEVICE parameters */
     void init_device();
 
@@ -182,7 +186,8 @@ class MemoryManager {
     unsigned int size;
     T* host_ptr;
 
-#if defined(_HAS_CUDA_)
+// #if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     T* device_ptr;
     T* cuda_managed_ptr;
 #endif

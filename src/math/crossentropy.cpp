@@ -8,6 +8,8 @@
  */
 #include "math/crossentropy.h"
 
+#include <cassert>
+
 namespace magmadnn {
 namespace math {
 

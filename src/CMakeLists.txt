@@ -1,8 +1,12 @@
+# if (MAGMADNN_ENABLE_CUDA)
+#   cuda_add_library(magmadnn "")
+# else()
 if (MAGMADNN_BUILD_SHARED_LIBS)
   add_library(magmadnn SHARED "")
 else()
   add_library(magmadnn STATIC "")
 endif()
+# endif()
 
 target_sources(magmadnn
   PRIVATE
@@ -73,7 +77,8 @@ if (MAGMADNN_ENABLE_CUDA)
     compute/sigmoid/sigmoid_internal_device.cu
     compute/sum/sum_internal_device.cu
     compute/tanh/tanh_internal_device.cu
-    compute/transpose/transpose_internal_device.cu)
+    compute/transpose/transpose_internal_device.cu
+    )
 endif()
 
 # dataloader

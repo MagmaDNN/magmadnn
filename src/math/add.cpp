@@ -28,7 +28,7 @@ void add_in_place(T alpha, Tensor<T> *x, T beta, Tensor<T> *out) {
             out_ptr[i] = alpha * x_ptr[i] + beta * out_ptr[i];
         }
     }
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     else {
         add_in_place_device(alpha, x, beta, out);
     }
@@ -38,7 +38,7 @@ template void add_in_place(int alpha, Tensor<int> *x, int beta, Tensor<int> *out
 template void add_in_place(float alpha, Tensor<float> *x, float beta, Tensor<float> *out);
 template void add_in_place(double alpha, Tensor<double> *x, double beta, Tensor<double> *out);
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
 template <typename T>
 void add_in_place_device(T alpha, Tensor<T> *x, T beta, Tensor<T> *out) {
     cudnnErrchk(cudnnAddTensor(::magmadnn::internal::MAGMADNN_SETTINGS->cudnn_handle, &alpha,
@@ -46,6 +46,10 @@ void add_in_place_device(T alpha, Tensor<T> *x, T beta, Tensor<T> *out) {
                                out->get_cudnn_tensor_descriptor(), out->get_ptr()));
 }
 #endif
+
+template void add_in_place_device(int alpha, Tensor<int> *x, int beta, Tensor<int> *out);
+template void add_in_place_device(float alpha, Tensor<float> *x, float beta, Tensor<float> *out);
+template void add_in_place_device(double alpha, Tensor<double> *x, double beta, Tensor<double> *out);
 
 }  // namespace math
 }  // namespace magmadnn

@@ -1,11 +1,10 @@
-
 #pragma once
 
 #include "compute/operation.h"
 #include "compute/reducesum/reducesum_internal.h"
+#include "magmadnn/utilities_internal.h"
 #include "math/reduce_sum.h"
 #include "tensor/tensor.h"
-#include "utilities_internal.h"
 
 namespace magmadnn {
 namespace op {
@@ -28,7 +27,7 @@ class ReduceSumOp : public Operation<T> {
 
     Tensor<T> *ones;
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     math::reduce_sum_cudnn_settings_t reduce_settings;
 #endif
 

@@ -16,7 +16,7 @@ namespace internal {
 template <typename T>
 magmadnn_error_t gradientdescent_update_internal(Tensor<T> *var, Tensor<T> *grad, T learning_rate);
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
 template <typename T>
 magmadnn_error_t gradientdescent_update_internal_device(Tensor<T> *var, Tensor<T> *grad, T learning_rate);
 #endif

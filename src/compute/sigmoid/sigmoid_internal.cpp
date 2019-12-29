@@ -26,7 +26,7 @@ void sigmoid_full(Tensor<T> *x, Tensor<T> *out, bool fast) {
             for (unsigned int i = 0; i < size; i++) out_ptr[i] = 1 / (1 + exp(-x_ptr[i]));
         }
     }
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     else {
         sigmoid_full_device(x, out, fast);
     }
@@ -56,7 +56,7 @@ void sigmoid_grad(Tensor<T> *output, Tensor<T> *grad, Tensor<T> *out) {
             }
         }
     }
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     else {
         sigmoid_grad_device(output, grad, out);
     }

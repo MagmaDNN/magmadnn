@@ -8,7 +8,7 @@
  */
 #pragma once
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
 
 namespace magmadnn {
 namespace internal {

@@ -35,7 +35,7 @@ bool geadd_check(Tensor<T> *A, Tensor<T> *B, Tensor<T> *C);
 template <typename T>
 void geadd_full(T alpha, Tensor<T> *A, T beta, Tensor<T> *B, Tensor<T> *C);
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
 /** Computes C=alpha*A + beta*B
  * @tparam T int, float, double
  * @param alpha scaling value
@@ -57,7 +57,7 @@ void geadd_full_device(T alpha, Tensor<T> *A, T beta, Tensor<T> *B, Tensor<T> *C
 template <typename T>
 void tensor_scalar_add_full(T alpha, Tensor<T> *x, Tensor<T> *out);
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
 /**
  * @tparam T numeric
  * @param alpha

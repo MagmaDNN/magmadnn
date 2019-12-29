@@ -32,7 +32,7 @@ class Conv2DForwardOp : public Operation<T> {
     int pad_h, pad_w, vertical_stride, horizontal_stride, dilation_h, dilation_w;
     bool use_cross_correlation;
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     ::magmadnn::math::conv2d_cudnn_settings cudnn_settings;
 #endif
 };

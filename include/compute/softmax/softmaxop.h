@@ -1,12 +1,10 @@
-
 #pragma once
 
 #include "compute/operation.h"
 #include "math/softmax.h"
 #include "tensor/tensor.h"
-#include "utilities_internal.h"
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
 #include "cudnn.h"
 #endif
 
@@ -27,7 +25,7 @@ class SoftmaxOp : public Operation<T> {
     Operation<T> *input;
     Tensor<T> *input_tensor;
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     void init_settings();
 
     math::cudnn_softmax_settings_t settings;

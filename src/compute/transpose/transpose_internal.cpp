@@ -16,7 +16,7 @@ void transpose_full(Tensor<T> *x, Tensor<T> *out) {
             }
         }
     }
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     else {
         transpose_full_device(x, out);
     }

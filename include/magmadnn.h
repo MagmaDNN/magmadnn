@@ -18,9 +18,9 @@
 #define USE_GPU
 #endif
 
-#include "init_finalize.h"
-#include "types.h"
-#include "utilities_internal.h"
+#include "magmadnn/init_finalize.h"
+#include "magmadnn/types.h"
+#include "magmadnn/utilities_internal.h"
 
 #include "memory/memorymanager.h"
 #include "tensor/tensor.h"

@@ -1,6 +1,7 @@
 /**
  * @file add.h
  * @author Daniel Nichols
+ * @author Florent Lopez
  * @version 1.0
  * @date 2019-06-24
  *
@@ -16,7 +17,7 @@ namespace math {
 template <typename T>
 void add_in_place(T alpha, Tensor<T> *x, T beta, Tensor<T> *out);
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
 template <typename T>
 void add_in_place_device(T alpha, Tensor<T> *x, T beta, Tensor<T> *out);
 #endif

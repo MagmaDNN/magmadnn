@@ -46,7 +46,7 @@ int main(int argc, char **argv) {
     test_for_all_mem_types(test_sigmoid, 50);
     test_for_all_mem_types(test_tanh, 50);
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     test_conv2d(DEVICE, 30);
     test_conv2d(MANAGED, 30);
     test_conv2d(CUDA_MANAGED, 30);
@@ -88,7 +88,7 @@ void test_add(memory_t mem_type, unsigned int size) {
 
     Tensor<float> *fin = sum->eval();
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     if (mem_type == DEVICE || mem_type == CUDA_MANAGED) fin->get_memory_manager()->sync();
     if (mem_type == MANAGED) fin->get_memory_manager()->sync(true);
 #endif
@@ -121,7 +121,7 @@ void test_sum(memory_t mem_type, unsigned int size) {
     op::Operation<float> *sum = op::sum<float>({v0, v1, v2, v3});
     Tensor<float> *fin = sum->eval();
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     if (mem_type == DEVICE || mem_type == CUDA_MANAGED) fin->get_memory_manager()->sync();
     if (mem_type == MANAGED) fin->get_memory_manager()->sync(true);
 #endif
@@ -162,7 +162,7 @@ void test_matmul(memory_t mem_type, unsigned int size) {
 
     Tensor<float> *fin = prod->eval();
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     if (mem_type == DEVICE || mem_type == CUDA_MANAGED) fin->get_memory_manager()->sync();
     if (mem_type == MANAGED) fin->get_memory_manager()->sync(true);
 #endif
@@ -260,7 +260,7 @@ void test_product(memory_t mem_type, unsigned int size) {
 
     Tensor<float> *output = out->eval();
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     if (mem_type == DEVICE || mem_type == CUDA_MANAGED) output->get_memory_manager()->sync();
     if (mem_type == MANAGED) output->get_memory_manager()->sync(true);
 #endif
@@ -294,7 +294,7 @@ void test_scalarproduct(memory_t mem_type, unsigned int size) {
 
     Tensor<float> *fin = prod->eval();
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     if (mem_type == DEVICE || mem_type == CUDA_MANAGED) fin->get_memory_manager()->sync();
     if (mem_type == MANAGED) fin->get_memory_manager()->sync(true);
 #endif
@@ -495,7 +495,7 @@ void test_tanh(memory_t mem_type, unsigned int size) {
 
     auto fin = fin_op->eval();
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     if (mem_type == DEVICE || mem_type == CUDA_MANAGED)
         fin->get_memory_manager()->sync();
     else if (mem_type == MANAGED)

@@ -9,9 +9,8 @@
 #pragma once
 
 #include "tensor/tensor.h"
-#include "utilities_internal.h"
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
 #include "cudnn.h"
 #endif
 
@@ -24,7 +23,7 @@ void relu(Tensor<T> *x, Tensor<T> *out);
 template <typename T>
 void relu_grad(Tensor<T> *x, Tensor<T> *relu_out, Tensor<T> *grad, Tensor<T> *out);
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
 
 struct relu_cudnn_settings_t {
     cudnnActivationDescriptor_t descriptor;

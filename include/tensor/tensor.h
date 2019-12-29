@@ -1,6 +1,7 @@
 /**
  * @file tensor.h
  * @author Daniel Nichols
+ * @author Florent Lopez
  * @version 0.1
  * @date 2019-02-07
  *
@@ -9,12 +10,13 @@
 #pragma once
 
 #include <vector>
+
+#include "magmadnn/types.h"
+#include "magmadnn/utilities_internal.h"
 #include "memory/memorymanager.h"
 #include "tensor_internal.h"
-#include "types.h"
-#include "utilities_internal.h"
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
 #include "cudnn.h"
 #endif
 
@@ -202,7 +204,7 @@ class Tensor {
      */
     device_t get_device_id() const { return this->device_id; }
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     cudnnTensorDescriptor_t get_cudnn_tensor_descriptor() { return desc; }
 #endif
 
@@ -231,7 +233,7 @@ class Tensor {
     unsigned int get_flattened_index_old(const std::vector<unsigned int>& idx) const;
 
 /* device specific code */
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     void init_cudnn_descriptor();
     void free_cudnn_descriptor();
 

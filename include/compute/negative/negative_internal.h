@@ -9,7 +9,7 @@ namespace internal {
 template <typename T>
 void negative_full(Tensor<T> *x, Tensor<T> *out);
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
 template <typename T>
 void negative_full_device(Tensor<T> *x, Tensor<T> *out);
 #endif

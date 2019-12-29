@@ -5,7 +5,7 @@
 #include "math/dropout.h"
 #include "tensor/tensor.h"
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
 #include "cudnn.h"
 #endif
 
@@ -34,7 +34,7 @@ class DropoutOp : public Operation<T> {
     float dropout_rate;
     unsigned long long seed;
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     void init_settings();
 
     math::cudnn_dropout_settings_t settings;

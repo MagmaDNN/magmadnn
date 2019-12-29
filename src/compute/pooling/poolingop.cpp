@@ -30,7 +30,7 @@ template <typename T>
 PoolingOp<T>::~PoolingOp() {
     if (this->mem_type == HOST) {
     }
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     else {
 
         cudnnErrchk(cudnnDestroyPoolingDescriptor(this->settings.poolingDesc));
@@ -45,7 +45,7 @@ Tensor<T> *PoolingOp<T>::_eval(bool recompute) {
     if (this->mem_type == HOST) {
         std::fprintf(stderr, "Error: Pooling::_eval requires GPU\n");
     }
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     else {
         ::magmadnn::math::pooling_device(this->input_tensor, this->output_tensor, this->settings);
     }
@@ -67,7 +67,7 @@ Tensor<T> *PoolingOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor
     if (this->mem_type == HOST) {
         ::magmadnn::math::pooling_grad(this->input_tensor, this->output_tensor, grad, out);
     }
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     else {
         ::magmadnn::math::pooling_grad_device(this->input_tensor, this->output_tensor, grad, out, this->settings);
     }
@@ -81,7 +81,7 @@ void PoolingOp<T>::init_settings() {
     if (this->mem_type == HOST) {
         std::fprintf(stderr, "Error: PoolingOp::init_settings requires GPU.\n");
     }
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     else {
         /* init the pooling descriptor */
         cudnnErrchk(cudnnCreatePoolingDescriptor(&this->settings.poolingDesc));
@@ -105,7 +105,7 @@ void PoolingOp<T>::calculate_and_set_output_shape() {
         std::fprintf(stderr, "Error: Pooling::output_shape requires GPU.\n");
         this->output_shape = this->input->get_output_shape();
     }
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     else {
         int n, c, h, w;
 

@@ -9,7 +9,6 @@
 #pragma once
 
 #include "tensor/tensor.h"
-#include "utilities_internal.h"
 
 namespace magmadnn {
 namespace math {
@@ -17,7 +16,7 @@ namespace math {
 template <typename T>
 void bias_add(Tensor<T> *x, Tensor<T> *bias, Tensor<T> *out);
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
 template <typename T>
 void bias_add_device(Tensor<T> *x, Tensor<T> *bias, Tensor<T> *out);
 #endif

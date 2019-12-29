@@ -10,7 +10,6 @@
 #include <sstream>
 #include <string>
 #include "tensor.h"
-#include "types.h"
 
 namespace magmadnn {
 namespace io {

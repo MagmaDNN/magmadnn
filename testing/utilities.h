@@ -46,7 +46,7 @@ bool fequal(float a, float b) { return (fabs(a - b) <= 1E-8); }
 
 void test_for_all_mem_types(void (*tester)(magmadnn::memory_t, unsigned int), unsigned int param) {
     tester(magmadnn::HOST, param);
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     tester(magmadnn::DEVICE, param);
     tester(magmadnn::MANAGED, param);
     tester(magmadnn::CUDA_MANAGED, param);
@@ -57,7 +57,7 @@ const char* get_memory_type_name(magmadnn::memory_t mem) {
     switch (mem) {
         case magmadnn::HOST:
             return "HOST";
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
         case magmadnn::DEVICE:
             return "DEVICE";
         case magmadnn::MANAGED:
@@ -72,7 +72,7 @@ const char* get_memory_type_name(magmadnn::memory_t mem) {
 
 template <typename T>
 void sync(magmadnn::Tensor<T>* t) {
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     if (t->get_memory_type() == magmadnn::DEVICE || t->get_memory_type() == magmadnn::CUDA_MANAGED)
         t->get_memory_manager()->sync();
     else if (t->get_memory_type() == magmadnn::MANAGED)

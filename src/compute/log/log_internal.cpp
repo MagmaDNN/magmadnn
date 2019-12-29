@@ -17,7 +17,7 @@ void log_full(Tensor<T> *x, Tensor<T> *out, bool stable) {
             out_ptr[i] = log(x_ptr[i] + epsilon);
         }
     }
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     else {
         log_full_device(x, out, stable);
     }
@@ -41,7 +41,7 @@ void log_grad(Tensor<T> *x, Tensor<T> *grad, Tensor<T> *out, bool stable) {
             out_ptr[i] = grad_ptr[i] / (x_ptr[i] + epsilon);
         }
     }
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     else {
         log_grad_device(x, grad, out, stable);
     }

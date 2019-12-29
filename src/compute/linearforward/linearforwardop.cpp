@@ -42,7 +42,7 @@ template <typename T>
 LinearForwardOp<T>::~LinearForwardOp() {
     if (bias_ones != NULL) delete bias_ones;
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     cudnnErrchk(cudnnDestroyReduceTensorDescriptor(bias_reduce_settings.descriptor));
     cudaErrchk(cudaFree(bias_reduce_settings.workspace));
 #endif
@@ -98,7 +98,7 @@ Tensor<T> *LinearForwardOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, 
         if (this->mem_type == HOST) {
             math::reduce_sum(grad, 1, this->bias_ones, out);
         }
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
         else {
             math::reduce_sum_device(grad, 1, out, this->bias_reduce_settings);
         }
@@ -113,7 +113,7 @@ void LinearForwardOp<T>::init_bias_settings() {
     if (this->mem_type == HOST) {
         bias_ones = new Tensor<T>({this->output_shape[1]}, {ONE, {}}, this->mem_type);
     }
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     else {
         /* create a temporary descriptor for grad, since we do not have its tensor yet and
             therefore cannot call get_cudnn_tensor_descriptor(). This allows us to get the

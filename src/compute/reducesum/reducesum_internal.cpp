@@ -67,7 +67,7 @@ void reduce_sum_grad(Tensor<T> *grad, int axis, Tensor<T> *out) {
             math::tile(grad, out, out->get_shape(axis), axis);
         }
     }
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     else {
         reduce_sum_grad_device(grad, axis, out);
     }

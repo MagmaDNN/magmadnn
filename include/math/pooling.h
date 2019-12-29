@@ -9,14 +9,13 @@
 #pragma once
 
 #include "tensor/tensor.h"
-#include "utilities_internal.h"
 
 enum pooling_mode {
     MAX_POOL,
     AVERAGE_POOL
 };
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
 #include "cudnn.h"
 #endif
 
@@ -30,7 +29,7 @@ template <typename T>
 void pooling_grad(Tensor<T> *x, Tensor<T> *y, Tensor<T> *grad, Tensor<T> *out);
 
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
 
 struct cudnn_pooling_settings_t {
     cudnnPoolingDescriptor_t poolingDesc;

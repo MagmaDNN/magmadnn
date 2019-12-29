@@ -81,7 +81,7 @@ void gemm_full(float alpha, Tensor<float> *A, Tensor<float> *B, float beta, Tens
              N, M, K, alpha, B->get_ptr(), ldb, A->get_ptr(), lda, beta, C->get_ptr(), ldc);
 
     }
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     else {
         // since magma is column-major we'll need the transpose of everything
         // i.e. (AB)^T = (C)^T and the fact that (AB)^T = (B^T)(A^T)
@@ -111,7 +111,7 @@ void gemm_full(double alpha, Tensor<double> *A, Tensor<double> *B, double beta, 
              N, M, K, alpha, B->get_ptr(), ldb, A->get_ptr(), lda, beta, C->get_ptr(), ldc);
 
     }
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     else {
         // since magma is column-major we'll need the transpose of everything
         // i.e. (AB)^T = (C)^T and the fact that (AB)^T = (B^T)(A^T)

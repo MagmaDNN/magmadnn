@@ -6,9 +6,9 @@
  *
  * @copyright Copyright (c) 2019
  */
-#include "init_finalize.h"
+#include "magmadnn/init_finalize.h"
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
 #include <cuda.h>
 #endif
 
@@ -24,7 +24,7 @@ magmadnn_error_t magmadnn_init() {
     /* init the settings struct */
     internal::MAGMADNN_SETTINGS = new magmadnn_settings_t;
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     err = (magmadnn_error_t) magma_init();
 
     /* init cudnn */
@@ -54,7 +54,7 @@ magmadnn_error_t magmadnn_init() {
 magmadnn_error_t magmadnn_finalize() {
     magmadnn_error_t err = 0;
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     err = (magmadnn_error_t) magma_finalize();
 
     /* destroy cudnn */

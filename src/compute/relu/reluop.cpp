@@ -23,7 +23,7 @@ ReluOp<T>::ReluOp(Operation<T> *x, bool copy, bool needs_grad)
         fprintf(stderr, "inplace relu not defined\n");
     }
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     cudnnErrchk(cudnnCreateActivationDescriptor(&cudnn_settings.descriptor));
     cudnnErrchk(
         cudnnSetActivationDescriptor(cudnn_settings.descriptor, CUDNN_ACTIVATION_RELU, CUDNN_NOT_PROPAGATE_NAN, 1.0));
@@ -32,7 +32,7 @@ ReluOp<T>::ReluOp(Operation<T> *x, bool copy, bool needs_grad)
 
 template <typename T>
 ReluOp<T>::~ReluOp() {
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     cudnnErrchk(cudnnDestroyActivationDescriptor(cudnn_settings.descriptor));
 #endif
 }
@@ -47,7 +47,7 @@ Tensor<T> *ReluOp<T>::_eval(bool recompute) {
     if (this->mem_type == HOST) {
         math::relu(x_tensor, this->output_tensor);
     }
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     else {
         math::relu_device(x_tensor, this->output_tensor, this->cudnn_settings);
     }
@@ -69,7 +69,7 @@ Tensor<T> *ReluOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T>
     if (this->mem_type == HOST) {
         math::relu_grad(this->x_tensor, this->output_tensor, grad, out);
     }
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     else {
         math::relu_grad_device(x_tensor, this->output_tensor, grad, out, this->cudnn_settings);
     }

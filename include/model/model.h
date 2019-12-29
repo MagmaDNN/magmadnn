@@ -10,9 +10,9 @@
 
 #include <string>
 #include "compute/operation.h"
+#include "magmadnn/types.h"
 #include "optimizer/optimizer.h"
 #include "tensor/tensor.h"
-#include "types.h"
 
 namespace magmadnn {
 namespace model {

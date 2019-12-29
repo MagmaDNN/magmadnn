@@ -18,7 +18,7 @@ void tensor_div_tensor_full(Tensor<T> *a, Tensor<T> *b, Tensor<T> *out) {
             out_ptr[i] = a_ptr[i] / b_ptr[i];
         }
     }
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     else {
         tensor_div_tensor_full_device(a, b, out);
     }
@@ -41,7 +41,7 @@ void tensor_div_scalar_full(Tensor<T> *a, T scalar, Tensor<T> *out) {
             out_ptr[i] = a_ptr[i] / scalar;
         }
     }
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     else {
         tensor_div_scalar_full_device(a, scalar, out);
     }
@@ -63,7 +63,7 @@ void scalar_div_tensor_full(T scalar, Tensor<T> *a, Tensor<T> *out) {
             out_ptr[i] = scalar / a_ptr[i];
         }
     }
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     else {
         scalar_div_tensor_full_device(scalar, a, out);
     }

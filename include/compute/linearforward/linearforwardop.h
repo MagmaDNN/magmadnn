@@ -32,7 +32,7 @@ class LinearForwardOp : public Operation<T> {
     bool copy;
     bool use_bias;
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     math::reduce_sum_cudnn_settings_t bias_reduce_settings;
 #endif
 };

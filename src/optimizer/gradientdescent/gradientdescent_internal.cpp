@@ -25,7 +25,7 @@ magmadnn_error_t gradientdescent_update_internal(Tensor<T> *var, Tensor<T> *grad
         }
         err = (magmadnn_error_t) 0;
     }
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     else {
         err = gradientdescent_update_internal_device(var, grad, learning_rate);
     }

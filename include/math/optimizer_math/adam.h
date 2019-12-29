@@ -26,12 +26,14 @@ namespace math {
  * @param out
  */
 template <typename T>
-void adam(T learning_rate, T beta1, T beta2, T running_beta1, T running_beta2, Tensor<T> *first_moment,
-          Tensor<T> *second_moment, Tensor<T> *grad, Tensor<T> *out);
+void adam(T learning_rate, T beta1, T beta2, T running_beta1, T running_beta2,
+          Tensor<T> *first_moment, Tensor<T> *second_moment, Tensor<T> *grad,
+          Tensor<T> *out);
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
 template <typename T>
-void adam_device(T learning_rate, T beta1, T beta2, T running_beta1, T running_beta2, Tensor<T> *first_moment,
+void adam_device(T learning_rate, T beta1, T beta2, T running_beta1,
+                 T running_beta2, Tensor<T> *first_moment,
                  Tensor<T> *second_moment, Tensor<T> *grad, Tensor<T> *out);
 #endif
 

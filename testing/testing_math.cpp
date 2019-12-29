@@ -97,7 +97,7 @@ void test_relu(memory_t mem, unsigned int size) {
     if (mem == HOST) {
         math::relu(x, relu_out);
     }
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     else {
         math::relu_cudnn_settings_t settings;
         cudnnErrchk(cudnnCreateActivationDescriptor(&settings.descriptor));
@@ -119,7 +119,7 @@ void test_relu(memory_t mem, unsigned int size) {
     if (mem == HOST) {
         math::relu_grad(x, relu_out, grad, relu_grad);
     }
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     else {
         math::relu_cudnn_settings_t settings;
         cudnnErrchk(cudnnCreateActivationDescriptor(&settings.descriptor));
@@ -172,7 +172,7 @@ void test_reduce_sum(memory_t mem, unsigned int size) {
         Tensor<float> ones({size}, {ONE, {}}, mem);
         math::reduce_sum(&x, 1, &ones, &reduced);
     }
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     else {
         math::reduce_sum_cudnn_settings_t settings;
 

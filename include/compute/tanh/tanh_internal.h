@@ -1,6 +1,7 @@
 /**
  * @file tanh_internal.h
  * @author Daniel Nichols
+ * @author Florent Lopez
  * @version 1.0
  * @date 2019-02-23
  *
@@ -20,7 +21,7 @@ namespace internal {
 template <typename T>
 void tanh_full(Tensor<T> *x, Tensor<T> *out);
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
 /** Computes the tanh function element-wise on the tensor x
  * @tparam T
  * @param x

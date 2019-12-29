@@ -8,9 +8,8 @@
  */
 #pragma once
 
-// #include "cblas.h"
 #include "tensor/tensor.h"
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
 #include "magma.h"
 #endif
 

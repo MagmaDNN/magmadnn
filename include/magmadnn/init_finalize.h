@@ -8,9 +8,9 @@
  */
 #pragma once
 
-#include "types.h"
+#include "magmadnn/types.h"
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
 #include "cublas_v2.h"
 #include "magma.h"
 #endif

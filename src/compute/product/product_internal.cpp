@@ -22,7 +22,7 @@ void product_full(T alpha, Tensor<T> *a, Tensor<T> *b, Tensor<T> *out) {
             out_ptr[i] = alpha * a_ptr[i] * b_ptr[i];
         }
     }
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     else {
         internal::product_full_device(alpha, a, b, out);
     }
@@ -42,7 +42,7 @@ void scalar_tensor_product_full(T scalar, Tensor<T> *a, Tensor<T> *out) {
             out_ptr[i] = scalar * a_ptr[i];
         }
     }
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     else {
         internal::scalar_tensor_product_full_device(scalar, a, out);
     }

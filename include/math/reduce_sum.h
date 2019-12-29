@@ -9,11 +9,10 @@
  */
 #pragma once
 
-// #include "cblas.h"
 #include "tensor/tensor.h"
-#include "utilities_internal.h"
+#include "magmadnn/utilities_internal.h"
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
 #include "cudnn.h"
 #include "magma.h"
 
@@ -26,7 +25,7 @@ namespace math {
 template <typename T>
 void reduce_sum(Tensor<T> *x, int axis, Tensor<T> *ones, Tensor<T> *out);
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
 struct reduce_sum_cudnn_settings_t {
     cudnnReduceTensorDescriptor_t descriptor;
     void *workspace;

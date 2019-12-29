@@ -30,7 +30,7 @@ class ReluOp : public Operation<T> {
     Operation<T> *x;
     Tensor<T> *x_tensor;
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     ::magmadnn::math::relu_cudnn_settings_t cudnn_settings;
 #endif
 

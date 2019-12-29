@@ -21,7 +21,7 @@ namespace internal {
 template <typename T>
 void sum_full(std::vector<Tensor<T> *> &vals, Tensor<T> &out);
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
 template <typename T>
 void sum_full_device(std::vector<Tensor<T> *> &vals, Tensor<T> &out);
 #endif

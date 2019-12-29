@@ -10,10 +10,11 @@
 
 #include <random>
 #include <vector>
-#include "memory/memorymanager.h"
-#include "utilities_internal.h"
 
-#if defined(_HAS_CUDA_)
+#include "magmadnn/utilities_internal.h"
+#include "memory/memorymanager.h"
+
+#if defined(MAGMADNN_HAVE_CUDA)
 #include <cuda.h>
 #include <curand.h>
 #endif
@@ -21,7 +22,7 @@
 namespace magmadnn {
 namespace internal {
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
 /** Calls cuda kernel to fill the memorymanager with constant val.
  * @tparam T
  * @param m

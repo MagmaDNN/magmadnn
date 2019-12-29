@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "compute/crossentropy/crossentropy_internal.h"
@@ -9,7 +8,6 @@
 #include "compute/reducesum/reducesumop.h"
 #include "math/crossentropy.h"
 #include "tensor/tensor.h"
-#include "utilities_internal.h"
 
 namespace magmadnn {
 namespace op {

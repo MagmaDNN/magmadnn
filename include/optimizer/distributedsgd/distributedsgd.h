@@ -14,7 +14,7 @@
   #define _HAS_MPI_
 #endif
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
 #include <cuda.h>
 #endif
 
@@ -45,7 +45,7 @@ class DistributedGradientDescent : public Optimizer<T> {
         assert(nnodes >= 1);
         MPI_Comm_rank(MPI_COMM_WORLD, &this->rank);
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
         int num_devices;
         
         // query number of devices

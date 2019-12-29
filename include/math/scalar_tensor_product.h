@@ -16,7 +16,7 @@ namespace math {
 template <typename T>
 void scalar_tensor_product(T scalar, Tensor<T> *x, Tensor<T> *out);
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
 template <typename T>
 void scalar_tensor_product_device(T scalar, Tensor<T> *x, Tensor<T> *out);
 #endif

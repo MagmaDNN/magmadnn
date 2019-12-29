@@ -1,6 +1,7 @@
 /**
  * @file sigmoidop.h
  * @author Daniel Nichols
+ * @author Florent Lopez
  * @version 1.0
  * @date 2019-02-23
  *
@@ -14,7 +15,6 @@
 #include "compute/operation.h"
 #include "compute/variable.h"
 #include "sigmoid_internal.h"
-#include "utilities_internal.h"
 
 namespace magmadnn {
 namespace op {

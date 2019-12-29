@@ -1,16 +1,17 @@
 /**
  * @file gemm_internal.h
  * @author Daniel Nichols
+ * @author Florent Lopez
  * @version 1.0
  * @date 2019-02-22
  *
  * @copyright Copyright (c) 2019
  */
 #pragma once
-// #include "cblas.h"
+
 #include "tensor/tensor.h"
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
 #include "magma.h"
 #endif
 

@@ -1,6 +1,7 @@
 /**
  * @file batchnorm.h
  * @author Sedrick Keh
+ * @author Florent Lopez
  * @version 1.0
  * @date 2019-07-24
  *
@@ -8,11 +9,11 @@
  */
 #pragma once
 
+#include "magmadnn/types.h"
+#include "magmadnn/utilities_internal.h"
 #include "tensor/tensor.h"
-#include "types.h"
-#include "utilities_internal.h"
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
 #include "cudnn.h"
 #endif
 
@@ -25,7 +26,7 @@ void batchnorm(Tensor<T> *x, Tensor<T> *out);
 template <typename T>
 void batchnorm_grad(Tensor<T> *grad, Tensor<T> *out);
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
 
 struct cudnn_batchnorm_settings_t {
     cudnnHandle_t handle;

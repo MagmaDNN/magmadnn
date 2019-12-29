@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "tensor/tensor.h"
@@ -14,7 +13,7 @@ namespace internal {
 template <typename T>
 void tensor_div_tensor_full(Tensor<T> *a, Tensor<T> *b, Tensor<T> *out);
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
 template <typename T>
 void tensor_div_tensor_full_device(Tensor<T> *a, Tensor<T> *b, Tensor<T> *out);
 #endif
@@ -27,7 +26,7 @@ void tensor_div_tensor_full_device(Tensor<T> *a, Tensor<T> *b, Tensor<T> *out);
 template <typename T>
 void tensor_div_scalar_full(Tensor<T> *a, T scalar, Tensor<T> *out);
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
 template <typename T>
 void tensor_div_scalar_full_device(Tensor<T> *a, T scalar, Tensor<T> *out);
 #endif
@@ -40,7 +39,7 @@ void tensor_div_scalar_full_device(Tensor<T> *a, T scalar, Tensor<T> *out);
 template <typename T>
 void scalar_div_tensor_full(T scalar, Tensor<T> *a, Tensor<T> *out);
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
 template <typename T>
 void scalar_div_tensor_full_device(T scalar, Tensor<T> *a, Tensor<T> *out);
 #endif

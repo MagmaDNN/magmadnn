@@ -23,7 +23,7 @@ void sum_full(std::vector<Tensor<T> *> &vals, Tensor<T> &out) {
             out.set(idx, sum);
         }
     }
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     else {
         sum_full_device(vals, out);
     }

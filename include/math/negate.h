@@ -1,6 +1,7 @@
 /**
  * @file negate.h
  * @author Daniel Nichols
+ * @author Florent Lopez
  * @version 0.1
  * @date 2019-06-13
  *
@@ -9,7 +10,6 @@
 #pragma once
 
 #include "tensor/tensor.h"
-#include "utilities_internal.h"
 
 namespace magmadnn {
 namespace math {

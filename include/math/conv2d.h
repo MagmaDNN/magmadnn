@@ -9,9 +9,10 @@
 #pragma once
 
 #include "tensor/tensor.h"
-#include "utilities_internal.h"
 
-#if defined(_HAS_CUDA_)
+#include "magmadnn/utilities_internal.h"
+
+#if defined(MAGMADNN_HAVE_CUDA)
 #include "cudnn.h"
 #endif
 
@@ -27,7 +28,7 @@ void conv2d_grad_data(Tensor<T> *w, Tensor<T> *grad, Tensor<T> *out);
 template <typename T>
 void conv2d_grad_filter(Tensor<T> *x, Tensor<T> *grad, Tensor<T> *out);
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
 
 struct conv2d_cudnn_settings {
     cudnnConvolutionDescriptor_t conv_desc;

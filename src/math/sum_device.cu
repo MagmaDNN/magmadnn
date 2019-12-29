@@ -6,9 +6,9 @@
  *
  * @copyright Copyright (c) 2019
  */
-// #include "math/sum.h"
+#include "magmadnn/math.h"
+#include "magmadnn/utilities_internal.h"
 #include "tensor/tensor.h"
-#include "utilities_internal.h"
 
 #define BLK_DIM 1024
 #define BLK2D_DIM 32
@@ -47,7 +47,9 @@ void sum_device(const std::vector<Tensor<T>*>& tensors, Tensor<T>* out) {
     
     cudaErrchk(cudaMemcpy(tensors_arr, host_tensors_arr, tensors.size() * sizeof(T*), cudaMemcpyHostToDevice));
 
-    kernel_sum_device<<<(size+BLK_DIM-1)/BLK_DIM,BLK_DIM>>> (tensors_arr, out->get_ptr(), size, tensors.size());
+    const auto grid_dim = ceildiv(size, BLK_DIM);
+
+    kernel_sum_device<<<grid_dim, BLK_DIM>>>(tensors_arr, out->get_ptr(), size, tensors.size());
 
     cudaErrchk(cudaFree(tensors_arr));
     free(host_tensors_arr);

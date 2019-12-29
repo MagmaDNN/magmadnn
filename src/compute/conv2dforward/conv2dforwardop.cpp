@@ -31,7 +31,7 @@ template <typename T>
 Conv2DForwardOp<T>::~Conv2DForwardOp() {
     if (this->mem_type == HOST) {
     }
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     else {
 
         cudaErrchk(cudaFree(this->cudnn_settings.workspace));
@@ -52,7 +52,7 @@ Tensor<T> *Conv2DForwardOp<T>::_eval(bool recompute) {
     if (this->mem_type == HOST) {
         std::fprintf(stderr, "Error: Conv2dForward::_eval requires GPU\n");
     }
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     else {
         ::magmadnn::math::conv2d_device(this->input_tensor, this->filter_tensor, this->output_tensor,
                                         this->cudnn_settings);
@@ -78,7 +78,7 @@ Tensor<T> *Conv2DForwardOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, 
         if (this->mem_type == HOST) {
             ::magmadnn::math::conv2d_grad_data(this->filter_tensor, grad, out);
         }
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
         else {
             ::magmadnn::math::conv2d_grad_data_device(this->filter_tensor, grad, out, this->cudnn_settings);
         }
@@ -95,7 +95,7 @@ Tensor<T> *Conv2DForwardOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, 
         if (this->mem_type == HOST) {
             ::magmadnn::math::conv2d_grad_filter(this->input_tensor, grad, out);
         }
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
         else {
             ::magmadnn::math::conv2d_grad_filter_device(this->input_tensor, grad, out, this->cudnn_settings);
         }
@@ -113,7 +113,7 @@ void Conv2DForwardOp<T>::init_settings() {
     if (this->mem_type == HOST) {
         std::fprintf(stderr, "Error: Conv2DForward::init_settings requires GPU.\n");
     }
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     else {
         /* init the conv descriptor */
         cudnnErrchk(cudnnCreateConvolutionDescriptor(&this->cudnn_settings.conv_desc));
@@ -210,7 +210,7 @@ void Conv2DForwardOp<T>::calculate_and_set_output_shape() {
         std::fprintf(stderr, "Error: Conv2dForward::output_shape requires GPU.\n");
         this->output_shape = this->input->get_output_shape();
     }
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     else {
         int n, c, h, w;
 

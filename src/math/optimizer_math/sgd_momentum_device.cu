@@ -6,7 +6,7 @@
  *
  * @copyright Copyright (c) 2019
  */
-// #include "math.h"
+#include "magmadnn/math.h"
 #include "math/optimizer_math/sgd_momentum.h"
 
 #define BLK_SIZE 1024
@@ -34,8 +34,7 @@ namespace math {
          Tensor<T> *out) {
       
       unsigned int size = out->get_size();
-      // const auto grid_dim = ceildiv(size, BLK_SIZE);
-      const auto grid_dim = (size + BLK_SIZE - 1) / BLK_SIZE;
+      const auto grid_dim = ceildiv(size, BLK_SIZE);
       
       kernel_sgd_momentum_device<<<grid_dim, BLK_SIZE>>>(
             learning_rate, momentum, prev->get_ptr(), grad->get_ptr(),

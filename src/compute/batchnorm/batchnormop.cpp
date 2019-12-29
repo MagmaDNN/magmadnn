@@ -15,7 +15,7 @@ BatchNormOp<T>::BatchNormOp(Operation<T> *input, bool needs_grad)
     this->input_tensor = input->get_output_tensor();
     this->output_tensor = new Tensor<T>(this->output_shape, {NONE, {}}, this->mem_type);
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     init_settings();
 #endif
 }
@@ -32,7 +32,7 @@ Tensor<T> *BatchNormOp<T>::_eval(bool recompute) {
     if (this->mem_type == HOST) {
         math::batchnorm(input_tensor, this->output_tensor);
     }
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     else {
         math::batchnorm_device(input_tensor, this->output_tensor, bn_scale, bn_bias, running_mean, running_variance,
                                saved_mean, saved_variance, num_calls, this->settings);
@@ -55,7 +55,7 @@ Tensor<T> *BatchNormOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tens
     if (this->mem_type == HOST) {
         math::batchnorm_grad(grad, out);
     }
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     else {
         math::batchnorm_grad_device(this->input_tensor, grad, out, bn_scale, bn_scale_diff, bn_bias_diff, saved_mean,
                                     saved_variance, this->settings);
@@ -65,7 +65,7 @@ Tensor<T> *BatchNormOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tens
     return out;
 }
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
 template <typename T>
 void BatchNormOp<T>::init_settings() {
     settings.handle = ::magmadnn::internal::MAGMADNN_SETTINGS->cudnn_handle;

@@ -13,7 +13,6 @@
 #include "compute/operation.h"
 #include "compute/sum/sum_internal.h"
 #include "tensor/tensor.h"
-#include "utilities_internal.h"
 
 namespace magmadnn {
 namespace op {

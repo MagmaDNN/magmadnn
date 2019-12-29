@@ -23,7 +23,7 @@ magmadnn_error_t relu_full(Tensor<T> *x, Tensor<T> *out) {
                 out->set(i, val);
         }
     }
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     else {
         internal::relu_full_device(x, out);
     }

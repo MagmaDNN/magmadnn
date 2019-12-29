@@ -10,7 +10,7 @@
 #pragma once
 
 #include "tensor/tensor.h"
-#include "utilities_internal.h"
+#include "magmadnn/utilities_internal.h"
 
 namespace magmadnn {
 namespace math {
@@ -24,7 +24,7 @@ namespace math {
 template <typename T>
 void crossentropy(Tensor<T> *predicted, Tensor<T> *ground_truth, Tensor<T> *out);
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
 template <typename T>
 void crossentropy_device(Tensor<T> *predicted, Tensor<T> *ground_truth, Tensor<T> *out);
 #endif

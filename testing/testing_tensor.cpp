@@ -12,14 +12,14 @@ int main(int argc, char **argv) {
 
     // test indexing
     test_indexing(HOST, true);
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     test_indexing(DEVICE, true);
     test_indexing(MANAGED, true);
     test_indexing(CUDA_MANAGED, true);
 #endif
 
     test_fill({CONSTANT, {0.5}}, HOST, true);
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     test_fill({CONSTANT, {0.5}}, DEVICE, true);
     test_fill({CONSTANT, {0.5}}, MANAGED, true);
     test_fill({CONSTANT, {0.5}}, CUDA_MANAGED, true);
@@ -27,7 +27,7 @@ int main(int argc, char **argv) {
 
     // test copying
     test_copy(HOST, true);
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     test_copy(DEVICE, true);
     test_copy(MANAGED, true);
     test_copy(CUDA_MANAGED, true);

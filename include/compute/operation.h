@@ -11,6 +11,7 @@
 #include <cassert>
 #include <map>
 #include <string>
+
 #include "tensor/tensor.h"
 
 namespace magmadnn {

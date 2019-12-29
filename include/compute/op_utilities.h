@@ -10,7 +10,6 @@
 #include <deque>
 #include <set>
 #include "compute/operation.h"
-#include "utilities_internal.h"
 
 namespace magmadnn {
 namespace op {

@@ -22,7 +22,7 @@ void tanh_full(Tensor<T> *x, Tensor<T> *out) {
             out_ptr[i] = tanh(x_ptr[i]);
         }
     }
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     else {
         tanh_full_device(x, out);
     }

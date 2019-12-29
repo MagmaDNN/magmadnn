@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "compute/operation.h"
@@ -32,7 +31,7 @@ class PoolingOp : public Operation<T> {
     pooling_mode mode;
     bool propagate_nan;
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     math::cudnn_pooling_settings_t settings;
 #endif
 };

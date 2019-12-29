@@ -21,7 +21,7 @@ namespace internal {
 template <typename T>
 void sigmoid_full(Tensor<T> *x, Tensor<T> *out, bool fast = true);
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
 /** Computes the element-wise sigmoid on a device.
  * @tparam T
  * @param x tensor with device_ptr
@@ -34,7 +34,7 @@ void sigmoid_full_device(Tensor<T> *x, Tensor<T> *out, bool fast = true);
 template <typename T>
 void sigmoid_grad(Tensor<T> *output, Tensor<T> *grad, Tensor<T> *out);
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
 template <typename T>
 void sigmoid_grad_device(Tensor<T> *output, Tensor<T> *grad, Tensor<T> *out);
 #endif

@@ -18,7 +18,7 @@ void pow_grad(Tensor<T> *x, int power, Tensor<T> *grad, Tensor<T> *out) {
             out_ptr[i] = grad_ptr[(grad_is_scalar) ? 0 : i] * ((T) power) * std::pow((T) x_ptr[i], (T) power - 1);
         }
     }
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     else {
         internal::pow_grad_device(x, power, grad, out);
     }
@@ -40,7 +40,7 @@ void pow_grad(Tensor<int> *x, int power, Tensor<int> *grad, Tensor<int> *out) {
                 grad_ptr[(grad_is_scalar) ? 0 : i] * power * ((int) std::pow((float) x_ptr[i], (float) (power - 1)));
         }
     }
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     else {
         internal::pow_grad_device(x, power, grad, out);
     }

@@ -10,7 +10,7 @@ namespace internal {
 template <typename T>
 void log_full(Tensor<T> *x, Tensor<T> *out, bool stable = false);
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
 template <typename T>
 void log_full_device(Tensor<T> *x, Tensor<T> *out, bool stable = false);
 #endif
@@ -18,7 +18,7 @@ void log_full_device(Tensor<T> *x, Tensor<T> *out, bool stable = false);
 template <typename T>
 void log_grad(Tensor<T> *x, Tensor<T> *grad, Tensor<T> *out, bool stable = false);
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
 template <typename T>
 void log_grad_device(Tensor<T> *x, Tensor<T> *grad, Tensor<T> *out, bool stable = false);
 #endif

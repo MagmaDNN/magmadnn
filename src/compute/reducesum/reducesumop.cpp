@@ -39,7 +39,7 @@ ReduceSumOp<T>::ReduceSumOp(Operation<T> *x, int axis, bool copy, bool needs_gra
         std::fprintf(stderr, "Non-Copy ReduceSum not supported.\n");
     }
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
 
     /* create a temporary descriptor for x, since we do not have its tensor yet (it's an operation) and
         therefore cannot call get_cudnn_tensor_descriptor(). This allows us to get the
@@ -85,7 +85,7 @@ template <typename T>
 ReduceSumOp<T>::~ReduceSumOp() {
     if (ones != NULL) delete ones;
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     cudnnErrchk(cudnnDestroyReduceTensorDescriptor(reduce_settings.descriptor));
     cudaErrchk(cudaFree(reduce_settings.workspace));
 #endif
@@ -103,7 +103,7 @@ Tensor<T> *ReduceSumOp<T>::_eval(bool recompute) {
     if (this->mem_type == HOST) {
         math::reduce_sum(x_tensor, axis, ones, this->output_tensor);
     }
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     else {
         math::reduce_sum_device(x_tensor, axis, this->output_tensor, this->reduce_settings);
     }

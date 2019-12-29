@@ -21,7 +21,7 @@ DropoutOp<T>::DropoutOp(Operation<T> *input, float dropout_rate, unsigned long l
     this->mask_tensor =
         new Tensor<T>(this->output_shape, {MASK, {static_cast<T>(p), static_cast<T>(1.0f / p)}}, this->mem_type);
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     init_settings();
 #endif
 }
@@ -30,7 +30,7 @@ template <typename T>
 DropoutOp<T>::~DropoutOp() {
     if (mask_tensor != NULL) delete mask_tensor;
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     cudnnErrchk(cudnnDestroyDropoutDescriptor(shared_settings.dropoutDesc));
 #endif
 }
@@ -44,7 +44,7 @@ Tensor<T> *DropoutOp<T>::_eval(bool recompute) {
     if (this->mem_type == HOST) {
         math::dropout(input_tensor, this->output_tensor, mask_tensor, dropout_rate);
     }
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     else {
         math::dropout_device(input_tensor, this->output_tensor, this->settings, this->shared_settings);
     }
@@ -58,7 +58,7 @@ Tensor<T> *DropoutOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor
     /* return gradient in here ... */
     Tensor<T> *out = this->_grad_cache[(uintptr_t) var];
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     this->grad_settings.dydesc = grad->get_cudnn_tensor_descriptor();
 #endif
 
@@ -66,7 +66,7 @@ Tensor<T> *DropoutOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor
         out = new Tensor<T>(this->output_shape, {NONE, {}}, this->mem_type);
         this->_grad_cache[(uintptr_t) var] = out;
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
         this->grad_settings.dxdesc = out->get_cudnn_tensor_descriptor();
 #endif
     }
@@ -74,7 +74,7 @@ Tensor<T> *DropoutOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor
     if (this->mem_type == HOST) {
         math::dropout_grad(grad, out, mask_tensor);
     }
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     else {
         math::dropout_grad_device(grad, out, this->grad_settings, this->shared_settings);
     }
@@ -83,7 +83,7 @@ Tensor<T> *DropoutOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor
     return out;
 }
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
 template <typename T>
 void DropoutOp<T>::init_settings() {
     settings.xdesc = this->input_tensor->get_cudnn_tensor_descriptor();

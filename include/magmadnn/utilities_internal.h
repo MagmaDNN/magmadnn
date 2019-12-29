@@ -1,6 +1,7 @@
 /**
  * @file utilities_internal.h
  * @author Daniel Nichols
+ * @author Florent Lopez
  * @version 0.1
  * @date 2019-05-21
  *
@@ -15,7 +16,6 @@
 #include <set>
 #include <vector>
 
-// #if defined(_HAS_CUDA_)
 #if defined(MAGMADNN_HAVE_CUDA)
 #include <cuda.h>
 #include <cuda_runtime_api.h>
@@ -83,7 +83,6 @@ template <typename T>
 void print_compute_graph(op::Operation<T> *node, bool debug=true);
 */
 
-// #if defined(_HAS_CUDA_)
 #if defined(MAGMADNN_HAVE_CUDA)
 template <typename T>
 cudnnDataType_t get_cudnn_data_type(T val);

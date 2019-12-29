@@ -8,11 +8,8 @@
  */
 #pragma once
 
-// #include <cstdint>
-// #include <cmath>
 #include <vector>  // for tensor_filler_t
 
-// #if defined(_HAS_CUDA_)
 #if defined(MAGMADNN_HAVE_CUDA)
 #include "cublas_v2.h"
 #include "cudnn.h"
@@ -27,7 +24,6 @@ namespace magmadnn {
 
 typedef enum memory_t {
     HOST,
-// #if defined(_HAS_CUDA_)
 #if defined(MAGMADNN_HAVE_CUDA)
     DEVICE,
     MANAGED,
@@ -40,7 +36,6 @@ typedef unsigned int magmadnn_error_t;
 
 struct magmadnn_settings_t {
     unsigned int n_devices;
-// #if defined(_HAS_CUDA_)
 #if defined(MAGMADNN_HAVE_CUDA)
     cudnnHandle_t cudnn_handle;
     cublasHandle_t cublas_handle;

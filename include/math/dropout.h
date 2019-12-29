@@ -8,19 +8,18 @@
  */
 #pragma once
 
+#include "magmadnn/types.h"
 #include "math/product.h"
 #include "tensor/tensor.h"
-#include "types.h"
-#include "utilities_internal.h"
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
 #include "cudnn.h"
 #endif
 
 namespace magmadnn {
 namespace math {
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
 struct cudnn_dropout_settings_t {
     cudnnHandle_t handle;
     cudnnTensorDescriptor_t xdesc;
@@ -48,7 +47,7 @@ void dropout(Tensor<T> *x, Tensor<T> *out, Tensor<T> *mask, float dropout_rate);
 template <typename T>
 void dropout_grad(Tensor<T> *grad, Tensor<T> *out, Tensor<T> *mask);
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
 template <typename T>
 void dropout_device(Tensor<T> *x, Tensor<T> *out, cudnn_dropout_settings_t settings,
                     cudnn_dropout_shared_settings_t shared);

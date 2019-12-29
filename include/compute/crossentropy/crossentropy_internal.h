@@ -10,7 +10,7 @@
 
 #include "tensor/tensor.h"
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
 #include <cuda.h>
 #endif
 
@@ -20,7 +20,7 @@ namespace internal {
 template <typename T>
 void crossentropy_full(Tensor<T> *x, Tensor<T> *y, Tensor<T> *softmax, Tensor<T> *out);
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
 template <typename T>
 void crossentropy_full_device(Tensor<T> *x, Tensor<T> *y, Tensor<T> *softmax, Tensor<T> *out);
 #endif

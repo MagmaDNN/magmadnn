@@ -12,7 +12,7 @@
 #include <cstdlib>
 #include <cassert>
 
-#include "utilities_internal.h"
+#include "magmadnn/utilities_internal.h"
 #if defined(MAGMADNN_HAVE_CUDA)
 #include "memory/memory_internal_device.h"
 #endif
@@ -29,7 +29,7 @@ MemoryManager<T>::MemoryManager(unsigned int size, memory_t mem_type, device_t d
         case HOST:
             init_host();
             break;
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
         case DEVICE:
             init_device();
             break;
@@ -51,7 +51,7 @@ void MemoryManager<T>::init_host() {
    host_ptr = (T*) std::malloc(size * sizeof(T));
 }
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
 template <typename T>
 void MemoryManager<T>::init_device() {
     cudaErrchk(cudaMalloc((void**) &device_ptr, size * sizeof(T)));
@@ -94,7 +94,7 @@ MemoryManager<T>::~MemoryManager<T>() {
            // TODO: replace use of `free` with `delete`
            std::free(host_ptr);
             break;
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
         case DEVICE:
             cudaErrchk(cudaFree(device_ptr));
             break;
@@ -122,7 +122,7 @@ magmadnn_error_t MemoryManager<T>::copy_from(const MemoryManager<T>& src, unsign
     if (src.mem_type == HOST) {
         return copy_from_host(src.host_ptr, begin_idx, copy_size);
     }
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     else if (src.mem_type == DEVICE) {
         return copy_from_device(src.device_ptr, begin_idx, copy_size);
     } else if (src.mem_type == MANAGED) {
@@ -152,7 +152,7 @@ magmadnn_error_t MemoryManager<T>::copy_from_host(T* src, unsigned int begin_idx
             // host --> host
             std::copy(src + begin_idx, (src + begin_idx) + copy_size, host_ptr);
             return (magmadnn_error_t) 0;
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
         case DEVICE:
             // host --> device
             cudaErrchk(cudaMemcpy(device_ptr, src + begin_idx, copy_size * sizeof(T), cudaMemcpyHostToDevice));
@@ -173,7 +173,7 @@ magmadnn_error_t MemoryManager<T>::copy_from_host(T* src, unsigned int begin_idx
     return (magmadnn_error_t) 1;
 }
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
 template <typename T>
 magmadnn_error_t MemoryManager<T>::copy_from_device(T* src, unsigned int begin_idx, unsigned int copy_size) {
     magmadnn_error_t err = (magmadnn_error_t) 0;
@@ -257,7 +257,7 @@ magmadnn_error_t MemoryManager<T>::copy_from_cudamanaged(T* src, unsigned int be
 
 template <typename T>
 magmadnn_error_t MemoryManager<T>::sync(bool gpu_was_modified) {
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     cudaError_t err = (cudaError_t) 0;
 
     if (mem_type == CUDA_MANAGED) {
@@ -285,7 +285,7 @@ T MemoryManager<T>::get(unsigned int idx) const {
     switch (mem_type) {
         case HOST:
             return host_ptr[idx];
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
         case DEVICE:
             // cudaErrchk( cudaSetDevice(device_id) );   /* TODO -- fix MagmaDNN's device selection system */
             return internal::get_device_array_element(device_ptr, idx);
@@ -307,7 +307,7 @@ void MemoryManager<T>::set(unsigned int idx, T val) {
         case HOST:
             host_ptr[idx] = val;
             break;
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
         case DEVICE:
             // cudaErrchk( cudaSetDevice(device_id) );   /* TODO -- fix MagmaDNN's device selection system */
             internal::set_device_array_element(device_ptr, idx, val);
@@ -326,7 +326,7 @@ void MemoryManager<T>::set(unsigned int idx, T val) {
 
 template <typename T>
 magmadnn_error_t MemoryManager<T>::set_device(device_t device_id) {
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     int n_devices = 0;
     cudaErrchk(cudaGetDeviceCount(&n_devices));
     if ((int) device_id >= n_devices) {
@@ -344,7 +344,7 @@ T* MemoryManager<T>::get_host_ptr() {
     return host_ptr;
 }
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
 template <typename T>
 T* MemoryManager<T>::get_device_ptr() {
     return device_ptr;
@@ -361,7 +361,7 @@ T* MemoryManager<T>::get_ptr() {
     switch (mem_type) {
         case HOST:
             return get_host_ptr();
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
         case DEVICE:
             return get_device_ptr();
         case MANAGED:

@@ -65,7 +65,7 @@ int main(int argc, char **argv) {
 
     // get/set
     test_get_set(HOST, test_size, true);
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     test_get_set(DEVICE, test_size, true);
     test_get_set(MANAGED, test_size, true);
     test_get_set(CUDA_MANAGED, test_size, true);
@@ -75,7 +75,7 @@ int main(int argc, char **argv) {
     // host to ...
     test_copy(HOST, HOST, test_size, true);
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     test_copy(HOST, DEVICE, test_size, true);
     test_copy(HOST, MANAGED, test_size, true);
     test_copy(HOST, CUDA_MANAGED, test_size, true);

@@ -6,7 +6,7 @@
  *
  * @copyright Copyright (c) 2019
  */
-#include "utilities_internal.h"
+#include "magmadnn/utilities_internal.h"
 
 namespace magmadnn {
 namespace internal {
@@ -161,7 +161,7 @@ template void reset_compute_graph(op::Operation<float> *node);
 template void reset_compute_graph(op::Operation<double> *node);
 #endif
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
 template <typename T>
 cudnnDataType_t get_cudnn_data_type(T v) {
     return CUDNN_DATA_FLOAT; /* default */
@@ -179,7 +179,6 @@ template <>
 cudnnDataType_t get_cudnn_data_type(double v) {
     return CUDNN_DATA_DOUBLE;
 }
-
 #endif
 
 }  // namespace internal

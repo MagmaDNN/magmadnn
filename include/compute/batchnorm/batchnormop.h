@@ -6,7 +6,7 @@
 #include "math/batchnorm.h"
 #include "tensor/tensor.h"
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
 #include "cudnn.h"
 #endif
 
@@ -39,7 +39,7 @@ class BatchNormOp : public Operation<T> {
     Tensor<T> *saved_mean;
     Tensor<T> *saved_variance;
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     void init_settings();
 
     math::cudnn_batchnorm_settings_t settings;

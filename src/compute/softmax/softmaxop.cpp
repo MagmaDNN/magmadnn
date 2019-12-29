@@ -15,7 +15,7 @@ SoftmaxOp<T>::SoftmaxOp(Operation<T> *input, bool copy, bool needs_grad)
     this->input_tensor = input->get_output_tensor();
     this->output_tensor = new Tensor<T>(this->output_shape, {NONE, {}}, this->mem_type);
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     init_settings();
 #endif
 }
@@ -29,7 +29,7 @@ Tensor<T> *SoftmaxOp<T>::_eval(bool recompute) {
     if (this->mem_type == HOST) {
         math::softmax(input_tensor, this->output_tensor);
     }
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     else {
         math::softmax_device(input_tensor, this->output_tensor, this->settings);
     }
@@ -43,7 +43,7 @@ Tensor<T> *SoftmaxOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor
     /* return gradient in here ... */
     Tensor<T> *out = this->_grad_cache[(uintptr_t) var];
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     this->grad_settings.dydesc = grad->get_cudnn_tensor_descriptor();
 #endif
 
@@ -51,7 +51,7 @@ Tensor<T> *SoftmaxOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor
         out = new Tensor<T>(this->output_shape, {NONE, {}}, this->mem_type);
         this->_grad_cache[(uintptr_t) var] = out;
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
         this->grad_settings.dxdesc = out->get_cudnn_tensor_descriptor();
 #endif
     }
@@ -59,7 +59,7 @@ Tensor<T> *SoftmaxOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor
     if (this->mem_type == HOST) {
         math::softmax_grad(this->output_tensor, grad, out);
     }
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     else {
         math::softmax_grad_device(this->output_tensor, grad, out, this->grad_settings);
     }
@@ -68,7 +68,7 @@ Tensor<T> *SoftmaxOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor
     return out;
 }
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
 template <typename T>
 void SoftmaxOp<T>::init_settings() {
     this->settings.handle = ::magmadnn::internal::MAGMADNN_SETTINGS->cudnn_handle;

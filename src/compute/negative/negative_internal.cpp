@@ -15,7 +15,7 @@ void negative_full(Tensor<T> *x, Tensor<T> *out) {
             out_ptr[i] = -x_ptr[i];
         }
     }
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     else {
         internal::negative_full_device(x, out);
     }

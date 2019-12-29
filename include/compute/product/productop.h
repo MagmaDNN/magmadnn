@@ -12,9 +12,9 @@
 #include "compute/operation.h"
 #include "compute/product/product_internal.h"
 #include "compute/variable.h"
+#include "magmadnn/utilities_internal.h"
 #include "math/scalar_tensor_product.h"
 #include "tensor/tensor.h"
-#include "utilities_internal.h"
 
 namespace magmadnn {
 

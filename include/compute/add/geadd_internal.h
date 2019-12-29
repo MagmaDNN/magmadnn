@@ -7,7 +7,8 @@
  * @copyright Copyright (c) 2019
  */
 #pragma once
-// #include "cblas.h"
+
+#include "magmadnn/config.h"
 #include "tensor/tensor.h"
 
 namespace magmadnn {
@@ -23,6 +24,9 @@ namespace internal {
  */
 template <typename T>
 bool geadd_check(Tensor<T> *A, Tensor<T> *B, Tensor<T> *C);
+
+template <typename T>
+void geadd_full_cpu(T alpha, Tensor<T> *A, T beta, Tensor<T> *B, Tensor<T> *C);
 
 /** Computes C = alpha*A + beta*B All tensors <i>must</i> have the same memory type and shape/size.
  * @tparam T int, float, or double
@@ -47,6 +51,9 @@ void geadd_full(T alpha, Tensor<T> *A, T beta, Tensor<T> *B, Tensor<T> *C);
 template <typename T>
 void geadd_full_device(T alpha, Tensor<T> *A, T beta, Tensor<T> *B, Tensor<T> *C);
 #endif
+
+template <typename T>
+void tensor_scalar_add_full_cpu(T alpha, Tensor<T> *x, Tensor<T> *out);
 
 /**
  * @tparam T numeric

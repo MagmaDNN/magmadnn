@@ -6,6 +6,7 @@
  *
  * @copyright Copyright (c) 2019
  */
+#include "magmadnn/config.h"
 #include "compute/add/geadd_internal.h"
 
 namespace magmadnn {
@@ -46,7 +47,7 @@ void geadd_full(T alpha, Tensor<T> *A, T beta, Tensor<T> *B, Tensor<T> *C) {
    if (A->get_memory_type() == HOST) {
       geadd_full_cpu(alpha, A, beta, B, C);
    }
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
    else {
       geadd_full_device(alpha, A, beta, B, C);
    }
@@ -57,17 +58,26 @@ template void geadd_full(float alpha, Tensor<float> *A, float beta, Tensor<float
 template void geadd_full(double alpha, Tensor<double> *A, double beta, Tensor<double> *B, Tensor<double> *C);
 
 template <typename T>
+void tensor_scalar_add_full_cpu(T alpha, Tensor<T> *x, Tensor<T> *out) {
+
+   T *x_ptr = x->get_ptr();
+   T *out_ptr = out->get_ptr();
+   unsigned int size = out->get_size();
+
+   for (unsigned int i = 0; i < size; i++) {
+      out_ptr[i] = alpha + x_ptr[i];
+   }
+}
+template void tensor_scalar_add_full_cpu(int alpha, Tensor<int> *x, Tensor<int> *out);
+template void tensor_scalar_add_full_cpu(float alpha, Tensor<float> *x, Tensor<float> *out);
+template void tensor_scalar_add_full_cpu(double alpha, Tensor<double> *x, Tensor<double> *out);
+   
+template <typename T>
 void tensor_scalar_add_full(T alpha, Tensor<T> *x, Tensor<T> *out) {
     if (out->get_memory_type() == HOST) {
-        T *x_ptr = x->get_ptr();
-        T *out_ptr = out->get_ptr();
-        unsigned int size = out->get_size();
-
-        for (unsigned int i = 0; i < size; i++) {
-            out_ptr[i] = alpha + x_ptr[i];
-        }
+       tensor_scalar_add_full_cpu(alpha, x, out);
     }
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     else {
         tensor_scalar_add_full_device(alpha, x, out);
     }

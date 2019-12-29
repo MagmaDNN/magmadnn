@@ -25,21 +25,31 @@ bool geadd_check(Tensor<T> *A, Tensor<T> *B, Tensor<T> *C) {
 }
 
 template <typename T>
-void geadd_full(T alpha, Tensor<T> *A, T beta, Tensor<T> *B, Tensor<T> *C) {
-    if (A->get_memory_type() == HOST) {
-        T *a_ptr = A->get_ptr();
-        T *b_ptr = B->get_ptr();
-        T *c_ptr = C->get_ptr();
-        unsigned int size = A->get_size();
+void geadd_full_cpu(T alpha, Tensor<T> *A, T beta, Tensor<T> *B, Tensor<T> *C) {
 
-        for (unsigned int i = 0; i < size; i++) {
-            c_ptr[i] = (alpha * a_ptr[i]) + (beta * b_ptr[i]);
-        }
-    }
+   T *a_ptr = A->get_ptr();
+   T *b_ptr = B->get_ptr();
+   T *c_ptr = C->get_ptr();
+   unsigned int size = A->get_size();
+
+   // TODO Use BLAS kernels and MKL omatadd operation if available
+   for (unsigned int i = 0; i < size; i++) {
+      c_ptr[i] = (alpha * a_ptr[i]) + (beta * b_ptr[i]);
+   }
+}
+template void geadd_full_cpu(int alpha, Tensor<int> *A, int beta, Tensor<int> *B, Tensor<int> *C);
+template void geadd_full_cpu(float alpha, Tensor<float> *A, float beta, Tensor<float> *B, Tensor<float> *C);
+template void geadd_full_cpu(double alpha, Tensor<double> *A, double beta, Tensor<double> *B, Tensor<double> *C);
+   
+template <typename T>
+void geadd_full(T alpha, Tensor<T> *A, T beta, Tensor<T> *B, Tensor<T> *C) {
+   if (A->get_memory_type() == HOST) {
+      geadd_full_cpu(alpha, A, beta, B, C);
+   }
 #if defined(_HAS_CUDA_)
-    else {
-        geadd_full_device(alpha, A, beta, B, C);
-    }
+   else {
+      geadd_full_device(alpha, A, beta, B, C);
+   }
 #endif
 }
 template void geadd_full(int alpha, Tensor<int> *A, int beta, Tensor<int> *B, Tensor<int> *C);

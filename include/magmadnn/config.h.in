@@ -1,0 +1,17 @@
+#pragma once
+
+// clang-format off
+#define MAGMADNN_VERSION_MAJOR @MagmaDNN_VERSION_MAJOR@
+#define MAGMADNN_VERSION_MINOR @MagmaDNN_VERSION_MINOR@
+#define MAGMADNN_VERSION_PATCH @MagmaDNN_VERSION_PATCH@
+#define MAGMADNN_VERSION_STR @MagmaDNN_VERSION_MAJOR@, @MagmaDNN_VERSION_MINOR@, @MagmaDNN_VERSION_PATCH@
+// clang-format on
+
+// Has MagmaDNN been compiled with CUDA 
+#cmakedefine MAGMADNN_HAVE_CUDA
+
+// Has MagmaDNN been compiled with OMP 
+#cmakedefine MAGMADNN_HAVE_OMP
+
+// Has MagmaDNN been compiled with OMP 
+#cmakedefine MAGMADNN_HAVE_MPI

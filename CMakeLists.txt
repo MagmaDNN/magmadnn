@@ -30,6 +30,9 @@ option(MAGMADNN_BUILD_SHARED_LIBS "Build shared (.so, .dylib, .dll) libraries" O
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
+set(MAGMADNN_HAVE_CUDA FALSE)
+set(MAGMADNN_HAVE_OMP FALSE)
+
 ########################################
 # BLAS
 set(LBLAS "" CACHE STRING "BLAS library")
@@ -116,6 +119,7 @@ if (MAGMADNN_ENABLE_CUDA)
   add_definitions(-DHAVE_CUDA)
   add_definitions(-D_HAS_CUDA_)
   add_definitions(-DMAGMADNN_HAVE_CUDA)
+  set(MAGMADNN_HAVE_CUDA TRUE)
   
   set(MAGMADNN_NVCC_ARCHS "60;61;70;75" CACHE STRING "The SM architectures to build code for.")
   
@@ -211,10 +215,18 @@ if (MAGMADNN_ENABLE_OMP)
 
     add_definitions(-DHAVE_OMP)
     add_definitions(-DMAGMADNN_HAVE_OMP)
+    set(MAGMADNN_HAVE_OMP TRUE)
 
   endif()
 
 endif()
+
+########################################
+
+configure_file(
+  ${MagmaDNN_SOURCE_DIR}/include/magmadnn/config.h.in
+  ${MagmaDNN_BINARY_DIR}/include/magmadnn/config.h
+  @ONLY)
 
 ########################################
 

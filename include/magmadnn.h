@@ -10,14 +10,18 @@
 
 /* include all magmadnn header files */
 
+// TODO remove the following define and rely on the config.h file
+// instead
 #if defined(USE_GPU)
 #define _HAS_CUDA_
 #endif
 
+// TODO remove the following define
 #if defined(_HAS_CUDA_)
 #define USE_GPU
 #endif
 
+#include "magmadnn/config.h"
 #include "magmadnn/init_finalize.h"
 #include "magmadnn/types.h"
 #include "magmadnn/utilities_internal.h"

@@ -38,7 +38,8 @@ class Layer {
     /** Returns a copy of the output shape as a vector
      * @return std::vector<unsigned int>
      */
-    std::vector<unsigned int> get_output_shape() const { return this->output->get_output_shape(); }
+    std::vector<unsigned int> get_output_shape() const {
+       return this->output->get_output_shape(); }
 
     /** Gets the size of the i-th axis of the input tensor
      * @param i axis
@@ -74,7 +75,8 @@ class Layer {
    std::size_t get_memory_size() const { return 0; }
    
    protected:
-    Layer(std::vector<unsigned int> input_shape, op::Operation<T> *input) : input_shape(input_shape), input(input) {}
+    Layer(std::vector<unsigned int> input_shape, op::Operation<T> *input)
+       : input_shape(input_shape), input(input) {}
 
     std::vector<unsigned int> input_shape;
     std::vector<unsigned int> output_shape;

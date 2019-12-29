@@ -26,7 +26,7 @@ void relu(Tensor<T> *x, Tensor<T> *out) {
             out_ptr[i] = (x_ptr[i] > static_cast<T>(0)) ? x_ptr[i] : static_cast<T>(0);
         }
     }
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     else {
         fprintf(stderr, "For GPU relu please use relu_device\n");
     }
@@ -50,7 +50,7 @@ void relu_grad(Tensor<T> *x, Tensor<T> *relu_out, Tensor<T> *grad, Tensor<T> *ou
             out_ptr[i] = (x_ptr[i] > static_cast<T>(0)) ? grad_ptr[i] : static_cast<T>(0);
         }
     }
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     else {
         fprintf(stderr, "For GPU relu_grad please use relu_grad_device\n");
     }
@@ -60,7 +60,7 @@ template void relu_grad(Tensor<int> *x, Tensor<int> *relu_out, Tensor<int> *grad
 template void relu_grad(Tensor<float> *x, Tensor<float> *relu_out, Tensor<float> *grad, Tensor<float> *out);
 template void relu_grad(Tensor<double> *x, Tensor<double> *relu_out, Tensor<double> *grad, Tensor<double> *out);
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
 template <typename T>
 void relu_device(Tensor<T> *x, Tensor<T> *out, relu_cudnn_settings_t settings) {
     T alpha = static_cast<T>(1), beta = static_cast<T>(0);

@@ -26,7 +26,9 @@ magmadnn_error_t magmadnn_init() {
 
 #if defined(MAGMADNN_HAVE_CUDA)
     err = (magmadnn_error_t) magma_init();
-
+    
+    // TODO: Create stream and init handles with it. DO NOT use
+    // default stream
     /* init cudnn */
     cudnnCreate(&internal::MAGMADNN_SETTINGS->cudnn_handle);
 

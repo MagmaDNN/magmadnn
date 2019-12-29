@@ -1,4 +1,5 @@
-
+#include "magmadnn/config.h"
+#include "compute/negative/negative_internal.h"
 #include "compute/negative/negativeop.h"
 
 namespace magmadnn {
@@ -19,19 +20,50 @@ NegativeOp<T>::NegativeOp(Operation<T> *x, bool copy, bool needs_grad)
 
 template <typename T>
 Tensor<T> *NegativeOp<T>::_eval(bool recompute) {
-    x_tensor = x->eval(recompute);
 
-    if (!copy) this->output_tensor = x_tensor;
+   // Only needed for asynchronous execution   
+// #if defined(MAGMADNN_HAVE_CUDA)
+//    // Make sure x Op and negative Op are performed in the same stream
+//    x->set_custream(this->get_custream());
+// #endif
+   
+   x_tensor = x->eval(recompute);
 
-    internal::negative_full(x_tensor, this->output_tensor);
+   if (!copy) this->output_tensor = x_tensor;
 
-    return this->output_tensor;
+   // internal::negative_full(x_tensor, this->output_tensor);
+   if (this->output_tensor->get_memory_type() == HOST) {
+      magmadnn::internal::negative_full_cpu(x_tensor, this->output_tensor);
+   }
+#if defined(MAGMADNN_HAVE_CUDA)
+   else {
+      // magmadnn::internal::negative_full_device(x_tensor, this->output_tensor);
+      magmadnn::internal::negative_full_device(
+            this->get_custream(), x_tensor, this->output_tensor);
+      cudaStreamSynchronize(this->get_custream());
+   }
+#endif
+    
+   return this->output_tensor;
 }
 
 template <typename T>
-Tensor<T> *NegativeOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad) {
-    /* grad : -grad */
-    internal::negative_full(grad, grad);
+Tensor<T> *NegativeOp<T>::_grad(
+      Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad) {
+
+   /* grad : -grad */
+    // internal::negative_full(grad, grad);
+    if (grad->get_memory_type() == HOST) {
+       magmadnn::internal::negative_full_cpu(grad, grad);
+    }
+#if defined(MAGMADNN_HAVE_CUDA)
+    else {
+       magmadnn::internal::negative_full_device(
+             this->get_custream(), grad, grad);
+       cudaStreamSynchronize(this->get_custream());
+    }
+#endif
+
     return grad;
 }
 

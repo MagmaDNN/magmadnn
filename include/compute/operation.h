@@ -12,28 +12,48 @@
 #include <map>
 #include <string>
 
+#include "magmadnn/config.h"
 #include "tensor/tensor.h"
+#if defined(MAGMADNN_HAVE_CUDA)
+#include "cuda.h"   
+#endif
 
 namespace magmadnn {
 namespace op {
 
 template <typename T>
 class Operation {
-   public:
-    /** The operation class serves as an abstract object, which all tensors operations descend
+public:
+
+   /** The operation class serves as an abstract object, which all tensors operations descend
      *  from. It is used to build a computation tree.
      */
-    Operation() : has_been_computed(false) {}
-    Operation(std::vector<Operation<T> *> inputs, bool needs_grad = true) : inputs(inputs), needs_grad(needs_grad) {
-        for (typename std::vector<Operation<T> *>::iterator vit = inputs.begin(); vit != inputs.end(); vit++) {
+   Operation() : has_been_computed(false) {
+#if defined(MAGMADNN_HAVE_CUDA)
+      // Use default stream for CUDA kernels
+      this->custream_ = nullptr;
+#endif
+   }
+
+   Operation(std::vector<Operation<T> *> inputs, bool needs_grad = true)
+      : inputs(inputs), needs_grad(needs_grad) {
+      
+        for (auto vit = inputs.begin(); vit != inputs.end(); vit++) {
             if (needs_grad) { /* TODO : verify this is necessary */
                 (*vit)->add_consumer(this);
             }
             this->_grad_cache.insert(std::make_pair((uintptr_t)(*vit), (Tensor<T> *) NULL));
         }
-    }
-    virtual ~Operation() {
-        for (unsigned int i = 0; i < inputs.size(); i++) delete inputs[i];
+        
+#if defined(MAGMADNN_HAVE_CUDA)
+      // Use default stream for CUDA kernels
+      this->custream_ = nullptr;
+#endif
+   }
+
+   virtual ~Operation() {
+      for (unsigned int i = 0; i < inputs.size(); i++)
+           delete inputs[i];
 
         /*  TODO : figure out why this peice of code caused SEGFAULTS
         if (this->output_tensor != NULL) {
@@ -146,6 +166,12 @@ class Operation {
      */
     virtual std::string get_name() { return this->name; }
 
+#if defined(MAGMADNN_HAVE_CUDA)
+   cudaStream_t get_custream() const { return custream_; }
+
+   void set_custream(cudaStream_t custream) { this->custream_ = custream;}
+#endif
+
    protected:
     /** Sets this->output_tensor to the value of this operation
      * @return Tensor<T>* the evaluated tensor
@@ -160,7 +186,7 @@ class Operation {
      * @return Tensor<T>*
      */
     virtual Tensor<T> *_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad) = 0;
-
+   
     std::vector<Operation<T> *> inputs;
     std::vector<Operation<T> *> consumers;
     std::vector<unsigned int> output_shape;
@@ -173,6 +199,11 @@ class Operation {
     bool needs_grad;
     bool has_been_computed;
     bool has_grad_been_computed;
+
+private:
+#if defined(MAGMADNN_HAVE_CUDA)
+   cudaStream_t custream_;
+#endif
 };
 
 }  // namespace op

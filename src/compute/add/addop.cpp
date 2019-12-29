@@ -1,6 +1,7 @@
 /**
  * @file add_op.cpp
  * @author Daniel Nichols
+ * @author Florent Lopez
  * @version 1.0
  * @date 2019-02-20
  *
@@ -32,20 +33,21 @@ AddOp<T>::AddOp(Operation<T> *a, Operation<T> *b, bool copy, bool needs_grad)
 
 template <typename T>
 Tensor<T> *AddOp<T>::_eval(bool recompute) {
-    a_tensor = a->eval(recompute);
-    b_tensor = b->eval(recompute);
 
-    if (a_tensor->get_size() == 1) {
-        a_tensor->get_memory_manager()->sync(true);
-        internal::tensor_scalar_add_full(a_tensor->get(0), b_tensor, this->output_tensor);
-    } else if (b_tensor->get_size() == 1) {
-        b_tensor->get_memory_manager()->sync(true);
-        internal::tensor_scalar_add_full(b_tensor->get(0), a_tensor, this->output_tensor);
-    } else {
-        internal::geadd_full((T) 1, a_tensor, (T) 1, b_tensor, this->output_tensor);
-    }
+   a_tensor = a->eval(recompute);
+   b_tensor = b->eval(recompute);
 
-    return this->output_tensor;
+   if (a_tensor->get_size() == 1) {
+      a_tensor->get_memory_manager()->sync(true);
+      internal::tensor_scalar_add_full(a_tensor->get(0), b_tensor, this->output_tensor);
+   } else if (b_tensor->get_size() == 1) {
+      b_tensor->get_memory_manager()->sync(true);
+      internal::tensor_scalar_add_full(b_tensor->get(0), a_tensor, this->output_tensor);
+   } else {
+      internal::geadd_full((T) 1, a_tensor, (T) 1, b_tensor, this->output_tensor);
+   }
+
+   return this->output_tensor;
 }
 
 template <typename T>

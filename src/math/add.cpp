@@ -9,6 +9,7 @@
  */
 #include <cassert>
 
+#include "magmadnn/config.h"
 #include "math/add.h"
 
 namespace magmadnn {

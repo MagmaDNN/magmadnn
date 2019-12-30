@@ -1,4 +1,4 @@
-
+#include "magmadnn/math.h"
 #include "compute/pow/pow_internal.h"
 
 #define BLK_SIZE 1024
@@ -36,6 +36,21 @@ template void pow_grad_device(Tensor<int> *x, int power, Tensor<int> *input, Ten
 template void pow_grad_device(Tensor<float> *x, int power, Tensor<float> *input, Tensor<float> *out);
 template void pow_grad_device(Tensor<double> *x, int power, Tensor<double> *input, Tensor<double> *out);
 
+template <typename T>
+void pow_grad_device(cudaStream_t custream, Tensor<T> *x, int power, Tensor<T> *grad, Tensor<T> *out) {
+
+   unsigned int size = out->get_size();
+   const auto grid_dim = ceildiv(size, BLK_SIZE);
+
+   kernel_pow_grad_device
+      <<<grid_dim, BLK_SIZE, 0, custream>>>
+      (x->get_ptr(), power, grad->get_ptr(), out->get_ptr(),
+       (grad->get_size() == 1), size);
+}
+template void pow_grad_device(cudaStream_t custream, Tensor<int> *x, int power, Tensor<int> *input, Tensor<int> *out);
+template void pow_grad_device(cudaStream_t custream, Tensor<float> *x, int power, Tensor<float> *input, Tensor<float> *out);
+template void pow_grad_device(cudaStream_t custream, Tensor<double> *x, int power, Tensor<double> *input, Tensor<double> *out);
+   
 }  // namespace internal
 }  // namespace magmadnn
 

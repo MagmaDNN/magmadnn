@@ -7,6 +7,7 @@
  * @copyright Copyright (c) 2019
  *
  */
+#include "magmadnn/math.h"
 #include "math/pow.h"
 
 #define BLK_SIZE 1024
@@ -33,6 +34,19 @@ template void pow_device(Tensor<int> *x, int power, Tensor<int> *out);
 template void pow_device(Tensor<float> *x, int power, Tensor<float> *out);
 template void pow_device(Tensor<double> *x, int power, Tensor<double> *out);
 
+template <typename T>
+void pow_device(cudaStream_t custream, Tensor<T> *x, int power, Tensor<T> *out) {
+   unsigned int size = out->get_size();
+   const auto grid_dim = ceildiv(size, BLK_SIZE);
+
+   kernel_pow_device
+      <<<grid_dim, BLK_SIZE, 0, custream>>>
+      (x->get_ptr(), power, out->get_ptr(), size);
+}
+template void pow_device(cudaStream_t custream, Tensor<int> *x, int power, Tensor<int> *out);
+template void pow_device(cudaStream_t custream, Tensor<float> *x, int power, Tensor<float> *out);
+template void pow_device(cudaStream_t custream, Tensor<double> *x, int power, Tensor<double> *out);
+   
 }  // namespace math
 }  // namespace magmadnn
 

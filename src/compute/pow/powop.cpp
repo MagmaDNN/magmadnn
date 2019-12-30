@@ -1,5 +1,6 @@
-
+#include "magmadnn/config.h"
 #include "compute/pow/powop.h"
+#include "math/pow.h"
 
 namespace magmadnn {
 namespace op {
@@ -17,29 +18,58 @@ PowOp<T>::PowOp(Operation<T> *input, int power, bool copy, bool needs_grad)
 
 template <typename T>
 Tensor<T> *PowOp<T>::_eval(bool recompute) {
-    input_tensor = input->eval(recompute);
 
-    math::pow(input_tensor, this->power, this->output_tensor);
+#if defined(MAGMADNN_HAVE_CUDA)
+   input->set_custream(this->get_custream());
+#endif
+   
+   input_tensor = input->eval(recompute);
 
-    return this->output_tensor;
+   if (this->output_tensor->get_memory_type() == HOST) {
+      magmadnn::math::pow_cpu(input_tensor, this->power, this->output_tensor);
+   }
+#if defined(MAGMADNN_HAVE_CUDA)
+   else {
+      magmadnn::math::pow_device(
+            this->get_custream(), input_tensor, this->power,
+            this->output_tensor);
+      cudaStreamSynchronize(this->get_custream());
+   }
+#endif
+
+   return this->output_tensor;
 }
 
 template <typename T>
 Tensor<T> *PowOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad) {
-    /* return gradient in here ... */
-    Tensor<T> *out = this->_grad_cache[(uintptr_t) var];
+   /* return gradient in here ... */
+   Tensor<T> *out = this->_grad_cache[(uintptr_t) var];
 
-    input_tensor = input->eval(false);
+#if defined(MAGMADNN_HAVE_CUDA)
+   input->set_custream(this->get_custream());
+#endif
+   
+   input_tensor = input->eval(false);
 
-    if (out == NULL) {
-        out = new Tensor<T>(this->output_shape, {NONE, {}}, this->mem_type);
-        this->_grad_cache[(uintptr_t) var] = out;
-    }
+   if (out == NULL) {
+      out = new Tensor<T>(this->output_shape, {NONE, {}}, this->mem_type);
+      this->_grad_cache[(uintptr_t) var] = out;
+   }
 
-    /* G * power * x^(power-1) */
-    internal::pow_grad(input_tensor, power, grad, out);
+   /* G * power * x^(power-1) */
+   // internal::pow_grad(input_tensor, power, grad, out);
+   if (out->get_memory_type() == HOST) {
+      magmadnn::internal::pow_grad_cpu(input_tensor, power, grad, out);
+   }
+#if defined(MAGMADNN_HAVE_CUDA)
+   else {
+      magmadnn::internal::pow_grad_device(
+            this->get_custream(), input_tensor, power, grad, out);
+      cudaStreamSynchronize(this->get_custream());
+   }
+#endif
 
-    return out;
+   return out;
 }
 
 template class PowOp<int>;

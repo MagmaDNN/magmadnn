@@ -21,11 +21,10 @@ NegativeOp<T>::NegativeOp(Operation<T> *x, bool copy, bool needs_grad)
 template <typename T>
 Tensor<T> *NegativeOp<T>::_eval(bool recompute) {
 
-   // Only needed for asynchronous execution   
-// #if defined(MAGMADNN_HAVE_CUDA)
-//    // Make sure x Op and negative Op are performed in the same stream
-//    x->set_custream(this->get_custream());
-// #endif
+#if defined(MAGMADNN_HAVE_CUDA)
+   // Make sure x Op and negative Op are performed in the same stream
+   x->set_custream(this->get_custream());
+#endif
    
    x_tensor = x->eval(recompute);
 
@@ -52,19 +51,18 @@ Tensor<T> *NegativeOp<T>::_grad(
       Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad) {
 
    /* grad : -grad */
-    // internal::negative_full(grad, grad);
-    if (grad->get_memory_type() == HOST) {
-       magmadnn::internal::negative_full_cpu(grad, grad);
-    }
+   if (grad->get_memory_type() == HOST) {
+      magmadnn::internal::negative_full_cpu(grad, grad);
+   }
 #if defined(MAGMADNN_HAVE_CUDA)
-    else {
-       magmadnn::internal::negative_full_device(
-             this->get_custream(), grad, grad);
-       cudaStreamSynchronize(this->get_custream());
-    }
+   else {
+      magmadnn::internal::negative_full_device(
+            this->get_custream(), grad, grad);
+      cudaStreamSynchronize(this->get_custream());
+   }
 #endif
 
-    return grad;
+   return grad;
 }
 
 template class NegativeOp<int>;

@@ -7,6 +7,7 @@
  *
  * @copyright Copyright (c) 2019
  */
+#include "magmadnn/config.h"
 #include "compute/add/addop.h"
 
 namespace magmadnn {
@@ -34,19 +35,62 @@ AddOp<T>::AddOp(Operation<T> *a, Operation<T> *b, bool copy, bool needs_grad)
 template <typename T>
 Tensor<T> *AddOp<T>::_eval(bool recompute) {
 
+#if defined(MAGMADNN_HAVE_CUDA)
+   a->set_custream(this->get_custream());
+   b->set_custream(this->get_custream());
+#endif
+   
    a_tensor = a->eval(recompute);
    b_tensor = b->eval(recompute);
 
    if (a_tensor->get_size() == 1) {
-      a_tensor->get_memory_manager()->sync(true);
-      internal::tensor_scalar_add_full(a_tensor->get(0), b_tensor, this->output_tensor);
-   } else if (b_tensor->get_size() == 1) {
-      b_tensor->get_memory_manager()->sync(true);
-      internal::tensor_scalar_add_full(b_tensor->get(0), a_tensor, this->output_tensor);
-   } else {
-      internal::geadd_full((T) 1, a_tensor, (T) 1, b_tensor, this->output_tensor);
-   }
 
+      a_tensor->get_memory_manager()->sync(true);
+      if (this->output_tensor->get_memory_type() == HOST) {
+         internal::tensor_scalar_add_full_cpu(
+               a_tensor->get(0), b_tensor, this->output_tensor);
+      }
+#if defined(MAGMADNN_HAVE_CUDA)
+      else {
+         internal::tensor_scalar_add_full_device(
+               this->get_custream(),
+               a_tensor->get(0), b_tensor, this->output_tensor);
+         cudaStreamSynchronize(this->get_custream());
+      }      
+#endif
+   }
+   else if (b_tensor->get_size() == 1) {
+
+      b_tensor->get_memory_manager()->sync(true);
+      if (this->output_tensor->get_memory_type() == HOST) {
+         internal::tensor_scalar_add_full_cpu(
+               b_tensor->get(0), a_tensor, this->output_tensor);
+      }
+#if defined(MAGMADNN_HAVE_CUDA)
+      else {
+         internal::tensor_scalar_add_full_device(
+               this->get_custream(),
+               b_tensor->get(0), a_tensor, this->output_tensor);            
+         cudaStreamSynchronize(this->get_custream());
+      }      
+#endif
+   }
+   else {
+
+      if (this->output_tensor->get_memory_type() == HOST) {
+         internal::geadd_full_cpu(
+               (T) 1, a_tensor, (T) 1, b_tensor, this->output_tensor);
+      }
+#if defined(MAGMADNN_HAVE_CUDA)
+      else {
+         internal::geadd_full_device(
+               this->get_custream(),
+               (T) 1, a_tensor, (T) 1, b_tensor, this->output_tensor);
+         cudaStreamSynchronize(this->get_custream());
+      }  
+#endif
+   }
+  
    return this->output_tensor;
 }
 

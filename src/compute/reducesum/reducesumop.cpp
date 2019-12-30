@@ -1,4 +1,4 @@
-
+#include "magmadnn/config.h"
 #include "compute/reducesum/reducesumop.h"
 
 namespace magmadnn {
@@ -93,22 +93,26 @@ ReduceSumOp<T>::~ReduceSumOp() {
 
 template <typename T>
 Tensor<T> *ReduceSumOp<T>::_eval(bool recompute) {
-    x_tensor = x->eval(recompute);
 
-    if (!copy) {
-        std::fprintf(stderr, "Non-Copy ReduceSum not supported.\n");
-        return this->output_tensor;
-    }
-
-    if (this->mem_type == HOST) {
-        math::reduce_sum(x_tensor, axis, ones, this->output_tensor);
-    }
 #if defined(MAGMADNN_HAVE_CUDA)
-    else {
-        math::reduce_sum_device(x_tensor, axis, this->output_tensor, this->reduce_settings);
-    }
+   x->set_custream(this->get_custream());
 #endif
-    return this->output_tensor;
+   x_tensor = x->eval(recompute);
+
+   if (!copy) {
+      std::fprintf(stderr, "Non-Copy ReduceSum not supported.\n");
+      return this->output_tensor;
+   }
+
+   if (this->mem_type == HOST) {
+      math::reduce_sum(x_tensor, axis, ones, this->output_tensor);
+   }
+#if defined(MAGMADNN_HAVE_CUDA)
+   else {
+      math::reduce_sum_device(x_tensor, axis, this->output_tensor, this->reduce_settings);
+   }
+#endif
+   return this->output_tensor;
 }
 
 template <typename T>

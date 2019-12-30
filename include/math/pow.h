@@ -10,17 +10,24 @@
 #pragma once
 
 #include <cmath>
+#include "magmadnn/config.h"
 #include "tensor/tensor.h"
 
 namespace magmadnn {
 namespace math {
 
 template <typename T>
+void pow_cpu(Tensor<T> *x, int power, Tensor<T> *out);
+   
+template <typename T>
 void pow(Tensor<T> *x, int power, Tensor<T> *out);
 
 #if defined(MAGMADNN_HAVE_CUDA)
 template <typename T>
 void pow_device(Tensor<T> *x, int power, Tensor<T> *out);
+
+template <typename T>
+void pow_device(cudaStream_t custream, Tensor<T> *x, int power, Tensor<T> *out);
 #endif
 
 }  // namespace math

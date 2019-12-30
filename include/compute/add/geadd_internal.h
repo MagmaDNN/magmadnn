@@ -1,6 +1,7 @@
 /**
  * @file geadd_internal.h
  * @author Daniel Nichols
+ * @author Florent Lopez
  * @version 1.0
  * @date 2019-02-22
  *
@@ -50,6 +51,9 @@ void geadd_full(T alpha, Tensor<T> *A, T beta, Tensor<T> *B, Tensor<T> *C);
  */
 template <typename T>
 void geadd_full_device(T alpha, Tensor<T> *A, T beta, Tensor<T> *B, Tensor<T> *C);
+
+template <typename T>
+void geadd_full_device(cudaStream_t custream, T alpha, Tensor<T> *A, T beta, Tensor<T> *B, Tensor<T> *C);
 #endif
 
 template <typename T>
@@ -73,6 +77,9 @@ void tensor_scalar_add_full(T alpha, Tensor<T> *x, Tensor<T> *out);
  */
 template <typename T>
 void tensor_scalar_add_full_device(T alpha, Tensor<T> *x, Tensor<T> *out);
+
+template <typename T>
+void tensor_scalar_add_full_device(cudaStream_t custream, T alpha, Tensor<T> *x, Tensor<T> *out);
 #endif
 
 }  // namespace internal

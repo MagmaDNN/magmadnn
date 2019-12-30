@@ -169,7 +169,7 @@ public:
 #if defined(MAGMADNN_HAVE_CUDA)
    cudaStream_t get_custream() const { return custream_; }
 
-   void set_custream(cudaStream_t custream) { this->custream_ = custream;}
+   virtual void set_custream(cudaStream_t custream) { this->custream_ = custream;}
 #endif
 
    protected:

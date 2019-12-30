@@ -7,6 +7,7 @@
  *
  * @copyright Copyright (c) 2019
  */
+#include "magmadnn/config.h"
 #include "math/wrappers.h"
 #include "math/reduce_sum.h"
 
@@ -106,7 +107,7 @@ namespace internal {
             fprintf(stderr, ">= 3D tensor reduction not yet support on CPU.\n");
          }
       }
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
       else {
          fprintf(stderr, "Please use reduce_sum_device for GPU sum_reduce.\n");
       }
@@ -116,7 +117,7 @@ namespace internal {
    template void reduce_sum(Tensor<float> *x, int axis, Tensor<float> *ones, Tensor<float> *out);
    template void reduce_sum(Tensor<double> *x, int axis, Tensor<double> *ones, Tensor<double> *out);
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
    template <typename T>
    void reduce_sum_device(Tensor<T> *x, int axis, Tensor<T> *out, reduce_sum_cudnn_settings_t settings) {
       /* call cudnn */

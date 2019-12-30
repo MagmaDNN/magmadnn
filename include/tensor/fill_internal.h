@@ -30,6 +30,9 @@ namespace internal {
  */
 template <typename T>
 void fill_constant_device(MemoryManager<T> &m, T val);
+
+template <typename T>
+void fill_constant_device(cudaStream_t custream, MemoryManager<T> &m, T val);
 #endif
 
 /** Fills the memory manager with a uniform distribution.

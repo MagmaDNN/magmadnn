@@ -44,7 +44,32 @@ namespace math {
    template void sgd_momentum_device(int learning_rate, int momentum, Tensor<int> *prev, Tensor<int> *grad, Tensor<int> *out);
    template void sgd_momentum_device(float learning_rate, float momentum, Tensor<float> *prev, Tensor<float> *grad, Tensor<float> *out);
    template void sgd_momentum_device(double learning_rate, double momentum, Tensor<double> *prev, Tensor<double> *grad, Tensor<double> *out);
- 
+
+   template <typename T>
+   void sgd_momentum_device(
+         cudaStream_t custream,
+         T learning_rate, T momentum, Tensor<T> *prev, Tensor<T> *grad,
+         Tensor<T> *out) {
+      
+      unsigned int size = out->get_size();
+      const auto grid_dim = ceildiv(size, BLK_SIZE);
+      
+      kernel_sgd_momentum_device
+         <<<grid_dim, BLK_SIZE, 0, custream>>>(
+            learning_rate, momentum, prev->get_ptr(), grad->get_ptr(),
+            out->get_ptr(), size);
+   }
+
+   template void sgd_momentum_device(
+         cudaStream_t custream, int learning_rate, int momentum,
+         Tensor<int> *prev, Tensor<int> *grad, Tensor<int> *out);
+   template void sgd_momentum_device(
+         cudaStream_t custream, float learning_rate, float momentum,
+         Tensor<float> *prev, Tensor<float> *grad, Tensor<float> *out);
+   template void sgd_momentum_device(
+         cudaStream_t custream, double learning_rate, double momentum,
+         Tensor<double> *prev, Tensor<double> *grad, Tensor<double> *out);
+
 }  // namespace math
 }  // namespace magmadnn
  

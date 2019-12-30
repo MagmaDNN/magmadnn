@@ -20,11 +20,6 @@ NegativeOp<T>::NegativeOp(Operation<T> *x, bool copy, bool needs_grad)
 
 template <typename T>
 Tensor<T> *NegativeOp<T>::_eval(bool recompute) {
-
-#if defined(MAGMADNN_HAVE_CUDA)
-   // Make sure x Op and negative Op are performed in the same stream
-   x->set_custream(this->get_custream());
-#endif
    
    x_tensor = x->eval(recompute);
 

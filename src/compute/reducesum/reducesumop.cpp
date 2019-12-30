@@ -94,9 +94,6 @@ ReduceSumOp<T>::~ReduceSumOp() {
 template <typename T>
 Tensor<T> *ReduceSumOp<T>::_eval(bool recompute) {
 
-#if defined(MAGMADNN_HAVE_CUDA)
-   x->set_custream(this->get_custream());
-#endif
    x_tensor = x->eval(recompute);
 
    if (!copy) {
@@ -109,7 +106,10 @@ Tensor<T> *ReduceSumOp<T>::_eval(bool recompute) {
    }
 #if defined(MAGMADNN_HAVE_CUDA)
    else {
+      this->reduce_settings.cudnn_handle = this->get_cudnn_handle();
       math::reduce_sum_device(x_tensor, axis, this->output_tensor, this->reduce_settings);
+      // Assume cudnn_handle is associated with custream
+      cudaStreamSynchronize(this->get_custream());
    }
 #endif
    return this->output_tensor;

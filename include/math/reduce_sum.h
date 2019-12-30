@@ -30,6 +30,7 @@ struct reduce_sum_cudnn_settings_t {
     cudnnReduceTensorDescriptor_t descriptor;
     void *workspace;
     size_t workspace_size;
+    cudnnHandle_t cudnn_handle;
 };
 
 template <typename T>

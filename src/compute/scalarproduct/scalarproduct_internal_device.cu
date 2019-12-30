@@ -22,5 +22,16 @@ template void scalarproduct_full_device(int alpha, Tensor<int> *x, Tensor<int> *
 template void scalarproduct_full_device(float alpha, Tensor<float> *x, Tensor<float> *out);
 template void scalarproduct_full_device(double alpha, Tensor<double> *x, Tensor<double> *out);
 
+template <typename T>
+void scalarproduct_full_device(cudaStream_t custream, T alpha, Tensor<T> *x, Tensor<T> *out) {
+    kernel_scalarproduct_full_device
+       <<<1, x->get_size(), 0, custream>>>
+       (alpha, x->get_ptr(), out->get_ptr(), x->get_size());
+}
+template void scalarproduct_full_device(cudaStream_t custream, int alpha, Tensor<int> *x, Tensor<int> *out);
+template void scalarproduct_full_device(cudaStream_t custream, float alpha, Tensor<float> *x, Tensor<float> *out);
+template void scalarproduct_full_device(cudaStream_t custream, double alpha, Tensor<double> *x, Tensor<double> *out);
+
+   
 }  // namespace internal
 }  // namespace magmadnn

@@ -8,6 +8,8 @@
  */
 #include "compute/scalarproduct/scalarproductop.h"
 
+#include "magmadnn/config.h"
+
 namespace magmadnn {
 namespace op {
 
@@ -36,6 +38,7 @@ ScalarProductOp<T>::ScalarProductOp(Operation<T> *scalar, Operation<T> *x, bool 
 
 template <typename T>
 Tensor<T> *ScalarProductOp<T>::_eval(bool recompute) {
+
     x_tensor = x->eval(recompute);
 
     if (scalar != NULL) {
@@ -46,20 +49,54 @@ Tensor<T> *ScalarProductOp<T>::_eval(bool recompute) {
 
     if (!copy) this->output_tensor = x_tensor;
 
-    internal::scalarproduct_full(alpha, x_tensor, this->output_tensor);
-
+    if (x->get_memory_type() == HOST) {
+       magmadnn::internal::scalarproduct_full_cpu(
+             alpha, x_tensor, this->output_tensor);
+    }
+#if defined(MAGMADNN_HAVE_CUDA)
+    else {
+       magmadnn::internal::scalarproduct_full_device(
+             this->get_custream(), alpha, x_tensor, this->output_tensor);
+       cudaStreamSynchronize(this->get_custream());
+    }
+#endif
+    
     return this->output_tensor;
 }
 
 template <typename T>
 Tensor<T> *ScalarProductOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad) {
+
     if (scalar != NULL) {
         scalar_tensor = scalar->eval(false);
         scalar_tensor->get_memory_manager()->sync(true);
 
-        internal::scalarproduct_full(scalar_tensor->get(0), grad, grad);
+        // internal::scalarproduct_full(scalar_tensor->get(0), grad, grad);
+        if (x->get_memory_type() == HOST) {
+           magmadnn::internal::scalarproduct_full_cpu(
+                 scalar_tensor->get(0), grad, grad);
+        }
+#if defined(MAGMADNN_HAVE_CUDA)
+        else {
+           magmadnn::internal::scalarproduct_full_device(
+                 this->get_custream(), scalar_tensor->get(0), grad, grad);
+           cudaStreamSynchronize(this->get_custream());
+        }
+#endif
+        
     } else {
-        internal::scalarproduct_full(alpha, grad, grad);
+       // internal::scalarproduct_full(alpha, grad, grad);
+       if (x->get_memory_type() == HOST) {
+          magmadnn::internal::scalarproduct_full_cpu(
+                alpha, grad, grad);
+       }
+#if defined(MAGMADNN_HAVE_CUDA)
+       else {
+          magmadnn::internal::scalarproduct_full_device(
+                this->get_custream(), alpha, grad, grad);
+          cudaStreamSynchronize(this->get_custream());
+       }
+#endif
     }
     return grad;
 }

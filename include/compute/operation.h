@@ -46,8 +46,11 @@ public:
         }
         
 #if defined(MAGMADNN_HAVE_CUDA)
-      // Use default stream for CUDA kernels
-      this->custream_ = nullptr;
+        // Use default stream for CUDA kernels
+        // this->custream_ = nullptr;
+        this->set_custream(nullptr);
+
+        this->set_cudnn_handle(magmadnn::internal::MAGMADNN_SETTINGS->cudnn_handle);
 #endif
    }
 
@@ -167,9 +170,32 @@ public:
     virtual std::string get_name() { return this->name; }
 
 #if defined(MAGMADNN_HAVE_CUDA)
-   cudaStream_t get_custream() const { return custream_; }
+    cudaStream_t get_custream() const { return custream_; }
 
-   virtual void set_custream(cudaStream_t custream) { this->custream_ = custream;}
+    void set_custream(cudaStream_t custream) {
+
+       // Make sure operations and inputs have the same custream
+       for (auto vit = inputs.begin(); vit != inputs.end(); vit++) {
+          Operation<T> *input_op = (*vit);
+          input_op->set_custream(custream);
+       }
+      
+       this->custream_ = custream;
+    }
+
+    cudnnHandle_t get_cudnn_handle() const { return cudnn_handle_; }
+
+    void set_cudnn_handle(cudnnHandle_t cudnn_handle) {
+
+       // Make sure operations and inputs have the same custream
+       for (auto vit = inputs.begin(); vit != inputs.end(); vit++) {
+          Operation<T> *input_op = (*vit);
+          input_op->set_cudnn_handle(cudnn_handle);
+       }
+      
+       this->cudnn_handle_ = cudnn_handle;
+    }
+
 #endif
 
    protected:
@@ -202,7 +228,8 @@ public:
 
 private:
 #if defined(MAGMADNN_HAVE_CUDA)
-   cudaStream_t custream_;
+    cudaStream_t custream_;
+    cudnnHandle_t cudnn_handle_;
 #endif
 };
 

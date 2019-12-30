@@ -18,10 +18,6 @@ PowOp<T>::PowOp(Operation<T> *input, int power, bool copy, bool needs_grad)
 
 template <typename T>
 Tensor<T> *PowOp<T>::_eval(bool recompute) {
-
-#if defined(MAGMADNN_HAVE_CUDA)
-   input->set_custream(this->get_custream());
-#endif
    
    input_tensor = input->eval(recompute);
 
@@ -44,10 +40,6 @@ template <typename T>
 Tensor<T> *PowOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad) {
    /* return gradient in here ... */
    Tensor<T> *out = this->_grad_cache[(uintptr_t) var];
-
-#if defined(MAGMADNN_HAVE_CUDA)
-   input->set_custream(this->get_custream());
-#endif
    
    input_tensor = input->eval(false);
 

@@ -11,6 +11,8 @@
 #include <cassert>
 #include <iostream>
 
+#include "magmadnn/config.h"
+
 namespace magmadnn {
 
 template <typename T>
@@ -47,7 +49,7 @@ template <typename T>
 Tensor<T>::~Tensor() {
     delete mem_manager;
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     this->free_cudnn_descriptor();
 #endif
 }
@@ -83,7 +85,7 @@ void Tensor<T>::init(std::vector<unsigned int>& shape, tensor_filler_t<T> filler
 
     internal::fill_memory(*mem_manager, filler);
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     /* create a cudnn descriptor */
     this->init_cudnn_descriptor();
 #endif
@@ -234,7 +236,7 @@ void Tensor<T>::reshape(const std::vector<unsigned int>& dims) {
         tmp_stride *= shape[i];
     }
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     /* update cudnn descriptor if on GPU */
     int n = 1, c = 1, h = 1, w = 1;
     if (shape.size() == 4) {
@@ -275,7 +277,7 @@ void Tensor<T>::unsqueeze(unsigned int dim) {
     shape.insert(shape.begin() + dim, 1, 1);
 }
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
 template <typename T>
 void Tensor<T>::init_cudnn_descriptor() {
     int n = 1, c = 1, h = 1, w = 1;

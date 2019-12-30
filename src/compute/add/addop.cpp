@@ -34,11 +34,6 @@ AddOp<T>::AddOp(Operation<T> *a, Operation<T> *b, bool copy, bool needs_grad)
 
 template <typename T>
 Tensor<T> *AddOp<T>::_eval(bool recompute) {
-
-#if defined(MAGMADNN_HAVE_CUDA)
-   a->set_custream(this->get_custream());
-   b->set_custream(this->get_custream());
-#endif
    
    a_tensor = a->eval(recompute);
    b_tensor = b->eval(recompute);

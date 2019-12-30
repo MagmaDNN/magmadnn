@@ -7,7 +7,7 @@
  * @copyright Copyright (c) 2019
  */
 
-// #include "tensor/fill_internal.h"
+#include "magmadnn/math.h"
 #include "memory/memorymanager.h"
 
 #define BLK_SIZE 1024
@@ -28,12 +28,30 @@ __global__ void kernel_fill_constant(T *arr, unsigned int size, T val) {
 template <typename T>
 void fill_constant_device(MemoryManager<T> &m, T val) {
     unsigned int size = m.get_size();
-    kernel_fill_constant<<<(size + BLK_SIZE - 1) / BLK_SIZE, BLK_SIZE>>>(m.get_device_ptr(), size, val);
+    const auto grid_dim = ceildiv(size, BLK_SIZE);
+
+    kernel_fill_constant<<<grid_dim, BLK_SIZE>>>(m.get_device_ptr(), size, val);
 }
 template void fill_constant_device(MemoryManager<int> &m, int val);
 template void fill_constant_device(MemoryManager<float> &m, float val);
 template void fill_constant_device(MemoryManager<double> &m, double val);
 
+template <typename T>
+void fill_constant_device(cudaStream_t custream, MemoryManager<T> &m, T val) {
+    unsigned int size = m.get_size();
+    const auto grid_dim = ceildiv(size, BLK_SIZE);
+
+    kernel_fill_constant
+       <<<grid_dim, BLK_SIZE, 0, custream>>>
+       (m.get_device_ptr(), size, val);
+}
+template void fill_constant_device(
+      cudaStream_t custream, MemoryManager<int> &m, int val);
+template void fill_constant_device(
+      cudaStream_t custream, MemoryManager<float> &m, float val);
+template void fill_constant_device(
+      cudaStream_t custream, MemoryManager<double> &m, double val);
+   
 }  // namespace internal
 }  // namespace magmadnn
 

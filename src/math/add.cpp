@@ -7,10 +7,11 @@
  *
  * @copyright Copyright (c) 2019
  */
+#include "math/add.h"
+
 #include <cassert>
 
 #include "magmadnn/config.h"
-#include "math/add.h"
 
 namespace magmadnn {
 namespace math {
@@ -45,9 +46,13 @@ void add_in_place_device(
       cudnnHandle_t handle, T alpha, Tensor<T> *x, T beta, Tensor<T> *out) {
    cudnnErrchk(
          cudnnAddTensor(
-               handle, &alpha,
-               x->get_cudnn_tensor_descriptor(), x->get_ptr(), &beta,
-               out->get_cudnn_tensor_descriptor(), out->get_ptr()));
+               handle,
+               &alpha,
+               x->get_cudnn_tensor_descriptor(),
+               x->get_ptr(),
+               &beta,
+               out->get_cudnn_tensor_descriptor(),
+               out->get_ptr()));
 }
 
 template void add_in_place_device(cudnnHandle_t handle, int alpha, Tensor<int> *x, int beta, Tensor<int> *out);
@@ -56,9 +61,14 @@ template void add_in_place_device(cudnnHandle_t handle, double alpha, Tensor<dou
    
 template <typename T>
 void add_in_place_device(T alpha, Tensor<T> *x, T beta, Tensor<T> *out) {
-    cudnnErrchk(cudnnAddTensor(::magmadnn::internal::MAGMADNN_SETTINGS->cudnn_handle, &alpha,
-                               x->get_cudnn_tensor_descriptor(), x->get_ptr(), &beta,
-                               out->get_cudnn_tensor_descriptor(), out->get_ptr()));
+    cudnnErrchk(
+          cudnnAddTensor(::magmadnn::internal::MAGMADNN_SETTINGS->cudnn_handle,
+                         &alpha,
+                         x->get_cudnn_tensor_descriptor(),
+                         x->get_ptr(),
+                         &beta,
+                         out->get_cudnn_tensor_descriptor(),
+                         out->get_ptr()));
 }
 
 template void add_in_place_device(int alpha, Tensor<int> *x, int beta, Tensor<int> *out);

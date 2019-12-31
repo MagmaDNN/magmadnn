@@ -11,6 +11,7 @@
 
 #include <vector>
 
+#include "magmadnn/config.h"
 #include "magmadnn/types.h"
 #include "magmadnn/utilities_internal.h"
 #include "memory/memorymanager.h"
@@ -168,7 +169,23 @@ class Tensor {
      */
     void set(unsigned int flattened_idx, T val);
 
-    /** Returns the memory manager used by this tensor
+#if defined(MAGMADNN_HAVE_CUDA)
+    void set_custream(cudaStream_t custream) {
+       // Update memory manager with CUDA stream
+       if (this->mem_manager)
+          this->mem_manager->set_custream(custream);
+       this->custream_ = custream;
+    }
+
+    void set_cublas_handle(cublasHandle_t cublas_handle) {
+       // Update memory manager with cuBLAS handle
+       // if (this->mem_manager)
+       //    this->mem_manager->set_custream(custream);
+       this->cublas_handle_ = cublas_handle;
+    }
+#endif
+   
+   /** Returns the memory manager used by this tensor
      * @return MemoryManager<T>*
      */
     MemoryManager<T>* get_memory_manager() const { return this->mem_manager; }
@@ -205,7 +222,11 @@ class Tensor {
     device_t get_device_id() const { return this->device_id; }
 
 #if defined(MAGMADNN_HAVE_CUDA)
-    cudnnTensorDescriptor_t get_cudnn_tensor_descriptor() { return desc; }
+    cudnnTensorDescriptor_t get_cudnn_tensor_descriptor() const { return desc; }
+
+    cudaStream_t get_custream() const { return this->custream_; }
+
+    cublasHandle_t get_cublas_handle() const { return cublas_handle_; }
 #endif
 
     /** changes shape of tensor to match dims
@@ -238,6 +259,9 @@ class Tensor {
     void free_cudnn_descriptor();
 
     cudnnTensorDescriptor_t desc;
+    // CUDA stream used for GPU operations
+    cudaStream_t custream_;
+    cublasHandle_t cublas_handle_;
 #endif
 
     MemoryManager<T>* mem_manager; /* allocated by init */

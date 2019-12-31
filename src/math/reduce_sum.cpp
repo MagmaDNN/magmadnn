@@ -7,9 +7,10 @@
  *
  * @copyright Copyright (c) 2019
  */
+#include "math/reduce_sum.h"
+
 #include "magmadnn/config.h"
 #include "math/wrappers.h"
-#include "math/reduce_sum.h"
 
 namespace magmadnn {
 namespace math {

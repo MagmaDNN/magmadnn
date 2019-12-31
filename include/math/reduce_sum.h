@@ -9,8 +9,9 @@
  */
 #pragma once
 
-#include "tensor/tensor.h"
+#include "magmadnn/config.h"
 #include "magmadnn/utilities_internal.h"
+#include "tensor/tensor.h"
 
 #if defined(MAGMADNN_HAVE_CUDA)
 #include "cudnn.h"

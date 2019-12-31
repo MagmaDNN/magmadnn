@@ -130,6 +130,8 @@ class MemoryManager {
      *  @return pointer to data memory
      */
     T* get_cuda_managed_ptr();
+
+    cudaStream_t get_custream() const { return this->custream_; }
 #endif
 
     /** Returns a pointer to whatever memory type this is using. For MANAGED
@@ -137,6 +139,12 @@ class MemoryManager {
      *  @return the data ptr
      */
     T* get_ptr();
+
+#if defined(MAGMADNN_HAVE_CUDA)
+    void set_custream(cudaStream_t custream) {
+       this->custream_ = custream;
+    }
+#endif
 
     /** Returns the size of this memorymanager
      * @return unsigned int  the size of this memory manager
@@ -172,6 +180,8 @@ class MemoryManager {
 #if defined(MAGMADNN_HAVE_CUDA)
     T* device_ptr;
     T* cuda_managed_ptr;
+    // CUDA stream used for GPU operations
+    cudaStream_t custream_;
 #endif
 };
 

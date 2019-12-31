@@ -1,13 +1,20 @@
 /**
  * @file matmul.cpp
  * @author Daniel Nichols
+ * @author Florent Lopez
  * @version 0.1
  * @date 2019-06-06
  *
  * @copyright Copyright (c) 2019
  */
-#include "math/wrappers.h"
 #include "math/matmul.h"
+
+#include "magmadnn/config.h"
+#include "math/wrappers.h"
+
+#if defined(MAGMADNN_HAVE_CUDA)
+#include "cublas_v2.h"
+#endif
 
 namespace magmadnn {
 namespace math {
@@ -47,15 +54,25 @@ void matmul(float alpha, bool trans_A, Tensor<float> *A, bool trans_B, Tensor<fl
        gemm(b_trans, a_trans, N, M, K, alpha, B->get_ptr(), lddb, A->get_ptr(), ldda, beta, C->get_ptr(), lddc);
 
     }
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     else {
         // since magma is column-major we'll need the transpose of everything
         // i.e. (AB)^T = (C)^T and the fact that (AB)^T = (B^T)(A^T)
-        magma_trans_t a_trans = (trans_A) ? MagmaTrans : MagmaNoTrans;
-        magma_trans_t b_trans = (trans_B) ? MagmaTrans : MagmaNoTrans;
 
-        MAGMA_SGEMM_ROWMAJOR(A->get_ptr(), B->get_ptr(), C->get_ptr(), M, N, K, alpha, beta, a_trans, b_trans, ldda,
-                             lddb, lddc);
+        if (C->get_cublas_handle()) {
+           cublasOperation_t a_trans = (trans_A) ? CUBLAS_OP_T : CUBLAS_OP_N;
+           cublasOperation_t b_trans = (trans_B) ? CUBLAS_OP_T : CUBLAS_OP_N;
+
+           cublasSgemm(C->get_cublas_handle(), b_trans, a_trans, N, M, K, &alpha, B->get_ptr(), lddb, A->get_ptr(), ldda, &beta, C->get_ptr(), lddc);
+        }
+        else {
+           magma_trans_t a_trans = (trans_A) ? MagmaTrans : MagmaNoTrans;
+           magma_trans_t b_trans = (trans_B) ? MagmaTrans : MagmaNoTrans;
+
+           MAGMA_SGEMM_ROWMAJOR(A->get_ptr(), B->get_ptr(), C->get_ptr(), M, N, K, alpha, beta, a_trans, b_trans, ldda,
+                                lddb, lddc);
+        }
+        // TODO: CUDA error management 
     }
 #endif
 }
@@ -93,15 +110,24 @@ void matmul(double alpha, bool trans_A, Tensor<double> *A, bool trans_B, Tensor<
         gemm(b_trans, a_trans, N, M, K, alpha, B->get_ptr(), lddb, A->get_ptr(), ldda, beta, C->get_ptr(), lddc);
 
     }
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     else {
         // since magma is column-major we'll need the transpose of everything
         // i.e. (AB)^T = (C)^T and the fact that (AB)^T = (B^T)(A^T)
-        magma_trans_t a_trans = (trans_A) ? MagmaTrans : MagmaNoTrans;
-        magma_trans_t b_trans = (trans_B) ? MagmaTrans : MagmaNoTrans;
 
-        MAGMA_DGEMM_ROWMAJOR(A->get_ptr(), B->get_ptr(), C->get_ptr(), M, N, K, alpha, beta, a_trans, b_trans, ldda,
-                             lddb, lddc);
+        if (C->get_cublas_handle()) {
+           cublasOperation_t a_trans = (trans_A) ? CUBLAS_OP_T : CUBLAS_OP_N;
+           cublasOperation_t b_trans = (trans_B) ? CUBLAS_OP_T : CUBLAS_OP_N;
+
+           cublasDgemm(C->get_cublas_handle(), b_trans, a_trans, N, M, K, &alpha, B->get_ptr(), lddb, A->get_ptr(), ldda, &beta, C->get_ptr(), lddc);
+        }
+        else {
+           magma_trans_t a_trans = (trans_A) ? MagmaTrans : MagmaNoTrans;
+           magma_trans_t b_trans = (trans_B) ? MagmaTrans : MagmaNoTrans;
+
+           MAGMA_DGEMM_ROWMAJOR(A->get_ptr(), B->get_ptr(), C->get_ptr(), M, N, K, alpha, beta, a_trans, b_trans, ldda,
+                                lddb, lddc);
+        }
     }
 #endif
 }

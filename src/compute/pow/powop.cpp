@@ -1,5 +1,6 @@
-#include "magmadnn/config.h"
 #include "compute/pow/powop.h"
+
+#include "magmadnn/config.h"
 #include "math/pow.h"
 
 namespace magmadnn {

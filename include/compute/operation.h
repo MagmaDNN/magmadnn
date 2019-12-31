@@ -28,15 +28,16 @@ public:
    /** The operation class serves as an abstract object, which all tensors operations descend
      *  from. It is used to build a computation tree.
      */
-   Operation() : has_been_computed(false) {
+   Operation() : has_been_computed(false), output_tensor(nullptr) {
 #if defined(MAGMADNN_HAVE_CUDA)
       // Use default stream for CUDA kernels
-      this->custream_ = nullptr;
+      // this->custream_ = nullptr;
+      this->set_custream(nullptr);
 #endif
    }
 
    Operation(std::vector<Operation<T> *> inputs, bool needs_grad = true)
-      : inputs(inputs), needs_grad(needs_grad) {
+      : inputs(inputs), needs_grad(needs_grad), output_tensor(nullptr) {
       
         for (auto vit = inputs.begin(); vit != inputs.end(); vit++) {
             if (needs_grad) { /* TODO : verify this is necessary */
@@ -180,6 +181,9 @@ public:
           input_op->set_custream(custream);
        }
       
+       if (this->output_tensor)
+          this->output_tensor->set_custream(custream);
+
        this->custream_ = custream;
     }
 
@@ -194,6 +198,22 @@ public:
        }
       
        this->cudnn_handle_ = cudnn_handle;
+    }
+
+    cublasHandle_t get_cublas_handle() const { return cublas_handle_; }
+
+    void set_cublas_handle(cublasHandle_t cublas_handle) {
+
+       // Make sure operations and inputs have the same custream
+       for (auto vit = inputs.begin(); vit != inputs.end(); vit++) {
+          Operation<T> *input_op = (*vit);
+          input_op->set_cublas_handle(cublas_handle);
+       }
+
+       if (this->output_tensor)
+          this->output_tensor->set_cublas_handle(cublas_handle);
+
+       this->cublas_handle_ = cublas_handle;
     }
 
 #endif
@@ -230,6 +250,7 @@ private:
 #if defined(MAGMADNN_HAVE_CUDA)
     cudaStream_t custream_;
     cudnnHandle_t cudnn_handle_;
+    cublasHandle_t cublas_handle_;
 #endif
 };
 

@@ -1,4 +1,4 @@
-
+#include "magmadnn/math.h"
 #include "compute/reducesum/reducesum_internal.h"
 
 #define BLK_SIZE 1024
@@ -47,8 +47,11 @@ void reduce_sum_grad_device(Tensor<T> *grad, int axis, Tensor<T> *out) {
     if (n_grad_axes == 1 && grad->get_size() == 1) {
         /* grad is a scalar -- fill out with the value */
 
-        kernel_reduce_sum_grad_scalar_to_vector_device<<<(out_size + BLK_SIZE - 1) / BLK_SIZE, BLK_SIZE>>>(
-            grad->get_ptr(), out->get_ptr(), out_size);
+        const auto grid_dim = ceildiv(out_size, BLK_SIZE);
+
+        kernel_reduce_sum_grad_scalar_to_vector_device
+           <<<grid_dim, BLK_SIZE, 0, out->get_custream()>>>
+           (grad->get_ptr(), out->get_ptr(), out_size);
 
     } else if (n_grad_axes == 2 && (grad_shape[0] == 1 || grad_shape[1] == 1)) {
         /* grad gets repeated along each row of out */
@@ -60,8 +63,9 @@ void reduce_sum_grad_device(Tensor<T> *grad, int axis, Tensor<T> *out) {
         dim3 grid;
         grid.x = (n_rows + block.x - 1) / block.x;
         grid.y = (n_cols + block.y - 1) / block.y;
-        kernel_reduce_sum_grad_vector_to_matrix_device<<<grid, block>>>(grad->get_ptr(), out->get_ptr(), n_rows, n_cols,
-                                                                        axis);
+        kernel_reduce_sum_grad_vector_to_matrix_device
+           <<<grid, block, 0, out->get_custream()>>>
+           (grad->get_ptr(), out->get_ptr(), n_rows, n_cols, axis);
 
     } else {
         /* use math::tile for the more general case */

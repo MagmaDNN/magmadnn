@@ -1,5 +1,6 @@
-
 #include "compute/linearforward/linearforwardop.h"
+
+#include "magmadnn/config.h"
 
 namespace magmadnn {
 namespace op {
@@ -50,11 +51,15 @@ LinearForwardOp<T>::~LinearForwardOp() {
 
 template <typename T>
 Tensor<T> *LinearForwardOp<T>::_eval(bool recompute) {
+
     input_tensor = input->eval(recompute);
     weights_tensor = weights->eval(recompute);
 
     /* XW */
     math::matmul((T) 1, false, input_tensor, false, weights_tensor, (T) 0, this->output_tensor);
+#if defined(MAGMADNN_HAVE_CUDA)
+    cudaStreamSynchronize(this->get_custream());
+#endif
 
     if (use_bias) {
         bias_tensor = bias->eval(recompute);
@@ -74,24 +79,44 @@ Tensor<T> *LinearForwardOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, 
 
         if (out == NULL) {
             out = new Tensor<T>({grad->get_shape(0), this->weights_tensor->get_shape(0)}, {NONE, {}}, this->mem_type);
+#if defined(MAGMADNN_HAVE_CUDA)
+            out->set_custream(this->get_custream());
+            out->set_cublas_handle(this->get_cublas_handle());
+#endif
             this->_grad_cache[(uintptr_t) var] = out;
         }
 
         math::matmul((T) 1, false, grad, true, this->weights_tensor, (T) 0, out);
+#if defined(MAGMADNN_HAVE_CUDA)
+        cudaStreamSynchronize(this->get_custream());
+#endif
+
     } else if (var == this->weights) {
         this->input_tensor = this->input->eval(false);
 
         if (out == NULL) {
             out = new Tensor<T>({this->input_tensor->get_shape(1), grad->get_shape(1)}, {NONE, {}}, this->mem_type);
+#if defined(MAGMADNN_HAVE_CUDA)
+            out->set_custream(this->get_custream());
+            out->set_cublas_handle(this->get_cublas_handle());
+#endif
             this->_grad_cache[(uintptr_t) var] = out;
         }
 
         math::matmul((T) 1, true, this->input_tensor, false, grad, (T) 0, out);
+#if defined(MAGMADNN_HAVE_CUDA)
+        cudaStreamSynchronize(this->get_custream());
+#endif
+
     } else if (this->use_bias && var == this->bias) {
         /* grad wrt bias is reduce sum of grad along axis 1 */
 
         if (out == NULL) {
             out = new Tensor<T>(this->bias_tensor->get_shape(), {NONE, {}}, this->mem_type);
+#if defined(MAGMADNN_HAVE_CUDA)
+            out->set_custream(this->get_custream());
+            out->set_cublas_handle(this->get_cublas_handle());
+#endif
             this->_grad_cache[(uintptr_t) var] = out;
         }
 
@@ -100,7 +125,9 @@ Tensor<T> *LinearForwardOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, 
         }
 #if defined(MAGMADNN_HAVE_CUDA)
         else {
+            this->bias_reduce_settings.cudnn_handle = this->get_cudnn_handle();
             math::reduce_sum_device(grad, 1, out, this->bias_reduce_settings);
+            cudaStreamSynchronize(this->get_custream());
         }
 #endif
     }

@@ -54,19 +54,22 @@ void MemoryManager<T>::init_host() {
 #if defined(MAGMADNN_HAVE_CUDA)
 template <typename T>
 void MemoryManager<T>::init_device() {
-    cudaErrchk(cudaMalloc((void**) &device_ptr, size * sizeof(T)));
+   this->set_custream(nullptr);
+   cudaErrchk(cudaMalloc((void**) &device_ptr, size * sizeof(T)));
 }
 
 template <typename T>
 void MemoryManager<T>::init_managed() {
+   this->set_custream(nullptr);
    // TODO: replace use of `malloc` with `new`
-    host_ptr = (T*) std::malloc(size * sizeof(T));
-    cudaErrchk(cudaMalloc((void**) &device_ptr, size * sizeof(T)));
+   host_ptr = (T*) std::malloc(size * sizeof(T));
+   cudaErrchk(cudaMalloc((void**) &device_ptr, size * sizeof(T)));
 }
 
 template <typename T>
 void MemoryManager<T>::init_cuda_managed() {
-    cudaErrchk(cudaMallocManaged((void**) &cuda_managed_ptr, size * sizeof(T)));
+   this->set_custream(nullptr);
+   cudaErrchk(cudaMallocManaged((void**) &cuda_managed_ptr, size * sizeof(T)));
 }
 #endif
 
@@ -181,23 +184,30 @@ magmadnn_error_t MemoryManager<T>::copy_from_device(T* src, unsigned int begin_i
     switch (mem_type) {
         case HOST:
             // device --> host
-            cudaErrchk(cudaMemcpy(host_ptr, src + begin_idx, copy_size * sizeof(T), cudaMemcpyDeviceToHost));
+           cudaErrchk(
+                 cudaMemcpyAsync(host_ptr, src + begin_idx, copy_size * sizeof(T), cudaMemcpyDeviceToHost, this->get_custream()));
             break;
         case DEVICE:
             // device --> device
-            cudaErrchk(cudaMemcpy(device_ptr, src + begin_idx, copy_size * sizeof(T), cudaMemcpyDeviceToDevice));
+            cudaErrchk(
+                  cudaMemcpyAsync(device_ptr, src + begin_idx, copy_size * sizeof(T), cudaMemcpyDeviceToDevice, this->get_custream()));
             break;
         case MANAGED:
             // device --> managed
-            cudaErrchk(cudaMemcpy(device_ptr, src + begin_idx, copy_size * sizeof(T), cudaMemcpyDeviceToDevice));
+            cudaErrchk(
+                  cudaMemcpyAsync(device_ptr, src + begin_idx, copy_size * sizeof(T), cudaMemcpyDeviceToDevice, this->get_custream()));
             sync(true);
             return err;
         case CUDA_MANAGED:
             // device --> cmanaged
-            cudaErrchk(cudaMemcpy(cuda_managed_ptr, src + begin_idx, copy_size * sizeof(T), cudaMemcpyDeviceToDevice));
+            cudaErrchk(
+                  cudaMemcpyAsync(cuda_managed_ptr, src + begin_idx, copy_size * sizeof(T), cudaMemcpyDeviceToDevice, this->get_custream()));
             sync(true);
             return err;
     }
+
+    // TODO Make routine optionally asynchronous
+    cudaStreamSynchronize(this->get_custream());
 
     return err;
 }

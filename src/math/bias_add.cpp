@@ -9,6 +9,8 @@
  */
 #include "math/bias_add.h"
 
+#include "magmadnn/config.h"
+
 #include <cassert>
 
 namespace magmadnn {
@@ -33,7 +35,7 @@ void bias_add(Tensor<T> *x, Tensor<T> *bias, Tensor<T> *out) {
             }
         }
     }
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     else {
         bias_add_device(x, bias, out);
     }
@@ -46,7 +48,7 @@ template void bias_add(Tensor<double> *x, Tensor<double> *bias, Tensor<double> *
 #if defined(_USE_CUDNN_BIAS_)
 /* temporarily undefined this until cudnn works */
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
 template <typename T>
 void bias_add_device(Tensor<T> *x, Tensor<T> *bias, Tensor<T> *out) {
     if (x != out) {

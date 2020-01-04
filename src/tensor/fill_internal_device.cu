@@ -30,7 +30,10 @@ void fill_constant_device(MemoryManager<T> &m, T val) {
     unsigned int size = m.get_size();
     const auto grid_dim = ceildiv(size, BLK_SIZE);
 
-    kernel_fill_constant<<<grid_dim, BLK_SIZE>>>(m.get_device_ptr(), size, val);
+    kernel_fill_constant
+       <<<grid_dim, BLK_SIZE, 0, m.get_custream()>>>
+       (m.get_device_ptr(), size, val);
+    cudaStreamSynchronize(m.get_custream());
 }
 template void fill_constant_device(MemoryManager<int> &m, int val);
 template void fill_constant_device(MemoryManager<float> &m, float val);

@@ -7,6 +7,7 @@
  * @copyright Copyright (c) 2019
  */
 #pragma once
+#include "magmadnn/config.h"
 #include "compute/operation.h"
 #include "compute/relu/relu_internal.h"
 #include "math/relu.h"

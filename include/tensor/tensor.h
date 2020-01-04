@@ -101,6 +101,11 @@ class Tensor {
      */
     magmadnn_error_t copy_from(const Tensor<T>& src, const std::vector<unsigned int>& dims);
 
+
+    void fill_memory(tensor_filler_t<T> filler) {
+       internal::fill_memory(*(this->mem_manager), filler);
+    }
+   
     /** gets the value at the given index.
      * @param idx indices to retreive value from
      * @return the value at idx

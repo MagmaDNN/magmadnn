@@ -132,13 +132,14 @@ Tensor<T> *ReduceSumOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tens
         out = new Tensor<T>(x->get_output_shape(), {NONE, {}}, this->mem_type);
 #if defined(MAGMADNN_HAVE_CUDA)
         out->set_custream(this->get_custream());
+        out->set_cublas_handle(this->get_cublas_handle());
 #endif
         this->_grad_cache[(uintptr_t) var] = out;
     }
 
     internal::reduce_sum_grad(grad, this->axis, out);
 #if defined(MAGMADNN_HAVE_CUDA)
-      cudaStreamSynchronize(this->get_custream());
+    cudaStreamSynchronize(this->get_custream());
 #endif
 
     return out;

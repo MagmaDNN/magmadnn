@@ -7,6 +7,7 @@
  * @copyright Copyright (c) 2019
  */
 
+#include "magmadnn/config.h"
 #include "tensor/fill_internal.h"
 
 #include <cassert>
@@ -31,7 +32,7 @@ void fill_uniform(MemoryManager<T>& m, const std::vector<T>& params) {
                 m.get_host_ptr()[i] = uniform_distribution(random_generator);
             break;
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
         case DEVICE: {
             MemoryManager<T> host_mem(m.get_size(), HOST, 0);
             T* host_ptr = host_mem.get_ptr();
@@ -73,7 +74,7 @@ void fill_uniform(MemoryManager<int>& m, const std::vector<int>& params) {
                 m.get_host_ptr()[i] = uniform_distribution(random_generator);
             break;
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
         case DEVICE:
             // TODO replace with kernel call
             {
@@ -119,7 +120,7 @@ void fill_glorot(MemoryManager<T>& m, const std::vector<T>& params) {
             for (unsigned int i = 0; i < m.get_size(); i++) m.get_host_ptr()[i] = normal_dist(random_generator);
             break;
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
         case DEVICE:
             // TODO replace with kernel call
             for (unsigned int i = 0; i < m.get_size(); i++) m.set(i, normal_dist(random_generator));
@@ -152,7 +153,7 @@ void fill_glorot(MemoryManager<int>& m, const std::vector<int>& params) {
             for (unsigned int i = 0; i < m.get_size(); i++) m.get_host_ptr()[i] = normal_dist(random_generator);
             break;
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
         case DEVICE:
             // TODO replace with kernel call
             for (unsigned int i = 0; i < m.get_size(); i++) m.set(i, normal_dist(random_generator));
@@ -190,7 +191,7 @@ void fill_mask(MemoryManager<T>& m, const std::vector<T>& params) {
             for (unsigned int i = 0; i < m.get_size(); i++) m.get_host_ptr()[i] = bernoulli(random_generator) * val;
             break;
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
         case DEVICE:
             // TODO replace with kernel call
             for (unsigned int i = 0; i < m.get_size(); i++) m.set(i, bernoulli(random_generator) * val);
@@ -226,7 +227,7 @@ void fill_mask(MemoryManager<int>& m, const std::vector<int>& params) {
             for (unsigned int i = 0; i < m.get_size(); i++) m.get_host_ptr()[i] = bernoulli(random_generator) * val;
             break;
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
         case DEVICE:
             // TODO replace with kernel call
             for (unsigned int i = 0; i < m.get_size(); i++) m.set(i, bernoulli(random_generator) * val);
@@ -298,7 +299,7 @@ void fill_constant(MemoryManager<T>& m, const std::vector<T>& params) {
             for (int i = 0; i < (int) m.get_size(); i++) m.get_host_ptr()[i] = val;
             break;
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
         case DEVICE:
             fill_constant_device(m, val);  // fill device pointer
             break;

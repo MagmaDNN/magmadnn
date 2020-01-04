@@ -12,6 +12,7 @@
 #include <cstdlib>
 #include <cassert>
 
+#include "magmadnn/config.h"
 #include "magmadnn/utilities_internal.h"
 #if defined(MAGMADNN_HAVE_CUDA)
 #include "memory/memory_internal_device.h"
@@ -158,7 +159,11 @@ magmadnn_error_t MemoryManager<T>::copy_from_host(T* src, unsigned int begin_idx
 #if defined(MAGMADNN_HAVE_CUDA)
         case DEVICE:
             // host --> device
-            cudaErrchk(cudaMemcpy(device_ptr, src + begin_idx, copy_size * sizeof(T), cudaMemcpyHostToDevice));
+            cudaErrchk(
+                  cudaMemcpyAsync(
+                        device_ptr, src + begin_idx, copy_size * sizeof(T),
+                        cudaMemcpyHostToDevice, this->get_custream()));
+            cudaStreamSynchronize(this->get_custream());
             return (magmadnn_error_t) 0;
         case MANAGED:
             // host --> managed
@@ -222,7 +227,11 @@ magmadnn_error_t MemoryManager<T>::copy_from_managed(T* host_src, T* device_src,
             return (magmadnn_error_t) 0;
         case DEVICE:
             // managed --> device
-            cudaErrchk(cudaMemcpy(device_ptr, device_src + begin_idx, copy_size * sizeof(T), cudaMemcpyDeviceToDevice));
+            cudaErrchk(
+                  cudaMemcpyAsync(
+                        device_ptr, device_src + begin_idx, copy_size * sizeof(T),
+                        cudaMemcpyDeviceToDevice, this->get_custream()));
+            cudaStreamSynchronize(this->get_custream());
             return (magmadnn_error_t) 0;
         case MANAGED:
             // managed --> managed
@@ -248,7 +257,11 @@ magmadnn_error_t MemoryManager<T>::copy_from_cudamanaged(T* src, unsigned int be
             return (magmadnn_error_t) 0;
         case DEVICE:
             // cmanaged --> device
-            cudaErrchk(cudaMemcpy(device_ptr, src + begin_idx, copy_size * sizeof(T), cudaMemcpyDeviceToDevice));
+            cudaErrchk(
+                  cudaMemcpyAsync(
+                        device_ptr, src + begin_idx, copy_size * sizeof(T),
+                        cudaMemcpyDeviceToDevice, this->get_custream()));
+            cudaStreamSynchronize(this->get_custream());
             return (magmadnn_error_t) 0;
         case MANAGED:
             // cmanaged --> managed
@@ -271,13 +284,22 @@ magmadnn_error_t MemoryManager<T>::sync(bool gpu_was_modified) {
     cudaError_t err = (cudaError_t) 0;
 
     if (mem_type == CUDA_MANAGED) {
-        cudaErrchk(cudaDeviceSynchronize());
+        // cudaErrchk(cudaDeviceSynchronize());
+        cudaStreamSynchronize(this->get_custream());
     } else if (mem_type == MANAGED) {
         if (gpu_was_modified) {
-            cudaErrchk(cudaMemcpy(host_ptr, device_ptr, size * sizeof(T), cudaMemcpyDeviceToHost));
+            cudaErrchk(
+                  cudaMemcpyAsync(
+                        host_ptr, device_ptr, size * sizeof(T),
+                        cudaMemcpyDeviceToHost, this->get_custream()));
+            
         } else {
-            cudaErrchk(cudaMemcpy(device_ptr, host_ptr, size * sizeof(T), cudaMemcpyHostToDevice));
+            cudaErrchk(
+                  cudaMemcpyAsync(
+                        device_ptr, host_ptr, size * sizeof(T),
+                        cudaMemcpyHostToDevice, this->get_custream()));
         }
+        cudaStreamSynchronize(this->get_custream());
     }
     return (magmadnn_error_t) err;
 #else
@@ -292,13 +314,20 @@ template <typename T>
 T MemoryManager<T>::get(unsigned int idx) const {
     assert(idx < size);
 
+    T res;
+    
     switch (mem_type) {
         case HOST:
             return host_ptr[idx];
 #if defined(MAGMADNN_HAVE_CUDA)
         case DEVICE:
             // cudaErrchk( cudaSetDevice(device_id) );   /* TODO -- fix MagmaDNN's device selection system */
-            return internal::get_device_array_element(device_ptr, idx);
+            // return internal::get_device_array_element(device_ptr, idx);
+           cudaMemcpyAsync(
+                 &res, &device_ptr[idx], sizeof(T),
+                 cudaMemcpyDeviceToHost, this->get_custream());
+           cudaStreamSynchronize(this->get_custream());
+           return res;
         case MANAGED:
             return host_ptr[idx];
         case CUDA_MANAGED:

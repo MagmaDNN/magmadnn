@@ -57,7 +57,7 @@ Tensor<T> *ScalarProductOp<T>::_eval(bool recompute) {
     else {
        magmadnn::internal::scalarproduct_full_device(
              this->get_custream(), alpha, x_tensor, this->output_tensor);
-       cudaStreamSynchronize(this->get_custream());
+       if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
     }
 #endif
     
@@ -80,7 +80,7 @@ Tensor<T> *ScalarProductOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, 
         else {
            magmadnn::internal::scalarproduct_full_device(
                  this->get_custream(), scalar_tensor->get(0), grad, grad);
-           cudaStreamSynchronize(this->get_custream());
+           if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
         }
 #endif
         
@@ -94,7 +94,7 @@ Tensor<T> *ScalarProductOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, 
        else {
           magmadnn::internal::scalarproduct_full_device(
                 this->get_custream(), alpha, grad, grad);
-          cudaStreamSynchronize(this->get_custream());
+          if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
        }
 #endif
     }

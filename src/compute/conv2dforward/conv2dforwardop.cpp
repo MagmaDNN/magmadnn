@@ -1,6 +1,8 @@
+#include "compute/conv2dforward/conv2dforwardop.h"
+
 #include <iostream>
 
-#include "compute/conv2dforward/conv2dforwardop.h"
+#include "magmadnn/config.h"
 
 namespace magmadnn {
 namespace op {
@@ -54,8 +56,12 @@ Tensor<T> *Conv2DForwardOp<T>::_eval(bool recompute) {
     }
 #if defined(MAGMADNN_HAVE_CUDA)
     else {
-        ::magmadnn::math::conv2d_device(this->input_tensor, this->filter_tensor, this->output_tensor,
-                                        this->cudnn_settings);
+       this->cudnn_settings.handle = this->get_cudnn_handle();
+       ::magmadnn::math::conv2d_device(
+             this->input_tensor, this->filter_tensor, this->output_tensor,
+             this->cudnn_settings);
+
+       if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
     }
 #endif
 
@@ -70,6 +76,10 @@ Tensor<T> *Conv2DForwardOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, 
     if (var == this->input) {
         if (out == NULL) {
             out = new Tensor<T>(this->input->get_output_shape(), {NONE, {}}, this->mem_type);
+#if defined(MAGMADNN_HAVE_CUDA)
+            out->set_custream(this->get_custream());
+            out->set_cublas_handle(this->get_cublas_handle());
+#endif
             this->_grad_cache[(uintptr_t) var] = out;
         }
 
@@ -80,13 +90,21 @@ Tensor<T> *Conv2DForwardOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, 
         }
 #if defined(MAGMADNN_HAVE_CUDA)
         else {
-            ::magmadnn::math::conv2d_grad_data_device(this->filter_tensor, grad, out, this->cudnn_settings);
+           this->cudnn_settings.handle = this->get_cudnn_handle();
+           ::magmadnn::math::conv2d_grad_data_device(
+                 this->filter_tensor, grad, out, this->cudnn_settings);
+           if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
+
         }
 #endif
 
     } else if (var == this->filter) {
         if (out == NULL) {
             out = new Tensor<T>(this->filter->get_output_shape(), {NONE, {}}, this->mem_type);
+#if defined(MAGMADNN_HAVE_CUDA)
+            out->set_custream(this->get_custream());
+            out->set_cublas_handle(this->get_cublas_handle());
+#endif
             this->_grad_cache[(uintptr_t) var] = out;
         }
 
@@ -97,7 +115,10 @@ Tensor<T> *Conv2DForwardOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, 
         }
 #if defined(MAGMADNN_HAVE_CUDA)
         else {
-            ::magmadnn::math::conv2d_grad_filter_device(this->input_tensor, grad, out, this->cudnn_settings);
+           this->cudnn_settings.handle = this->get_cudnn_handle();
+           ::magmadnn::math::conv2d_grad_filter_device(
+                 this->input_tensor, grad, out, this->cudnn_settings);
+           if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
         }
 #endif
 
@@ -115,6 +136,9 @@ void Conv2DForwardOp<T>::init_settings() {
     }
 #if defined(MAGMADNN_HAVE_CUDA)
     else {
+
+        this->cudnn_settings.handle = this->get_cudnn_handle();
+       
         /* init the conv descriptor */
         cudnnErrchk(cudnnCreateConvolutionDescriptor(&this->cudnn_settings.conv_desc));
 
@@ -142,14 +166,14 @@ void Conv2DForwardOp<T>::init_settings() {
 
         /* use CUDNN to get the correct/optimal convolution algorithm */
         cudnnErrchk(cudnnGetConvolutionForwardAlgorithm(
-            ::magmadnn::internal::MAGMADNN_SETTINGS->cudnn_handle,
+            this->cudnn_settings.handle,
             this->input->get_output_tensor()->get_cudnn_tensor_descriptor(), this->cudnn_settings.filter_desc,
             this->cudnn_settings.conv_desc, this->output_tensor->get_cudnn_tensor_descriptor(),
             CUDNN_CONVOLUTION_FWD_PREFER_FASTEST, 0, &this->cudnn_settings.algo));
 
         /* use CuDNN to get the necessary workspace size and allocate that memory */
         cudnnErrchk(cudnnGetConvolutionForwardWorkspaceSize(
-            ::magmadnn::internal::MAGMADNN_SETTINGS->cudnn_handle,
+            this->cudnn_settings.handle,
             this->input->get_output_tensor()->get_cudnn_tensor_descriptor(), this->cudnn_settings.filter_desc,
             this->cudnn_settings.conv_desc, this->output_tensor->get_cudnn_tensor_descriptor(),
             this->cudnn_settings.algo, &this->cudnn_settings.workspace_size));
@@ -159,20 +183,23 @@ void Conv2DForwardOp<T>::init_settings() {
 
         /* INIT the grad settings */
         cudnnErrchk(cudnnGetConvolutionBackwardDataAlgorithm(
-            ::magmadnn::internal::MAGMADNN_SETTINGS->cudnn_handle, this->cudnn_settings.filter_desc,
+            this->cudnn_settings.handle,
+            this->cudnn_settings.filter_desc,
             this->output_tensor->get_cudnn_tensor_descriptor(),                                /* use output for dy */
             this->cudnn_settings.conv_desc, this->input_tensor->get_cudnn_tensor_descriptor(), /* use input for dx */
             CUDNN_CONVOLUTION_BWD_DATA_PREFER_FASTEST, 0, &this->cudnn_settings.bwd_data_algo));
 
         cudnnErrchk(cudnnGetConvolutionBackwardFilterAlgorithm(
-            ::magmadnn::internal::MAGMADNN_SETTINGS->cudnn_handle, this->input_tensor->get_cudnn_tensor_descriptor(),
+            this->cudnn_settings.handle,
+            this->input_tensor->get_cudnn_tensor_descriptor(),
             this->output_tensor->get_cudnn_tensor_descriptor(), this->cudnn_settings.conv_desc,
             this->cudnn_settings.filter_desc, CUDNN_CONVOLUTION_BWD_FILTER_PREFER_FASTEST, 0,
             &this->cudnn_settings.bwd_filter_algo));
 
         /* get the workspaces for each of the backward algorithms */
         cudnnErrchk(cudnnGetConvolutionBackwardDataWorkspaceSize(
-            ::magmadnn::internal::MAGMADNN_SETTINGS->cudnn_handle, this->cudnn_settings.filter_desc,
+            this->cudnn_settings.handle,
+            this->cudnn_settings.filter_desc,
             this->output_tensor->get_cudnn_tensor_descriptor(), this->cudnn_settings.conv_desc,
             this->input_tensor->get_cudnn_tensor_descriptor(), this->cudnn_settings.bwd_data_algo,
             &this->cudnn_settings.grad_data_workspace_size));
@@ -183,7 +210,8 @@ void Conv2DForwardOp<T>::init_settings() {
                               this->cudnn_settings.grad_data_workspace_size));
 
         cudnnErrchk(cudnnGetConvolutionBackwardFilterWorkspaceSize(
-            ::magmadnn::internal::MAGMADNN_SETTINGS->cudnn_handle, this->input_tensor->get_cudnn_tensor_descriptor(),
+            this->cudnn_settings.handle,
+            this->input_tensor->get_cudnn_tensor_descriptor(),
             this->output_tensor->get_cudnn_tensor_descriptor(), this->cudnn_settings.conv_desc,
             this->cudnn_settings.filter_desc, this->cudnn_settings.bwd_filter_algo,
             &this->cudnn_settings.grad_filter_workspace_size));
@@ -214,15 +242,25 @@ void Conv2DForwardOp<T>::calculate_and_set_output_shape() {
     else {
         int n, c, h, w;
 
-        cudnnErrchk(cudnnGetConvolution2dForwardOutputDim(this->cudnn_settings.conv_desc,
-                                                          this->input_tensor->get_cudnn_tensor_descriptor(),
-                                                          this->cudnn_settings.filter_desc, &n, &c, &h, &w));
-        this->output_shape = {static_cast<unsigned int>(n), static_cast<unsigned int>(c), static_cast<unsigned int>(h),
+        cudnnErrchk(
+              cudnnGetConvolution2dForwardOutputDim(
+                    this->cudnn_settings.conv_desc,
+                    this->input_tensor->get_cudnn_tensor_descriptor(),
+                    this->cudnn_settings.filter_desc, &n, &c, &h, &w));
+
+        this->output_shape = {static_cast<unsigned int>(n),
+                              static_cast<unsigned int>(c),
+                              static_cast<unsigned int>(h),
                               static_cast<unsigned int>(w)};
     }
 #endif
 
     this->output_tensor = new Tensor<T>(this->output_shape, {NONE, {}}, this->mem_type);
+#if defined(MAGMADNN_HAVE_CUDA)
+    this->output_tensor->set_custream(this->get_custream());
+    this->output_tensor->set_cublas_handle(this->get_cublas_handle());
+#endif
+
 }
 
 template class Conv2DForwardOp<int>;

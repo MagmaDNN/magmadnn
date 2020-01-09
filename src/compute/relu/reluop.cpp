@@ -26,7 +26,11 @@ ReluOp<T>::ReluOp(Operation<T> *x, bool copy, bool needs_grad)
 #if defined(MAGMADNN_HAVE_CUDA)
     cudnnErrchk(cudnnCreateActivationDescriptor(&cudnn_settings.descriptor));
     cudnnErrchk(
-        cudnnSetActivationDescriptor(cudnn_settings.descriptor, CUDNN_ACTIVATION_RELU, CUDNN_NOT_PROPAGATE_NAN, 1.0));
+        cudnnSetActivationDescriptor(
+              cudnn_settings.descriptor,
+              CUDNN_ACTIVATION_RELU,
+              CUDNN_NOT_PROPAGATE_NAN,
+              1.0));
 #endif
 }
 
@@ -51,7 +55,7 @@ Tensor<T> *ReluOp<T>::_eval(bool recompute) {
     else {
        this->cudnn_settings.handle = this->get_cudnn_handle();
        math::relu_device(x_tensor, this->output_tensor, this->cudnn_settings);
-       cudaStreamSynchronize(this->get_custream());
+       if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
     }
 #endif
 
@@ -78,8 +82,10 @@ Tensor<T> *ReluOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T>
 #if defined(MAGMADNN_HAVE_CUDA)
     else {
        this->cudnn_settings.handle = this->get_cudnn_handle();
-       math::relu_grad_device(x_tensor, this->output_tensor, grad, out, this->cudnn_settings);
-       cudaStreamSynchronize(this->get_custream());
+       math::relu_grad_device(
+             x_tensor, this->output_tensor, grad, out,
+             this->cudnn_settings);
+       if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
     }
 #endif
 

@@ -50,7 +50,7 @@ Tensor<T> *AddOp<T>::_eval(bool recompute) {
          internal::tensor_scalar_add_full_device(
                this->get_custream(),
                a_tensor->get(0), b_tensor, this->output_tensor);
-         cudaStreamSynchronize(this->get_custream());
+         if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
       }      
 #endif
    }
@@ -66,7 +66,7 @@ Tensor<T> *AddOp<T>::_eval(bool recompute) {
          internal::tensor_scalar_add_full_device(
                this->get_custream(),
                b_tensor->get(0), a_tensor, this->output_tensor);            
-         cudaStreamSynchronize(this->get_custream());
+         if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
       }      
 #endif
    }
@@ -81,7 +81,7 @@ Tensor<T> *AddOp<T>::_eval(bool recompute) {
          internal::geadd_full_device(
                this->get_custream(),
                (T) 1, a_tensor, (T) 1, b_tensor, this->output_tensor);
-         cudaStreamSynchronize(this->get_custream());
+         if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
       }  
 #endif
    }

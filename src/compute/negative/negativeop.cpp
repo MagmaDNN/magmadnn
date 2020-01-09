@@ -34,7 +34,7 @@ Tensor<T> *NegativeOp<T>::_eval(bool recompute) {
       // magmadnn::internal::negative_full_device(x_tensor, this->output_tensor);
       magmadnn::internal::negative_full_device(
             this->get_custream(), x_tensor, this->output_tensor);
-      cudaStreamSynchronize(this->get_custream());
+      if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
    }
 #endif
     
@@ -53,7 +53,7 @@ Tensor<T> *NegativeOp<T>::_grad(
    else {
       magmadnn::internal::negative_full_device(
             this->get_custream(), grad, grad);
-      cudaStreamSynchronize(this->get_custream());
+      if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
    }
 #endif
 

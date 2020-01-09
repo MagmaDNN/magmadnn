@@ -1,5 +1,6 @@
-
 #include "compute/flatten/flattenop.h"
+
+#include "magmadnn/config.h"
 
 namespace magmadnn {
 namespace op {
@@ -25,6 +26,12 @@ Tensor<T> *FlattenOp<T>::_eval(bool recompute) {
     /* eval code in here ... */
 
     input_tensor = input->eval(recompute);
+
+#if defined(MAGMADNN_HAVE_CUDA)
+    // Maake sure custream and cublas handle are set
+    this->output_tensor->set_custream(this->get_custream());
+    this->output_tensor->set_cublas_handle(this->get_cublas_handle());
+#endif
     this->output_tensor->copy_from(*input_tensor);
     this->output_tensor->reshape(this->output_shape);
 
@@ -38,6 +45,10 @@ Tensor<T> *FlattenOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor
 
     if (out == NULL) {
         out = new Tensor<T>(this->output_shape, {NONE, {}}, this->mem_type);
+#if defined(MAGMADNN_HAVE_CUDA)
+        out->set_custream(this->get_custream());
+        out->set_cublas_handle(this->get_cublas_handle());
+#endif
         this->_grad_cache[(uintptr_t) var] = out;
     }
 

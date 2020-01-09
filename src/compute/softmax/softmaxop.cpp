@@ -35,7 +35,7 @@ Tensor<T> *SoftmaxOp<T>::_eval(bool recompute) {
        // TODO overload set_cudnn_handle() to update this->settings.handle 
        this->settings.handle = this->get_cudnn_handle();
        math::softmax_device(input_tensor, this->output_tensor, this->settings);
-       cudaStreamSynchronize(this->get_custream());
+       if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
     }
 #endif
 
@@ -53,6 +53,10 @@ Tensor<T> *SoftmaxOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor
 
     if (out == NULL) {
         out = new Tensor<T>(this->output_shape, {NONE, {}}, this->mem_type);
+#if defined(MAGMADNN_HAVE_CUDA)
+        out->set_custream(this->get_custream());
+        out->set_cublas_handle(this->get_cublas_handle());
+#endif
         this->_grad_cache[(uintptr_t) var] = out;
 
 #if defined(MAGMADNN_HAVE_CUDA)
@@ -68,7 +72,7 @@ Tensor<T> *SoftmaxOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor
         // TODO overload set_cudnn_handle() to update this->settings.handle 
         this->grad_settings.handle = this->get_cudnn_handle();
         math::softmax_grad_device(this->output_tensor, grad, out, this->grad_settings);
-        cudaStreamSynchronize(this->get_custream());
+        if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
     }
 #endif
 
@@ -78,7 +82,7 @@ Tensor<T> *SoftmaxOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor
 #if defined(MAGMADNN_HAVE_CUDA)
 template <typename T>
 void SoftmaxOp<T>::init_settings() {
-    this->settings.handle = ::magmadnn::internal::MAGMADNN_SETTINGS->cudnn_handle;
+    this->settings.handle = this->get_cudnn_handle();
     this->settings.alg = CUDNN_SOFTMAX_ACCURATE;
     this->settings.mode = CUDNN_SOFTMAX_MODE_INSTANCE;
 

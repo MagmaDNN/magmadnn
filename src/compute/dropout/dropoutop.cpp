@@ -1,5 +1,6 @@
-
 #include "compute/dropout/dropoutop.h"
+
+#include "magmadnn/config.h"
 
 namespace magmadnn {
 namespace op {
@@ -46,7 +47,9 @@ Tensor<T> *DropoutOp<T>::_eval(bool recompute) {
     }
 #if defined(MAGMADNN_HAVE_CUDA)
     else {
-        math::dropout_device(input_tensor, this->output_tensor, this->settings, this->shared_settings);
+       settings.handle = this->get_cudnn_handle();    
+       math::dropout_device(input_tensor, this->output_tensor, this->settings, this->shared_settings);
+       if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
     }
 #endif
 
@@ -64,6 +67,10 @@ Tensor<T> *DropoutOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor
 
     if (out == NULL) {
         out = new Tensor<T>(this->output_shape, {NONE, {}}, this->mem_type);
+#if defined(MAGMADNN_HAVE_CUDA)
+        out->set_custream(this->get_custream());
+        out->set_cublas_handle(this->get_cublas_handle());
+#endif
         this->_grad_cache[(uintptr_t) var] = out;
 
 #if defined(MAGMADNN_HAVE_CUDA)
@@ -76,7 +83,9 @@ Tensor<T> *DropoutOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor
     }
 #if defined(MAGMADNN_HAVE_CUDA)
     else {
-        math::dropout_grad_device(grad, out, this->grad_settings, this->shared_settings);
+       settings.handle = this->get_cudnn_handle();
+       math::dropout_grad_device(grad, out, this->grad_settings, this->shared_settings);
+       if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
     }
 #endif
 
@@ -88,7 +97,7 @@ template <typename T>
 void DropoutOp<T>::init_settings() {
     settings.xdesc = this->input_tensor->get_cudnn_tensor_descriptor();
     settings.ydesc = this->output_tensor->get_cudnn_tensor_descriptor();
-    settings.handle = ::magmadnn::internal::MAGMADNN_SETTINGS->cudnn_handle;
+    settings.handle = this->get_cudnn_handle();
 
     cudnnErrchk(cudnnDropoutGetStatesSize(settings.handle, &shared_settings.stateSizeInBytes));
     cudnnErrchk(cudnnDropoutGetReserveSpaceSize(settings.xdesc, &shared_settings.reserveSpaceSizeInBytes));
@@ -99,7 +108,8 @@ void DropoutOp<T>::init_settings() {
     cudnnErrchk(cudnnSetDropoutDescriptor(shared_settings.dropoutDesc, settings.handle, this->dropout_rate,
                                           shared_settings.states, shared_settings.stateSizeInBytes, this->seed));
 
-    grad_settings.handle = ::magmadnn::internal::MAGMADNN_SETTINGS->cudnn_handle;
+    grad_settings.handle = this->get_cudnn_handle();
+
     /* hold off to init grad tensor descriptors */
 }
 

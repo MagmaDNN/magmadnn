@@ -30,7 +30,7 @@ Tensor<T> *PowOp<T>::_eval(bool recompute) {
       magmadnn::math::pow_device(
             this->get_custream(), input_tensor, this->power,
             this->output_tensor);
-      cudaStreamSynchronize(this->get_custream());
+      if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
    }
 #endif
 
@@ -46,6 +46,10 @@ Tensor<T> *PowOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> 
 
    if (out == NULL) {
       out = new Tensor<T>(this->output_shape, {NONE, {}}, this->mem_type);
+#if defined(MAGMADNN_HAVE_CUDA)
+      out->set_custream(this->get_custream());
+      out->set_cublas_handle(this->get_cublas_handle());
+#endif
       this->_grad_cache[(uintptr_t) var] = out;
    }
 
@@ -58,7 +62,7 @@ Tensor<T> *PowOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> 
    else {
       magmadnn::internal::pow_grad_device(
             this->get_custream(), input_tensor, power, grad, out);
-      cudaStreamSynchronize(this->get_custream());
+      if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
    }
 #endif
 

@@ -11,6 +11,8 @@
 
 #include <cassert>
 
+#include "magmadnn/config.h"
+
 namespace magmadnn {
 namespace math {
 
@@ -21,7 +23,7 @@ void batchnorm(Tensor<T> *x, Tensor<T> *out) {
     if (out->get_memory_type() == HOST) {
         fprintf(stderr, "batchnorm CPU not supported yet.\n");
     }
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     else {
         fprintf(stderr, "For batchnorm on GPU, please use batchnorm_device\n");
     }
@@ -38,7 +40,7 @@ void batchnorm_grad(Tensor<T> *grad, Tensor<T> *out) {
     if (out->get_memory_type() == HOST) {
         fprintf(stderr, "batchnorm grad CPU not supported yet.\n");
     }
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     else {
         fprintf(stderr, "For batchnorm_grad on GPU, please use batchnorm_grad_device\n");
     }
@@ -48,7 +50,7 @@ template void batchnorm_grad(Tensor<int> *grad, Tensor<int> *out);
 template void batchnorm_grad(Tensor<float> *grad, Tensor<float> *out);
 template void batchnorm_grad(Tensor<double> *grad, Tensor<double> *out);
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
 template <typename T>
 void batchnorm_device(Tensor<T> *x, Tensor<T> *out, Tensor<T> *bn_scale, Tensor<T> *bn_bias, Tensor<T> *running_mean,
                       Tensor<T> *running_variance, Tensor<T> *saved_mean, Tensor<T> *saved_variance,

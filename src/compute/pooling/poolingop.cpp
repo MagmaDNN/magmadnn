@@ -1,5 +1,6 @@
-
 #include "compute/pooling/poolingop.h"
+
+#include "magmadnn/config.h"
 
 namespace magmadnn {
 namespace op {
@@ -40,18 +41,21 @@ PoolingOp<T>::~PoolingOp() {
 
 template <typename T>
 Tensor<T> *PoolingOp<T>::_eval(bool recompute) {
-    input_tensor = input->eval(recompute);
 
-    if (this->mem_type == HOST) {
-        std::fprintf(stderr, "Error: Pooling::_eval requires GPU\n");
-    }
+   input_tensor = input->eval(recompute);
+
+   if (this->mem_type == HOST) {
+      std::fprintf(stderr, "Error: Pooling::_eval requires GPU\n");
+   }
 #if defined(MAGMADNN_HAVE_CUDA)
-    else {
-        ::magmadnn::math::pooling_device(this->input_tensor, this->output_tensor, this->settings);
-    }
+   else {
+      this->settings.handle = this->get_cudnn_handle();
+      ::magmadnn::math::pooling_device(this->input_tensor, this->output_tensor, this->settings);
+      if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
+   }
 #endif
 
-    return this->output_tensor;
+   return this->output_tensor;
 }
 
 template <typename T>
@@ -61,6 +65,10 @@ Tensor<T> *PoolingOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor
 
     if (out == NULL) {
         out = new Tensor<T>(this->input->get_output_shape(), {NONE, {}}, this->mem_type);
+#if defined(MAGMADNN_HAVE_CUDA)
+        out->set_custream(this->get_custream());
+        out->set_cublas_handle(this->get_cublas_handle());
+#endif
         this->_grad_cache[(uintptr_t) var] = out;
     }
 
@@ -69,7 +77,9 @@ Tensor<T> *PoolingOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor
     }
 #if defined(MAGMADNN_HAVE_CUDA)
     else {
-        ::magmadnn::math::pooling_grad_device(this->input_tensor, this->output_tensor, grad, out, this->settings);
+       this->settings.handle = this->get_cudnn_handle();
+       ::magmadnn::math::pooling_grad_device(this->input_tensor, this->output_tensor, grad, out, this->settings);
+       if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
     }
 #endif
 
@@ -83,17 +93,21 @@ void PoolingOp<T>::init_settings() {
     }
 #if defined(MAGMADNN_HAVE_CUDA)
     else {
-        /* init the pooling descriptor */
-        cudnnErrchk(cudnnCreatePoolingDescriptor(&this->settings.poolingDesc));
 
-        /* set the pooling description */
-        cudnnErrchk(cudnnSetPooling2dDescriptor(
-            this->settings.poolingDesc,
-            (mode == MAX_POOL) ? CUDNN_POOLING_MAX_DETERMINISTIC : CUDNN_POOLING_AVERAGE_COUNT_EXCLUDE_PADDING,
-            (propagate_nan) ? CUDNN_PROPAGATE_NAN : CUDNN_NOT_PROPAGATE_NAN, filter_h, filter_w, pad_h, pad_w,
-            vertical_stride, horizontal_stride));
+       this->settings.handle = this->get_cudnn_handle();
+          
+       /* init the pooling descriptor */
+       cudnnErrchk(cudnnCreatePoolingDescriptor(&this->settings.poolingDesc));
 
-        this->calculate_and_set_output_shape();
+       /* set the pooling description */
+       cudnnErrchk(cudnnSetPooling2dDescriptor(
+                         this->settings.poolingDesc,
+                         (mode == MAX_POOL) ? CUDNN_POOLING_MAX_DETERMINISTIC : CUDNN_POOLING_AVERAGE_COUNT_EXCLUDE_PADDING,
+                         (propagate_nan) ? CUDNN_PROPAGATE_NAN : CUDNN_NOT_PROPAGATE_NAN,
+                         filter_h, filter_w, pad_h, pad_w,
+                         vertical_stride, horizontal_stride));
+
+       this->calculate_and_set_output_shape();
     }
 #endif
 }
@@ -109,14 +123,25 @@ void PoolingOp<T>::calculate_and_set_output_shape() {
     else {
         int n, c, h, w;
 
-        cudnnErrchk(cudnnGetPooling2dForwardOutputDim(
-            this->settings.poolingDesc, this->input_tensor->get_cudnn_tensor_descriptor(), &n, &c, &h, &w));
-        this->output_shape = {static_cast<unsigned int>(n), static_cast<unsigned int>(c), static_cast<unsigned int>(h),
+        cudnnErrchk(
+              cudnnGetPooling2dForwardOutputDim(
+                    this->settings.poolingDesc,
+                    this->input_tensor->get_cudnn_tensor_descriptor(),
+                    &n, &c, &h, &w));
+
+        this->output_shape = {static_cast<unsigned int>(n),
+                              static_cast<unsigned int>(c),
+                              static_cast<unsigned int>(h),
                               static_cast<unsigned int>(w)};
     }
 #endif
 
     this->output_tensor = new Tensor<T>(this->output_shape, {NONE, {}}, this->mem_type);
+#if defined(MAGMADNN_HAVE_CUDA)
+    this->output_tensor->set_custream(this->get_custream());
+    this->output_tensor->set_cublas_handle(this->get_cublas_handle());
+#endif
+    
 }
 
 template class PoolingOp<int>;

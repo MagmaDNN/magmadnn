@@ -1,6 +1,8 @@
+#include "compute/div/div_internal.h"
+
 #include <cassert>
 
-#include "compute/div/div_internal.h"
+#include "magmadnn/config.h"
 
 namespace magmadnn {
 namespace internal {

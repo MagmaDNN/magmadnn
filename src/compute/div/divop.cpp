@@ -1,4 +1,3 @@
-
 #include "compute/div/divop.h"
 
 namespace magmadnn {

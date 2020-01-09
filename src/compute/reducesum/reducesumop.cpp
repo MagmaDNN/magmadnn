@@ -109,7 +109,7 @@ Tensor<T> *ReduceSumOp<T>::_eval(bool recompute) {
       this->reduce_settings.cudnn_handle = this->get_cudnn_handle();
       math::reduce_sum_device(x_tensor, axis, this->output_tensor, this->reduce_settings);
       // Assume cudnn_handle is associated with custream
-      cudaStreamSynchronize(this->get_custream());
+      if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
    }
 #endif
    return this->output_tensor;
@@ -139,7 +139,7 @@ Tensor<T> *ReduceSumOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tens
 
     internal::reduce_sum_grad(grad, this->axis, out);
 #if defined(MAGMADNN_HAVE_CUDA)
-    cudaStreamSynchronize(this->get_custream());
+    if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
 #endif
 
     return out;

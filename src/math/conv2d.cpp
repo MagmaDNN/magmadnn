@@ -21,7 +21,7 @@ void conv2d(Tensor<T> *x, Tensor<T> *w, Tensor<T> *out) {
     if (out->get_memory_type() == HOST) {
         fprintf(stderr, "__Conv2d CPU not supported yet.\n");
     }
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     else {
         fprintf(stderr, "For Conv2d GPU please use conv2d_device.\n");
     }
@@ -38,7 +38,7 @@ void conv2d_grad_data(Tensor<T> *w, Tensor<T> *grad, Tensor<T> *out) {
     if (out->get_memory_type() == HOST) {
         fprintf(stderr, "__Conv2d_grad_data CPU not supported yet.\n");
     }
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     else {
         fprintf(stderr, "For Conv2d_grad_data GPU please use conv2d_grad_data_device.\n");
     }
@@ -55,7 +55,7 @@ void conv2d_grad_filter(Tensor<T> *w, Tensor<T> *grad, Tensor<T> *out) {
     if (out->get_memory_type() == HOST) {
         fprintf(stderr, "__Conv2d_grad_filter CPU not supported yet.\n");
     }
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
     else {
         fprintf(stderr, "For Conv2d_grad_filter GPU please use conv2d_grad_filter_device.\n");
     }
@@ -65,7 +65,7 @@ template void conv2d_grad_filter(Tensor<int> *x, Tensor<int> *grad, Tensor<int> 
 template void conv2d_grad_filter(Tensor<float> *x, Tensor<float> *grad, Tensor<float> *out);
 template void conv2d_grad_filter(Tensor<double> *x, Tensor<double> *grad, Tensor<double> *out);
 
-#if defined(_HAS_CUDA_)
+#if defined(MAGMADNN_HAVE_CUDA)
 
 template <typename T>
 void conv2d_device(Tensor<T> *x, Tensor<T> *w, Tensor<T> *out, conv2d_cudnn_settings settings) {

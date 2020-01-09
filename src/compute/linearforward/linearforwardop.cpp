@@ -58,7 +58,7 @@ Tensor<T> *LinearForwardOp<T>::_eval(bool recompute) {
     /* XW */
     math::matmul((T) 1, false, input_tensor, false, weights_tensor, (T) 0, this->output_tensor);
 #if defined(MAGMADNN_HAVE_CUDA)
-    cudaStreamSynchronize(this->get_custream());
+    if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
 #endif
 
     if (use_bias) {
@@ -88,7 +88,7 @@ Tensor<T> *LinearForwardOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, 
 
         math::matmul((T) 1, false, grad, true, this->weights_tensor, (T) 0, out);
 #if defined(MAGMADNN_HAVE_CUDA)
-        cudaStreamSynchronize(this->get_custream());
+        if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
 #endif
 
     } else if (var == this->weights) {
@@ -105,7 +105,7 @@ Tensor<T> *LinearForwardOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, 
 
         math::matmul((T) 1, true, this->input_tensor, false, grad, (T) 0, out);
 #if defined(MAGMADNN_HAVE_CUDA)
-        cudaStreamSynchronize(this->get_custream());
+        if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
 #endif
 
     } else if (this->use_bias && var == this->bias) {
@@ -127,7 +127,7 @@ Tensor<T> *LinearForwardOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, 
         else {
             this->bias_reduce_settings.cudnn_handle = this->get_cudnn_handle();
             math::reduce_sum_device(grad, 1, out, this->bias_reduce_settings);
-            cudaStreamSynchronize(this->get_custream());
+            if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
         }
 #endif
     }
@@ -158,8 +158,11 @@ void LinearForwardOp<T>::init_bias_settings() {
                                                    CUDNN_NOT_PROPAGATE_NAN, CUDNN_REDUCE_TENSOR_NO_INDICES,
                                                    CUDNN_32BIT_INDICES));
         cudnnErrchk(cudnnGetReductionWorkspaceSize(
-            ::magmadnn::internal::MAGMADNN_SETTINGS->cudnn_handle, bias_reduce_settings.descriptor, grad_tmp_descriptor,
-            this->output_tensor->get_cudnn_tensor_descriptor(), &bias_reduce_settings.workspace_size));
+                          this->get_cudnn_handle(),
+                          bias_reduce_settings.descriptor, grad_tmp_descriptor,
+                          this->output_tensor->get_cudnn_tensor_descriptor(),
+                          &bias_reduce_settings.workspace_size));
+        
         cudaErrchk(
             cudaMalloc((void **) &bias_reduce_settings.workspace, bias_reduce_settings.workspace_size * sizeof(T)));
 

@@ -8,9 +8,9 @@
  */
 #pragma once
 
-#include "tensor/tensor.h"
-
+#include "magmadnn/config.h"
 #include "magmadnn/utilities_internal.h"
+#include "tensor/tensor.h"
 
 #if defined(MAGMADNN_HAVE_CUDA)
 #include "cudnn.h"
@@ -42,6 +42,7 @@ struct conv2d_cudnn_settings {
     size_t grad_data_workspace_size;
     void *grad_filter_workspace;
     size_t grad_filter_workspace_size;
+    cudnnHandle_t handle;
 };
 
 template <typename T>

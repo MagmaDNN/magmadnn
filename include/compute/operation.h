@@ -33,6 +33,12 @@ public:
       // Use default stream for CUDA kernels
       // this->custream_ = nullptr;
       this->set_custream(nullptr);
+
+      this->set_cudnn_handle(magmadnn::internal::MAGMADNN_SETTINGS->cudnn_handle);
+
+      this->set_cublas_handle(magmadnn::internal::MAGMADNN_SETTINGS->cublas_handle);
+
+      this->set_async(false);
 #endif
    }
 
@@ -52,6 +58,10 @@ public:
         this->set_custream(nullptr);
 
         this->set_cudnn_handle(magmadnn::internal::MAGMADNN_SETTINGS->cudnn_handle);
+
+        this->set_cublas_handle(magmadnn::internal::MAGMADNN_SETTINGS->cublas_handle);
+
+        this->set_async(false);
 #endif
    }
 
@@ -216,6 +226,17 @@ public:
        this->cublas_handle_ = cublas_handle;
     }
 
+    bool get_async() const { return async_; }
+
+    void set_async(bool async) {
+       
+       for (auto vit = inputs.begin(); vit != inputs.end(); vit++) {
+          Operation<T> *input_op = (*vit);
+          input_op->set_async(async);
+       }
+       
+       this->async_ = async;
+    }
 #endif
 
    protected:
@@ -251,6 +272,10 @@ private:
     cudaStream_t custream_;
     cudnnHandle_t cudnn_handle_;
     cublasHandle_t cublas_handle_;
+   /*
+    * Determine whether CUDA kernels should be called asynchronously
+    */
+    bool async_;
 #endif
 };
 

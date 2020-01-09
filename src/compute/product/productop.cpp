@@ -8,6 +8,8 @@
  */
 #include "compute/product/productop.h"
 
+#include "magmadnn/config.h"
+
 namespace magmadnn {
 namespace op {
 
@@ -36,6 +38,7 @@ ProductOp<T>::ProductOp(T alpha, Operation<T> *a, Operation<T> *b, bool copy, bo
 
 template <typename T>
 Tensor<T> *ProductOp<T>::_eval(bool recompute) {
+
     a_tensor = a->eval(recompute);
     b_tensor = b->eval(recompute);
 
@@ -69,6 +72,10 @@ Tensor<T> *ProductOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor
         if (out == NULL) {
             /* init grad tensor wrt a */
             out = new Tensor<T>(b_tensor->get_shape(), {NONE, {}}, this->mem_type);
+#if defined(MAGMADNN_HAVE_CUDA)
+            out->set_custream(this->get_custream());
+            out->set_cublas_handle(this->get_cublas_handle());
+#endif
             this->_grad_cache[(uintptr_t) a] = out;
         }
 

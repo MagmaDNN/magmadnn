@@ -1,6 +1,7 @@
 /**
  * @file dropout.h
  * @author Sedrick Keh
+ * @author Florent Lopez
  * @version 0.1
  * @date 2019-06-28
  *
@@ -8,6 +9,7 @@
  */
 #pragma once
 
+#include "magmadnn/config.h"
 #include "magmadnn/types.h"
 #include "math/product.h"
 #include "tensor/tensor.h"

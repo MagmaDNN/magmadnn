@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include "magmadnn/config.h"
 #include "tensor/tensor.h"
 
 enum pooling_mode {
@@ -32,7 +33,8 @@ void pooling_grad(Tensor<T> *x, Tensor<T> *y, Tensor<T> *grad, Tensor<T> *out);
 #if defined(MAGMADNN_HAVE_CUDA)
 
 struct cudnn_pooling_settings_t {
-    cudnnPoolingDescriptor_t poolingDesc;
+   cudnnPoolingDescriptor_t poolingDesc;
+   cudnnHandle_t handle;
 };
 
 template <typename T>

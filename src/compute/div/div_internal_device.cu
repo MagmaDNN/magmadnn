@@ -1,4 +1,3 @@
-
 #include "compute/div/div_internal.h"
 
 namespace magmadnn {

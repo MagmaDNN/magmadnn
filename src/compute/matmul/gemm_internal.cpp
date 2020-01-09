@@ -6,10 +6,12 @@
  *
  * @copyright Copyright (c) 2019
  */
+#include "compute/matmul/gemm_internal.h"
+
 #include <cassert>
 
+#include "magmadnn/config.h"
 #include "math/wrappers.h"
-#include "compute/matmul/gemm_internal.h"
 
 namespace magmadnn {
 namespace internal {

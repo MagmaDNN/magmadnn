@@ -13,6 +13,9 @@
 namespace magmadnn {
 namespace internal {
 
+template <typename T>
+void sigmoid_full_cpu(Tensor<T> *x, Tensor<T> *out, bool fast);
+
 /** Computes the element-wise sigmoid on x.
  * @tparam T
  * @param x pointer to tensor to be sigmoided
@@ -29,7 +32,14 @@ void sigmoid_full(Tensor<T> *x, Tensor<T> *out, bool fast = true);
  */
 template <typename T>
 void sigmoid_full_device(Tensor<T> *x, Tensor<T> *out, bool fast = true);
+
+template <typename T>
+void sigmoid_full_device(
+      cudaStream_t custream, Tensor<T> *x, Tensor<T> *out, bool fast = true);
 #endif
+
+template <typename T>
+void sigmoid_grad_cpu(Tensor<T> *output, Tensor<T> *grad, Tensor<T> *out);
 
 template <typename T>
 void sigmoid_grad(Tensor<T> *output, Tensor<T> *grad, Tensor<T> *out);
@@ -37,6 +47,10 @@ void sigmoid_grad(Tensor<T> *output, Tensor<T> *grad, Tensor<T> *out);
 #if defined(MAGMADNN_HAVE_CUDA)
 template <typename T>
 void sigmoid_grad_device(Tensor<T> *output, Tensor<T> *grad, Tensor<T> *out);
+
+template <typename T>
+void sigmoid_grad_device(
+      cudaStream_t custream, Tensor<T> *output, Tensor<T> *grad, Tensor<T> *out);
 #endif
 
 }  // namespace internal

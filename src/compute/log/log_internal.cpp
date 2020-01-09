@@ -1,5 +1,6 @@
-
 #include "compute/log/log_internal.h"
+
+#include "magmadnn/config.h"
 
 namespace magmadnn {
 namespace internal {

@@ -23,13 +23,13 @@ magmadnn_error_t get_grad_table(const std::vector<Operation<T> *> &vars, Operati
        graph and descendents of nodes in vars. */
     /* TODO */
 
-    /* init Loss in grad table to one */
     // Tensor<T> *grad_loss = new Tensor<T>({1}, {ONE, {}}, graph->get_memory_type());
     Tensor<T> *grad_loss = new Tensor<T>({1}, {NONE, {}}, graph->get_memory_type());
 #if defined(MAGMADNN_HAVE_CUDA)
     grad_loss->set_custream(graph->get_custream());
     grad_loss->set_cublas_handle(graph->get_cublas_handle());
 #endif
+    /* init Loss in grad table to one */
     grad_loss->fill_memory({ONE, {}});
        
     table.set(graph, grad_loss);

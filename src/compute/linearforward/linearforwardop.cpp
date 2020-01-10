@@ -1,5 +1,7 @@
 #include "compute/linearforward/linearforwardop.h"
 
+#include <iostream>
+
 #include "magmadnn/config.h"
 
 namespace magmadnn {
@@ -62,9 +64,21 @@ Tensor<T> *LinearForwardOp<T>::_eval(bool recompute) {
 #endif
 
     if (use_bias) {
-        bias_tensor = bias->eval(recompute);
-        math::bias_add(this->output_tensor, this->bias_tensor, this->output_tensor);
-    }
+       bias_tensor = bias->eval(recompute);
+
+       if (this->output_tensor->get_memory_type() == HOST) {
+          magmadnn::math::bias_add_cpu(
+                this->output_tensor, this->bias_tensor, this->output_tensor);
+       }
+#if defined(MAGMADNN_HAVE_CUDA)
+       else {
+          magmadnn::math::bias_add_device(
+                this->get_custream(),
+                this->output_tensor, this->bias_tensor, this->output_tensor);
+          if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
+       }
+#endif
+    } // use_bias
 
     return this->output_tensor;
 }
@@ -75,7 +89,8 @@ Tensor<T> *LinearForwardOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, 
     Tensor<T> *out = this->_grad_cache[(uintptr_t) var];
 
     if (var == this->input) {
-        this->weights_tensor = this->weights->eval(false);
+
+       this->weights_tensor = this->weights->eval(false);
 
         if (out == NULL) {
             out = new Tensor<T>({grad->get_shape(0), this->weights_tensor->get_shape(0)}, {NONE, {}}, this->mem_type);
@@ -91,44 +106,49 @@ Tensor<T> *LinearForwardOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, 
         if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
 #endif
 
-    } else if (var == this->weights) {
-        this->input_tensor = this->input->eval(false);
+    }
+    else if (var == this->weights) {
 
-        if (out == NULL) {
-            out = new Tensor<T>({this->input_tensor->get_shape(1), grad->get_shape(1)}, {NONE, {}}, this->mem_type);
+       this->input_tensor = this->input->eval(false);
+
+       if (out == NULL) {
+          out = new Tensor<T>({this->input_tensor->get_shape(1), grad->get_shape(1)}, {NONE, {}}, this->mem_type);
 #if defined(MAGMADNN_HAVE_CUDA)
-            out->set_custream(this->get_custream());
-            out->set_cublas_handle(this->get_cublas_handle());
+          out->set_custream(this->get_custream());
+          out->set_cublas_handle(this->get_cublas_handle());
 #endif
-            this->_grad_cache[(uintptr_t) var] = out;
-        }
+          this->_grad_cache[(uintptr_t) var] = out;
+       }
 
-        math::matmul((T) 1, true, this->input_tensor, false, grad, (T) 0, out);
+       math::matmul((T) 1, true, this->input_tensor, false, grad, (T) 0, out);
 #if defined(MAGMADNN_HAVE_CUDA)
-        if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
+       if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
 #endif
 
-    } else if (this->use_bias && var == this->bias) {
-        /* grad wrt bias is reduce sum of grad along axis 1 */
+    }
+    else if (this->use_bias && var == this->bias) {
+       /* grad wrt bias is reduce sum of grad along axis 1 */
 
-        if (out == NULL) {
-            out = new Tensor<T>(this->bias_tensor->get_shape(), {NONE, {}}, this->mem_type);
+       this->bias_tensor = this->bias->eval(false);
+
+       if (out == NULL) {
+          out = new Tensor<T>(this->bias_tensor->get_shape(), {NONE, {}}, this->mem_type);
 #if defined(MAGMADNN_HAVE_CUDA)
-            out->set_custream(this->get_custream());
-            out->set_cublas_handle(this->get_cublas_handle());
+          out->set_custream(this->get_custream());
+          out->set_cublas_handle(this->get_cublas_handle());
 #endif
-            this->_grad_cache[(uintptr_t) var] = out;
-        }
+          this->_grad_cache[(uintptr_t) var] = out;
+       }
 
-        if (this->mem_type == HOST) {
-            math::reduce_sum(grad, 1, this->bias_ones, out);
-        }
+       if (this->mem_type == HOST) {
+          math::reduce_sum(grad, 1, this->bias_ones, out);
+       }
 #if defined(MAGMADNN_HAVE_CUDA)
-        else {
-            this->bias_reduce_settings.cudnn_handle = this->get_cudnn_handle();
-            math::reduce_sum_device(grad, 1, out, this->bias_reduce_settings);
-            if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
-        }
+       else {
+          this->bias_reduce_settings.cudnn_handle = this->get_cudnn_handle();
+          math::reduce_sum_device(grad, 1, out, this->bias_reduce_settings);
+          if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
+       }
 #endif
     }
 
@@ -148,23 +168,34 @@ void LinearForwardOp<T>::init_bias_settings() {
         cudnnTensorDescriptor_t grad_tmp_descriptor;
 
         cudnnErrchk(cudnnCreateTensorDescriptor(&grad_tmp_descriptor));
-        cudnnErrchk(cudnnSetTensor4dDescriptor(grad_tmp_descriptor, CUDNN_TENSOR_NCHW,
-                                               ::magmadnn::internal::get_cudnn_data_type((T) 0),
-                                               input->get_output_shape(0), weights->get_output_shape(1), 1, 1));
+        cudnnErrchk(
+              cudnnSetTensor4dDescriptor(
+                    grad_tmp_descriptor, CUDNN_TENSOR_NCHW,
+                    ::magmadnn::internal::get_cudnn_data_type((T) 0),
+                    input->get_output_shape(0), weights->get_output_shape(1), 1, 1));
 
-        cudnnErrchk(cudnnCreateReduceTensorDescriptor(&bias_reduce_settings.descriptor));
-        cudnnErrchk(cudnnSetReduceTensorDescriptor(bias_reduce_settings.descriptor, CUDNN_REDUCE_TENSOR_ADD,
-                                                   ::magmadnn::internal::get_cudnn_data_type(static_cast<T>(0)),
-                                                   CUDNN_NOT_PROPAGATE_NAN, CUDNN_REDUCE_TENSOR_NO_INDICES,
-                                                   CUDNN_32BIT_INDICES));
-        cudnnErrchk(cudnnGetReductionWorkspaceSize(
-                          this->get_cudnn_handle(),
-                          bias_reduce_settings.descriptor, grad_tmp_descriptor,
-                          this->output_tensor->get_cudnn_tensor_descriptor(),
-                          &bias_reduce_settings.workspace_size));
+        cudnnErrchk(
+              cudnnCreateReduceTensorDescriptor(&bias_reduce_settings.descriptor));
+
+        cudnnErrchk(
+              cudnnSetReduceTensorDescriptor(
+                    bias_reduce_settings.descriptor, CUDNN_REDUCE_TENSOR_ADD,
+                    ::magmadnn::internal::get_cudnn_data_type(static_cast<T>(0)),
+                    CUDNN_NOT_PROPAGATE_NAN, CUDNN_REDUCE_TENSOR_NO_INDICES,
+                    CUDNN_32BIT_INDICES));
+
+        cudnnErrchk(
+              cudnnGetReductionWorkspaceSize(
+                    this->get_cudnn_handle(),
+                    bias_reduce_settings.descriptor, grad_tmp_descriptor,
+                    this->output_tensor->get_cudnn_tensor_descriptor(),
+                    &bias_reduce_settings.workspace_size));
         
         cudaErrchk(
-            cudaMalloc((void **) &bias_reduce_settings.workspace, bias_reduce_settings.workspace_size * sizeof(T)));
+            cudaMalloc(
+                  (void **) &bias_reduce_settings.workspace,
+                  bias_reduce_settings.workspace_size * sizeof(T))
+              );
 
         cudnnErrchk(cudnnDestroyTensorDescriptor(grad_tmp_descriptor));
     }

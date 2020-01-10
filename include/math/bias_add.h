@@ -25,7 +25,7 @@ template <typename T>
 void bias_add_device(Tensor<T> *x, Tensor<T> *bias, Tensor<T> *out);
 
 template <typename T>
-void bias_add_device(cudaStream_t custream, Tensor<T> *x, Tensor<T> *bias, Tensor<T> *out)
+void bias_add_device(cudaStream_t custream, Tensor<T> *x, Tensor<T> *bias, Tensor<T> *out);
 #endif
 
 }  // namespace math

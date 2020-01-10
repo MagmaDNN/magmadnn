@@ -8,17 +8,24 @@
  */
 #pragma once
 
+#include "magmadnn/config.h"
 #include "tensor/tensor.h"
 
 namespace magmadnn {
 namespace math {
 
 template <typename T>
+void bias_add_cpu(Tensor<T> *x, Tensor<T> *bias, Tensor<T> *out);
+   
+template <typename T>
 void bias_add(Tensor<T> *x, Tensor<T> *bias, Tensor<T> *out);
 
 #if defined(MAGMADNN_HAVE_CUDA)
 template <typename T>
 void bias_add_device(Tensor<T> *x, Tensor<T> *bias, Tensor<T> *out);
+
+template <typename T>
+void bias_add_device(cudaStream_t custream, Tensor<T> *x, Tensor<T> *bias, Tensor<T> *out)
 #endif
 
 }  // namespace math

@@ -6,8 +6,14 @@ namespace magmadnn {
 namespace op {
 
 template <typename T>
-PoolingOp<T>::PoolingOp(Operation<T> *input, int filter_h, int filter_w, int pad_h, int pad_w, int vertical_stride,
-                        int horizontal_stride, pooling_mode mode, bool propagate_nan, bool needs_grad)
+PoolingOp<T>::PoolingOp(
+      Operation<T> *input,
+      int filter_h, int filter_w,
+      int pad_h, int pad_w,
+      int vertical_stride, int horizontal_stride,
+      pooling_mode mode,
+      bool propagate_nan,
+      bool needs_grad)
     : Operation<T>::Operation({input}, needs_grad),
       input(input),
       filter_h(filter_h),
@@ -18,7 +24,8 @@ PoolingOp<T>::PoolingOp(Operation<T> *input, int filter_h, int filter_w, int pad
       horizontal_stride(horizontal_stride),
       mode(mode),
       propagate_nan(propagate_nan) {
-    /* setup code in here */
+
+   /* setup code in here */
     this->mem_type = input->get_memory_type();
     this->name = "Pooling";
 

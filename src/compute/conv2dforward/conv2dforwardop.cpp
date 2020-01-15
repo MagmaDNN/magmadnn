@@ -8,9 +8,10 @@ namespace magmadnn {
 namespace op {
 
 template <typename T>
-Conv2DForwardOp<T>::Conv2DForwardOp(Operation<T> *input, Operation<T> *filter, int pad_h, int pad_w,
-                                    int vertical_stride, int horizontal_stride, int dilation_h, int dilation_w,
-                                    bool use_cross_correlation, bool needs_grad)
+Conv2DForwardOp<T>::Conv2DForwardOp(
+      Operation<T> *input, Operation<T> *filter, int pad_h, int pad_w,
+      int vertical_stride, int horizontal_stride, int dilation_h, int dilation_w,
+      bool use_cross_correlation, bool needs_grad)
     : Operation<T>::Operation({input, filter}, needs_grad),
       input(input),
       filter(filter),
@@ -21,6 +22,7 @@ Conv2DForwardOp<T>::Conv2DForwardOp(Operation<T> *input, Operation<T> *filter, i
       dilation_h(dilation_h),
       dilation_w(dilation_w),
       use_cross_correlation(use_cross_correlation) {
+   
     /* setup code in here */
     this->mem_type = input->get_memory_type();
 

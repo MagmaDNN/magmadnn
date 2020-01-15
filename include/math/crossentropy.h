@@ -15,6 +15,9 @@
 namespace magmadnn {
 namespace math {
 
+template <typename T>
+void crossentropy_full_cpu(Tensor<T> *x, Tensor<T> *y, Tensor<T> *softmax, Tensor<T> *out);
+
 /** Computes the cross entropy of predicted and ground_truth into out.
  * @tparam T
  * @param predicted

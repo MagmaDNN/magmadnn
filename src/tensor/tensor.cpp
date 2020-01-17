@@ -64,7 +64,7 @@ void Tensor<T>::init(std::vector<unsigned int>& shape, tensor_filler_t<T> filler
     this->shape = shape;
     this->mem_type = mem_type;
     this->device_id = device_id;
-    
+
     // calculate stride values
     this->strides.resize(shape.size());
     unsigned int tmp_stride = 1;
@@ -87,7 +87,7 @@ void Tensor<T>::init(std::vector<unsigned int>& shape, tensor_filler_t<T> filler
     this->set_custream(nullptr);
     this->set_cublas_handle(nullptr);
 #endif
-    
+
     internal::fill_memory(*mem_manager, filler);
 
 #if defined(MAGMADNN_HAVE_CUDA)

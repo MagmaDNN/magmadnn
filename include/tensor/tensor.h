@@ -101,11 +101,8 @@ class Tensor {
      */
     magmadnn_error_t copy_from(const Tensor<T>& src, const std::vector<unsigned int>& dims);
 
+    void fill_memory(tensor_filler_t<T> filler) { internal::fill_memory(*(this->mem_manager), filler); }
 
-    void fill_memory(tensor_filler_t<T> filler) {
-       internal::fill_memory(*(this->mem_manager), filler);
-    }
-   
     /** gets the value at the given index.
      * @param idx indices to retreive value from
      * @return the value at idx
@@ -176,21 +173,20 @@ class Tensor {
 
 #if defined(MAGMADNN_HAVE_CUDA)
     void set_custream(cudaStream_t custream) {
-       // Update memory manager with CUDA stream
-       if (this->mem_manager)
-          this->mem_manager->set_custream(custream);
-       this->custream_ = custream;
+        // Update memory manager with CUDA stream
+        if (this->mem_manager) this->mem_manager->set_custream(custream);
+        this->custream_ = custream;
     }
 
     void set_cublas_handle(cublasHandle_t cublas_handle) {
-       // Update memory manager with cuBLAS handle
-       // if (this->mem_manager)
-       //    this->mem_manager->set_custream(custream);
-       this->cublas_handle_ = cublas_handle;
+        // Update memory manager with cuBLAS handle
+        // if (this->mem_manager)
+        //    this->mem_manager->set_custream(custream);
+        this->cublas_handle_ = cublas_handle;
     }
 #endif
-   
-   /** Returns the memory manager used by this tensor
+
+    /** Returns the memory manager used by this tensor
      * @return MemoryManager<T>*
      */
     MemoryManager<T>* get_memory_manager() const { return this->mem_manager; }
@@ -248,11 +244,9 @@ class Tensor {
      */
     void unsqueeze(unsigned int dim = 0);
 
-   // Return the amount of memory needed to store the tensor data
-   std::size_t get_memory_size() const {
-      return get_size() * sizeof(T);
-   }
-   
+    // Return the amount of memory needed to store the tensor data
+    std::size_t get_memory_size() const { return get_size() * sizeof(T); }
+
    private:
     void init(std::vector<unsigned int>& shape, tensor_filler_t<T> filler, memory_t mem_type, device_t device_id);
     unsigned int get_flattened_index(const std::vector<unsigned int>& idx) const;

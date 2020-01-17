@@ -7,7 +7,7 @@
 #include "tensor/tensor.h"
 
 namespace magmadnn {
-namespace op {
+   namespace op {
 
 template <typename T>
 class PowOp : public Operation<T> {

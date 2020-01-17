@@ -85,7 +85,7 @@ Tensor<T> *AddOp<T>::_eval(bool recompute) {
       }  
 #endif
    }
-  
+
    return this->output_tensor;
 }
 

@@ -212,8 +212,7 @@ void Conv2DForwardOp<T>::init_settings() {
                               this->cudnn_settings.grad_data_workspace_size));
 
         cudnnErrchk(cudnnGetConvolutionBackwardFilterWorkspaceSize(
-            this->cudnn_settings.handle,
-            this->input_tensor->get_cudnn_tensor_descriptor(),
+            this->cudnn_settings.handle, this->input_tensor->get_cudnn_tensor_descriptor(),
             this->output_tensor->get_cudnn_tensor_descriptor(), this->cudnn_settings.conv_desc,
             this->cudnn_settings.filter_desc, this->cudnn_settings.bwd_filter_algo,
             &this->cudnn_settings.grad_filter_workspace_size));

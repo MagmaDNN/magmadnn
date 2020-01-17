@@ -90,13 +90,13 @@ Tensor<T> *MatmulOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor<
             }
             
 #if defined(MAGMADNN_HAVE_CUDA)
-      out->set_custream(this->get_custream());
-      out->set_cublas_handle(this->get_cublas_handle());
+            out->set_custream(this->get_custream());
+            out->set_cublas_handle(this->get_cublas_handle());
 #endif
       
             this->_grad_cache[(uintptr_t) a] = out;
         }
-        
+
         math::dot((T) 1, false, grad, true, b_tensor, (T) 0, out);
 
         // return dot(grad, transpose(b, true, false), true, false);

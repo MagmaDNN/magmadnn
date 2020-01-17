@@ -97,7 +97,7 @@ void gemm_full(float alpha, Tensor<float> *A, Tensor<float> *B, float beta, Tens
 template <>
 void gemm_full(double alpha, Tensor<double> *A, Tensor<double> *B, double beta, Tensor<double> *C) {
     // unsigned int M, N, K;
-   int M, N, K;
+    int M, N, K;
     if (!gemm_check(A, B, C, M, N, K)) return;
 
     if (A->get_memory_type() == HOST) {

@@ -1,0 +1,8 @@
+magmadnn_add_test(testing_compute_graph.cpp)
+magmadnn_add_test(testing_dataloader.cpp)
+magmadnn_add_test(testing_grad.cpp)
+magmadnn_add_test(testing_layers.cpp)
+magmadnn_add_test(testing_math.cpp)
+magmadnn_add_test(testing_memorymanager.cpp)
+magmadnn_add_test(testing_model.cpp)
+magmadnn_add_test(testing_tensor.cpp)

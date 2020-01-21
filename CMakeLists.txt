@@ -26,6 +26,7 @@ option(MAGMADNN_ENABLE_MPI "Enable distributed memory routines using MPI" OFF)
 option(MAGMADNN_ENABLE_OMP "Enable parallelization using OpenMP library" OFF)
 option(MAGMADNN_BUILD_DOC "Generate documentation" OFF)
 option(MAGMADNN_BUILD_EXAMPLES "Build MagmaDNN examples" ON)
+option(MAGMADNN_BUILD_TESTS "Generate build files for unit tests" OFF)
 option(MAGMADNN_BUILD_SHARED_LIBS "Build shared (.so, .dylib, .dll) libraries" ON)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules/")
@@ -242,6 +243,10 @@ add_subdirectory(src)
 
 if(MAGMADNN_BUILD_EXAMPLES)
     add_subdirectory(examples)
+endif()
+
+if(MAGMADNN_BUILD_TESTS)
+    add_subdirectory(testing)
 endif()
 
 magmadnn_install()

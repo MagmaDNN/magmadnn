@@ -14,6 +14,7 @@ namespace op {
 
 template <typename T>
 Operation<T> *meansquarederror(Operation<T> *ground_truth, Operation<T> *prediction) {
+    // Batch size 
     auto size = ground_truth->get_output_shape(0);
     T norm = static_cast<T>(1.0) / static_cast<T>(size);
     return op::scalarproduct(norm, op::reducesum(op::pow(op::add(ground_truth, op::negative(prediction)), 2), 0));

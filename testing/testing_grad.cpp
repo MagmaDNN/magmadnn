@@ -10,7 +10,7 @@
 #include <cmath>
 #include "magmadnn.h"
 #include "utilities.h"
-#include "utilities_internal.h"
+// #include "utilities_internal.h"
 
 using namespace magmadnn;
 

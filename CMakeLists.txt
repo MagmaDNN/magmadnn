@@ -21,12 +21,12 @@ endif()
 
 ########################################
 # MagmaDNN options
-option(MAGMADNN_ENABLE_CUDA "Enable use of CUDA library and compilation of CUDA kernel" OFF)
+option(MAGMADNN_ENABLE_CUDA "Enable use of CUDA library and compilation of CUDA kernel" ON)
 option(MAGMADNN_ENABLE_MPI "Enable distributed memory routines using MPI" OFF)
 option(MAGMADNN_ENABLE_OMP "Enable parallelization using OpenMP library" OFF)
 option(MAGMADNN_BUILD_DOC "Generate documentation" OFF)
 option(MAGMADNN_BUILD_EXAMPLES "Build MagmaDNN examples" ON)
-option(MAGMADNN_BUILD_TESTS "Generate build files for unit tests" OFF)
+option(MAGMADNN_BUILD_TESTS "Generate build files for unit tests" ON)
 option(MAGMADNN_BUILD_SHARED_LIBS "Build shared (.so, .dylib, .dll) libraries" ON)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules/")
@@ -132,11 +132,11 @@ if (MAGMADNN_ENABLE_CUDA)
 
   ########################################
   # Find cuBLAS library
-  find_library(CUBLAS cublas)
+  # find_library(CUBLAS cublas)
 
-  message(STATUS "cuBLAS: ${CUBLAS}")
+  # message(STATUS "cuBLAS: ${CUDA_CUBLAS_LIBRARIES}")
 
-  set(LIBS ${LIBS} ${CUBLAS})
+  # set(LIBS ${LIBS} ${CUDA_CUBLAS_LIBRARIES})
 
   ########################################
   # Find Magma library

@@ -20,7 +20,8 @@ namespace magmadnn {
 namespace math {
 
 template <typename T>
-void conv2d(Tensor<T> *x, Tensor<T> *w, Tensor<T> *out);
+void conv2d(Tensor<T> *x, Tensor<T> *w, Tensor<T> *out, const int pad_h, const int pad_w, const int vertical_stride,
+            const int horizontal_stride, const int dilation_h, const int dilation_w);
 
 template <typename T>
 void conv2d_grad_data(Tensor<T> *w, Tensor<T> *grad, Tensor<T> *out);

@@ -59,7 +59,7 @@ int main(int argc, char** argv) {
     }
 
     memory_t dev;
-#if defined(USE_GPU)
+#if defined(MAGMADNN_HAVE_CUDA)
     dev = DEVICE;
 #else
     dev = HOST;
@@ -74,10 +74,12 @@ int main(int argc, char** argv) {
     delete host_labels;
 
     model::nn_params_t params;
-    params.batch_size = 2;
-    params.n_epochs = 30;
-    params.learning_rate = 0.01;
-
+    params.batch_size = 128;
+    params.n_epochs = 100;
+    params.learning_rate = 0.001;
+    params.momentum = 0.9;
+    params.decaying_factor = 0.01;
+   
     auto x_batch = op::var<float>("x_batch", {params.batch_size, 3, image_height, image_width}, {NONE, {}}, dev);
 
     auto input_layer = layer::input<float>(x_batch);
@@ -174,7 +176,8 @@ int main(int argc, char** argv) {
         drop5,       conv9,  act9,  drop6, conv10, act10, pool4, conv11, act11,  drop7, conv12, act12,
         drop8,       conv13, act13, pool5, drop9,  flat,  fc1,   act14,  drop10, fc2,   act15,  output};
 
-    model::NeuralNetwork<float> model(layers, optimizer::CROSS_ENTROPY, optimizer::SGD, params);
+    // model::NeuralNetwork<float> model(layers, optimizer::CROSS_ENTROPY, optimizer::SGD, params);
+    model::NeuralNetwork<float> model(layers, optimizer::CROSS_ENTROPY, optimizer::RMSPROP, params);
 
     std::printf("model created successfully!\n");
     // std::exit(0);

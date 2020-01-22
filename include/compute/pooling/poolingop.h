@@ -1,5 +1,6 @@
 #pragma once
 
+#include "magmadnn/config.h"
 #include "compute/operation.h"
 #include "math/pooling.h"
 #include "tensor/tensor.h"

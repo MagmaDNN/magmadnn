@@ -92,7 +92,7 @@ int main(int argc, char** argv) {
     auto act2 = layer::activation<float>(conv2->out(), layer::RELU);
     /* batchnorm */
 
-    auto pool1 = layer::pooling<float>(act2->out(), {2, 2}, layer::SAME, {1, 1}, MAX_POOL);
+    auto pool1 = layer::pooling<float>(act2->out(), {2, 2}, layer::SAME, {1, 1}, {1, 1}, MAX_POOL);
 
     /* CHUNK 2 */
     auto conv3 = layer::conv2d<float>(pool1->out(), {3, 3}, 128, layer::SAME);
@@ -104,7 +104,7 @@ int main(int argc, char** argv) {
     auto act4 = layer::activation<float>(conv4->out(), layer::RELU);
     /* batchnorm */
 
-    auto pool2 = layer::pooling<float>(act4->out(), {2, 2}, layer::SAME, {1, 1}, MAX_POOL);
+    auto pool2 = layer::pooling<float>(act4->out(), {2, 2}, layer::SAME, {1, 1}, {1, 1}, MAX_POOL);
 
     /* CHUNK 3 */
     auto conv5 = layer::conv2d<float>(pool2->out(), {3, 3}, 256, layer::SAME);
@@ -121,7 +121,7 @@ int main(int argc, char** argv) {
     auto act7 = layer::activation<float>(conv7->out(), layer::RELU);
     /* batchnorm */
 
-    auto pool3 = layer::pooling<float>(act7->out(), {2, 2}, layer::SAME, {1, 1}, MAX_POOL);
+    auto pool3 = layer::pooling<float>(act7->out(), {2, 2}, layer::SAME, {1, 1}, {1, 1}, MAX_POOL);
 
     /* CHUNK 4 */
     auto conv8 = layer::conv2d<float>(pool3->out(), {3, 3}, 512, layer::SAME);
@@ -138,7 +138,7 @@ int main(int argc, char** argv) {
     auto act10 = layer::activation<float>(conv10->out(), layer::RELU);
     /* batchnorm */
 
-    auto pool4 = layer::pooling<float>(act10->out(), {2, 2}, layer::SAME, {1, 1}, MAX_POOL);
+    auto pool4 = layer::pooling<float>(act10->out(), {2, 2}, layer::SAME, {1, 1}, {1, 1}, MAX_POOL);
 
     /* CHUNK 5 */
     auto conv11 = layer::conv2d<float>(pool4->out(), {3, 3}, 512, layer::SAME);
@@ -155,7 +155,7 @@ int main(int argc, char** argv) {
     auto act13 = layer::activation<float>(conv13->out(), layer::RELU);
     /* batchnorm */
 
-    auto pool5 = layer::pooling<float>(act13->out(), {2, 2}, layer::SAME, {1, 1}, MAX_POOL);
+    auto pool5 = layer::pooling<float>(act13->out(), {2, 2}, layer::SAME, {1, 1}, {1, 1}, MAX_POOL);
     auto drop9 = layer::dropout<float>(pool5->out(), 0.5);
 
     auto flat = layer::flatten<float>(drop9->out());

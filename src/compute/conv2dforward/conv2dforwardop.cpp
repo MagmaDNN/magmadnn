@@ -227,49 +227,60 @@ template <typename T>
 void Conv2DForwardOp<T>::calculate_and_set_output_shape() {
     /* calculate the correct output shape here */
     if (this->mem_type == HOST) {
-        unsigned int No, Co, Ho, Wo, Ck, Ci;  // shorthand for tensor dims
-        const int p_h_x2 = this->pad_h * 2;   // total padding to add on top and bottom
-        const int p_w_x2 = this->pad_w * 2;   // total padding to add on left and right
-        unsigned int out_img_h, out_img_w;
+        unsigned int No, Co, Ho, Wo, Cf, Nf, Hf, Wf, Ni, Ci, Hi, Wi;  // shorthand for tensor dims
+        const int p_h_x2 = this->pad_h * 2;                           // total padding to add on top and bottom
+        const int p_w_x2 = this->pad_w * 2;                           // total padding to add on left and right
         std::vector<unsigned int> in_shape = this->input_tensor->get_shape();
         std::vector<unsigned int> filter_shape = this->filter->get_output_shape();
 
         if (filter_shape.size() == 4 && in_shape.size() == 4) {
-            out_img_h = (in_shape[2] - (filter_shape[2] * this->dilation_h) + p_h_x2 + this->vertical_stride) /
-                        this->vertical_stride;
-            out_img_w = (in_shape[3] - (filter_shape[3] * this->dilation_w) + p_w_x2 + this->horizontal_stride) /
-                        this->horizontal_stride;
+            Ni = in_shape[0];
             Ci = in_shape[1];
-            Co = filter_shape[0];
-            Ho = out_img_h;
-            Wo = out_img_w;
-            No = in_shape[0];
-            Ck = filter_shape[1];
-            this->output_shape = {No, Co, Ho, Wo};
+            Hi = in_shape[2];
+            Wi = in_shape[3];
+
+            Nf = filter_shape[0];
+            Cf = filter_shape[1];
+            Hf = filter_shape[2];
+            Wf = filter_shape[3];
         } else if (filter_shape.size() == 4 && in_shape.size() == 3) {
-            out_img_h = (in_shape[1] - (filter_shape[2] * this->dilation_h) + p_h_x2 + this->vertical_stride) /
-                        this->vertical_stride;
-            out_img_w = (in_shape[2] - (filter_shape[3] * this->dilation_w) + p_w_x2 + this->horizontal_stride) /
-                        this->horizontal_stride;
+            Ni = 1;
             Ci = in_shape[0];
-            Co = filter_shape[0];
-            Ho = out_img_h;
-            Wo = out_img_w;
-            No = 1;
-            Ck = filter_shape[1];
-            this->output_shape = {Co, Ho, Wo};
+            Hi = in_shape[1];
+            Wi = in_shape[2];
+
+            Nf = filter_shape[0];
+            Cf = filter_shape[1];
+            Hf = filter_shape[2];
+            Wf = filter_shape[3];
         } else if (filter_shape.size() == 3 && in_shape.size() == 3) {
-            // TODO write logic for other kernel and image shapes
-            fprintf(stderr, "Error: Conv2dForward::invalid shape sizes. Img: %i filter: %i\n", in_shape.size(),
-                    filter_shape.size());
+            Ni = 1;
+            Ci = in_shape[0];
+            Hi = in_shape[1];
+            Wi = in_shape[2];
+
+            Nf = 1;
+            Cf = filter_shape[0];
+            Hf = filter_shape[1];
+            Wf = filter_shape[2];
         } else {
-            fprintf(stderr, "Error: Conv2dForward::invalid shape sizes. Img: %i filter: %i\n", in_shape.size(),
-                    filter_shape.size());
+            fprintf(stderr, "Error invalid shapes\n");
         }
 
-        if (Ci != Ck) {
-            fprintf(stderr, "Error: Conv2d_cpu filter channels must equal input channels.\n");
+        if (Ci != Cf) {
+            fprintf(stderr, "Error: Conv2d_cpu filter channels(%i) must equal input channels(%i).\n", Cf, Ci);
         }
+
+        No = Ni;
+        Co = Nf;
+        Ho = (Hi - (Hf * this->dilation_h) + p_h_x2 + this->horizontal_stride) / this->horizontal_stride;
+        Wo = (Wi - (Wf * this->dilation_w) + p_w_x2 + this->vertical_stride) / this->vertical_stride;
+
+        this->output_tensor = new Tensor<T>({No, Co, Ho, Wo}, {NONE, {}}, this->mem_type);
+
+        this->output_tensor->squeeze();
+
+        this->output_shape = this->output_tensor->get_shape();
 
     }
 #if defined(MAGMADNN_HAVE_CUDA)
@@ -282,10 +293,10 @@ void Conv2DForwardOp<T>::calculate_and_set_output_shape() {
 
         this->output_shape = {static_cast<unsigned int>(n), static_cast<unsigned int>(c), static_cast<unsigned int>(h),
                               static_cast<unsigned int>(w)};
+        this->output_tensor = new Tensor<T>(this->output_shape, {NONE, {}}, this->mem_type);
     }
 #endif
 
-    this->output_tensor = new Tensor<T>(this->output_shape, {NONE, {}}, this->mem_type);
 #if defined(MAGMADNN_HAVE_CUDA)
     this->output_tensor->set_custream(this->get_custream());
     this->output_tensor->set_cublas_handle(this->get_cublas_handle());

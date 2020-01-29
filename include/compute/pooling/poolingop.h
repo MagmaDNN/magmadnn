@@ -11,8 +11,8 @@ template <typename T>
 class PoolingOp : public Operation<T> {
    public:
     PoolingOp(Operation<T> *input, int filter_h = 0, int filter_w = 0, int pad_h = 0, int pad_w = 0,
-              int vertical_stride = 1, int horizontal_stride = 1, pooling_mode mode = MAX_POOL,
-              bool propagate_nan = false, bool needs_grad = true);
+              int vertical_stride = 1, int horizontal_stride = 1, int dilation_h = 1, int dilation_w = 1,
+              pooling_mode mode = MAX_POOL, bool propagate_nan = false, bool needs_grad = true);
     ~PoolingOp();
 
     std::string to_string() { return "Pooling(" + input->to_string() + ")"; }
@@ -26,8 +26,9 @@ class PoolingOp : public Operation<T> {
 
     Operation<T> *input;
     Tensor<T> *input_tensor;
+    Tensor<int> *max_positions;
 
-    int filter_h, filter_w, pad_h, pad_w, vertical_stride, horizontal_stride;
+    int filter_h, filter_w, pad_h, pad_w, dilation_h, dilation_w, vertical_stride, horizontal_stride;
     pooling_mode mode;
     bool propagate_nan;
 
@@ -38,8 +39,8 @@ class PoolingOp : public Operation<T> {
 
 template <typename T>
 PoolingOp<T> *pooling(Operation<T> *input, int filter_h = 0, int filter_w = 0, int pad_h = 0, int pad_w = 0,
-                      int vertical_stride = 1, int horizontal_stride = 1, pooling_mode mode = MAX_POOL,
-                      bool propagate_nan = false, bool needs_grad = true);
+                      int vertical_stride = 1, int horizontal_stride = 1, int dilation_h = 1, int dilation_w = 1,
+                      pooling_mode mode = MAX_POOL, bool propagate_nan = false, bool needs_grad = true);
 
 }  // namespace op
 }  // namespace magmadnn

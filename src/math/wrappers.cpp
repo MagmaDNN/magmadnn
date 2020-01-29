@@ -18,6 +18,12 @@ extern "C" {
    // GEMV
    void sgemv_(char* trans, int *m, int *n, float* alpha, float const* a, int* lda, const float *x, int const* incx, float *beta, float *y, int const *incy);
    void dgemv_(char* trans, int *m, int *n, double* alpha, double const* a, int* lda, const double *x, int const* incx, double *beta, double *y, int const *incy);
+   // AXPY
+   void daxpy_(const int *n, const double *a, const double *x, const int *incx, double *y, const int *incy);
+   void saxpy_(const int *n, const float *a, const float *x, const int *incx, float *y, const int *incy);
+   // SCAL
+   void dscal_(int const* n, double const* a, double const* x, int const* incx);
+   void sscal_(int const* n, float const* a, float const* x, int const* incx);
 }
 
 namespace magmadnn {
@@ -67,5 +73,26 @@ namespace math {
       dgemv_(&ftrans, &m, &n, &alpha, a, &lda, x, &incx, &beta, y, &incy);
    }
 
+   // SAXPY
+   template<>
+   void axpy<float>(int n, float a, const float *x, int incx, float *y, int incy) {
+      saxpy_(&n, &a, x, &incx, y, &incy);
+   }
+   // DAXPY
+   template<>
+   void axpy<double>(int n, double a, const double *x, int incx, double *y, int incy) {
+      daxpy_(&n, &a, x, &incx, y, &incy);
+   }
+
+   // SSCAL
+   template<>
+   void scal<float>(int n, float a, const float *x, int incx) {
+      sscal_(&n, &a, x, &incx);
+   }
+   // DSCAL
+   template<>
+   void scal<double>(int n, double a, const double *x, int incx) {
+      dscal_(&n, &a, x, &incx);
+   }
    
 }}  // namespace magmadnn::math

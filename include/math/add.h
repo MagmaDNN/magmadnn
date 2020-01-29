@@ -9,6 +9,7 @@
  */
 #pragma once
 
+#include "magmadnn/config.h"
 #include "tensor/tensor.h"
 
 #if defined(MAGMADNN_HAVE_CUDA)
@@ -19,14 +20,35 @@ namespace magmadnn {
 namespace math {
 
 template <typename T>
+void add_in_place_cpu(T alpha, Tensor<T> *x, T beta, Tensor<T> *out);
+
+template <typename T>
+void add_in_place_cpu(T alpha, Tensor<T> *x, Tensor<T> *out);
+
+template <typename T>
+void add_in_place_cpu(Tensor<T> *x, Tensor<T> *out);
+
+template <typename T>
+void subtract_cpu(Tensor<T> *x, Tensor<T> *out);
+   
+template <typename T>
 void add_in_place(T alpha, Tensor<T> *x, T beta, Tensor<T> *out);
+
+template <typename T>
+void add_in_place(T alpha, Tensor<T> *x, Tensor<T> *out);
 
 #if defined(MAGMADNN_HAVE_CUDA)
 template <typename T>
 void add_in_place_device(cudnnHandle_t handle, T alpha, Tensor<T> *x, T beta, Tensor<T> *out);
 
 template <typename T>
+void add_in_place_device(cudnnHandle_t handle, Tensor<T> *x, Tensor<T> *out);
+   
+template <typename T>
 void add_in_place_device(T alpha, Tensor<T> *x, T beta, Tensor<T> *out);
+
+template <typename T>
+void subtract_device(cudnnHandle_t handle, Tensor<T> *x, Tensor<T> *out);
 #endif
 
 }  // namespace math

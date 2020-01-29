@@ -33,4 +33,12 @@ namespace math {
    void gemv(enum operation trans, int m, int n, T alpha, T const* a, int lda,
                   T const* x, int incx, T beta, T *y, int incy);
 
+   // AXPY
+   template <typename T> 
+   void axpy(int n, const T a, const T *x, const int incx, T *y, const int incy);
+
+   // SCAL
+   template <typename T> 
+   void scal(int n, const T a, const T *x, const int incx);
+
 }}  // namespace magmadnn::math

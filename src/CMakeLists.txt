@@ -81,6 +81,12 @@ if (MAGMADNN_ENABLE_CUDA)
     )
 endif()
 
+# data
+target_sources(magmadnn
+  PRIVATE
+  data/utils.cpp
+  data/MNIST.cpp)
+
 # dataloader
 target_sources(magmadnn
   PRIVATE

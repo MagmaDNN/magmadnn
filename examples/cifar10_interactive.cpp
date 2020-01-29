@@ -39,8 +39,7 @@ void switch_batch(Tensor<float>** data, Tensor<float>** labels, uint32_t& cur_ba
                   uint32_t& n_classes, bool normalize = true);
 
 int main(int argc, char** argv) {
-
-   magmadnn_init();
+    magmadnn_init();
 
     Tensor<float>*host_data, *host_labels, *data, *labels;
     uint32_t n_images, image_width, image_height, n_channels, n_classes;
@@ -79,7 +78,7 @@ int main(int argc, char** argv) {
     training_memory_type = HOST;
     std::cout << "Training on CPUs" << std::endl;
 #endif
-    
+
     data = new Tensor<float>(host_data->get_shape(), {NONE, {}}, training_memory_type);
     labels = new Tensor<float>(host_labels->get_shape(), {NONE, {}}, training_memory_type);
 
@@ -96,12 +95,13 @@ int main(int argc, char** argv) {
     params.n_epochs = 30;
     params.learning_rate = 0.05;
 
-    auto x_batch = op::var<float>("x_batch", {params.batch_size, 3, image_height, image_width}, {NONE, {}}, training_memory_type);
+    auto x_batch =
+        op::var<float>("x_batch", {params.batch_size, 3, image_height, image_width}, {NONE, {}}, training_memory_type);
 
     auto input_layer = layer::input<float>(x_batch);
     auto conv2d1 = layer::conv2d<float>(input_layer->out(), {5, 5}, 32, {0, 0}, {1, 1}, {1, 1}, true, false);
     auto act1 = layer::activation<float>(conv2d1->out(), layer::RELU);
-    auto pool1 = layer::pooling<float>(act1->out(), {2, 2}, {0, 0}, {2, 2}, MAX_POOL);
+    auto pool1 = layer::pooling<float>(act1->out(), {2, 2}, {0, 0}, {2, 2}, {1, 1}, MAX_POOL);
     auto dropout1 = layer::dropout<float>(pool1->out(), 0.25);
 
     auto flatten = layer::flatten<float>(dropout1->out());

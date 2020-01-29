@@ -27,11 +27,11 @@ void conv2d(Tensor<T> *x, Tensor<T> *w, Tensor<T> *out, const int pad_h, const i
         }
 
         std::vector<unsigned int> out_shape = out->get_shape();
+        std::vector<unsigned int> in_shape = x->get_shape();
         std::vector<unsigned int> w_shape = w->get_shape();
-        // fprintf(stderr, "__Conv2d CPU not supported yet.\n");
 
         unsigned int o_n, o_c, o_h, o_w, k_n, k_c, k_h, k_w;  // iteration variables
-        unsigned int No, Co, Ho, Wo, Ck, Hk, Wk, Ci;          // shorthand for tensor dims
+        unsigned int No, Co, Ho, Wo, Ck, Hk, Wk, Ci, Hi, Wi;  // shorthand for tensor dims
         if (out_shape.size() == 4) {
             No = out_shape[0];
             Co = out_shape[1];
@@ -56,6 +56,20 @@ void conv2d(Tensor<T> *x, Tensor<T> *w, Tensor<T> *out, const int pad_h, const i
             return;
         }
 
+        if (in_shape.size() == 4) {
+            Hi = in_shape[2];
+            Wi = in_shape[3];
+        } else if (in_shape.size() == 3) {
+            Hi = in_shape[1];
+            Wi = in_shape[2];
+        } else if (in_shape.size() == 2) {
+            Hi = in_shape[0];
+            Wi = in_shape[1];
+        } else {
+            fprintf(stderr, "Error: pooling::invalid input shape size.\n");
+            return;
+        }
+
         // crop
         for (o_n = 0; o_n < No; o_n++) {
             for (o_c = 0; o_c < Co; o_c++) {
@@ -70,7 +84,7 @@ void conv2d(Tensor<T> *x, Tensor<T> *w, Tensor<T> *out, const int pad_h, const i
                                     unsigned int in_h = o_h * vertical_stride - pad_h + k_h * dilation_h;
                                     unsigned int in_w = o_w * horizontal_stride - pad_w + k_w * dilation_w;
 
-                                    if (in_h < out_shape[1] && in_w < out_shape[2]) {
+                                    if (in_h < Hi && in_w < Wi) {
                                         val += w->get({o_c, k_c, k_h, k_w}) * x->get({o_n, k_c, in_h, in_w});
                                     }
                                 }

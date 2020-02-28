@@ -100,6 +100,7 @@ void test_relu(memory_t mem, unsigned int size) {
 #if defined(MAGMADNN_HAVE_CUDA)
     else {
         math::relu_cudnn_settings_t settings;
+        settings.handle = internal::MAGMADNN_SETTINGS->cudnn_handle;
         cudnnErrchk(cudnnCreateActivationDescriptor(&settings.descriptor));
         cudnnErrchk(
             cudnnSetActivationDescriptor(settings.descriptor, CUDNN_ACTIVATION_RELU, CUDNN_NOT_PROPAGATE_NAN, 1.0));
@@ -122,6 +123,7 @@ void test_relu(memory_t mem, unsigned int size) {
 #if defined(MAGMADNN_HAVE_CUDA)
     else {
         math::relu_cudnn_settings_t settings;
+        settings.handle = internal::MAGMADNN_SETTINGS->cudnn_handle;
         cudnnErrchk(cudnnCreateActivationDescriptor(&settings.descriptor));
         cudnnErrchk(
             cudnnSetActivationDescriptor(settings.descriptor, CUDNN_ACTIVATION_RELU, CUDNN_NOT_PROPAGATE_NAN, 1.0));
@@ -175,7 +177,7 @@ void test_reduce_sum(memory_t mem, unsigned int size) {
 #if defined(MAGMADNN_HAVE_CUDA)
     else {
         math::reduce_sum_cudnn_settings_t settings;
-
+        settings.cudnn_handle = internal::MAGMADNN_SETTINGS->cudnn_handle;
         cudnnCreateReduceTensorDescriptor(&settings.descriptor);
         cudnnSetReduceTensorDescriptor(settings.descriptor, CUDNN_REDUCE_TENSOR_ADD, CUDNN_DATA_FLOAT,
                                        CUDNN_NOT_PROPAGATE_NAN, CUDNN_REDUCE_TENSOR_NO_INDICES, CUDNN_32BIT_INDICES);

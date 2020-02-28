@@ -285,7 +285,8 @@ magmadnn_error_t MemoryManager<T>::sync(bool gpu_was_modified) {
 
     if (mem_type == CUDA_MANAGED) {
         // cudaErrchk(cudaDeviceSynchronize());
-        cudaStreamSynchronize(this->get_custream());
+        cudaErrchk(
+              cudaStreamSynchronize(this->get_custream()));
     } else if (mem_type == MANAGED) {
         if (gpu_was_modified) {
             cudaErrchk(

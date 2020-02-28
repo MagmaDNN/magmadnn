@@ -247,6 +247,12 @@ class Tensor {
     // Return the amount of memory needed to store the tensor data
     std::size_t get_memory_size() const { return get_size() * sizeof(T); }
 
+   
+    /** Zero out memory
+     *
+     */
+    magmadnn_error_t zero();
+
    private:
     void init(std::vector<unsigned int>& shape, tensor_filler_t<T> filler, memory_t mem_type, device_t device_id);
     unsigned int get_flattened_index(const std::vector<unsigned int>& idx) const;

@@ -414,6 +414,36 @@ T* MemoryManager<T>::get_ptr() {
     }
 }
 
+template <typename T>
+magmadnn_error_t MemoryManager<T>::zero() {
+
+   std::size_t sz = size * sizeof(T);
+
+   switch (mem_type) {
+    case HOST:
+       std::memset(this->host_ptr, 0, sz);
+       return (magmadnn_error_t) 0;
+#if defined(MAGMADNN_HAVE_CUDA)
+    case DEVICE:
+       cudaMemsetAsync(this->device_ptr, 0, sz, custream_);
+       return (magmadnn_error_t) 0;           
+    case MANAGED:
+       std::memset(this->host_ptr, 0, sz);
+       cudaMemsetAsync(this->device_ptr, 0, sz, this->custream_);       
+       cudaStreamSynchronize(this->custream_);
+       return (magmadnn_error_t) 0;
+    case CUDA_MANAGED:
+       std::memset(this->host_ptr, 0, sz);
+       cudaMemsetAsync(this->device_ptr, 0, sz, custream_);
+       cudaStreamSynchronize(this->custream_);
+       return (magmadnn_error_t) 0;
+#endif
+    }
+
+    return (magmadnn_error_t) 1;
+
+}
+
 /* COMPILE FOR INT, FLOAT, AND DOUBLE */
 template class MemoryManager<int>;
 template class MemoryManager<float>;

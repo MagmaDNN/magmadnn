@@ -316,6 +316,11 @@ void Tensor<T>::free_cudnn_descriptor() {
 }
 #endif
 
+template <typename T>
+magmadnn_error_t Tensor<T>::zero() {
+   return this->mem_manager->zero();
+}
+   
 /* COMPILE FOR INT, FLOAT, AND DOUBLE */
 template class Tensor<int>;
 template class Tensor<float>;

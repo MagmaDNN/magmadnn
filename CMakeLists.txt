@@ -235,6 +235,9 @@ configure_file(
 # Load CMake helpers
 include(cmake/build_helpers.cmake)
 include(cmake/install_helpers.cmake)
+if(MAGMADNN_BUILD_TESTS)
+  include(cmake/create_test.cmake)
+endif()
 
 ########################################
 # Subdirectories
@@ -246,7 +249,9 @@ if(MAGMADNN_BUILD_EXAMPLES)
 endif()
 
 if(MAGMADNN_BUILD_TESTS)
-    add_subdirectory(testing)
+  enable_testing()
+  include(CTest)
+  add_subdirectory(testing)
 endif()
 
 magmadnn_install()

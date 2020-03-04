@@ -86,6 +86,8 @@ int main(int argc, char** argv) {
    model::metric_t metrics;
    model.fit(&train_set.images(), &train_set.labels(), metrics, true);
 
+   // Compute accuracy of the model on the test set
+  
    uint32_t total_correct = 0;
    
    Tensor<T> sample({train_set.nchanels(), test_set.nrows(), test_set.ncols()}, {NONE, {}}, test_set.images().get_memory_type());

@@ -1,10 +1,10 @@
 /**
- * @file vgg16.cpp
+ * @file lenet5.cpp
  * @author Florent Lopez
  * @version 1.0
  * @date 2020-03-03
  *
- * @copyright Copyright (c) 2019
+ * @copyright Copyright (c) 2020
  */
 
 #include "magmadnn.h"

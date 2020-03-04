@@ -144,6 +144,11 @@ void Conv2DForwardOp<T>::init_settings() {
         /* init the conv descriptor */
         cudnnErrchk(cudnnCreateConvolutionDescriptor(&this->cudnn_settings.conv_desc));
 
+        // std::cout << "Padding: " << pad_h << "x" << pad_w << std::endl;
+        // std::cout << "Stride: " << vertical_stride << "x" << horizontal_stride << std::endl;
+
+        assert((vertical_stride > 0) && (horizontal_stride > 0));
+        
         /* set the convolution description */
         cudnnErrchk(cudnnSetConvolution2dDescriptor(
             this->cudnn_settings.conv_desc, pad_h, pad_w, vertical_stride, horizontal_stride, dilation_h, dilation_w,

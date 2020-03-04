@@ -28,6 +28,10 @@
 
 #include "magmadnn/data/Dataset.h"
 #include "magmadnn/data/MNIST.h"
+#include "magmadnn/data/CIFAR10.h"
+
+#include "magmadnn/exception.h"
+#include "magmadnn/exception_helpers.h"
 
 #include "memory/memorymanager.h"
 #include "tensor/tensor.h"

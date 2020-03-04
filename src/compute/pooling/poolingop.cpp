@@ -2,6 +2,8 @@
 
 #include "magmadnn/config.h"
 
+#include <iostream>
+
 namespace magmadnn {
 namespace op {
 
@@ -106,6 +108,10 @@ void PoolingOp<T>::init_settings() {
        /* init the pooling descriptor */
        cudnnErrchk(cudnnCreatePoolingDescriptor(&this->settings.poolingDesc));
 
+       // std::cout << "filter = " << filter_h << " x " << filter_w << std::endl; 
+       // std::cout << "padding = " << pad_h << " x " << pad_w << std::endl; 
+       // std::cout << "stride = " << vertical_stride << " x " << horizontal_stride << std::endl; 
+       
        /* set the pooling description */
        cudnnErrchk(cudnnSetPooling2dDescriptor(
                          this->settings.poolingDesc,
@@ -128,13 +134,45 @@ void PoolingOp<T>::calculate_and_set_output_shape() {
     }
 #if defined(MAGMADNN_HAVE_CUDA)
     else {
-        int n, c, h, w;
+        int n = 0, c = 0, h = 0, w = 0;
 
+        cudnnTensorDescriptor_t cudnn_tensor_desc = this->input_tensor->get_cudnn_tensor_descriptor();
+
+        cudnnDataType_t data_type;
+
+        // int nStride = 0, cStride = 0, hStride = 0, wStride = 0;
+           
+        // cudnnGetTensor4dDescriptor(
+        //       cudnn_tensor_desc,
+        //       &data_type,
+        //       &n, &c, &h, &w,
+        //       &nStride, &cStride, &hStride, &wStride);
+
+        // std::cout << "Input tensor:" << std::endl; 
+        // std::cout << "n = " << n << std::endl; 
+        // std::cout << "c = " << c << std::endl; 
+        // std::cout << "h = " << h << std::endl; 
+        // std::cout << "w = " << w << std::endl; 
+
+        // std::cout << "nStride = " << nStride << std::endl; 
+        // std::cout << "cStride = " << cStride << std::endl; 
+        // std::cout << "hStride = " << hStride << std::endl; 
+        // std::cout << "wStride = " << wStride << std::endl; 
+
+        
         cudnnErrchk(
               cudnnGetPooling2dForwardOutputDim(
                     this->settings.poolingDesc,
-                    this->input_tensor->get_cudnn_tensor_descriptor(),
+                    cudnn_tensor_desc,
                     &n, &c, &h, &w));
+
+        assert((n >= 0) && (c >=0) && (h >= 0) && (w >= 0));
+
+        // std::cout << "Pooling forward outdim:" << std::endl; 
+        // std::cout << "n = " << n << std::endl; 
+        // std::cout << "c = " << c << std::endl; 
+        // std::cout << "h = " << h << std::endl; 
+        // std::cout << "w = " << w << std::endl; 
 
         this->output_shape = {static_cast<unsigned int>(n),
                               static_cast<unsigned int>(c),

@@ -85,7 +85,8 @@ endif()
 target_sources(magmadnn
   PRIVATE
   data/utils.cpp
-  data/MNIST.cpp)
+  data/MNIST.cpp
+  data/CIFAR10.cpp)
 
 # dataloader
 target_sources(magmadnn

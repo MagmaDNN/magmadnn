@@ -39,12 +39,16 @@ namespace data {
          return *this->images_;
       }
 
-      uint32_t num_images() const {
+      uint32_t nimages() const {
          return this->nimages_;
       }
 
-      uint32_t num_labels() const {
+      uint32_t nlabels() const {
          return this->nlabels_;
+      }
+
+      void nlabels(uint32_t in_nlabels) {
+         this->nlabels_ = in_nlabels;
       }
       
       /* Return a tensor containing lables from the MNIST dataset

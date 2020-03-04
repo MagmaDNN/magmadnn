@@ -18,7 +18,10 @@ namespace data {
    class Dataset {
    public:
 
-      explicit Dataset() : images_(nullptr), labels_(nullptr) {}
+      explicit Dataset() :
+         images_(nullptr), labels_(nullptr), nimages_(0), nlabels_(0),
+         nchanels_(0), nrows_(0), ncols_(0), nclasses_(0) 
+      {}
          
       /* Size of the dataset 
        */
@@ -32,11 +35,15 @@ namespace data {
          return *this->images_;
       }
 
-      int num_images() const {
+      magmadnn::Tensor<T>& images() {
+         return *this->images_;
+      }
+
+      uint32_t num_images() const {
          return this->nimages_;
       }
 
-      int num_labels() const {
+      uint32_t num_labels() const {
          return this->nlabels_;
       }
       
@@ -46,22 +53,47 @@ namespace data {
          return *this->labels_;
       }
 
+      magmadnn::Tensor<T>& labels() {
+         return *this->labels_;
+      }
+
       /* Return the number of classes for this dataset
        */
-      int nclasses() const {
-         return this->nclasses;
+      uint32_t nclasses() const {
+         return this->nclasses_;
+      }
+
+      void nclasses(uint32_t in_nclasses) {
+         this->nclasses_ = in_nclasses;
       }
       
+      uint32_t nchanels() const {
+         return this->nchanels_;
+      }
+
+      void nchanels(uint32_t in_nchanels) {
+         this->nchanels_ = in_nchanels;
+      }
+      
+      uint32_t nrows() const {
+         return this->nrows_;
+      }
+
+      uint32_t ncols() const {
+         return this->ncols_;
+      }
+
    protected:
       // magmadnn::size_type size_;
 
-      int nimages_;
-      int nlabels_;
+      uint32_t nimages_;
+      uint32_t nlabels_;
 
-      int nrows_;
-      int ncols_;
+      uint32_t nchanels_;
+      uint32_t nrows_;
+      uint32_t ncols_;
       
-      int nclasses_;
+      uint32_t nclasses_;
       
       std::unique_ptr<magmadnn::Tensor<T>> images_; // Image samples
       std::unique_ptr<magmadnn::Tensor<T>> labels_; // Corresponding labels

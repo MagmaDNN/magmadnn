@@ -8,7 +8,7 @@ namespace magmadnn {
 namespace data {
 
    template <typename T>
-   class MNIST : Dataset<T> {
+   class MNIST : public Dataset<T> {
    public:
 
       explicit MNIST(std::string const& root, dataset_type type);

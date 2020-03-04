@@ -26,6 +26,9 @@
 #include "magmadnn/types.h"
 #include "magmadnn/utilities_internal.h"
 
+#include "magmadnn/data/Dataset.h"
+#include "magmadnn/data/MNIST.h"
+
 #include "memory/memorymanager.h"
 #include "tensor/tensor.h"
 #include "tensor/tensor_io.h"

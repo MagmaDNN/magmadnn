@@ -80,8 +80,8 @@ int main(int argc, char** argv) {
        fc3, act5,
        output};
 
-   // model::NeuralNetwork<T> model(layers, optimizer::CROSS_ENTROPY, optimizer::SGD, params);
-   model::NeuralNetwork<T> model(layers, optimizer::MSE, optimizer::SGD, params);
+   model::NeuralNetwork<T> model(layers, optimizer::CROSS_ENTROPY, optimizer::SGD, params);
+   // model::NeuralNetwork<T> model(layers, optimizer::MSE, optimizer::SGD, params);
 
    model::metric_t metrics;
    model.fit(&train_set.images(), &train_set.labels(), metrics, true);

@@ -115,7 +115,9 @@ void PoolingOp<T>::init_settings() {
        /* set the pooling description */
        cudnnErrchk(cudnnSetPooling2dDescriptor(
                          this->settings.poolingDesc,
-                         (mode == MAX_POOL) ? CUDNN_POOLING_MAX_DETERMINISTIC : CUDNN_POOLING_AVERAGE_COUNT_EXCLUDE_PADDING,
+                         (mode == MAX_POOL) ?
+                         /*CUDNN_POOLING_MAX*/ CUDNN_POOLING_MAX_DETERMINISTIC :
+                         CUDNN_POOLING_AVERAGE_COUNT_EXCLUDE_PADDING /*CUDNN_POOLING_AVERAGE_COUNT_INCLUDE_PADDING*/,
                          (propagate_nan) ? CUDNN_PROPAGATE_NAN : CUDNN_NOT_PROPAGATE_NAN,
                          filter_h, filter_w, pad_h, pad_w,
                          vertical_stride, horizontal_stride));

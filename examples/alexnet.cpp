@@ -30,8 +30,8 @@ int main(int argc, char** argv) {
    magmadnn::model::nn_params_t params;
    params.batch_size = 128;
    params.n_epochs = 20;
-   // params.learning_rate = 0.05;
-   params.learning_rate = 0.1;
+   params.learning_rate = 0.05;
+   // params.learning_rate = 0.1;
 
    // Memory 
    magmadnn::memory_t training_memory_type;

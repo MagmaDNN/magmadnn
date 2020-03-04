@@ -22,9 +22,14 @@ int main(int argc, char** argv) {
 
    // Location of the CIFAR-10 dataset
    std::string const cifar10_dir = ".";
-   // Load MNIST trainnig dataset
-   magmadnn::data::CIFAR10<T> train_set(cifar10_dir, magmadnn::data::Train);
-   magmadnn::data::CIFAR10<T> test_set(cifar10_dir, magmadnn::data::Test);
+   // Location of the CIFAR-100 dataset
+   std::string const cifar100_dir = ".";
+   // Load CIFAR trainnig dataset
+   // magmadnn::data::CIFAR10<T> train_set(cifar10_dir, magmadnn::data::Train);
+   // magmadnn::data::CIFAR10<T> test_set(cifar10_dir, magmadnn::data::Test);
+
+   magmadnn::data::CIFAR100<T> train_set(cifar100_dir, magmadnn::data::Train);
+   magmadnn::data::CIFAR100<T> test_set(cifar100_dir, magmadnn::data::Test);
 
    // Training parameters
    magmadnn::model::nn_params_t params;
@@ -42,6 +47,11 @@ int main(int argc, char** argv) {
    training_memory_type = HOST;
 #endif
 
+   std::cout << "[alexnet] Image dimensions: " << train_set.nrows() << " x " << train_set.ncols() << std::endl;
+   std::cout << "[alexnet] Number of chanels: " << train_set.nchanels() << std::endl;
+   std::cout << "[alexnet] Number of classes: " << train_set.nclasses() << std::endl;
+   std::cout << "[alexnet] Training set size: " << train_set.nimages() << std::endl;
+   
    auto x_batch = op::var<T>(
          "x_batch",
          {params.batch_size, train_set.nchanels(),  train_set.nrows(), train_set.ncols()},

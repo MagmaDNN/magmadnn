@@ -29,6 +29,7 @@
 #include "magmadnn/data/Dataset.h"
 #include "magmadnn/data/MNIST.h"
 #include "magmadnn/data/CIFAR10.h"
+#include "magmadnn/data/CIFAR100.h"
 
 #include "magmadnn/exception.h"
 #include "magmadnn/exception_helpers.h"

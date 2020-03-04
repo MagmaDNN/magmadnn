@@ -86,7 +86,8 @@ target_sources(magmadnn
   PRIVATE
   data/utils.cpp
   data/MNIST.cpp
-  data/CIFAR10.cpp)
+  data/CIFAR10.cpp
+  data/CIFAR100.cpp)
 
 # dataloader
 target_sources(magmadnn

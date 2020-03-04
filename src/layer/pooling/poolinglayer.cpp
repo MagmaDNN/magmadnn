@@ -67,8 +67,8 @@ PoolingLayer<T>* pooling(op::Operation<T>* input, const std::vector<unsigned int
                          const std::vector<unsigned int>& padding, const std::vector<unsigned int>& strides,
                          pooling_mode mode, bool propagate_nan) {
 
-   std::cout << "Pooling parameters: " << std::endl;
-   std::cout << "Padding: " << padding[0] << "x" << padding[1] << std::endl;
+   // std::cout << "Pooling parameters: " << std::endl;
+   // std::cout << "Padding: " << padding[0] << "x" << padding[1] << std::endl;
 
    return new PoolingLayer<T>(input, filter_shape, padding, strides, mode, propagate_nan);
 }
@@ -101,8 +101,8 @@ PoolingLayer<T>* pooling(op::Operation<T>* input, const std::vector<unsigned int
         padding_w = 0;
     }
 
-    std::cout << "Pooling parameters: " << std::endl;
-    std::cout << "Padding: " << padding_h << "x" << padding_w << std::endl;
+    // std::cout << "Pooling parameters: " << std::endl;
+    // std::cout << "Padding: " << padding_h << "x" << padding_w << std::endl;
 
     return new PoolingLayer<T>(input, filter_shape, {padding_h, padding_w}, strides, mode, propagate_nan);
 }

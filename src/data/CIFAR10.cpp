@@ -35,6 +35,12 @@ CIFAR10<T>::CIFAR10(std::string const& root, dataset_type type, uint32_t batch_i
          this->nimages_, this->ncols_, this->nrows_,
          this->nchanels_, this->nclasses_/*, bool normalize*/);
 
+   if (err != static_cast<magmadnn::magmadnn_error_t>(0)) {
+      throw ::magmadnn::Error(
+            __FILE__, __LINE__,
+            "Could not find CIFAR10 dataset in the following directory: " + root);
+   }
+   
    assert((cifar10_images != nullptr) && (cifar10_labels != nullptr));
    assert((this->nrows_ > 0) && (this->ncols_ > 0));
 

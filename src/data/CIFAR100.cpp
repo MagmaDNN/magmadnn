@@ -11,23 +11,40 @@ namespace data {
 template <typename T>
 CIFAR100<T>::CIFAR100(std::string const& root, dataset_type type)
 {
+
+   magmadnn::magmadnn_error_t err = 1;
       
-   std::string data_filename;
-
-   if (type == dataset_type::Test) {
-      data_filename = root + "/test.bin";
-   }
-   else {
-      data_filename = root + "/train.bin";
-   }
-
    magmadnn::Tensor<T> *cifar100_images = nullptr;
    magmadnn::Tensor<T> *cifar100_labels = nullptr;
 
-   read_cifar100(
-         data_filename, &cifar100_images, &cifar100_labels,
-         this->nimages_, this->ncols_, this->nrows_,
-         this->nchanels_, this->nclasses_, this->nsuperclasses_);
+   std::string data_filename;
+
+   if (type == dataset_type::Test) {
+      // Test dataset filename
+      data_filename = root + "/test.bin";
+
+      err = read_cifar100_test(
+            data_filename, &cifar100_images, &cifar100_labels,
+            this->nimages_, this->ncols_, this->nrows_,
+            this->nchanels_, this->nclasses_, this->nsuperclasses_);
+
+   }
+   else {
+      // Training dataset filename
+      data_filename = root + "/train.bin";
+
+      err = read_cifar100_train(
+            data_filename, &cifar100_images, &cifar100_labels,
+            this->nimages_, this->ncols_, this->nrows_,
+            this->nchanels_, this->nclasses_, this->nsuperclasses_);
+   }
+
+   // std::cout << "" << std::endl;
+   if (err != static_cast<magmadnn::magmadnn_error_t>(0)) {
+      throw ::magmadnn::Error(
+            __FILE__, __LINE__,
+            "Error when loading CIFAR100 dataset in the following directory: " + root);      
+   }
 
    assert((cifar100_images != nullptr) && (cifar100_labels != nullptr));
    assert((this->nrows_ > 0) && (this->ncols_ > 0));

@@ -142,10 +142,11 @@ void print_image(uint32_t image_idx, magmadnn::Tensor<float> *images, magmadnn::
 
 magmadnn::magmadnn_error_t read_cifar100(
       const std::string& file_name, magmadnn::Tensor<float>** data, magmadnn::Tensor<float>** labels,
-      uint32_t& n_images, uint32_t& image_width, uint32_t& image_height, uint32_t& n_channels,
+      uint32_t n_images, uint32_t& image_width, uint32_t& image_height, uint32_t& n_channels,
       uint32_t& n_classes, uint32_t& n_super_classes/*, bool normalize = true*/) {
 
-   n_images = 50000; /* magic numbers from cifar100 file format */
+   // n_images = 50000; /* training set */
+   // n_images = 10000; /* test set */
    image_width = 32;
    image_height = 32;
    n_channels = 3;
@@ -190,6 +191,31 @@ magmadnn::magmadnn_error_t read_cifar100(
    return (magmadnn::magmadnn_error_t) 0;
 }
 
+magmadnn::magmadnn_error_t read_cifar100_train(
+      const std::string& file_name, magmadnn::Tensor<float>** data, magmadnn::Tensor<float>** labels,
+      uint32_t& n_images, uint32_t& image_width, uint32_t& image_height, uint32_t& n_channels,
+      uint32_t& n_classes, uint32_t& n_super_classes/*, bool normalize = true*/) {
+
+   n_images = 50000;
+   
+   return read_cifar100(
+         file_name, data, labels, n_images, image_width, image_height, n_channels,
+         n_classes, n_super_classes/*, bool normalize = true*/);
+}
+
+magmadnn::magmadnn_error_t read_cifar100_test(
+      const std::string& file_name, magmadnn::Tensor<float>** data, magmadnn::Tensor<float>** labels,
+      uint32_t& n_images, uint32_t& image_width, uint32_t& image_height, uint32_t& n_channels,
+      uint32_t& n_classes, uint32_t& n_super_classes/*, bool normalize = true*/) {
+   
+   n_images = 10000;
+   
+   return read_cifar100(
+         file_name, data, labels, n_images, image_width, image_height, n_channels,
+         n_classes, n_super_classes/*, bool normalize = true*/);
+}
+   
+   
 magmadnn::magmadnn_error_t load_cifar100(
       const std::string& cifar_root,
       magmadnn::Tensor<float>** data,

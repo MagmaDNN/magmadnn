@@ -11,7 +11,8 @@ magmadnn::Tensor<float> *read_mnist_images(const char *file_name, uint32_t &n_im
 
 magmadnn::Tensor<float> *read_mnist_labels(const char *file_name, uint32_t &n_labels, uint32_t n_classes);
 
-void print_image(uint32_t image_idx, magmadnn::Tensor<float> *images, magmadnn::Tensor<float> *labels, uint32_t n_rows, uint32_t n_cols);
+template<typename T>
+void mnist_print_image(uint32_t image_idx, magmadnn::Tensor<T> *images, magmadnn::Tensor<T> *labels, uint32_t n_rows, uint32_t n_cols);
 
 // CIFAR
 

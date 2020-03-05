@@ -106,7 +106,13 @@ magmadnn::Tensor<float> *read_mnist_labels(const char *file_name, uint32_t &n_la
    return labels;
 }
 
-void print_image(uint32_t image_idx, magmadnn::Tensor<float> *images, magmadnn::Tensor<float> *labels, uint32_t n_rows, uint32_t n_cols) {
+
+template<typename T>
+void mnist_print_image(
+      uint32_t image_idx,
+      magmadnn::Tensor<T> *images,
+      magmadnn::Tensor<T> *labels,
+      uint32_t n_rows, uint32_t n_cols) {
    uint8_t label = 0;
    uint32_t n_classes = labels->get_shape(1);
 
@@ -129,6 +135,14 @@ void print_image(uint32_t image_idx, magmadnn::Tensor<float> *images, magmadnn::
    }
 }
 
+template void mnist_print_image<float>(
+      uint32_t image_idx, magmadnn::Tensor<float> *images,
+      magmadnn::Tensor<float> *labels, uint32_t n_rows, uint32_t n_cols);
+
+template void mnist_print_image<double>(
+      uint32_t image_idx, magmadnn::Tensor<double> *images,
+      magmadnn::Tensor<double> *labels, uint32_t n_rows, uint32_t n_cols);
+   
 #undef FREAD_CHECK
 
 ////////////////////////////////////////////////////////////

@@ -44,6 +44,13 @@ MNIST<T>::MNIST(std::string const& root, dataset_type type)
 
 }
 
+template <typename T>
+void MNIST<T>::print_image(uint32_t idx)
+{
+   mnist_print_image(
+         idx, &this->images(), &this->labels(), this->nrows(), this->ncols()); 
+}
+
 // template class MNIST<int>;
 template class MNIST<float>;
 // template class MNIST<double>;

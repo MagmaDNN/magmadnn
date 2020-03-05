@@ -239,7 +239,7 @@ Tensor<T> *NeuralNetwork<T>::predict(Tensor<T> *sample) {
 
 template <typename T>
 unsigned int NeuralNetwork<T>::predict_class(Tensor<T> *sample) {
-    assert(T_IS_VECTOR(sample));
+   // assert(T_IS_VECTOR(sample));
 
     /* copy sample into beginning of input tensor */
     this->network_input_tensor_ptr->copy_from(*sample, 0, sample->get_size());

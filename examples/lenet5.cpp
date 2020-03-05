@@ -29,7 +29,7 @@ int main(int argc, char** argv) {
    // Training parameters
    magmadnn::model::nn_params_t params;
    params.batch_size = 128;
-   params.n_epochs = 20;
+   params.n_epochs = 10;
    // params.learning_rate = 0.05;
    params.learning_rate = 0.1;
 
@@ -90,10 +90,12 @@ int main(int argc, char** argv) {
   
    uint32_t total_correct = 0;
    
-   Tensor<T> sample({train_set.nchanels(), test_set.nrows(), test_set.ncols()}, {NONE, {}}, test_set.images().get_memory_type());
+   Tensor<T> sample({test_set.nchanels(), test_set.nrows(), test_set.ncols()}, {NONE, {}}, test_set.images().get_memory_type());
 
-   for (uint32_t i = 0; i < test_set.images().get_shape(0); ++i) {
+   for (uint32_t i = 0; i < /*20*/test_set.images().get_shape(0); ++i) {
 
+      // test_set.print_image(i);
+      
       sample.copy_from(test_set.images(), i * sample.get_size(), sample.get_size());
 
       auto predicted_class = model.predict_class(&sample);
@@ -106,13 +108,14 @@ int main(int argc, char** argv) {
          }
       }
 
+      std::cout << "[lenet5] actual: " << actual_class << ", predicted: " << predicted_class <<std::endl;
       if (actual_class == predicted_class) {
          total_correct++;
-      } 
+      }
    }
 
    double accuracy = static_cast<double>(total_correct) / static_cast<double>(test_set.images().get_shape(0));
-   std::cout << "Model accuracy on testset: " << accuracy << std::endl;
+   // std::cout << "Model accuracy on testset: " << accuracy << std::endl;
    
    delete output;
 

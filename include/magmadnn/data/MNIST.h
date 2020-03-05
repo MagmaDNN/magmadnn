@@ -12,7 +12,9 @@ namespace data {
    public:
 
       explicit MNIST(std::string const& root, dataset_type type);
-      
+
+      // Print image index `idx` from the dataset
+      void print_image(uint32_t idx);
    };
 
 }} // End of namespace magmadnn::data

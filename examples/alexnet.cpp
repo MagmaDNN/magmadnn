@@ -37,8 +37,10 @@ int main(int argc, char** argv) {
    params.n_epochs = 500;
    // params.learning_rate = 0.05;
    params.learning_rate = 0.001;
-   // params.learning_rate = 0.1;
-
+   // params.learning_rate = 0.0001;
+   // params.learning_rate = 1.0;
+   // params.decaying_factor = 0.99;
+   
    // Memory
    magmadnn::memory_t training_memory_type;
 #if defined(MAGMADNN_HAVE_CUDA)
@@ -120,6 +122,7 @@ int main(int argc, char** argv) {
        output};
 
    model::NeuralNetwork<float> model(layers, optimizer::CROSS_ENTROPY, optimizer::SGD, params);
+   // model::NeuralNetwork<float> model(layers, optimizer::CROSS_ENTROPY, optimizer::RMSPROP, params);
    // model::NeuralNetwork<float> model(layers, optimizer::MSE, optimizer::SGD, params);
 
    model::metric_t metrics;

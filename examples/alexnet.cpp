@@ -64,9 +64,10 @@ int main(int argc, char** argv) {
 
    auto conv2d1 = layer::conv2d<T>(input->out(), {11, 11}, 64, {2, 2}, {4, 4}, {1, 1});
    auto act1 = layer::activation<T>(conv2d1->out(), layer::RELU);
+   // auto pool1 = layer::pooling<T>(act1->out(), {3, 3}, layer::SAME, {2, 2}, AVERAGE_POOL);
    auto pool1 = layer::pooling<T>(act1->out(), {3, 3}, {0, 0}, {2, 2}, AVERAGE_POOL);
    // auto pool1 = layer::pooling<T>(act1->out(), {3, 3}, {0, 0}, {2, 2}, MAX_POOL);
-   // auto pool1 = layer::pooling<T>(act1->out(), {3, 3}, layer::SAME, {2, 2}, MAX_POOL);
+   // auto pool1 = layer::pooling<T>(act1->out(), {3, 3}, layer::SAME, {1, 1}, MAX_POOL);
 
    auto conv2d2 = layer::conv2d<T>(pool1->out(), {5, 5}, 192, {2, 2}, {1, 1}, {1, 1});
    // auto conv2d2 = layer::conv2d<T>(act1->out(), {5, 5}, 192, {2, 2}, {1, 1}, {1, 1});

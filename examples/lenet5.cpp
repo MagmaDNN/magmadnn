@@ -108,14 +108,14 @@ int main(int argc, char** argv) {
          }
       }
 
-      std::cout << "[lenet5] actual: " << actual_class << ", predicted: " << predicted_class <<std::endl;
+      // std::cout << "[lenet5] actual: " << actual_class << ", predicted: " << predicted_class <<std::endl;
       if (actual_class == predicted_class) {
          total_correct++;
       }
    }
 
    double accuracy = static_cast<double>(total_correct) / static_cast<double>(test_set.images().get_shape(0));
-   // std::cout << "Model accuracy on testset: " << accuracy << std::endl;
+   std::cout << "Model accuracy on testset: " << accuracy << std::endl;
    
    delete output;
 

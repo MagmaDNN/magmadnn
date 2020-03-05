@@ -29,8 +29,8 @@ int main(int argc, char **argv) {
     /* these functions read-in and return tensors holding the mnist data set
         to use them, please change the string to the path to your local copy of the mnist dataset.
         it can be downloaded from http://yann.lecun.com/exdb/mnist */
-    images_host = read_mnist_images("/opt/data/mnist/train-images-idx3-ubyte", n_images, n_rows, n_cols);
-    labels_host = read_mnist_labels("/opt/data/mnist/train-labels-idx1-ubyte", n_labels, n_classes);
+    images_host = read_mnist_images("./train-images-idx3-ubyte", n_images, n_rows, n_cols);
+    labels_host = read_mnist_labels("./train-labels-idx1-ubyte", n_labels, n_classes);
 
     if (images_host == NULL || labels_host == NULL) {
         return 1;
@@ -58,6 +58,7 @@ int main(int argc, char **argv) {
     auto conv2d1 = layer::conv2d<float>(input->out(), {5, 5}, 32, {0, 0}, {1, 1}, {1, 1}, true, false);
     auto act1 = layer::activation<float>(conv2d1->out(), layer::RELU);
     auto pool1 = layer::pooling<float>(act1->out(), {2, 2}, {0, 0}, {2, 2}, MAX_POOL);
+    // auto pool1 = layer::pooling<float>(act1->out(), {2, 2}, {0, 0}, {2, 2}, AVERAGE_POOL);
     auto dropout1 = layer::dropout<float>(pool1->out(), 0.25);
 
     auto flatten = layer::flatten<float>(dropout1->out());

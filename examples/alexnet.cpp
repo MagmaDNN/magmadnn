@@ -24,10 +24,10 @@ int main(int argc, char** argv) {
    std::string const cifar10_dir = ".";
    // Location of the CIFAR-100 dataset
    std::string const cifar100_dir = ".";
-   // Load CIFAR trainnig dataset
+   // Load CIFAR-10 trainnig dataset
    // magmadnn::data::CIFAR10<T> train_set(cifar10_dir, magmadnn::data::Train);
    // magmadnn::data::CIFAR10<T> test_set(cifar10_dir, magmadnn::data::Test);
-
+   // Load CIFAR-100 trainnig dataset   
    magmadnn::data::CIFAR100<T> train_set(cifar100_dir, magmadnn::data::Train);
    magmadnn::data::CIFAR100<T> test_set(cifar100_dir, magmadnn::data::Test);
 
@@ -36,7 +36,9 @@ int main(int argc, char** argv) {
    params.batch_size = 128;
    params.n_epochs = 500;
    // params.learning_rate = 0.05;
+   // params.learning_rate = 0.01;
    params.learning_rate = 0.001;
+   // params.learning_rate = 0.002;
    // params.learning_rate = 0.0001;
    // params.learning_rate = 1.0;
    // params.decaying_factor = 0.99;
@@ -62,30 +64,33 @@ int main(int argc, char** argv) {
 
    auto input = layer::input<T>(x_batch);
 
-   auto conv2d1 = layer::conv2d<T>(input->out(), {11, 11}, 64, {2, 2}, {4, 4}, {1, 1});
+   auto conv2d1 = layer::conv2d<T>(input->out(), {11, 11}, 64, {2, 2}, {4, 4}, {1, 1}, true, false);
    // auto conv2d1 = layer::conv2d<T>(input->out(), {11, 11}, 64, layer::SAME, {4, 4}, {1, 1});
    auto act1 = layer::activation<T>(conv2d1->out(), layer::RELU);
    // auto pool1 = layer::pooling<T>(act1->out(), {3, 3}, layer::SAME, {2, 2}, AVERAGE_POOL);
    auto pool1 = layer::pooling<T>(act1->out(), {3, 3}, {0, 0}, {2, 2}, AVERAGE_POOL);
    // auto pool1 = layer::pooling<T>(act1->out(), {3, 3}, {0, 0}, {2, 2}, MAX_POOL);
    // auto pool1 = layer::pooling<T>(act1->out(), {3, 3}, layer::SAME, {1, 1}, MAX_POOL);
-   // auto pool1 = layer::pooling<T>(act1->out(), {3, 3}, layer::VALID, {2, 2}, MAX_POOL);
 
-   // auto conv2d2 = layer::conv2d<T>(pool1->out(), {5, 5}, 192, layer::VALID, {1, 1}, {1, 1});
-   auto conv2d2 = layer::conv2d<T>(pool1->out(), {5, 5}, 192, {2, 2}, {1, 1}, {1, 1});
+   auto conv2d2 = layer::conv2d<T>(pool1->out(), {5, 5}, 192, layer::SAME, {1, 1}, {1, 1});
+   // auto conv2d2 = layer::conv2d<T>(pool1->out(), {5, 5}, 192, {2, 2}, {1, 1}, {1, 1});
    auto act2 = layer::activation<T>(conv2d2->out(), layer::RELU);
    auto pool2 = layer::pooling<T>(act2->out(), {3, 3}, {0, 0}, {2, 2}, AVERAGE_POOL);
+   // auto pool2 = layer::pooling<T>(act2->out(), {3, 3}, layer::SAME, {2, 2}, AVERAGE_POOL);
    // auto pool2 = layer::pooling<T>(act2->out(), {3, 3}, {0, 0}, {2, 2}, MAX_POOL);
    // auto pool2 = layer::pooling<T>(act2->out(), {3, 3}, layer::SAME, {2, 2}, MAX_POOL);
 
-   auto conv2d3 = layer::conv2d<T>(pool2->out(), {3, 3}, 384, {1, 1}, {1, 1}, {1, 1});
+   // auto conv2d3 = layer::conv2d<T>(pool2->out(), {3, 3}, 384, {1, 1}, {1, 1}, {1, 1});
+   auto conv2d3 = layer::conv2d<T>(pool2->out(), {3, 3}, 384, layer::SAME, {1, 1}, {1, 1});
    // auto conv2d3 = layer::conv2d<T>(act2->out(), {3, 3}, 256, {1, 1}, {1, 1}, {1, 1});
    auto act3 = layer::activation<T>(conv2d3->out(), layer::RELU);
 
-   auto conv2d4 = layer::conv2d<T>(act3->out(), {3, 3}, 384, {1, 1}, {1, 1}, {1, 1});
+   // auto conv2d4 = layer::conv2d<T>(act3->out(), {3, 3}, 384, {1, 1}, {1, 1}, {1, 1});
+   auto conv2d4 = layer::conv2d<T>(act3->out(), {3, 3}, 384, layer::SAME, {1, 1}, {1, 1});
    auto act4 = layer::activation<T>(conv2d4->out(), layer::RELU);
 
-   auto conv2d5 = layer::conv2d<T>(act4->out(), {3, 3}, 256, {1, 1}, {1, 1}, {1, 1});
+   // auto conv2d5 = layer::conv2d<T>(act4->out(), {3, 3}, 256, {1, 1}, {1, 1}, {1, 1});
+   auto conv2d5 = layer::conv2d<T>(act4->out(), {3, 3}, 256, layer::SAME, {1, 1}, {1, 1});
    auto act5 = layer::activation<T>(conv2d5->out(), layer::RELU);
 
    // auto pool3 = layer::pooling<T>(act3->out(), {3, 3}, {0, 0}, {2, 2}, AVERAGE_POOL);

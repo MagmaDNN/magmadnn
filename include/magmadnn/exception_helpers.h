@@ -75,7 +75,7 @@ namespace magmadnn {
  *
  * @param _cublas_call  a library call expression
  */
-#define MAGMADNN_ASSERT_NO_CUDNNx_ERRORS(_cudnn_call) \
+#define MAGMADNN_ASSERT_NO_CUDNN_ERRORS(_cudnn_call) \
     do {                                          \
         auto _errcode = _cudnn_call;             \
         if (_errcode != CUDNN_STATUS_SUCCESS) {  \

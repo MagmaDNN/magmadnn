@@ -22,14 +22,33 @@ public:
    {
 
       cudaError_t cuerr;
-          
-      // Create Stream
+      cudnnStatus_t cudnnstat;
+      cublasStatus_t cublasstat;
+      
+      // Create CUDA Stream
       cuerr = cudaStreamCreate(&custream_);
       MAGMADNN_ASSERT_NO_CUDA_ERRORS(cuerr);
 
-      
+      // Create cuDNN handle and associate CUDA stream
+      cudnnstat = cudnnCreate(&cudnn_handle_);
+      MAGMADNN_ASSERT_NO_CUDNN_ERRORS(cudnnstat);
+      cudnnstat = cudnnSetStream(cudnn_handle_, custream_);
+      MAGMADNN_ASSERT_NO_CUDNN_ERRORS(cudnnstat);
+
+      // Create cuBLAS handle and associate CUDA stream
+      cublasstat = cublasCreate(&cublas_handle_);
+      MAGMADNN_ASSERT_NO_CUBLAS_ERRORS(cublasstat);
+      cublasstat = cublasSetStream(cublas_handle_, custream_);     
+      MAGMADNN_ASSERT_NO_CUBLAS_ERRORS(cublasstat);
+
    }
-   
+
+   ~CudaExecContext() {
+      cudaStreamDestroy(custream_);
+      cudnnDestroy(cudnn_handle_);
+      cublasDestroy(cublas_handle_);
+   }
+
    int devid() const { return devid_; }
 
    void devid(int in_devid) {
@@ -54,6 +73,14 @@ public:
       custream_ = in_stream;
    }
 
+   void synchronize() const {
+      cudaError_t cuerr;
+
+      cuerr = cudaStreamSynchronize(custream_);
+      MAGMADNN_ASSERT_NO_CUDA_ERRORS(cuerr);
+
+   }
+   
 private:
 
    // Device index

@@ -22,6 +22,7 @@
 #endif
 
 #include "magmadnn/config.h"
+#include "magmadnn/exec_context.h"
 #include "magmadnn/init_finalize.h"
 #include "magmadnn/types.h"
 #include "magmadnn/utilities_internal.h"

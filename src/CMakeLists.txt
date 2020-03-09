@@ -11,6 +11,7 @@ endif()
 target_sources(magmadnn
   PRIVATE
   init_finalize.cpp
+  exception.cpp
   utilities_internal.cpp)
 
 # compute

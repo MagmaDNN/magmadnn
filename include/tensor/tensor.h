@@ -12,6 +12,7 @@
 #include <vector>
 
 #include "magmadnn/config.h"
+#include "magmadnn/exec_context.h"
 #include "magmadnn/types.h"
 #include "magmadnn/utilities_internal.h"
 #include "memory/memorymanager.h"
@@ -172,9 +173,22 @@ class Tensor {
     void set(unsigned int flattened_idx, T val);
 
 #if defined(MAGMADNN_HAVE_CUDA)
+    /* Update CUDA execution context including CUDA stream, cuBLAS
+       handle and cuDNN handle
+    */
+    void cuda_exec_context(CudaExecContext const& cuda_ctx) {
+       // Update CUDA stream
+       this->set_custream(cuda_ctx.stream());
+       // Update cuBLAS handle
+       this->set_cublas_handle(cuda_ctx.cublas_handle());
+    } 
+   
     void set_custream(cudaStream_t custream) {
         // Update memory manager with CUDA stream
-        if (this->mem_manager) this->mem_manager->set_custream(custream);
+        if (this->mem_manager) {
+          this->mem_manager->set_custream(custream);
+        }
+
         this->custream_ = custream;
     }
 

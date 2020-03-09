@@ -2,6 +2,8 @@
 
 #include "magmadnn/exception_helpers.h"   
 
+#include <iostream>
+
 #if defined(MAGMADNN_HAVE_CUDA)
 #include <cuda.h>   
 #include <cublas_v2.h>
@@ -24,6 +26,8 @@ public:
       cudaError_t cuerr;
       cudnnStatus_t cudnnstat;
       cublasStatus_t cublasstat;
+
+      // std::cout << "[CudaExecContext]" << std::endl;
       
       // Create CUDA Stream
       cuerr = cudaStreamCreate(&custream_);
@@ -44,6 +48,8 @@ public:
    }
 
    ~CudaExecContext() {
+      // std::cout << "[~CudaExecContext]" << std::endl;
+
       cudaStreamDestroy(custream_);
       cudnnDestroy(cudnn_handle_);
       cublasDestroy(cublas_handle_);

@@ -426,7 +426,7 @@ magmadnn_error_t MemoryManager<T>::zero() {
        return (magmadnn_error_t) 0;
 #if defined(MAGMADNN_HAVE_CUDA)
     case DEVICE:
-       cudaMemsetAsync(this->device_ptr, 0, sz, custream_);
+       cudaMemsetAsync(this->device_ptr, 0, sz, this->custream_);
        return (magmadnn_error_t) 0;           
     case MANAGED:
        std::memset(this->host_ptr, 0, sz);
@@ -435,7 +435,7 @@ magmadnn_error_t MemoryManager<T>::zero() {
        return (magmadnn_error_t) 0;
     case CUDA_MANAGED:
        std::memset(this->host_ptr, 0, sz);
-       cudaMemsetAsync(this->device_ptr, 0, sz, custream_);
+       cudaMemsetAsync(this->device_ptr, 0, sz, this->custream_);
        cudaStreamSynchronize(this->custream_);
        return (magmadnn_error_t) 0;
 #endif

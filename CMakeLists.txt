@@ -4,6 +4,7 @@ project(MagmaDNN LANGUAGES C CXX VERSION 1.0.0 DESCRIPTION "A simple deep learni
 
 # include(CheckSymbolExists)
 include(CheckFunctionExists)
+include(ExternalProject)
 
 ########################################
 # Compiling options
@@ -24,6 +25,7 @@ endif()
 option(MAGMADNN_ENABLE_CUDA "Enable use of CUDA library and compilation of CUDA kernel" OFF)
 option(MAGMADNN_ENABLE_MPI "Enable distributed memory routines using MPI" OFF)
 option(MAGMADNN_ENABLE_OMP "Enable parallelization using OpenMP library" OFF)
+option(MAGMADNN_ENABLE_MKLDNN "Enable use of MKLDNN library" OFF)
 option(MAGMADNN_BUILD_DOC "Generate documentation" OFF)
 option(MAGMADNN_BUILD_EXAMPLES "Build MagmaDNN examples" ON)
 option(MAGMADNN_BUILD_TESTS "Generate build files for unit tests" OFF)
@@ -224,6 +226,19 @@ if (MAGMADNN_ENABLE_OMP)
 endif()
 
 ########################################
+# MKLDNN
+
+if (MAGMADNN_ENABLE_MKLDNN)
+  
+  include(cmake/mkldnn.cmake)
+
+  add_definitions(-D MAGMADNN_HAVE_MKLDNN)
+  set(MAGMADNN_HAVE_MKLDNN TRUE)
+
+endif()
+
+########################################
+# Configuration file
 
 configure_file(
   ${MagmaDNN_SOURCE_DIR}/include/magmadnn/config.h.in

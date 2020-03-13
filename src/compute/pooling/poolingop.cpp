@@ -98,7 +98,48 @@ Tensor<T> *PoolingOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor
 template <typename T>
 void PoolingOp<T>::init_settings() {
     if (this->mem_type == HOST) {
-        std::fprintf(stderr, "Error: PoolingOp::init_settings requires GPU.\n");
+#if defined(MAGMADNN_HAVE_MKLDNN)
+
+       dnnl_memory_desc_t pool_src_md;
+
+       dnnl_dim_t pool_src_sizes[4] =
+          {
+           this->input_tensor->get_shape(0),
+           this->input_tensor->get_shape(1),
+           this->input_tensor->get_shape(2),
+           this->input_tensor->get_shape(3)
+          };
+
+       // Create memory descriptor for source
+       dnnl_memory_desc_init_by_tag(
+             &pool_src_md,
+             4, pool_src_sizes, // Output dimensions
+             dnnl_f32, // Datatype
+             dnnl_format_tag_t::dnnl_format_tag_any);
+
+       // dnnl_memory_desc_t pool_dst_md;
+       // dnnl_dim_t pool_dst_sizes[4] = {}:
+
+       // Create memory descriptor for destination
+       // dnnl_memory_desc_init_by_tag(
+       //       &pool_dst_md,
+       //       4, pool_dst_sizes, // Output dimensions
+       //       dnnl_f32, // Datatype
+       //       dnnl_format_tag_t::dnnl_format_tag_any);
+       
+       // dnnl_primitive_desc_t pool_pd;
+       // dnnl_pooling_desc_t pool_desc;
+
+       dnnl_dim_t pool_strides[2] = {vertical_stride, horizontal_stride};
+          
+       // dnnl_pooling_forward_desc_init(
+       //       &pool_desc,  dnnl_prop_kind_t::dnnl_forward,
+       //       dnnl_alg_kind_t::dnnl_pooling_max, pool_src_md, &pool_dst_md, pool_strides,
+       //       pool_kernel, pool_padding, pool_padding));
+#else
+       std::fprintf(stderr, "Error: PoolingOp::init_settings requires GPU.\n");
+#endif
+
     }
 #if defined(MAGMADNN_HAVE_CUDA)
     else {

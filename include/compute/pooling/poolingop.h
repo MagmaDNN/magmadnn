@@ -5,6 +5,10 @@
 #include "math/pooling.h"
 #include "tensor/tensor.h"
 
+#if defined(MAGMADNN_HAVE_MKLDNN)
+#include "dnnl.h"
+#endif
+
 namespace magmadnn {
 namespace op {
 

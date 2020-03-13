@@ -1,13 +1,13 @@
 # IF(APPLE)
 # MESSAGE(WARNING
-# “Mac is not supported with MKLDNN in Paddle yet.”
+# “Mac is not supported with MKLDNN in MAGMADNN yet.”
 # “Force WITH_MKLDNN=OFF”)
 # SET(WITH_MKLDNN OFF CACHE STRING “Disable MKLDNN in MacOS” FORCE)
 # return()
 # ENDIF()
 
 SET(MKLDNN_SOURCES_DIR "third_party/mkldnn")
-set(MKLDNN_INSTALL_DIR "third_party/mkldnn/build")
+set(MKLDNN_INSTALL_DIR "${CMAKE_BINARY_DIR}/third_party/mkldnn/build")
 set(MKLDNN_INCLUDE_DIRS "${MKLDNN_INSTALL_DIR}/include" CACHE PATH "MKLDNN include directory." FORCE)
 
 # INCLUDE(GNUInstallDirs)
@@ -33,7 +33,9 @@ ExternalProject_Add(
   GIT_REPOSITORY "https://github.com/intel/mkl-dnn.git"
   GIT_TAG "v1.2.1"  
   PREFIX ${MKLDNN_SOURCES_DIR}
+  BINARY_DIR ${MKLDNN_INSTALL_DIR}
   UPDATE_COMMAND ""
+  INSTALL_COMMAND ""
   CMAKE_ARGS -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
   CMAKE_ARGS -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
   CMAKE_ARGS -DCMAKE_CXX_FLAGS_RELEASE=${CMAKE_CXX_FLAGS_RELEASE}
@@ -58,3 +60,4 @@ else()
   set(MKLDNN_LIB "${MKLDNN_INSTALL_DIR}/${LIBDIR}/libmkldnn.so" CACHE FILEPATH "MKLDNN library." FORCE)
 endif()
 
+set(LIBS ${LIBS} ${MKLDNN_LIB})

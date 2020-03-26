@@ -13,9 +13,27 @@
 
 namespace magmadnn {
 
+class ExecContext {
+public:
+   ExecContext()
+      : id_(-1)
+   {}
+
+   int id() const { return id_; }
+
+   void id(int in_id) {
+      id_ = in_id;
+   }
+
+private:
+   // Worker index
+   int id_;
+
+};
+   
 #if defined(MAGMADNN_HAVE_CUDA)
 
-class CudaExecContext {
+class CudaExecContext : public ExecContext {
 public:
 
    CudaExecContext()

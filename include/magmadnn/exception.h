@@ -5,6 +5,10 @@
 #include <exception>
 #include <string>
 
+#if defined(MAGMADNN_HAVE_MKLDNN)
+#include "dnnl.hpp"
+#endif
+
 namespace magmadnn {
 
 class Error : public std::exception {
@@ -49,6 +53,31 @@ public:
     {}
 };
 
+#if defined(MAGMADNN_HAVE_MKLDNN)
+/**
+ * DnnlError is thrown when a DNNL routine throws a non-zero error code.
+ */
+class DnnlError : public Error {
+public:
+    /**
+     * Initializes a CUDA error.
+     *
+     * @param file  The name of the offending source file
+     * @param line  The source code line number where the error occurred
+     * @param func  The name of the CUDA routine that failed
+     * @param error_code  The resulting CUDA error code
+     */
+    DnnlError(const std::string &file, int line, const std::string &func,
+              int64 error_code)
+        : Error(file, line, func + ": " + get_error(error_code))
+    {}
+
+private:
+    static std::string get_error(int64 error_code);
+};
+#endif
+
+#if defined(MAGMADNN_HAVE_CUDA)
 /**
  * CudaError is thrown when a CUDA routine throws a non-zero error code.
  */
@@ -114,5 +143,6 @@ public:
 private:
     static std::string get_error(int64 error_code);
 };
-
+#endif
+   
 } // magmadnn namespace

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "magmadnn/config.h"
 #include "magmadnn/exception.h"
 
 namespace magmadnn {
@@ -17,7 +18,33 @@ namespace magmadnn {
    static_assert(true,                                                  \
                  "This assert is used to counter the false positive extra " \
                  "semi-colon warnings")
+
    
+#if defined(MAGMADNN_HAVE_MKLDNN)
+
+/**
+ * Instantiates a CudaError.
+ *
+ * @param errcode  The error code returned from a CUDA runtime API routine.
+ */
+#define MAGMADNN_DNNL_ERROR(_errcode) \
+    ::magmadnn::DnnlError(__FILE__, __LINE__, __func__, _errcode)
+
+/**
+ * Asserts that a DNNL library call completed without errors.
+ *
+ * @param _dnnl_call  a library call expression
+ */
+#define MAGMADNN_ASSERT_NO_DNNL_ERRORS(_dnnl_call) \
+   do {                                            \
+       auto _errcode = _dnnl_call;                 \
+       if (_errcode != dnnl_success) {             \
+          throw MAGMADNN_DNNL_ERROR(_errcode);     \
+       }                                           \
+   } while (false)
+
+#endif
+
 /**
  * Instantiates a CudaError.
  *

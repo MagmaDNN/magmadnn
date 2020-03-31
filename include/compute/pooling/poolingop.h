@@ -6,7 +6,7 @@
 #include "tensor/tensor.h"
 
 #if defined(MAGMADNN_HAVE_MKLDNN)
-#include "dnnl.h"
+#include "dnnl.hpp"
 #endif
 
 namespace magmadnn {
@@ -39,6 +39,15 @@ class PoolingOp : public Operation<T> {
 #if defined(MAGMADNN_HAVE_CUDA)
     math::cudnn_pooling_settings_t settings;
 #endif
+
+#if defined(MAGMADNN_HAVE_MKLDNN)
+   dnnl::engine dnnl_cpu_engine_;
+
+   // dnnl_engine_t engine_;
+   // dnnl_pooling_desc_t dnnl_pool_fwd_desc_;
+   // dnnl_pooling_desc_t dnnl_pool_bwd_desc_;
+#endif
+
 };
 
 template <typename T>

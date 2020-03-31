@@ -114,6 +114,7 @@ void PoolingOp<T>::init_settings() {
        dnnl_memory_desc_init_by_tag(
              &pool_src_md,
              4, pool_src_sizes, // Output dimensions
+             // TODO: adapt dnnl datatype with T
              dnnl_f32, // Datatype
              dnnl_format_tag_t::dnnl_format_tag_any);
 

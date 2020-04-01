@@ -112,6 +112,9 @@ Tensor<T> *PoolingOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor
     dnnl::memory::dims diff_dst_mem_dims;
     dnnl::memory::dims diff_src_mem_dims;
     // mkldnn::memory::dims in_grad_dims;
+
+    dnnl::memory::desc diff_src_mem_md;
+    dnnl::memory::desc diff_dst_mem_md;
 #endif
     
     if (out == NULL) {
@@ -132,7 +135,7 @@ Tensor<T> *PoolingOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor
             this->input->get_output_shape()[3]
            };
 
-        auto diff_dst_mem_md = dnnl::memory::desc(
+        diff_dst_mem_md = dnnl::memory::desc(
               diff_dst_mem_dims,
               dnnl::memory::data_type::f32,
               dnnl::memory::format_tag::nchw);
@@ -145,7 +148,7 @@ Tensor<T> *PoolingOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor
             grad->get_shape(3)
            };
 
-        auto diff_src_mem_md = dnnl::memory::desc(
+        diff_src_mem_md = dnnl::memory::desc(
               diff_src_mem_dims,
               dnnl::memory::data_type::f32,
               dnnl::memory::format_tag::nchw);
@@ -171,7 +174,6 @@ Tensor<T> *PoolingOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor
               {filter_h, filter_w},
               {pad_h, pad_w},
               {pad_h, pad_w});
-
 #endif
 
         this->_grad_cache[(uintptr_t) var] = out;
@@ -179,7 +181,33 @@ Tensor<T> *PoolingOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor
 
     if (this->mem_type == HOST) {
 #if defined(MAGMADNN_HAVE_MKLDNN)
-       
+       // Source DNNL memory
+       auto diff_src_mem = dnnl::memory(
+             diff_src_mem_md,
+             this->dnnl_cpu_engine_,
+             // Poiter to underlying source data
+             grad->get_ptr());
+
+       // Destination DNNL memory
+       auto diff_dst_mem = dnnl::memory(
+             diff_dst_mem_md,
+             this->dnnl_cpu_engine_,
+             // Poiter to underlying source data
+             out->get_ptr());
+
+       // Build arg list for kernel execution
+       std::unordered_map<int, dnnl::memory> dnnl_args;
+       dnnl_args.insert({DNNL_ARG_SRC, diff_src_mem});
+       dnnl_args.insert({DNNL_ARG_DST, diff_dst_mem});        
+
+       // Create dnnl stream.
+       dnnl::stream dnnl_engine_stream(this->dnnl_cpu_engine_);
+        
+       this->dnnl_fwd_->execute(dnnl_engine_stream, dnnl_args);
+
+       dnnl_engine_stream.wait();       
+#else
+       MAGMADNN_NOT_IMPLEMENTED
 #endif
     }
 

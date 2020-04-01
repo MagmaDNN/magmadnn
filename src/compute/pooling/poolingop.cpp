@@ -108,12 +108,72 @@ Tensor<T> *PoolingOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor
     /* return gradient in here ... */
     Tensor<T> *out = this->_grad_cache[(uintptr_t) var];
 
+#if defined(MAGMADNN_HAVE_MKLDNN)
+    dnnl::memory::dims diff_dst_mem_dims;
+    dnnl::memory::dims diff_src_mem_dims;
+    // mkldnn::memory::dims in_grad_dims;
+#endif
+    
     if (out == NULL) {
         out = new Tensor<T>(this->input->get_output_shape(), {NONE, {}}, this->mem_type);
+
 #if defined(MAGMADNN_HAVE_CUDA)
         out->set_custream(this->get_custream());
         out->set_cublas_handle(this->get_cublas_handle());
 #endif
+
+#if defined(MAGMADNN_HAVE_MKLDNN)
+        // Dimensions of destiation gradient 
+        diff_dst_mem_dims =
+           {
+            this->input->get_output_shape()[0],
+            this->input->get_output_shape()[1],
+            this->input->get_output_shape()[2],
+            this->input->get_output_shape()[3]
+           };
+
+        auto diff_dst_mem_md = dnnl::memory::desc(
+              diff_dst_mem_dims,
+              dnnl::memory::data_type::f32,
+              dnnl::memory::format_tag::nchw);
+
+        diff_src_mem_dims =
+           {
+            grad->get_shape(0),
+            grad->get_shape(1),
+            grad->get_shape(2),
+            grad->get_shape(3)
+           };
+
+        auto diff_src_mem_md = dnnl::memory::desc(
+              diff_src_mem_dims,
+              dnnl::memory::data_type::f32,
+              dnnl::memory::format_tag::nchw);
+
+        dnnl::algorithm pool_alg;
+
+        if (mode == pooling_mode::MAX_POOL) {
+           pool_alg = dnnl::algorithm::pooling_max;
+        }
+        else if (mode == pooling_mode::AVERAGE_POOL) {
+           pool_alg = dnnl::algorithm::pooling_avg_exclude_padding;
+        }
+        else {
+           throw ::magmadnn::Error(
+                 __FILE__, __LINE__,
+                 "Pooling algorithm not supported: " + mode);
+        }
+
+        dnnl::pooling_backward::desc desc(
+              pool_alg,
+              diff_src_mem_md, diff_dst_mem_md,
+              {vertical_stride, horizontal_stride},
+              {filter_h, filter_w},
+              {pad_h, pad_w},
+              {pad_h, pad_w});
+
+#endif
+
         this->_grad_cache[(uintptr_t) var] = out;
     }
 
@@ -121,8 +181,8 @@ Tensor<T> *PoolingOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor
 #if defined(MAGMADNN_HAVE_MKLDNN)
        
 #endif
-       // ::magmadnn::math::pooling_grad(this->input_tensor, this->output_tensor, grad, out);
     }
+
 #if defined(MAGMADNN_HAVE_CUDA)
     else {
        this->settings.handle = this->get_cudnn_handle();
@@ -151,10 +211,13 @@ void PoolingOp<T>::init_settings() {
        // Ouput width
        w = 1 + (this->input_tensor->get_shape(3) + 2*pad_w - filter_w) / horizontal_stride;
        
-       this->output_shape = {static_cast<unsigned int>(n),
-                             static_cast<unsigned int>(c),
-                             static_cast<unsigned int>(h),
-                             static_cast<unsigned int>(w)};
+       this->output_shape =
+          {
+           static_cast<unsigned int>(n),
+           static_cast<unsigned int>(c),
+           static_cast<unsigned int>(h),
+           static_cast<unsigned int>(w)
+          };
 
        // Pooling operation dimensions
 
@@ -228,7 +291,6 @@ void PoolingOp<T>::init_settings() {
 
        //
        // Init backward pooling
-
        
        
        //

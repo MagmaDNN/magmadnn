@@ -58,7 +58,39 @@ Tensor<T> *PoolingOp<T>::_eval(bool recompute) {
    input_tensor = input->eval(recompute);
 
    if (this->mem_type == HOST) {
+#if defined(MAGMADNN_HAVE_MKLDNN)
+
+      // Source DNNL memory
+      auto src_mem = dnnl::memory(
+            this->dnnl_fwd_pdesc_->src_desc(),
+            this->dnnl_cpu_engine_,
+            // Poiter to underlying source data
+            this->input_tensor->get_ptr());
+
+      // Destination DNNL memory
+      auto dst_mem = dnnl::memory(
+            this->dnnl_fwd_pdesc_->dst_desc(),
+            this->dnnl_cpu_engine_,
+            // Poiter to underlying destination data
+            this->output_tensor->get_ptr());
+      
+      auto dnnl_workspace_mem = dnnl::memory(
+            this->dnnl_fwd_pdesc_->workspace_desc(), this->dnnl_cpu_engine_);
+
+      // Build arg list for kernel execution
+      std::unordered_map<int, dnnl::memory> dnnl_args;
+      dnnl_args.insert({DNNL_ARG_WORKSPACE, dnnl_workspace_mem});
+      dnnl_args.insert({DNNL_ARG_SRC, src_mem});
+      dnnl_args.insert({DNNL_ARG_DST, dst_mem});
+
+      // Create dnnl stream.
+      dnnl::stream dnnl_engine_stream(this->dnnl_cpu_engine_);
+      
+      this->dnnl_fwd_->execute(dnnl_engine_stream, dnnl_args);
+      dnnl_engine_stream.wait();
+#else
       std::fprintf(stderr, "Error: Pooling::_eval requires GPU\n");
+#endif
    }
 #if defined(MAGMADNN_HAVE_CUDA)
    else {
@@ -86,7 +118,10 @@ Tensor<T> *PoolingOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor
     }
 
     if (this->mem_type == HOST) {
-        ::magmadnn::math::pooling_grad(this->input_tensor, this->output_tensor, grad, out);
+#if defined(MAGMADNN_HAVE_MKLDNN)
+       
+#endif
+       // ::magmadnn::math::pooling_grad(this->input_tensor, this->output_tensor, grad, out);
     }
 #if defined(MAGMADNN_HAVE_CUDA)
     else {
@@ -141,7 +176,7 @@ void PoolingOp<T>::init_settings() {
            this->output_shape[3]
           };
 
-       // kernel dimension
+       // Kernel dimension
        dnnl::memory::dims pool_kernel_dims = {filter_h, filter_w};
        // Strides dimension
        dnnl::memory::dims pool_strides_dims = {vertical_stride, horizontal_stride};
@@ -154,136 +189,50 @@ void PoolingOp<T>::init_settings() {
              pool_src_dims,
              dnnl::memory::data_type::f32,
              dnnl::memory::format_tag::nchw);
-       auto pool_src_mem = dnnl::memory(pool_src_md, this->dnnl_cpu_engine_);
+       // auto pool_src_mem = dnnl::memory(pool_src_md, this->dnnl_cpu_engine_);
 
        auto pool_dst_md = dnnl::memory::desc(
              pool_dst_dims,
              dnnl::memory::data_type::f32,
              dnnl::memory::format_tag::nchw);
-       auto pool_dst_mem = dnnl::memory(pool_dst_md, this->dnnl_cpu_engine_);
+       // auto pool_dst_mem = dnnl::memory(pool_dst_md, this->dnnl_cpu_engine_);
+
+       dnnl::algorithm pool_alg;
+       
+       if (mode == pooling_mode::MAX_POOL) {
+          pool_alg = dnnl::algorithm::pooling_max;
+       }
+       else if (mode == pooling_mode::AVERAGE_POOL) {
+          pool_alg = dnnl::algorithm::pooling_avg_exclude_padding;
+       }
+       else {
+          throw ::magmadnn::Error(
+                __FILE__, __LINE__,
+                "Pooling algorithm not supported: " + mode);
+       }
+       
+       // Create pooling operation descriptor.
+       auto pool_fwd_desc = dnnl::pooling_forward::desc(
+             dnnl::prop_kind::forward_training,
+             pool_alg,
+             pool_src_md, pool_dst_md,
+             pool_strides_dims, pool_kernel_dims,
+             pool_padding_dims, pool_padding_dims);
+
+       this->dnnl_fwd_pdesc_.reset(
+             new dnnl::pooling_forward::primitive_desc(
+                   pool_fwd_desc, this->dnnl_cpu_engine_));
+
+       this->dnnl_fwd_.reset(
+             new dnnl::pooling_forward(*(this->dnnl_fwd_pdesc_)));
+
+       //
+       // Init backward pooling
 
        
        
-       // create a pooling primitive descriptor
-       // auto pool_fwd_desc = pooling_forward::desc(
-       //       prop_kind::forward,
-       //       algorithm::pooling_max, lrn_dst_memory.get_desc(), pool_dst_md,
-       //       pool_strides, pool_kernel, pool_padding, pool_padding);
-       // auto pool_fwd_pd = pooling_forward::primitive_desc(
-       //       pool_fwd_desc, this->dnnl_cpu_engine_);
-       
-       // // Crate DNNL engine
-       // dnnl_engine_create(
-       //       &this->engine_,
-       //       dnnl_cpu, // Engine type (CPU, GPU or unspecified)
-       //       0 // Engine index
-       //       );
-       
-       // dnnl_status_t dnnl_stat = dnnl_success;
-          
-       // dnnl_memory_desc_t pool_src_md;
-
-       // dnnl_dim_t pool_src_sizes[4] =
-       //    {
-       //     this->input_tensor->get_shape(0),
-       //     this->input_tensor->get_shape(1),
-       //     this->input_tensor->get_shape(2),
-       //     this->input_tensor->get_shape(3)
-       //    };
-
-       // // Create memory descriptor for source
-       // dnnl_stat = dnnl_memory_desc_init_by_tag(
-       //       &pool_src_md,
-       //       4, pool_src_sizes, // Output dimensions
-       //       // TODO: adapt dnnl datatype to T
-       //       dnnl_f32, // Datatype
-       //       dnnl_format_tag_t::dnnl_format_tag_any);
-       // MAGMADNN_ASSERT_NO_DNNL_ERRORS(dnnl_stat);
-          
-       // dnnl_memory_desc_t pool_dst_md;
-
-       // dnnl_dim_t pool_dst_sizes[4] =
-       //    {
-       //     this->output_shape[0],
-       //     this->output_shape[1],
-       //     this->output_shape[2],
-       //     this->output_shape[3]
-       //    };
-
-       // // Create memory descriptor for destination
-       // dnnl_stat = dnnl_memory_desc_init_by_tag(
-       //       &pool_dst_md,
-       //       4, pool_dst_sizes, // Output dimensions
-       //       dnnl_f32, // Datatype
-       //       dnnl_format_tag_t::dnnl_format_tag_any);
-       // MAGMADNN_ASSERT_NO_DNNL_ERRORS(dnnl_stat);
-       
-       // dnnl_dim_t pool_strides[2] = {vertical_stride, horizontal_stride};
-
-       // dnnl_alg_kind_t alg_kind = dnnl_alg_kind_t::dnnl_pooling_max;
-
-       // if (mode == MAX_POOL) {
-       //    alg_kind = dnnl_alg_kind_t::dnnl_pooling_max;
-       // }
-       // else if (mode == AVERAGE_POOL) {
-       //    alg_kind = dnnl_alg_kind_t::dnnl_pooling_avg_exclude_padding;
-       // }
-       // else {
-       //    throw ::magmadnn::Error(
-       //          __FILE__, __LINE__,
-       //          "Pooling algorithm not supported: " + mode);
-       // }
-
-       // // Filter dimensions
-       // dnnl_dim_t pool_kernel[2] = {filter_h, filter_w};
-       // // Padding dimensions
-       // dnnl_dim_t pool_padding[2] = {pad_h, pad_w};
-
-       // //
-       // // Init pooling forward
-
-       // // Create pooling operation descriptor
-       // dnnl_stat = dnnl_pooling_forward_desc_init(
-       //       &this->dnnl_pool_fwd_desc_,  dnnl_prop_kind_t::dnnl_forward,
-       //       alg_kind,
-       //       &pool_src_md, &pool_dst_md,
-       //       pool_strides,
-       //       pool_kernel,
-       //       pool_padding, pool_padding);
-       // MAGMADNN_ASSERT_NO_DNNL_ERRORS(dnnl_stat);
-
-       // // Create primitive descriptor
-       // dnnl_primitive_desc_t pool_fwd_pd;
-
-       // dnnl_stat = dnnl_primitive_desc_create(
-       //       &pool_fwd_pd, &this->dnnl_pool_fwd_desc_, NULL, this->engine_, NULL);
-       // MAGMADNN_ASSERT_NO_DNNL_ERRORS(dnnl_stat);
-
-       // // create memory for workspace
-       // dnnl_memory_t pool_ws_memory;
-       
-       // const dnnl_memory_desc_t *pool_ws_md = dnnl_primitive_desc_query_md(
-       //       pool_fwd_pd, dnnl_query_workspace_md, 0);
-
-       // dnnl_stat = dnnl_memory_create(
-       //       &pool_ws_memory, pool_ws_md, this->engine_, DNNL_MEMORY_ALLOCATE);
-       // MAGMADNN_ASSERT_NO_DNNL_ERRORS(dnnl_stat);
-       
-       // //
-       // // Init pooling backward
-       
-       // dnnl_memory_desc_t const pool_diff_src_md = pool_src_md;
-       // // pooling diff dst memory descriptor
-       // dnnl_memory_desc_t const pool_diff_dst_md = pool_dst_md;       
-
-       // dnnl_stat = dnnl_pooling_backward_desc_init(
-       //       &this->dnnl_pool_bwd_desc_,
-       //       alg_kind,
-       //       &pool_diff_src_md, &pool_diff_dst_md,
-       //       pool_strides,
-       //       pool_kernel,
-       //       pool_padding, pool_padding);
-       // MAGMADNN_ASSERT_NO_DNNL_ERRORS(dnnl_stat);
+       //
+       // Create output tensor
        
        // FIXME: call calculate_and_set_output_shape instead? 
        this->output_tensor = new Tensor<T>(this->output_shape, {NONE, {}}, this->mem_type);

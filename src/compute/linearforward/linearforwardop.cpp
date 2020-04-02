@@ -10,35 +10,35 @@ namespace op {
 template <typename T>
 LinearForwardOp<T>::LinearForwardOp(Operation<T> *input, Operation<T> *weights, bool copy, bool needs_grad)
     : Operation<T>::Operation({input, weights}, needs_grad),
+#if defined(MAGMADNN_HAVE_MKLDNN)   
+      dnnl_cpu_engine_(dnnl::engine::kind::cpu, 0),
+#endif
       input(input),
       weights(weights),
       copy(copy),
       use_bias(false) {
-    /* setup code in here */
-    this->output_shape = {input->get_output_shape(0), weights->get_output_shape(1)};
-    this->mem_type = input->get_memory_type();
-    this->name = "LinearForward";
 
-    this->output_tensor = new Tensor<T>(this->output_shape, {NONE, {}}, this->mem_type);
+   // Setting up output tensor
+   this->init_settings(input, weights);
 }
 
 template <typename T>
 LinearForwardOp<T>::LinearForwardOp(Operation<T> *input, Operation<T> *weights, Operation<T> *bias, bool copy,
                                     bool needs_grad)
     : Operation<T>::Operation({input, weights, bias}, needs_grad),
+#if defined(MAGMADNN_HAVE_MKLDNN)   
+      dnnl_cpu_engine_(dnnl::engine::kind::cpu, 0),
+#endif
       input(input),
       weights(weights),
       bias(bias),
       copy(copy),
       use_bias(true) {
-    /* setup code in here */
-    this->output_shape = {input->get_output_shape(0), weights->get_output_shape(1)};
-    this->mem_type = input->get_memory_type();
-    this->name = "LinearForward";
 
-    this->output_tensor = new Tensor<T>(this->output_shape, {NONE, {}}, this->mem_type);
-
-    init_bias_settings();
+   // Setting up output tensor
+   this->init_settings(input, weights);
+   // Setting up bias tensor
+   this->init_bias_settings();
 }
 
 template <typename T>
@@ -155,6 +155,19 @@ Tensor<T> *LinearForwardOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, 
     return out;
 }
 
+
+template <typename T>
+void LinearForwardOp<T>::init_settings(Operation<T> const* input, Operation<T> const* weights) {
+
+   /* setup code in here */
+   this->output_shape = {input->get_output_shape(0), weights->get_output_shape(1)};
+   this->mem_type = input->get_memory_type();
+   this->name = "LinearForward";
+
+   this->output_tensor = new Tensor<T>(this->output_shape, {NONE, {}}, this->mem_type);
+
+}   
+   
 template <typename T>
 void LinearForwardOp<T>::init_bias_settings() {
     if (this->mem_type == HOST) {

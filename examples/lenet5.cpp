@@ -47,28 +47,28 @@ int main(int argc, char** argv) {
          {NONE, {}},
          training_memory_type);
 
-   auto input = layer::input<T>(x_batch);
+   auto input = layer::input(x_batch);
    
-   auto conv2d1 = layer::conv2d<T>(input->out(), {5, 5}, 32, {0, 0}, {1, 1}, {1, 1});
-   auto act1 = layer::activation<T>(conv2d1->out(), layer::TANH);
-   auto pool1 = layer::pooling<T>(act1->out(), {2, 2}, {0, 0}, {2, 2}, AVERAGE_POOL);
+   auto conv2d1 = layer::conv2d(input->out(), {5, 5}, 32, {0, 0}, {1, 1}, {1, 1});
+   auto act1 = layer::activation(conv2d1->out(), layer::TANH);
+   auto pool1 = layer::pooling(act1->out(), {2, 2}, {0, 0}, {2, 2}, AVERAGE_POOL);
 
-   auto conv2d2 = layer::conv2d<T>(pool1->out(), {5, 5}, 32, {0, 0}, {1, 1}, {1, 1});
-   auto act2 = layer::activation<T>(conv2d2->out(), layer::TANH);
-   auto pool2 = layer::pooling<T>(act2->out(), {2, 2}, {0, 0}, {2, 2}, AVERAGE_POOL);
+   auto conv2d2 = layer::conv2d(pool1->out(), {5, 5}, 32, {0, 0}, {1, 1}, {1, 1});
+   auto act2 = layer::activation(conv2d2->out(), layer::TANH);
+   auto pool2 = layer::pooling(act2->out(), {2, 2}, {0, 0}, {2, 2}, AVERAGE_POOL);
 
-   auto flatten = layer::flatten<T>(pool2->out());
+   auto flatten = layer::flatten(pool2->out());
 
-   auto fc1 = layer::fullyconnected<T>(flatten->out(), 120, true);
-   auto act3 = layer::activation<T>(fc1->out(), layer::TANH);
+   auto fc1 = layer::fullyconnected(flatten->out(), 120, true);
+   auto act3 = layer::activation(fc1->out(), layer::TANH);
 
-   auto fc2 = layer::fullyconnected<T>(act3->out(), 84, true);
-   auto act4 = layer::activation<T>(fc2->out(), layer::TANH);
+   auto fc2 = layer::fullyconnected(act3->out(), 84, true);
+   auto act4 = layer::activation(fc2->out(), layer::TANH);
 
-   auto fc3 = layer::fullyconnected<T>(act4->out(), train_set.nclasses(), false);
-   auto act5 = layer::activation<T>(fc3->out(), layer::SOFTMAX);
+   auto fc3 = layer::fullyconnected(act4->out(), train_set.nclasses(), false);
+   auto act5 = layer::activation(fc3->out(), layer::SOFTMAX);
 
-   auto output = layer::output<T>(act5->out());
+   auto output = layer::output(act5->out());
 
    std::vector<layer::Layer<T> *> layers =
       {input,

@@ -67,9 +67,53 @@ Tensor<T> *LinearForwardOp<T>::_eval(bool recompute) {
 
     input_tensor = input->eval(recompute);
     weights_tensor = weights->eval(recompute);
+    // Update bias tensor is requested
     if (use_bias) {
        bias_tensor = bias->eval(recompute);
     }
+
+#if defined(MAGMADNN_HAVE_MKLDNN)
+    if (input_tensor->get_memory_type() == HOST) {
+       
+       auto src_mem = dnnl::memory(
+             this->dnnl_fwd_pdesc_->src_desc(),
+             this->dnnl_cpu_engine_,
+             (void*)this->input_tensor->get_ptr());
+
+       auto weights_mem = dnnl::memory(
+             this->dnnl_fwd_pdesc_->weights_desc(),
+             this->dnnl_cpu_engine_,
+             (void*)this->weights_tensor->get_ptr());
+
+       auto dst_mem = dnnl::memory(
+             this->dnnl_fwd_pdesc_->dst_desc(),
+             this->dnnl_cpu_engine_,
+             (void*)this->output_tensor->get_ptr());
+
+       std::unordered_map<int, dnnl::memory> inner_product_fwd_args;       
+
+       inner_product_fwd_args.insert({DNNL_ARG_SRC, src_mem});
+       inner_product_fwd_args.insert({DNNL_ARG_WEIGHTS, weights_mem});
+       inner_product_fwd_args.insert({DNNL_ARG_DST, dst_mem});
+
+       if (use_bias) {
+          auto bias_mem = dnnl::memory(
+                this->dnnl_fwd_pdesc_->bias_desc(),
+                this->dnnl_cpu_engine_,
+                (void*)this->bias_tensor->get_ptr());
+
+          inner_product_fwd_args.insert({DNNL_ARG_BIAS, bias_mem});
+       }
+
+       // Create dnnl::stream.
+       dnnl::stream engine_stream(this->dnnl_cpu_engine_);
+       dnnl_fwd_->execute(engine_stream, inner_product_fwd_args);
+       // Wait for the computation to finalize.
+       engine_stream.wait();
+    
+       return this->output_tensor;
+    }
+#endif
     
     /* XW */
     math::matmul((T) 1, false, input_tensor, false, weights_tensor, (T) 0, this->output_tensor);
@@ -187,72 +231,97 @@ void LinearForwardOp<T>::init_dnnl_settings() {
 
    dnnl::memory::dims src_dims =
       {input->get_output_shape(0), input->get_output_shape(1)};
-
-   dnnl::memory::dims src_strides = {input->get_output_shape(0), 1};
+   dnnl::memory::dims src_strides = {input->get_output_shape(1), 1};
+   // dnnl::memory::dims src_strides = {1, input->get_output_shape(1)};
 
    dnnl::memory::dims weights_dims =
       {weights->get_output_shape(0), weights->get_output_shape(1)};
+   dnnl::memory::dims weights_strides = {weights->get_output_shape(1), 1};
 
-   dnnl::memory::dims weights_strides = {weights->get_output_shape(0), 1};
-   
+   dnnl::memory::dims trans_weights_dims =
+      {weights->get_output_shape(1), weights->get_output_shape(0)};
+   dnnl::memory::dims trans_weights_strides = {1, weights->get_output_shape(1)};
+
+   // dnnl::memory::dims weights_strides = {1, weights->get_output_shape(1)};   
    dnnl::memory::dims dst_dims =
       {this->output_shape[0], this->output_shape[1]};
-
-   dnnl::memory::dims dst_strides = {this->output_shape[0], 1};
+   dnnl::memory::dims dst_strides = {this->output_shape[1], 1};
+   // dnnl::memory::dims dst_strides = {1, this->output_shape[1]};
 
    auto src_md = dnnl::memory::desc(
          src_dims,
          dnnl::memory::data_type::f32,
-         src_strides);
+         // dnnl::memory::format_tag::ab
+         src_strides
+         // dnnl::memory::format_tag::any
+         );
 
-   auto weights_md = dnnl::memory::desc(
-         weights_dims,
+   // auto weights_md = dnnl::memory::desc(
+   //       weights_dims,
+   //       dnnl::memory::data_type::f32,
+   //       // dnnl::memory::format_tag::ab
+   //       weights_strides
+   //       // dnnl::memory::format_tag::any
+   //       );
+
+   auto trans_weights_md = dnnl::memory::desc(
+         trans_weights_dims,
          dnnl::memory::data_type::f32,
-         weights_strides);
-
+         // dnnl::memory::format_tag::ab
+         // weights_strides
+         // dnnl::memory::format_tag::any
+         trans_weights_strides
+         );
+   
    auto dst_md = dnnl::memory::desc(
          dst_dims,
          dnnl::memory::data_type::f32,
-         dst_strides);
+         // dnnl::memory::format_tag::ab
+         dst_strides
+         // dnnl::memory::format_tag::any
+         );
 
    // auto src_mem = dnnl::memory(src_md, dnnl_cpu_engine_);
    // auto weigths_mem = dnnl::memory(weigths_md, dnnl_cpu_engine_);
    // auto dst_mem = dnnl::memory(dst_md, dnnl_cpu_engine_);
 
-   std::unique_ptr<dnnl::matmul::desc> matmul_desc = nullptr;
+   std::unique_ptr<dnnl::inner_product_forward::desc> inner_product_fwd_desc = nullptr;
       
    if (use_bias) {
 
-      dnnl::memory::dims bias_dims;
-      dnnl::memory::dims bias_strides;
-      dnnl::memory::desc bias_md;
-      // dnnl::memory bias_mem;
+      // dnnl::memory::dims bias_dims = {1, this->output_shape[1]};   
+      // dnnl::memory::dims bias_strides = {1, 1};
 
-      bias_dims = {1, this->output_shape[1]};   
-      bias_strides = {1, 1};
-
-      bias_md = dnnl::memory::desc(
-            bias_dims,
+      dnnl::memory::desc bias_md = dnnl::memory::desc(
+            {1, this->output_shape[1]},
             dnnl::memory::data_type::f32,
-            bias_strides);
+            {1, 1});
 
-      // bias_mem = dnnl::memory(bias_md, dnnl_cpu_engine_);
-
-      matmul_desc.reset(
-            new dnnl::matmul::desc(src_md, weights_md, bias_md, dst_md));
+      
+      inner_product_fwd_desc.reset(
+            new dnnl::inner_product_forward::desc(
+                  dnnl::prop_kind::forward_training,
+                  src_md, trans_weights_md, bias_md, dst_md));
 
    }
    else {
-      matmul_desc.reset(
-            new dnnl::matmul::desc(src_md, weights_md, dst_md));
+
+      // matmul_desc.reset(
+      //       new dnnl::inner_product_forward::desc(
+      //             src_md, weights_md, dst_md));
+
+      inner_product_fwd_desc.reset(
+            new dnnl::inner_product_forward::desc(
+                  dnnl::prop_kind::forward_training,
+                  src_md, trans_weights_md, dst_md));
    }
 
    this->dnnl_fwd_pdesc_.reset( 
-         new dnnl::matmul::primitive_desc(
-               *matmul_desc.get(), this->dnnl_cpu_engine_));
+         new dnnl::inner_product_forward::primitive_desc(
+               *(inner_product_fwd_desc.get()), this->dnnl_cpu_engine_));
 
    this->dnnl_fwd_.reset(
-         new dnnl::matmul(*(this->dnnl_fwd_pdesc_.get())));
+         new dnnl::inner_product_forward(*(this->dnnl_fwd_pdesc_.get())));
 
 }
 #endif

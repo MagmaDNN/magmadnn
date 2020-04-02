@@ -47,10 +47,10 @@ class LinearForwardOp : public Operation<T> {
    dnnl::engine dnnl_cpu_engine_;
 
    // Pooling DNNL primitive descriptor
-   std::unique_ptr<dnnl::matmul::primitive_desc> dnnl_fwd_pdesc_;
+   std::unique_ptr<dnnl::inner_product_forward::primitive_desc> dnnl_fwd_pdesc_;
 
    // Pooling DNNL primitive
-   std::unique_ptr<dnnl::matmul> dnnl_fwd_;
+   std::unique_ptr<dnnl::inner_product_forward> dnnl_fwd_;
 
 #endif
 

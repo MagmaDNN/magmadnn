@@ -80,7 +80,6 @@ int main(int argc, char **argv) {
     auto input = layer::input(x_batch);
 
     auto pool = layer::pooling(input->out(), {2, 2}, {0, 0}, {2, 2}, AVERAGE_POOL);
-    // auto pool = layer::pooling(input->out(), {2, 2}, {0, 0}, {2, 2}, AVERAGE_POOL);
     // auto pool = layer::pooling(input->out(), {2, 2}, {0, 0}, {2, 2}, MAX_POOL);
     auto flatten = layer::flatten(pool->out());
     // auto flatten = layer::flatten(input->out());

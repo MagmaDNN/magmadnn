@@ -43,6 +43,7 @@ class PoolingOp : public Operation<T> {
 #if defined(MAGMADNN_HAVE_MKLDNN)
    dnnl::engine dnnl_cpu_engine_;
 
+   //
    // DNNL forward
    //
    
@@ -50,13 +51,6 @@ class PoolingOp : public Operation<T> {
    std::unique_ptr<dnnl::pooling_forward::primitive_desc> dnnl_fwd_pdesc_;
    // Pooling DNNL primitive
    std::unique_ptr<dnnl::pooling_forward> dnnl_fwd_;
-
-   // DNNL backward
-   //
-
-   // dnnl_engine_t engine_;
-   // dnnl_pooling_desc_t dnnl_pool_fwd_desc_;
-   // dnnl_pooling_desc_t dnnl_pool_bwd_desc_;
 #endif
 
 };

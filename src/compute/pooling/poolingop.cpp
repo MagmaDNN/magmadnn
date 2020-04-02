@@ -85,7 +85,8 @@ Tensor<T> *PoolingOp<T>::_eval(bool recompute) {
 
       // Create dnnl stream.
       dnnl::stream dnnl_engine_stream(this->dnnl_cpu_engine_);
-      
+
+      // std::cout << "PoolingOp<T>::_eval execute DNNL pooling fwd kernel" << std::endl;
       this->dnnl_fwd_->execute(dnnl_engine_stream, dnnl_args);
       dnnl_engine_stream.wait();
 #else
@@ -107,14 +108,13 @@ template <typename T>
 Tensor<T> *PoolingOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad) {
     /* return gradient in here ... */
     Tensor<T> *out = this->_grad_cache[(uintptr_t) var];
+    // std::cout << "PoolingOp<T>::_grad" << std::endl;        
 
 #if defined(MAGMADNN_HAVE_MKLDNN)
-    dnnl::memory::dims diff_dst_mem_dims;
-    dnnl::memory::dims diff_src_mem_dims;
-    // mkldnn::memory::dims in_grad_dims;
-
     dnnl::memory::desc diff_src_mem_md;
     dnnl::memory::desc diff_dst_mem_md;
+
+    dnnl::pooling_backward::primitive_desc dnnl_bwd_pdesc;
 #endif
     
     if (out == NULL) {
@@ -126,56 +126,67 @@ Tensor<T> *PoolingOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor
 #endif
 
 #if defined(MAGMADNN_HAVE_MKLDNN)
-        // Dimensions of destiation gradient 
-        diff_dst_mem_dims =
-           {
-            this->input->get_output_shape()[0],
-            this->input->get_output_shape()[1],
-            this->input->get_output_shape()[2],
-            this->input->get_output_shape()[3]
-           };
+        if (this->mem_type == HOST) {
+           // Only use DNNL on HOST for now
+           
+           // Dimensions of destiation gradient 
+           dnnl::memory::dims diff_dst_mem_dims =
+              {
+               this->input->get_output_shape()[0],
+               this->input->get_output_shape()[1],
+               this->input->get_output_shape()[2],
+               this->input->get_output_shape()[3]
+              };
 
-        diff_dst_mem_md = dnnl::memory::desc(
-              diff_dst_mem_dims,
-              dnnl::memory::data_type::f32,
-              dnnl::memory::format_tag::nchw);
+           diff_dst_mem_md = dnnl::memory::desc(
+                 diff_dst_mem_dims,
+                 dnnl::memory::data_type::f32,
+                 dnnl::memory::format_tag::nchw);
 
-        diff_src_mem_dims =
-           {
-            grad->get_shape(0),
-            grad->get_shape(1),
-            grad->get_shape(2),
-            grad->get_shape(3)
-           };
+           dnnl::memory::dims diff_src_mem_dims =
+              {
+               grad->get_shape(0),
+               grad->get_shape(1),
+               grad->get_shape(2),
+               grad->get_shape(3)
+              };
 
-        diff_src_mem_md = dnnl::memory::desc(
-              diff_src_mem_dims,
-              dnnl::memory::data_type::f32,
-              dnnl::memory::format_tag::nchw);
+           diff_src_mem_md = dnnl::memory::desc(
+                 diff_src_mem_dims,
+                 dnnl::memory::data_type::f32,
+                 dnnl::memory::format_tag::nchw);
 
-        dnnl::algorithm pool_alg;
+           dnnl::algorithm pool_alg;
 
-        if (mode == pooling_mode::MAX_POOL) {
-           pool_alg = dnnl::algorithm::pooling_max;
+           if (mode == pooling_mode::MAX_POOL) {
+              pool_alg = dnnl::algorithm::pooling_max;
+           }
+           else if (mode == pooling_mode::AVERAGE_POOL) {
+              pool_alg = dnnl::algorithm::pooling_avg_exclude_padding;
+           }
+           else {
+              throw ::magmadnn::Error(
+                    __FILE__, __LINE__,
+                    "Pooling algorithm not supported: " + mode);
+           }
+
+           // Create DNNL pooling descriptor
+           dnnl::pooling_backward::desc bwd_desc(
+                 pool_alg,
+                 diff_src_mem_md, diff_dst_mem_md,
+                 {vertical_stride, horizontal_stride},
+                 {filter_h, filter_w},
+                 {pad_h, pad_w},
+                 {pad_h, pad_w});
+
+           // Create DNNL pooling primitive descriptor
+           dnnl_bwd_pdesc = dnnl::pooling_backward::primitive_desc(
+                 bwd_desc,
+                 this->dnnl_cpu_engine_,
+                 *(this->dnnl_fwd_pdesc_.get()));
+           
         }
-        else if (mode == pooling_mode::AVERAGE_POOL) {
-           pool_alg = dnnl::algorithm::pooling_avg_exclude_padding;
-        }
-        else {
-           throw ::magmadnn::Error(
-                 __FILE__, __LINE__,
-                 "Pooling algorithm not supported: " + mode);
-        }
-
-        dnnl::pooling_backward::desc desc(
-              pool_alg,
-              diff_src_mem_md, diff_dst_mem_md,
-              {vertical_stride, horizontal_stride},
-              {filter_h, filter_w},
-              {pad_h, pad_w},
-              {pad_h, pad_w});
 #endif
-
         this->_grad_cache[(uintptr_t) var] = out;
     }
 
@@ -195,15 +206,18 @@ Tensor<T> *PoolingOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor
              // Poiter to underlying source data
              out->get_ptr());
 
+       // Crate primitive
+       dnnl::pooling_backward dnnl_bwd(dnnl_bwd_pdesc);
+ 
        // Build arg list for kernel execution
        std::unordered_map<int, dnnl::memory> dnnl_args;
        dnnl_args.insert({DNNL_ARG_SRC, diff_src_mem});
        dnnl_args.insert({DNNL_ARG_DST, diff_dst_mem});        
-
+       
        // Create dnnl stream.
        dnnl::stream dnnl_engine_stream(this->dnnl_cpu_engine_);
-        
-       this->dnnl_fwd_->execute(dnnl_engine_stream, dnnl_args);
+       // std::cout << "PoolingOp<T>::_grad execute DNNL pooling bwd kernel" << std::endl;        
+       dnnl_bwd.execute(dnnl_engine_stream, dnnl_args);
 
        dnnl_engine_stream.wait();       
 #else

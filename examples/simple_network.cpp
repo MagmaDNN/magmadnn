@@ -49,8 +49,8 @@ int main(int argc, char **argv) {
 
     // Initialize our model parameters
     model::nn_params_t params;
-    params.batch_size = 32; /* batch size: the number of samples to process in each mini-batch */
-    params.n_epochs = 5;    /* # of epochs: the number of passes over the entire training set */
+    params.batch_size = 128; /* batch size: the number of samples to process in each mini-batch */
+    params.n_epochs = 10;    /* # of epochs: the number of passes over the entire training set */
     params.learning_rate = 0.05;
 
     // This is only necessary for a general example which can handle
@@ -58,8 +58,10 @@ int main(int argc, char **argv) {
     // code you will not need macros as you can simply pass DEVICE to
     // the x_batch constructor.
 #if defined(MAGMADNN_HAVE_CUDA)
-    training_memory_type = DEVICE;
-    std::cout << "Training on GPUs" << std::endl;
+    // training_memory_type = DEVICE;
+    // std::cout << "Training on GPUs" << std::endl;
+    training_memory_type = HOST;
+    std::cout << "Training on CPUs" << std::endl;
 #else
     training_memory_type = HOST;
     std::cout << "Training on CPUs" << std::endl;
@@ -69,11 +71,22 @@ int main(int argc, char **argv) {
 
     // Create a variable (of type T=float) with size (batch_size x
     // n_features) This will serve as the input to our network.
-    auto x_batch = op::var<T>("x_batch", {params.batch_size, n_features}, {NONE, {}}, training_memory_type);
+    auto x_batch = op::var<T>(
+          "x_batch",
+          {params.batch_size, train_set.nchanels(),  train_set.nrows(), train_set.ncols()},
+          {NONE, {}}, training_memory_type);
 
     // Initialize the layers in our network
     auto input = layer::input(x_batch);
-    auto fc1 = layer::fullyconnected(input->out(), 784, false);
+
+    auto pool = layer::pooling(input->out(), {2, 2}, {0, 0}, {2, 2}, AVERAGE_POOL);
+    // auto pool = layer::pooling(input->out(), {2, 2}, {0, 0}, {2, 2}, AVERAGE_POOL);
+    // auto pool = layer::pooling(input->out(), {2, 2}, {0, 0}, {2, 2}, MAX_POOL);
+    auto flatten = layer::flatten(pool->out());
+    // auto flatten = layer::flatten(input->out());
+
+    auto fc1 = layer::fullyconnected(flatten->out(), 784, false);
+    // auto fc1 = layer::fullyconnected(input->out(), 784, false);
     auto act1 = layer::activation(fc1->out(), layer::RELU);
 
     auto fc2 = layer::fullyconnected(act1->out(), 500, false);
@@ -85,7 +98,19 @@ int main(int argc, char **argv) {
     auto output = layer::output(act3->out());
 
     // Wrap each layer in a vector of layers to pass to the model
-    std::vector<layer::Layer<float> *> layers = {input, fc1, act1, fc2, act2, fc3, act3, output};
+    std::vector<layer::Layer<float> *> layers =
+       {input,
+        // Pooling layer
+        pool,
+        // flatten layer
+        flatten,
+        // First fully-connected layer
+        fc1, act1,
+        // Second fully-connected layer
+        fc2, act2,
+        //Third fully-connected layer
+        fc3, act3,
+        output};
 
     // This creates a Model for us. The model can train on our data
     // and perform other typical operations that a ML model can.

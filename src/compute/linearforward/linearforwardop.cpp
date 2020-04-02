@@ -12,14 +12,20 @@ LinearForwardOp<T>::LinearForwardOp(Operation<T> *input, Operation<T> *weights, 
     : Operation<T>::Operation({input, weights}, needs_grad),
 #if defined(MAGMADNN_HAVE_MKLDNN)   
       dnnl_cpu_engine_(dnnl::engine::kind::cpu, 0),
+      dnnl_fwd_pdesc_(nullptr),
 #endif
       input(input),
       weights(weights),
       copy(copy),
+      bias(nullptr),
       use_bias(false) {
 
    // Setting up output tensor
-   this->init_settings(input, weights);
+   this->init_settings();
+
+#if defined(MAGMADNN_HAVE_MKLDNN)   
+   this->init_dnnl_settings();
+#endif
 }
 
 template <typename T>
@@ -28,6 +34,7 @@ LinearForwardOp<T>::LinearForwardOp(Operation<T> *input, Operation<T> *weights, 
     : Operation<T>::Operation({input, weights, bias}, needs_grad),
 #if defined(MAGMADNN_HAVE_MKLDNN)   
       dnnl_cpu_engine_(dnnl::engine::kind::cpu, 0),
+      dnnl_fwd_pdesc_(nullptr),
 #endif
       input(input),
       weights(weights),
@@ -36,9 +43,13 @@ LinearForwardOp<T>::LinearForwardOp(Operation<T> *input, Operation<T> *weights, 
       use_bias(true) {
 
    // Setting up output tensor
-   this->init_settings(input, weights);
+   this->init_settings();
    // Setting up bias tensor
    this->init_bias_settings();
+
+#if defined(MAGMADNN_HAVE_MKLDNN)   
+   this->init_dnnl_settings();
+#endif
 }
 
 template <typename T>
@@ -56,7 +67,10 @@ Tensor<T> *LinearForwardOp<T>::_eval(bool recompute) {
 
     input_tensor = input->eval(recompute);
     weights_tensor = weights->eval(recompute);
-
+    if (use_bias) {
+       bias_tensor = bias->eval(recompute);
+    }
+    
     /* XW */
     math::matmul((T) 1, false, input_tensor, false, weights_tensor, (T) 0, this->output_tensor);
 #if defined(MAGMADNN_HAVE_CUDA)
@@ -64,8 +78,6 @@ Tensor<T> *LinearForwardOp<T>::_eval(bool recompute) {
 #endif
 
     if (use_bias) {
-       bias_tensor = bias->eval(recompute);
-
        if (this->output_tensor->get_memory_type() == HOST) {
           magmadnn::math::bias_add_cpu(
                 this->output_tensor, this->bias_tensor, this->output_tensor);
@@ -155,18 +167,95 @@ Tensor<T> *LinearForwardOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, 
     return out;
 }
 
-
 template <typename T>
-void LinearForwardOp<T>::init_settings(Operation<T> const* input, Operation<T> const* weights) {
+void LinearForwardOp<T>::init_settings() {
 
    /* setup code in here */
-   this->output_shape = {input->get_output_shape(0), weights->get_output_shape(1)};
+   this->output_shape =
+      {this->input->get_output_shape(0),
+       this->weights->get_output_shape(1)};
    this->mem_type = input->get_memory_type();
    this->name = "LinearForward";
-
+   
    this->output_tensor = new Tensor<T>(this->output_shape, {NONE, {}}, this->mem_type);
-
+   
 }   
+
+#if defined(MAGMADNN_HAVE_MKLDNN)   
+template <typename T>
+void LinearForwardOp<T>::init_dnnl_settings() {
+
+   dnnl::memory::dims src_dims =
+      {input->get_output_shape(0), input->get_output_shape(1)};
+
+   dnnl::memory::dims src_strides = {input->get_output_shape(0), 1};
+
+   dnnl::memory::dims weights_dims =
+      {weights->get_output_shape(0), weights->get_output_shape(1)};
+
+   dnnl::memory::dims weights_strides = {weights->get_output_shape(0), 1};
+   
+   dnnl::memory::dims dst_dims =
+      {this->output_shape[0], this->output_shape[1]};
+
+   dnnl::memory::dims dst_strides = {this->output_shape[0], 1};
+
+   auto src_md = dnnl::memory::desc(
+         src_dims,
+         dnnl::memory::data_type::f32,
+         src_strides);
+
+   auto weights_md = dnnl::memory::desc(
+         weights_dims,
+         dnnl::memory::data_type::f32,
+         weights_strides);
+
+   auto dst_md = dnnl::memory::desc(
+         dst_dims,
+         dnnl::memory::data_type::f32,
+         dst_strides);
+
+   // auto src_mem = dnnl::memory(src_md, dnnl_cpu_engine_);
+   // auto weigths_mem = dnnl::memory(weigths_md, dnnl_cpu_engine_);
+   // auto dst_mem = dnnl::memory(dst_md, dnnl_cpu_engine_);
+
+   std::unique_ptr<dnnl::matmul::desc> matmul_desc = nullptr;
+      
+   if (use_bias) {
+
+      dnnl::memory::dims bias_dims;
+      dnnl::memory::dims bias_strides;
+      dnnl::memory::desc bias_md;
+      // dnnl::memory bias_mem;
+
+      bias_dims = {1, this->output_shape[1]};   
+      bias_strides = {1, 1};
+
+      bias_md = dnnl::memory::desc(
+            bias_dims,
+            dnnl::memory::data_type::f32,
+            bias_strides);
+
+      // bias_mem = dnnl::memory(bias_md, dnnl_cpu_engine_);
+
+      matmul_desc.reset(
+            new dnnl::matmul::desc(src_md, weights_md, bias_md, dst_md));
+
+   }
+   else {
+      matmul_desc.reset(
+            new dnnl::matmul::desc(src_md, weights_md, dst_md));
+   }
+
+   this->dnnl_fwd_pdesc_.reset( 
+         new dnnl::matmul::primitive_desc(
+               *matmul_desc.get(), this->dnnl_cpu_engine_));
+
+   this->dnnl_fwd_.reset(
+         new dnnl::matmul(*(this->dnnl_fwd_pdesc_.get())));
+
+}
+#endif
    
 template <typename T>
 void LinearForwardOp<T>::init_bias_settings() {

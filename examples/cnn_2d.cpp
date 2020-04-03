@@ -46,32 +46,46 @@ int main(int argc, char **argv) {
     params.learning_rate = 0.05;
 
 #if defined(USE_GPU)
-    training_memory_type = DEVICE;
+    // training_memory_type = DEVICE;
+    training_memory_type = HOST;
 #else
     training_memory_type = HOST;
 #endif
 
     auto x_batch = op::var<float>("x_batch", {params.batch_size, 1, n_rows, n_cols}, {NONE, {}}, training_memory_type);
 
-    auto input = layer::input<float>(x_batch);
+    auto input = layer::input(x_batch);
 
-    auto conv2d1 = layer::conv2d<float>(input->out(), {5, 5}, 32, {0, 0}, {1, 1}, {1, 1}, true, false);
-    auto act1 = layer::activation<float>(conv2d1->out(), layer::RELU);
-    auto pool1 = layer::pooling<float>(act1->out(), {2, 2}, {0, 0}, {2, 2}, MAX_POOL);
-    // auto pool1 = layer::pooling<float>(act1->out(), {2, 2}, {0, 0}, {2, 2}, AVERAGE_POOL);
-    auto dropout1 = layer::dropout<float>(pool1->out(), 0.25);
+    auto conv2d1 = layer::conv2d(input->out(), {5, 5}, 32, {0, 0}, {1, 1}, {1, 1}, true, false);
+    // auto conv2d1 = layer::conv2d(input->out(), {2, 2}, 32, {0, 0}, {1, 1}, {0, 0}, true, false);
+    auto act1 = layer::activation(conv2d1->out(), layer::RELU);
+    // auto pool1 = layer::pooling(act1->out(), {2, 2}, {0, 0}, {2, 2}, MAX_POOL);
+    auto pool1 = layer::pooling<float>(act1->out(), {2, 2}, {0, 0}, {2, 2}, AVERAGE_POOL);
+    // auto dropout1 = layer::dropout(pool1->out(), 0.25);
 
-    auto flatten = layer::flatten<float>(dropout1->out());
+    // auto flatten = layer::flatten(input->out());
+    // auto flatten = layer::flatten(act1->out());
+    // auto flatten = layer::flatten(dropout1->out());
+    auto flatten = layer::flatten(pool1->out());
 
-    auto fc1 = layer::fullyconnected<float>(flatten->out(), 128, true);
-    auto act2 = layer::activation<float>(fc1->out(), layer::RELU);
-    auto fc2 = layer::fullyconnected<float>(act2->out(), n_classes, false);
-    auto act3 = layer::activation<float>(fc2->out(), layer::SOFTMAX);
+    auto fc1 = layer::fullyconnected(flatten->out(), 128, true);
+    auto act2 = layer::activation(fc1->out(), layer::RELU);
+    auto fc2 = layer::fullyconnected(act2->out(), n_classes, false);
+    // auto fc2 = layer::fullyconnected(flatten->out(), n_classes, false);
 
-    auto output = layer::output<float>(act3->out());
+    auto act3 = layer::activation(fc2->out(), layer::SOFTMAX);
 
-    std::vector<layer::Layer<float> *> layers = {input, conv2d1, act1, pool1, dropout1, flatten,
-                                                 fc1,   act2,    fc2,  act3,  output};
+    auto output = layer::output(act3->out());
+
+    std::vector<layer::Layer<float> *> layers =
+       {input,
+        conv2d1, act1,
+        pool1,
+        // dropout1,
+        flatten,
+        fc1,   act2,
+        fc2,  act3,
+        output};
 
     model::NeuralNetwork<float> model(layers, optimizer::CROSS_ENTROPY, optimizer::SGD, params);
 

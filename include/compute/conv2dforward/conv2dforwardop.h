@@ -26,6 +26,10 @@ class Conv2DForwardOp : public Operation<T> {
     void init_settings();
     void calculate_and_set_output_shape();
 
+#if defined(MAGMADNN_HAVE_MKLDNN)
+   void init_dnnl_settings();
+#endif
+
     Operation<T> *input, *filter;
     Tensor<T> *input_tensor, *filter_tensor;
 
@@ -35,6 +39,17 @@ class Conv2DForwardOp : public Operation<T> {
 #if defined(MAGMADNN_HAVE_CUDA)
     ::magmadnn::math::conv2d_cudnn_settings cudnn_settings;
 #endif
+
+#if defined(MAGMADNN_HAVE_MKLDNN)
+   dnnl::engine dnnl_cpu_engine_;
+
+   // Pooling DNNL primitive descriptor
+   std::unique_ptr<dnnl::convolution_forward::primitive_desc> dnnl_fwd_pdesc_;
+
+   // Pooling DNNL primitive
+   std::unique_ptr<dnnl::convolution_forward> dnnl_fwd_;
+#endif
+
 };
 
 template <typename T>

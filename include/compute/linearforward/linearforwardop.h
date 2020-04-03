@@ -51,7 +51,6 @@ class LinearForwardOp : public Operation<T> {
 
    // Pooling DNNL primitive
    std::unique_ptr<dnnl::inner_product_forward> dnnl_fwd_;
-
 #endif
 
 };

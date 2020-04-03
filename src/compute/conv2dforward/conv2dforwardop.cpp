@@ -58,54 +58,126 @@ Conv2DForwardOp<T>::~Conv2DForwardOp() {
 
 template <typename T>
 Tensor<T> *Conv2DForwardOp<T>::_eval(bool recompute) {
-    this->input_tensor = input->eval(recompute);
-    this->filter_tensor = filter->eval(recompute);
 
-    if (this->mem_type == HOST) {
+   this->input_tensor = input->eval(recompute);
+   this->filter_tensor = filter->eval(recompute);
+
+   if (this->mem_type == HOST) {
 #if defined(MAGMADNN_HAVE_MKLDNN)
 
-       auto src_md = this->dnnl_fwd_pdesc_->src_desc();
-       auto dst_md = this->dnnl_fwd_pdesc_->dst_desc();
-       auto bias_md = this->dnnl_fwd_pdesc_->bias_desc();
-       auto weights_md = this->dnnl_fwd_pdesc_->weights_desc();
+      // dnnl::engine eng(dnnl::engine::kind::cpu, 0);
 
-       auto src_mem = dnnl::memory(
-             src_md, this->dnnl_cpu_engine_, this->input_tensor->get_ptr());
-       auto dst_mem = dnnl::memory(
-             dst_md, this->dnnl_cpu_engine_, this->output_tensor->get_ptr());
-       auto bias_mem = dnnl::memory(bias_md, this->dnnl_cpu_engine_, nullptr);
-       auto weights_mem = dnnl::memory(
-             weights_md, this->dnnl_cpu_engine_, this->filter_tensor->get_ptr());
+      // dnnl::memory::dims src_dims =
+      //    {this->input_tensor->get_shape(0), this->input_tensor->get_shape(1),
+      //     this->input_tensor->get_shape(2), this->input_tensor->get_shape(3)};
 
-       // Primitive arguments.
-       std::unordered_map<int, dnnl::memory> conv_fwd_args;
-       conv_fwd_args.insert({DNNL_ARG_SRC, src_mem});
-       conv_fwd_args.insert({DNNL_ARG_WEIGHTS, weights_mem});
-       conv_fwd_args.insert({DNNL_ARG_BIAS, bias_mem});
-       conv_fwd_args.insert({DNNL_ARG_DST, dst_mem});
+      // dnnl::memory::dims dst_dims =
+      //    {this->output_tensor->get_shape(0), this->output_tensor->get_shape(1),
+      //     this->output_tensor->get_shape(2), this->output_tensor->get_shape(3)};
 
-       // Create dnnl::stream.
-       dnnl::stream engine_stream(this->dnnl_cpu_engine_);
-       dnnl_fwd_->execute(engine_stream, conv_fwd_args);
-       // Wait for the computation to finalize.
-       engine_stream.wait();
+      // dnnl::memory::dims weights_dims =
+      //    {this->filter_tensor->get_shape(0), this->filter_tensor->get_shape(1),
+      //     this->filter_tensor->get_shape(2), this->filter_tensor->get_shape(3)};
 
+      // auto src_md = dnnl::memory::desc(
+      //       src_dims,
+      //       dnnl::memory::data_type::f32,
+      //       dnnl::memory::format_tag::nchw);
+
+      // auto dst_md = dnnl::memory::desc(
+      //       dst_dims,
+      //       dnnl::memory::data_type::f32,
+      //       dnnl::memory::format_tag::nchw);
+
+      // auto weights_md = dnnl::memory::desc(
+      //       weights_dims,
+      //       dnnl::memory::data_type::f32,
+      //       dnnl::memory::format_tag::nchw);
+
+      // auto bias_md = dnnl::memory::desc();
+            
+      auto src_md = this->dnnl_fwd_pdesc_->src_desc();
+      auto dst_md = this->dnnl_fwd_pdesc_->dst_desc();
+      auto bias_md = this->dnnl_fwd_pdesc_->bias_desc();
+      auto weights_md = this->dnnl_fwd_pdesc_->weights_desc();
+
+      // // Strides dimension
+      // dnnl::memory::dims conv_strides_dims = {vertical_stride, horizontal_stride};
+      // // Padding dimension
+      // dnnl::memory::dims conv_padding_dims = {pad_h, pad_w};
+      // // Dilatation dimension
+      // dnnl::memory::dims conv_dilation_dims = {dilation_h, dilation_w};
+
+      // dnnl::algorithm conv_alg;
+
+      // auto conv_fwd_desc = dnnl::convolution_forward::desc(
+      //       dnnl::prop_kind::forward_training,
+      //       dnnl::algorithm::convolution_direct,
+      //       src_md, weights_md, bias_md, dst_md,
+      //       conv_strides_dims, conv_dilation_dims,
+      //       conv_padding_dims, conv_padding_dims);
+
+      // auto conv_fwd_pdesc = dnnl::convolution_forward::primitive_desc(
+      //       conv_fwd_desc, eng);
+
+      // auto conv_fwd = dnnl::convolution_forward(
+      //       conv_fwd_pdesc);
+
+      auto src_mem = dnnl::memory(
+            src_md,
+            // eng,
+            this->dnnl_cpu_engine_,
+            this->input_tensor->get_ptr());
+      auto dst_mem = dnnl::memory(
+            dst_md,
+            this->dnnl_cpu_engine_,
+            // eng,
+            this->output_tensor->get_ptr());
+      auto bias_mem = dnnl::memory(
+            bias_md,
+            // eng,
+            this->dnnl_cpu_engine_,
+            nullptr);
+      auto weights_mem = dnnl::memory(
+            weights_md,
+            this->dnnl_cpu_engine_,
+            // eng,
+            this->filter_tensor->get_ptr());
+
+      // Primitive arguments.
+      std::unordered_map<int, dnnl::memory> conv_fwd_args;
+      conv_fwd_args.insert({DNNL_ARG_SRC, src_mem});
+      conv_fwd_args.insert({DNNL_ARG_WEIGHTS, weights_mem});
+      conv_fwd_args.insert({DNNL_ARG_BIAS, bias_mem});
+      conv_fwd_args.insert({DNNL_ARG_DST, dst_mem});
+
+      // std::cout << "eval" << std::endl;
+
+      // Create dnnl::stream.
+      dnnl::stream engine_stream(this->dnnl_cpu_engine_);
+      // dnnl::stream engine_stream(eng);
+      dnnl_fwd_->execute(engine_stream, conv_fwd_args);
+      // conv_fwd.execute(engine_stream, conv_fwd_args);
+      // Wait for the computation to finalize.
+      engine_stream.wait();
+
+      // std::cout << "eval end" << std::endl;
 #else          
-       std::fprintf(stderr, "Error: Conv2dForward::_eval requires GPU\n");
+      std::fprintf(stderr, "Error: Conv2dForward::_eval requires GPU\n");
 #endif
-    }
+   }
 #if defined(MAGMADNN_HAVE_CUDA)
-    else {
-       this->cudnn_settings.handle = this->get_cudnn_handle();
-       ::magmadnn::math::conv2d_device(
-             this->input_tensor, this->filter_tensor, this->output_tensor,
-             this->cudnn_settings);
+   else {
+      this->cudnn_settings.handle = this->get_cudnn_handle();
+      ::magmadnn::math::conv2d_device(
+            this->input_tensor, this->filter_tensor, this->output_tensor,
+            this->cudnn_settings);
 
-       if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
-    }
+      if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
+   }
 #endif
 
-    return this->output_tensor;
+   return this->output_tensor;
 }
 
 template <typename T>
@@ -320,6 +392,10 @@ Tensor<T> *Conv2DForwardOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, 
 template <typename T>
 void Conv2DForwardOp<T>::init_dnnl_settings() {
 
+   // std::cout << "Conv2DForwardOp<T>::init_dnnl_settings, get_count = "
+   //           << dnnl::engine::get_count(dnnl::engine::kind::cpu)
+   //           << std::endl;
+   
    int in = 0, ic = 0, ih = 0, iw = 0;
 
    in = this->input_tensor->get_shape(0);

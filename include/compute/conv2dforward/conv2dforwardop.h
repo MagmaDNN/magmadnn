@@ -22,12 +22,23 @@ class Conv2DForwardOp : public Operation<T> {
    protected:
     Tensor<T> *_eval(bool recompute);
     Tensor<T> *_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad);
-
-    void init_settings();
+   
     void calculate_and_set_output_shape();
 
+#if defined(MAGMADNN_HAVE_CUDA)
+    void cuda_forward();
+#endif
+   
+    void init_settings();
+
 #if defined(MAGMADNN_HAVE_MKLDNN)
-   void init_dnnl_settings();
+    void onednn_backward_data(Tensor<T> *grad, Tensor<T> *out);
+
+    void onednn_backward_weights(Tensor<T> *grad, Tensor<T> *out);
+   
+    void onednn_forward();
+
+    void onednn_init_settings();
 #endif
 
     Operation<T> *input, *filter;

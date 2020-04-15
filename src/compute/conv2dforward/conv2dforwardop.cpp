@@ -35,7 +35,7 @@ Conv2DForwardOp<T>::Conv2DForwardOp(
     this->init_settings();
 
 #if defined(MAGMADNN_HAVE_MKLDNN)   
-    this->init_dnnl_settings();
+    this->onednn_init_settings();
 #endif
 }
 
@@ -64,116 +64,15 @@ Tensor<T> *Conv2DForwardOp<T>::_eval(bool recompute) {
 
    if (this->mem_type == HOST) {
 #if defined(MAGMADNN_HAVE_MKLDNN)
-
-      // dnnl::engine eng(dnnl::engine::kind::cpu, 0);
-
-      // dnnl::memory::dims src_dims =
-      //    {this->input_tensor->get_shape(0), this->input_tensor->get_shape(1),
-      //     this->input_tensor->get_shape(2), this->input_tensor->get_shape(3)};
-
-      // dnnl::memory::dims dst_dims =
-      //    {this->output_tensor->get_shape(0), this->output_tensor->get_shape(1),
-      //     this->output_tensor->get_shape(2), this->output_tensor->get_shape(3)};
-
-      // dnnl::memory::dims weights_dims =
-      //    {this->filter_tensor->get_shape(0), this->filter_tensor->get_shape(1),
-      //     this->filter_tensor->get_shape(2), this->filter_tensor->get_shape(3)};
-
-      // auto src_md = dnnl::memory::desc(
-      //       src_dims,
-      //       dnnl::memory::data_type::f32,
-      //       dnnl::memory::format_tag::nchw);
-
-      // auto dst_md = dnnl::memory::desc(
-      //       dst_dims,
-      //       dnnl::memory::data_type::f32,
-      //       dnnl::memory::format_tag::nchw);
-
-      // auto weights_md = dnnl::memory::desc(
-      //       weights_dims,
-      //       dnnl::memory::data_type::f32,
-      //       dnnl::memory::format_tag::nchw);
-
-      // auto bias_md = dnnl::memory::desc();
-            
-      auto src_md = this->dnnl_fwd_pdesc_->src_desc();
-      auto dst_md = this->dnnl_fwd_pdesc_->dst_desc();
-      auto bias_md = this->dnnl_fwd_pdesc_->bias_desc();
-      auto weights_md = this->dnnl_fwd_pdesc_->weights_desc();
-
-      // // Strides dimension
-      // dnnl::memory::dims conv_strides_dims = {vertical_stride, horizontal_stride};
-      // // Padding dimension
-      // dnnl::memory::dims conv_padding_dims = {pad_h, pad_w};
-      // // Dilatation dimension
-      // dnnl::memory::dims conv_dilation_dims = {dilation_h, dilation_w};
-
-      // dnnl::algorithm conv_alg;
-
-      // auto conv_fwd_desc = dnnl::convolution_forward::desc(
-      //       dnnl::prop_kind::forward_training,
-      //       dnnl::algorithm::convolution_direct,
-      //       src_md, weights_md, bias_md, dst_md,
-      //       conv_strides_dims, conv_dilation_dims,
-      //       conv_padding_dims, conv_padding_dims);
-
-      // auto conv_fwd_pdesc = dnnl::convolution_forward::primitive_desc(
-      //       conv_fwd_desc, eng);
-
-      // auto conv_fwd = dnnl::convolution_forward(
-      //       conv_fwd_pdesc);
-
-      auto src_mem = dnnl::memory(
-            src_md,
-            // eng,
-            this->dnnl_cpu_engine_,
-            this->input_tensor->get_ptr());
-      auto dst_mem = dnnl::memory(
-            dst_md,
-            this->dnnl_cpu_engine_,
-            // eng,
-            this->output_tensor->get_ptr());
-      auto bias_mem = dnnl::memory(
-            bias_md,
-            // eng,
-            this->dnnl_cpu_engine_,
-            nullptr);
-      auto weights_mem = dnnl::memory(
-            weights_md,
-            this->dnnl_cpu_engine_,
-            // eng,
-            this->filter_tensor->get_ptr());
-
-      // Primitive arguments.
-      std::unordered_map<int, dnnl::memory> conv_fwd_args;
-      conv_fwd_args.insert({DNNL_ARG_SRC, src_mem});
-      conv_fwd_args.insert({DNNL_ARG_WEIGHTS, weights_mem});
-      conv_fwd_args.insert({DNNL_ARG_BIAS, bias_mem});
-      conv_fwd_args.insert({DNNL_ARG_DST, dst_mem});
-
-      // std::cout << "eval" << std::endl;
-
-      // Create dnnl::stream.
-      dnnl::stream engine_stream(this->dnnl_cpu_engine_);
-      // dnnl::stream engine_stream(eng);
-      dnnl_fwd_->execute(engine_stream, conv_fwd_args);
-      // conv_fwd.execute(engine_stream, conv_fwd_args);
-      // Wait for the computation to finalize.
-      engine_stream.wait();
-
-      // std::cout << "eval end" << std::endl;
+      this->onednn_forward();
 #else          
+      // TODO: raise exception
       std::fprintf(stderr, "Error: Conv2dForward::_eval requires GPU\n");
 #endif
    }
 #if defined(MAGMADNN_HAVE_CUDA)
    else {
-      this->cudnn_settings.handle = this->get_cudnn_handle();
-      ::magmadnn::math::conv2d_device(
-            this->input_tensor, this->filter_tensor, this->output_tensor,
-            this->cudnn_settings);
-
-      if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
+      this->cuda_forward();
    }
 #endif
 
@@ -201,68 +100,7 @@ Tensor<T> *Conv2DForwardOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, 
       if (this->mem_type == HOST) {
 #if defined(MAGMADNN_HAVE_MKLDNN)
 
-         dnnl::memory::dims diff_src_dims =
-            {out->get_shape(0), out->get_shape(1),
-             out->get_shape(2), out->get_shape(3)};
-
-         dnnl::memory::dims diff_dst_dims =
-            {grad->get_shape(0), grad->get_shape(1),
-             grad->get_shape(2), grad->get_shape(3)};
-
-         dnnl::memory::desc diff_src_md = dnnl::memory::desc(
-               diff_src_dims,
-               dnnl::memory::data_type::f32,
-               dnnl::memory::format_tag::nchw);
-
-         dnnl::memory::desc diff_dst_md = dnnl::memory::desc(
-               diff_dst_dims,
-               dnnl::memory::data_type::f32,
-               dnnl::memory::format_tag::nchw);
-
-         auto weights_md = this->dnnl_fwd_pdesc_->weights_desc();
-         
-         // Strides dimension
-         dnnl::memory::dims conv_strides_dims = {vertical_stride, horizontal_stride};
-         // Padding dimension
-         dnnl::memory::dims conv_padding_dims = {pad_h, pad_w};
-         // Dilatation dimension
-         dnnl::memory::dims conv_dilation_dims = {dilation_h, dilation_w};
-
-         auto conv_bwd_data_desc = dnnl::convolution_backward_data::desc(
-               dnnl::algorithm::convolution_direct, diff_src_md, weights_md,
-               diff_src_md, conv_strides_dims, conv_dilation_dims,
-               conv_padding_dims, conv_padding_dims);
-
-         auto conv_bwd_data_pdesc =
-            dnnl::convolution_backward_data::primitive_desc(
-               conv_bwd_data_desc, this->dnnl_cpu_engine_,
-               *(this->dnnl_fwd_pdesc_.get()));
-
-         auto conv_bwd_data =
-            dnnl::convolution_backward_data(conv_bwd_data_pdesc); 
-
-         // auto bias_mem = dnnl::memory(bias_md, this->dnnl_cpu_engine_, nullptr);
-         auto weights_mem = dnnl::memory(
-               weights_md, this->dnnl_cpu_engine_, this->filter_tensor->get_ptr());
-
-         auto diff_src_mem = dnnl::memory(
-               diff_src_md, this->dnnl_cpu_engine_, out->get_ptr());
-
-         auto diff_dst_mem = dnnl::memory(
-               diff_dst_md, this->dnnl_cpu_engine_, grad->get_ptr());
-
-         // Primitive arguments.
-         std::unordered_map<int, dnnl::memory> conv_bwd_data_args;
-         conv_bwd_data_args.insert({DNNL_ARG_DIFF_SRC, diff_src_mem});
-         conv_bwd_data_args.insert({DNNL_ARG_WEIGHTS, weights_mem});
-         conv_bwd_data_args.insert({DNNL_ARG_DIFF_DST, diff_dst_mem});
-
-         // Create dnnl::stream.
-         dnnl::stream engine_stream(this->dnnl_cpu_engine_);
-         conv_bwd_data.execute(engine_stream, conv_bwd_data_args);
-         // Wait for the computation to finalize.
-         engine_stream.wait();
-
+         this->onednn_backward_data(grad, out);
 #else
          ::magmadnn::math::conv2d_grad_data(this->filter_tensor, grad, out);
 #endif
@@ -293,81 +131,7 @@ Tensor<T> *Conv2DForwardOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, 
 
       if (this->mem_type == HOST) {
 #if defined(MAGMADNN_HAVE_MKLDNN)
-         dnnl::memory::dims diff_weigths_dims =
-            {out->get_shape(0), out->get_shape(1),
-             out->get_shape(2), out->get_shape(3)};
-
-         dnnl::memory::dims diff_dst_dims =
-            {grad->get_shape(0), grad->get_shape(1),
-             grad->get_shape(2), grad->get_shape(3)};
-
-         dnnl::memory::desc diff_weights_md = dnnl::memory::desc(
-               diff_weigths_dims,
-               dnnl::memory::data_type::f32,
-               dnnl::memory::format_tag::nchw);
-
-         dnnl::memory::desc diff_dst_md = dnnl::memory::desc(
-               diff_dst_dims,
-               dnnl::memory::data_type::f32,
-               dnnl::memory::format_tag::nchw);
-
-         // dnnl::memory::desc diff_bias_md = dnnl::memory::desc(
-         //       {0,0},
-         //       dnnl::memory::data_type::f32,
-         //       dnnl::memory::format_tag::nchw);
-
-         // Create a zero memory descriptor
-         dnnl::memory::desc diff_bias_md = dnnl::memory::desc();
-         
-         auto src_md = this->dnnl_fwd_pdesc_->src_desc();
-
-         // Strides dimension
-         dnnl::memory::dims conv_strides_dims = {vertical_stride, horizontal_stride};
-         // Padding dimension
-         dnnl::memory::dims conv_padding_dims = {pad_h, pad_w};
-         // Dilatation dimension
-         dnnl::memory::dims conv_dilation_dims = {dilation_h, dilation_w};
-
-         auto conv_bwd_weights_desc = dnnl::convolution_backward_weights::desc(
-               dnnl::algorithm::convolution_direct, src_md, diff_weights_md,
-               diff_bias_md, diff_dst_md, conv_strides_dims, conv_dilation_dims,
-               conv_padding_dims, conv_padding_dims);
-
-         auto conv_bwd_weights_pdesc =
-            dnnl::convolution_backward_weights::primitive_desc(
-                  conv_bwd_weights_desc, this->dnnl_cpu_engine_,
-                  *(this->dnnl_fwd_pdesc_.get()));
-
-         auto conv_bwd_weights =
-            dnnl::convolution_backward_weights(conv_bwd_weights_pdesc); 
-
-         // auto bias_mem = dnnl::memory(bias_md, this->dnnl_cpu_engine_, nullptr);
-         auto diff_weights_mem = dnnl::memory(
-               diff_weights_md, this->dnnl_cpu_engine_,
-               out->get_ptr());
-
-         auto src_mem = dnnl::memory(
-               src_md, this->dnnl_cpu_engine_, this->input_tensor->get_ptr());
-
-         auto diff_dst_mem = dnnl::memory(
-               diff_dst_md, this->dnnl_cpu_engine_, grad->get_ptr());
-
-         auto diff_bias_mem = dnnl::memory(
-               diff_bias_md, this->dnnl_cpu_engine_, nullptr);
-
-         // Primitive arguments.
-         std::unordered_map<int, dnnl::memory> conv_bwd_weights_args;
-         conv_bwd_weights_args.insert({DNNL_ARG_SRC, src_mem});
-         conv_bwd_weights_args.insert({DNNL_ARG_DIFF_WEIGHTS, diff_weights_mem});
-         conv_bwd_weights_args.insert({DNNL_ARG_DIFF_BIAS, diff_bias_mem});
-         conv_bwd_weights_args.insert({DNNL_ARG_DIFF_DST, diff_dst_mem});
-
-         // Create dnnl::stream.
-         dnnl::stream engine_stream(this->dnnl_cpu_engine_);
-         conv_bwd_weights.execute(engine_stream, conv_bwd_weights_args);
-         // Wait for the computation to finalize.
-         engine_stream.wait();
-
+         onednn_backward_weights(grad, out);
 #else
          ::magmadnn::math::conv2d_grad_filter(this->input_tensor, grad, out);
 #endif
@@ -390,7 +154,7 @@ Tensor<T> *Conv2DForwardOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, 
 
 #if defined(MAGMADNN_HAVE_MKLDNN)
 template <typename T>
-void Conv2DForwardOp<T>::init_dnnl_settings() {
+void Conv2DForwardOp<T>::onednn_init_settings() {
 
    // std::cout << "Conv2DForwardOp<T>::init_dnnl_settings, get_count = "
    //           << dnnl::engine::get_count(dnnl::engine::kind::cpu)

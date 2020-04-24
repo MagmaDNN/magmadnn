@@ -37,7 +37,7 @@ int main(int argc, char **argv) {
 
     model::nn_params_t params;
     params.batch_size = 128;
-    params.n_epochs = 20;
+    params.n_epochs = 5;
     params.learning_rate = 0.05;
 
     // #if defined(USE_GPU)
@@ -50,10 +50,10 @@ int main(int argc, char **argv) {
 
     auto input = layer::input<float>(x_batch);
 
-    auto conv2d1 = layer::conv2d<float>(input->out(), {5, 5}, 32, {0, 0}, {1, 1}, {1, 1}, true, false);
+    auto conv2d1 = layer::conv2d<float>(input->out(), {3, 3}, 6, {0, 0}, {2, 2}, {1, 1}, true, false);
     auto act1 = layer::activation<float>(conv2d1->out(), layer::RELU);
-    auto pool1 = layer::pooling<float>(act1->out(), {2, 2}, {0, 0}, {2, 2}, {1, 1}, MAX_POOL);
-    auto dropout1 = layer::dropout<float>(pool1->out(), 0.25);
+    // auto pool1 = layer::pooling<float>(act1->out(), {2, 2}, {0, 0}, {2, 2}, {1, 1}, MAX_POOL);
+    auto dropout1 = layer::dropout<float>(act1->out(), 0.25);
     auto flatten = layer::flatten<float>(dropout1->out());
 
     auto fc1 = layer::fullyconnected<float>(flatten->out(), 128, true);
@@ -63,11 +63,10 @@ int main(int argc, char **argv) {
 
     auto output = layer::output<float>(act3->out());
 
-    std::vector<layer::Layer<float> *> layers = {input, conv2d1, act1, pool1, dropout1, flatten,
-                                                 fc1,   act2,    fc2,  act3,  output};
+    // std::vector<layer::Layer<float> *> layers = {input, conv2d1, act1, pool1, dropout1, flatten,
+    //                                              fc1,   act2,    fc2,  act3,  output};
 
-    // std::vector<layer::Layer<float> *> layers = {input, conv2d1, act1, dropout1, flatten, fc1, act2, fc2, act3,
-    // output};
+    std::vector<layer::Layer<float> *> layers = {input, conv2d1, act1, dropout1, flatten, fc1, act2, fc2, act3, output};
 
     model::NeuralNetwork<float> model(layers, optimizer::CROSS_ENTROPY, optimizer::SGD, params);
 

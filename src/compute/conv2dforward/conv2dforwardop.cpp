@@ -8,6 +8,70 @@ namespace magmadnn {
 namespace op {
 
 template <typename T>
+void compare_tensor(Tensor<T> *a, Tensor<T> *b, bool print) {
+    std::vector<unsigned int> shape = a->get_shape();
+    if (a->get_shape().size() != b->get_shape().size()) {
+        printf("shapes don't match\n");
+        return;
+    }
+
+    for (int i = 0; i < shape.size(); i++) {
+        if (a->get_shape()[i] != b->get_shape()[i]) {
+            printf("shape sizes don't match\n");
+            return;
+        }
+    }
+    // printf("\033[1;31mbold red text\033[0m\n");
+    float max = 0;
+    if (a->get_shape().size() == 4) {
+        if (print) printf("\n[");
+        for (int n = 0; n < shape[0]; n++) {
+            if (print) printf("[");
+            for (int c = 0; c < shape[1]; c++) {
+                if (print) printf("[");
+                for (int h = 0; h < shape[2]; h++) {
+                    if (print) printf("[");
+                    for (int w = 0; w < shape[3]; w++) {
+                        float diff = a->get({n, c, h, w}) - b->get({n, c, h, w});
+                        if (diff < 0) diff = -diff;
+                        // if (diff > 0.3) {
+                        // printf("tensor vals don't match. diff: %lf\n", diff);
+                        // return;
+                        // }
+                        if (diff > max) max = diff;
+                        int color = 37;
+                        if (diff > 0) color = 32;
+                        if (diff > 0.00001) color = 33;
+                        if (diff > 0.00005) color = 31;
+                        if (print) printf("\033[1;%im%f\033[0m ", color, diff);
+                    }
+                    if (print) {
+                        if (h == shape[3] - 1)
+                            printf("]");
+                        else
+                            printf("]\n   ");
+                    }
+                }
+                if (print) {
+                    if (c == shape[1] - 1)
+                        printf("]");
+                    else
+                        printf("]\n  ");
+                }
+            }
+            if (print) {
+                if (n == shape[0] - 1)
+                    printf("]");
+                else
+                    printf("]\n\n ");
+            }
+        }
+        printf("]\n");
+    }
+    printf("max error: %lf\n", max);
+}
+
+template <typename T>
 Conv2DForwardOp<T>::Conv2DForwardOp(Operation<T> *input, Operation<T> *filter, int pad_h, int pad_w,
                                     int vertical_stride, int horizontal_stride, int dilation_h, int dilation_w,
                                     bool use_cross_correlation, bool needs_grad)
@@ -54,6 +118,19 @@ Tensor<T> *Conv2DForwardOp<T>::_eval(bool recompute) {
     if (this->mem_type == HOST) {
         ::magmadnn::math::conv2d(this->input_tensor, this->filter_tensor, this->output_tensor, this->pad_h, this->pad_w,
                                  this->vertical_stride, this->horizontal_stride, this->dilation_h, this->dilation_w);
+        if (true) {
+            Tensor<T> *gpu_filter = new Tensor<T>(this->filter_tensor->get_shape(), {NONE, {}}, DEVICE);
+            Tensor<T> *gpu_input = new Tensor<T>(this->input_tensor->get_shape(), {NONE, {}}, DEVICE);
+            Tensor<T> *gpu_out = new Tensor<T>(this->output_tensor->get_shape(), {NONE, {}}, DEVICE);
+            // *input = *(this->input_tensor);
+            gpu_input->copy_from(*(this->input_tensor));
+            gpu_filter->copy_from(*(this->filter_tensor));
+            this->cudnn_settings.handle = this->get_cudnn_handle();
+            ::magmadnn::math::conv2d_device(gpu_input, gpu_filter, gpu_out, this->cudnn_settings);
+            if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
+            printf("conv forward: ");
+            compare_tensor(gpu_out, this->output_tensor, false);
+        }
     }
 #if defined(MAGMADNN_HAVE_CUDA)
     else {
@@ -109,7 +186,28 @@ Tensor<T> *Conv2DForwardOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, 
         this->input_tensor = this->input->eval(false);
 
         if (this->mem_type == HOST) {
-            ::magmadnn::math::conv2d_grad_filter(this->input_tensor, grad, out);
+            ::magmadnn::math::conv2d_grad_filter(this->input_tensor, grad, out, this->pad_h, this->pad_w,
+                                                 this->vertical_stride, this->horizontal_stride, this->dilation_h,
+                                                 this->dilation_w);
+
+            if (true) {
+                // #if defined(MAGMADNN_HAVE_CUDA)
+                //                 print("Testing CPU conv requires GPU.\n");
+                //                 return;
+                // #endif
+                Tensor<T> *gpu_test = new Tensor<T>(out->get_shape(), {NONE, {}}, DEVICE);
+                Tensor<T> *input = new Tensor<T>(this->input_tensor->get_shape(), {NONE, {}}, DEVICE);
+                Tensor<T> *gpu_grad = new Tensor<T>(grad->get_shape(), {NONE, {}}, DEVICE);
+                // *input = *(this->input_tensor);
+                input->copy_from(*(this->input_tensor));
+                gpu_grad->copy_from(*(grad));
+                this->cudnn_settings.handle = this->get_cudnn_handle();
+                ::magmadnn::math::conv2d_grad_filter_device(input, gpu_grad, gpu_test, this->cudnn_settings);
+                if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
+                printf("conv backward grad: ");
+                compare_tensor(gpu_test, out, true);
+                // compare_tensor(input, this->input_tensor);
+            }
         }
 #if defined(MAGMADNN_HAVE_CUDA)
         else {
@@ -132,8 +230,8 @@ void Conv2DForwardOp<T>::init_settings() {
         this->calculate_and_set_output_shape();
     }
 #if defined(MAGMADNN_HAVE_CUDA)
-    else {
-
+    // else
+    {
         this->cudnn_settings.handle = this->get_cudnn_handle();
 
         /* init the conv descriptor */

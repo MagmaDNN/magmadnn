@@ -2,8 +2,6 @@
 
 #include "magmadnn.h"
 
-#include "magmadnn.h"
-
 namespace magmadnn {
 namespace solver {
 

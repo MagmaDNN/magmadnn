@@ -225,7 +225,7 @@ Tensor<T> *PoolingOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor
        dnnl_bwd.execute(dnnl_engine_stream, dnnl_args);
        dnnl_engine_stream.wait();       
 #else
-       MAGMADNN_NOT_IMPLEMENTED
+       MAGMADNN_NOT_IMPLEMENTED;
 #endif
     }
 

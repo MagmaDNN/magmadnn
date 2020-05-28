@@ -238,6 +238,17 @@ if (MAGMADNN_ENABLE_MKLDNN)
 endif()
 
 ########################################
+# MPI
+
+if (MAGMADNN_ENABLE_MPI)
+
+  find_package(MPI REQUIRED)
+
+  message(STATUS "MPI c++ libraries: ${MPI_CXX_LIBRARIES}")
+
+endif()
+
+########################################
 # Configuration file
 
 configure_file(

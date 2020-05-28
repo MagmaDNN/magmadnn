@@ -18,3 +18,6 @@
 
 // Has MagmaDNN been compiled with MKLDNN 
 #cmakedefine MAGMADNN_HAVE_MKLDNN
+
+// Has MagmaDNN been compiled with MPI 
+#cmakedefine MAGMADNN_HAVE_MPI

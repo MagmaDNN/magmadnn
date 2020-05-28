@@ -244,7 +244,12 @@ if (MAGMADNN_ENABLE_MPI)
 
   find_package(MPI REQUIRED)
 
-  message(STATUS "MPI c++ libraries: ${MPI_CXX_LIBRARIES}")
+  add_definitions(-D MAGMADNN_HAVE_MPI)
+  set(MAGMADNN_HAVE_MPI TRUE)
+
+  message(STATUS "MPI C++ libraries: ${MPI_CXX_LIBRARIES}")
+
+  set(LIBS ${LIBS} ${MPI_CXX_LIBRARIES})
 
 endif()
 

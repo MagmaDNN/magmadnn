@@ -72,7 +72,10 @@ class NeuralNetwork : public Model<T> {
 
     Tensor<T> *network_input_tensor() { return this->network_input_tensor_ptr; }
     Tensor<T> *network_output_tensor() { return this->network_output_tensor_ptr; }
-    
+    Tensor<T> *ground_truth_tensor() const { return this->ground_truth_tensor_ptr; }
+
+    op::Operation<T> *lossfun() { return this->_obj; }
+
    protected:
     typename std::vector<layer::Layer<T> *> layers;
     optimizer::loss_t loss_func;

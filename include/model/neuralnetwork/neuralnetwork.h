@@ -76,6 +76,8 @@ class NeuralNetwork : public Model<T> {
 
     op::Operation<T> *lossfun() { return this->_obj; }
 
+    std::vector<op::Operation<T> *>& weights() { return this->_vars; }
+
    protected:
     typename std::vector<layer::Layer<T> *> layers;
     optimizer::loss_t loss_func;

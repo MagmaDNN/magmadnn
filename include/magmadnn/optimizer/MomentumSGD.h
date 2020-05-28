@@ -134,7 +134,7 @@ private:
 };
 
 template <typename T>
-class MomentumSGD {
+class MomentumSGD : public magmadnn::solver::FMinSolver<T> {
 public:
    // Momentum SGD itereration (synchronous)
    using SgdIter = MomentumSgdIter<T, false>;

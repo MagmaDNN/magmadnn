@@ -36,17 +36,14 @@ private:
 class CudaExecContext : public ExecContext {
 public:
 
-   CudaExecContext()
-      : devid_(0), custream_(nullptr), cublas_handle_(nullptr),
-        cudnn_handle_(nullptr)
-   {
+   CudaExecContext(int in_devid)
+      : devid_(in_devid), custream_(nullptr), cublas_handle_(nullptr),
+        cudnn_handle_(nullptr) {
 
       cudaError_t cuerr;
       cudnnStatus_t cudnnstat;
       cublasStatus_t cublasstat;
 
-      // std::cout << "[CudaExecContext]" << std::endl;
-      
       // Create CUDA Stream
       cuerr = cudaStreamCreate(&custream_);
       MAGMADNN_ASSERT_NO_CUDA_ERRORS(cuerr);
@@ -62,8 +59,11 @@ public:
       MAGMADNN_ASSERT_NO_CUBLAS_ERRORS(cublasstat);
       cublasstat = cublasSetStream(cublas_handle_, custream_);     
       MAGMADNN_ASSERT_NO_CUBLAS_ERRORS(cublasstat);
-
    }
+
+   CudaExecContext()
+      : CudaExecContext(0)
+   {}
 
    ~CudaExecContext() {
       // std::cout << "[~CudaExecContext]" << std::endl;

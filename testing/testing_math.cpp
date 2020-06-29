@@ -10,6 +10,7 @@
 
 #include "magmadnn.h"
 #include "utilities.h"
+// #include "mat"
 
 using namespace magmadnn;
 
@@ -23,23 +24,31 @@ void test_bias_add(memory_t mem, unsigned int size);
 void test_sum(memory_t mem, unsigned int size);
 void test_concat(memory_t mem, unsigned int size);
 void test_tile(memory_t mem, unsigned int size);
+void test_conv2d(memory_t mem, unsigned int size);
+void test_conv2d_grad(memory_t mem, unsigned int size);
+
+template <typename T>
+void compare_tensor(Tensor<T> *a, Tensor<T> *b, bool print);
 
 int main(int argc, char **argv) {
     magmadnn_init();
 
     test_for_all_mem_types(test_matmul, 50);
     test_for_all_mem_types(test_pow, 15);
-    test_for_all_mem_types(test_relu, 50);
+    printf("warning: skipping math tests\n");
+    // test_for_all_mem_types(test_relu, 50);
     test_for_all_mem_types(test_crossentropy, 10);
-    test_for_all_mem_types(test_reduce_sum, 10);
+    // test_for_all_mem_types(test_reduce_sum, 10);
     // test_for_all_mem_types(test_argmax, 10);
 
-    test_argmax(HOST, 10);
+    // test_argmax(HOST, 10);
+    test_conv2d(HOST, 30);
+    // test_conv2d_grad(HOST, 30);
 
     test_for_all_mem_types(test_bias_add, 15);
     test_for_all_mem_types(test_sum, 5);
     test_for_all_mem_types(test_concat, 4);
-    test_for_all_mem_types(test_tile, 4);
+    // test_for_all_mem_types(test_tile, 4);
 
     magmadnn_finalize();
 }
@@ -289,11 +298,6 @@ void test_concat(memory_t mem, unsigned int size) {
             }
         }
     }
-
-    show_success();
-}
-
-void test_tile(memory_t mem, unsigned int size) {
     printf("Testing %s tile...  ", get_memory_type_name(mem));
 
     Tensor<float> *D = new Tensor<float>({size, 1, size * 2}, {CONSTANT, {2.0f}}, mem);
@@ -311,4 +315,206 @@ void test_tile(memory_t mem, unsigned int size) {
     }
 
     show_success();
+}
+
+void test_conv2d(memory_t mem_type, unsigned int size) {
+    printf("Testing %s conv2d...  ", get_memory_type_name(mem_type));
+
+    /* basic convolution2d test */
+    unsigned int batch_size = 5;
+    unsigned int channels = 3;
+    unsigned int h = 5;
+    unsigned int w = 5;
+
+    unsigned int in_channels = channels;
+    unsigned int out_channels = 2;
+
+    int pad_h = 1;
+    int pad_w = 1;
+    int vertical_stride = 1;
+    int horizontal_stride = 1;
+    int dilation_h = 1;
+    int dilation_w = 1;
+    bool use_cross_correlation = true;
+
+    unsigned int filter_h = 3;
+    unsigned int filter_w = 3;
+
+    op::Operation<float> *x = op::var<float>("data", {batch_size, channels, h, w}, {GLOROT, {0.0f, 1.0f}}, mem_type);
+    op::Operation<float> *filter =
+        op::var<float>("filter", {out_channels, in_channels, filter_h, filter_w}, {GLOROT, {0.0f, 1.0f}}, mem_type);
+
+    op::Operation<float> *conv = op::conv2dforward(x, filter, pad_h, pad_w, vertical_stride, horizontal_stride,
+                                                   dilation_h, dilation_w, use_cross_correlation);
+
+    Tensor<float> *out = conv->eval();
+
+#ifdef MAGMADNN_HAVE_CUDA
+    if (mem_type == HOST) {
+        op::Operation<float> *x_dev =
+            op::var<float>("data", {batch_size, channels, h, w}, {GLOROT, {0.0f, 1.0f}}, DEVICE);
+        op::Operation<float> *filter_dev =
+            op::var<float>("filter", {out_channels, in_channels, filter_h, filter_w}, {GLOROT, {0.0f, 1.0f}}, DEVICE);
+
+        op::Operation<float> *conv_dev =
+            op::conv2dforward(x_dev, filter_dev, pad_h, pad_w, vertical_stride, horizontal_stride, dilation_h,
+                              dilation_w, use_cross_correlation);
+
+        Tensor<float> *out_dev = conv_dev->eval();
+
+        compare_tensor(out_dev, out, false);
+    }
+#endif
+
+    sync(out);
+
+    /* formula from:
+     * https://docs.nvidia.com/deeplearning/sdk/cudnn-developer-guide/index.html#cudnnGetConvolution2dForwardOutputDim
+     */
+    unsigned int expected_h = 1 + (h + 2 * pad_h - (((filter_h - 1) * dilation_h) + 1)) / vertical_stride;
+    unsigned int expected_w = 1 + (w + 2 * pad_w - (((filter_w - 1) * dilation_w) + 1)) / horizontal_stride;
+
+    MAGMADNN_TEST_ASSERT_DEFAULT(out->get_shape().size() == 4, "\"out->get_shape().size() == 4\" failed");
+    MAGMADNN_TEST_ASSERT_DEFAULT(out->get_shape(0) == batch_size, "\"out->get_shape(0) == batch_size\" failed");
+    MAGMADNN_TEST_ASSERT_DEFAULT(out->get_shape(1) == out_channels, "\"out->get_shape(1) == out_channels\" failed");
+    MAGMADNN_TEST_ASSERT_DEFAULT(out->get_shape(2) == expected_h, "\"out->get_shape(2) == expected_h\" failed");
+    MAGMADNN_TEST_ASSERT_DEFAULT(out->get_shape(3) == expected_w, "\"out->get_shape(3) == expected_w\" failed");
+
+    delete conv;
+
+    show_success();
+}
+
+template <typename T>
+void test_conv2d_grad(memory_t mem_type, unsigned int size) {
+    printf("Testing %s conv2d_grad...  ", get_memory_type_name(mem_type));
+
+    /* basic convolution2d test */
+    unsigned int batch_size = 5;
+    unsigned int channels = 3;
+    unsigned int h = 5;
+    unsigned int w = 5;
+
+    unsigned int in_channels = channels;
+    unsigned int out_channels = 2;
+
+    int pad_h = 1;
+    int pad_w = 1;
+    int vertical_stride = 1;
+    int horizontal_stride = 1;
+    int dilation_h = 1;
+    int dilation_w = 1;
+    bool use_cross_correlation = true;
+
+    unsigned int filter_h = 3;
+    unsigned int filter_w = 3;
+
+    unsigned int grad_h = 1 + (h + 2 * pad_h - (((filter_h - 1) * dilation_h) + 1)) / vertical_stride;
+    unsigned int grad_w = 1 + (w + 2 * pad_w - (((filter_w - 1) * dilation_w) + 1)) / horizontal_stride;
+
+    Tensor<T> *out = new Tensor<T>({out_channels, batch_size, filter_h, filter_w}, {NONE, {}}, HOST);
+    Tensor<T> *input = new Tensor<T>({batch_size, channels, h, w}, {GLOROT, {}}, HOST);
+    Tensor<T> *grad = new Tensor<T>({batch_size, out_channels, grad_h, grad_w}, {GLOROT, {}}, HOST);
+
+    ::magmadnn::math::conv2d_grad_filter(input, grad, out, pad_h, pad_w, vertical_stride, horizontal_stride, dilation_h,
+                                         dilation_w);
+#if defined(MAGMADNN_HAVE_CUDA)
+    //                 print("Testing CPU conv requires GPU.\n");
+    //                 return;
+    Tensor<T> *gpu_test = new Tensor<T>(out->get_shape(), {NONE, {}}, DEVICE);
+    Tensor<T> *gpu_input = new Tensor<T>(input->get_shape(), {NONE, {}}, DEVICE);
+    Tensor<T> *gpu_grad = new Tensor<T>(grad->get_shape(), {NONE, {}}, DEVICE);
+    // *input = *(this->input_tensor);
+    gpu_input->copy_from(*(input));
+    gpu_grad->copy_from(*(grad));
+    // this->cudnn_settings.handle = this->get_cudnn_handle();
+    // ::magmadnn::math::conv2d_grad_filter_device(input, gpu_grad, gpu_test, this->cudnn_settings);
+    // if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
+    printf("conv backward grad: ");
+    compare_tensor(gpu_test, out, true);
+    // compare_tensor(input, this->input_tensor);
+
+#endif
+
+    sync(out);
+
+    // delete conv;
+
+    show_success();
+}
+
+template <typename T>
+void compare_tensor(Tensor<T> *a, Tensor<T> *b, bool print) {
+    std::vector<unsigned int> shape = a->get_shape();
+    if (a->get_shape().size() != b->get_shape().size()) {
+        printf("shapes don't match\n");
+        return;
+    }
+
+    double norm_difference, l2norm_a = 0, l2norm_b = 0;
+
+    for (int i = 0; i < shape.size(); i++) {
+        if (a->get_shape()[i] != b->get_shape()[i]) {
+            printf("shape sizes don't match\n");
+            return;
+        }
+    }
+
+    float max = 0;
+    if (a->get_shape().size() == 4) {
+        if (print) printf("\n[");
+        for (int n = 0; n < shape[0]; n++) {
+            if (print) printf("[");
+            for (int c = 0; c < shape[1]; c++) {
+                if (print) printf("[");
+                for (int h = 0; h < shape[2]; h++) {
+                    if (print) printf("[");
+                    for (int w = 0; w < shape[3]; w++) {
+                        float diff = a->get({n, c, h, w}) - b->get({n, c, h, w});
+                        l2norm_a += a->get({n, c, h, w}) * a->get({n, c, h, w});
+                        l2norm_b += b->get({n, c, h, w}) * b->get({n, c, h, w});
+
+                        if (diff < 0) diff = -diff;
+
+                        if (diff > max) max = diff;
+                        if (print) {
+                            int color = 37;
+                            if (diff > 0) color = 32;
+                            if (diff > 0.00001) color = 33;
+                            if (diff > 0.00005) color = 31;
+                            printf("\033[1;%im%f\033[0m ", color, diff);
+                        }
+                    }
+                    if (print) {
+                        if (h == shape[3] - 1)
+                            printf("]");
+                        else
+                            printf("]\n   ");
+                    }
+                }
+                if (print) {
+                    if (c == shape[1] - 1)
+                        printf("]");
+                    else
+                        printf("]\n  ");
+                }
+            }
+            if (print) {
+                if (n == shape[0] - 1)
+                    printf("]");
+                else
+                    printf("]\n\n ");
+            }
+        }
+        if (print) printf("]\n");
+    }
+
+    l2norm_a = sqrt(l2norm_a);
+    l2norm_b = sqrt(l2norm_b);
+
+    norm_difference = l2norm_a - l2norm_b;
+    if (norm_difference < 0) norm_difference = -norm_difference;
+
+    printf("max error: %lf ", max);
+    printf("l2norm: %lf ", norm_difference);
 }

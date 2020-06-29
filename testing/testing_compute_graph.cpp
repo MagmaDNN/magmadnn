@@ -45,11 +45,12 @@ int main(int argc, char **argv) {
     test_for_all_mem_types(test_affine, 50);
     test_for_all_mem_types(test_sigmoid, 50);
     test_for_all_mem_types(test_tanh, 50);
+    test_for_all_mem_types(test_conv2d, 30);
 
 #if defined(MAGMADNN_HAVE_CUDA)
-    test_conv2d(DEVICE, 30);
-    test_conv2d(MANAGED, 30);
-    test_conv2d(CUDA_MANAGED, 30);
+    // test_conv2d(DEVICE, 30);
+    // test_conv2d(MANAGED, 30);
+    // test_conv2d(CUDA_MANAGED, 30);
 
     test_pooling(DEVICE, 30);
     test_pooling(MANAGED, 30);

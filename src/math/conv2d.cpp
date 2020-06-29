@@ -9,6 +9,7 @@
  * @copyright Copyright (c) 2019
  */
 #include "math/conv2d.h"
+#include "omp.h"
 
 #include <cassert>
 
@@ -72,7 +73,8 @@ void conv2d(Tensor<T> *x, Tensor<T> *w, Tensor<T> *out, const int pad_h, const i
             return;
         }
 
-        // crop
+#pragma omp parallel
+#pragma omp for collapse(4)
         for (o_n = 0; o_n < No; o_n++) {
             for (o_c = 0; o_c < Co; o_c++) {
                 for (o_h = 0; o_h < Ho; o_h++) {
@@ -149,12 +151,13 @@ void conv2d_grad_filter(Tensor<T> *w, Tensor<T> *grad, Tensor<T> *out, const int
         std::vector<unsigned int> grad_shape = grad->get_shape();
         std::vector<unsigned int> w_shape = w->get_shape();
 
-        if (out_shape.size() == 4)
-            printf("out shape: N %i, C %i , H %i W %i\n", out_shape[0], out_shape[1], out_shape[2], out_shape[3]);
-        if (grad_shape.size() == 4)
-            printf("grad shape: N %i, C %i , H %i W %i\n", grad_shape[0], grad_shape[1], grad_shape[2], grad_shape[3]);
-        if (w_shape.size() == 4)
-            printf("w shape: N %i, C %i , H %i W %i\n", w_shape[0], w_shape[1], w_shape[2], w_shape[3]);
+        // if (out_shape.size() == 4)
+        //     printf("out shape: N %i, C %i , H %i W %i\n", out_shape[0], out_shape[1], out_shape[2], out_shape[3]);
+        // if (grad_shape.size() == 4)
+        //     printf("grad shape: N %i, C %i , H %i W %i\n", grad_shape[0], grad_shape[1], grad_shape[2],
+        //     grad_shape[3]);
+        // if (w_shape.size() == 4)
+        //     printf("w shape: N %i, C %i , H %i W %i\n", w_shape[0], w_shape[1], w_shape[2], w_shape[3]);
 
         unsigned int o_n, o_c, o_h, o_w, g_n, g_c, g_h, g_w;          // iteration variables
         unsigned int No, Co, Ho, Wo, Nw, Cw, Hw, Ww, Ng, Cg, Hg, Wg;  // shorthand for tensor dims
@@ -203,6 +206,8 @@ void conv2d_grad_filter(Tensor<T> *w, Tensor<T> *grad, Tensor<T> *out, const int
             return;
         }
 
+#pragma omp parallel
+#pragma omp for collapse(4)
         for (o_n = 0; o_n < No; o_n++) {
             for (o_c = 0; o_c < Co; o_c++) {
                 for (o_h = 0; o_h < Wo; o_h++) {

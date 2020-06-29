@@ -70,8 +70,7 @@ int main(int argc, char **argv) {
     // std::vector<layer::Layer<float> *> layers = {input, conv2d1, act1, pool1, dropout1, flatten,
     //                                              fc1,   act2,    fc2,  act3,  output};
 
-    // std::vector<layer::Layer<float> *> layers = {input, conv2d1, act1, dropout1, flatten, fc1, act2, fc2, act3,
-    // output};
+    std::vector<layer::Layer<float> *> layers = {input, conv2d1, act1, dropout1, flatten, fc1, act2, fc2, act3, output};
 
     model::NeuralNetwork<float> model(layers, optimizer::CROSS_ENTROPY, optimizer::SGD, params);
 

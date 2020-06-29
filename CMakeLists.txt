@@ -21,9 +21,9 @@ endif()
 
 ########################################
 # MagmaDNN options
-option(MAGMADNN_ENABLE_CUDA "Enable use of CUDA library and compilation of CUDA kernel" ON)
+option(MAGMADNN_ENABLE_CUDA "Enable use of CUDA library and compilation of CUDA kernel" OFF)
 option(MAGMADNN_ENABLE_MPI "Enable distributed memory routines using MPI" OFF)
-option(MAGMADNN_ENABLE_OMP "Enable parallelization using OpenMP library" OFF)
+option(MAGMADNN_ENABLE_OMP "Enable parallelization using OpenMP library" ON)
 option(MAGMADNN_BUILD_DOC "Generate documentation" OFF)
 option(MAGMADNN_BUILD_EXAMPLES "Build MagmaDNN examples" ON)
 option(MAGMADNN_BUILD_TESTS "Generate build files for unit tests" ON)

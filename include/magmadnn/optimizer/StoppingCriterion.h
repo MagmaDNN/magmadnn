@@ -7,6 +7,10 @@ namespace solver {
 
 class StoppingCriterion {
 
+   StoppingCriterion()
+      : elapsed_time_(0.0), num_iters_(0), 
+   {}
+   
    void num_iters(int in_num_iters) {
       this->num_iters_ = in_num_iters;
    }
@@ -16,8 +20,8 @@ class StoppingCriterion {
    }
    
 private:
-   int num_iters_;
    double elapsed_time_;
+   int num_iters_;
 };
    
 }} // End of magmadnn:solver namespace

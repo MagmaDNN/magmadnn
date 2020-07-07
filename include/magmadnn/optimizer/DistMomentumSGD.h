@@ -76,7 +76,7 @@ public:
          Tensor<T>& y,  // Labels on input data
          int batch_size,
          bool enable_train_error,
-         int num_iters, double time_budget,
+         int max_num_iters, double time_budget,
          std::vector<TrainStats<T>> &stats
          ) {
 
@@ -88,7 +88,7 @@ public:
       std::cout << "[" << context << "] " << "Learning rate = " << sgd_iter.learning_rate() << std::endl;
       std::cout << "[" << context << "] " << "Momentum = " << sgd_iter.momentum() << std::endl;
 
-      std::cout << "[" << context << "] " << "Number of iterations = " << num_iters << std::endl;
+      std::cout << "[" << context << "] " << "Number of iterations = " << max_num_iters << std::endl;
       std::cout << "[" << context << "] " << "Time budget = " << time_budget << std::endl;
 
       std::cout << "[" << context << "] " << "Number of processes = " << this->nnodes_ << std::endl;
@@ -129,6 +129,7 @@ public:
          std::cout << "[" << context << "] " << "GPU training (" << devid << ")" << std::endl;
          std::cout << "[" << context << "] " << "Total number of devices = " << num_devices << std::endl;
       }               
+
       std::cout << "[" << context << "] " << "Number of batches = " << num_batches << std::endl;
 
       // Calculate initial training accuracy
@@ -184,7 +185,7 @@ public:
 
       int iters = 0;
       
-      while (iters < num_iters) {
+      while (iters < max_num_iters) {
 
          //
          // Select a batch index randomly

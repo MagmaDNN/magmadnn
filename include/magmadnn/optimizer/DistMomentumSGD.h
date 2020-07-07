@@ -139,7 +139,7 @@ public:
       // // Compute training error
       // this->eval_error(model, x, y, batch_size, loss, accuracy);
 
-#if defined(MAGMADNN_HARNESS_HAVE_CUDA)      
+#if defined(MAGMADNN_HARNESS_HAVE_CUDA)
       // cudaStream_t stream;
       // cudnnHandle_t cudnn_handle;
       // cublasHandle_t cublas_handle;
@@ -234,7 +234,7 @@ public:
          }
 
          // Send model to participating nodes
-         this->model_bcast(model);
+         // this->model_bcast(model);
             
          ++iters;
       }

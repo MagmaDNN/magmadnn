@@ -61,6 +61,7 @@ int main(int argc, char **argv) {
 #endif
 
     test_for_all_mem_types(test_crossentropy, 10);
+    // test_meansquarederror(HOST, 10);
     test_for_all_mem_types(test_meansquarederror, 10);
 
     magmadnn_finalize();
@@ -691,6 +692,9 @@ void test_meansquarederror(memory_t mem_type, unsigned int size) {
 
     op::Operation<float> *mse_loss = op::meansquarederror(truth, predicted);
     Tensor<float> *loss_tensor = mse_loss->eval();
+
+    // delete mse_loss;
+    // return;
 
     sync(loss_tensor);
 

@@ -181,6 +181,19 @@ public:
     virtual std::string get_name() { return this->name; }
 
 #if defined(MAGMADNN_HAVE_CUDA)
+
+    /* Update CUDA execution context including CUDA stream, cuBLAS
+       handle and cuDNN handle
+    */
+    void cuda_exec_context(CudaExecContext const& cuda_ctx) {
+       // Update CUDA stream
+       this->set_custream(cuda_ctx.stream());
+       // Update cuBLAS handle
+       this->set_cublas_handle(cuda_ctx.cublas_handle());
+       // Update cuDNN handle
+       this->set_cudnn_handle(cuda_ctx.cudnn_handle());
+    }
+
     cudaStream_t get_custream() const { return custream_; }
 
     void set_custream(cudaStream_t custream) {

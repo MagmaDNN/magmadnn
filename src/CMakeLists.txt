@@ -11,6 +11,7 @@ endif()
 target_sources(magmadnn
   PRIVATE
   init_finalize.cpp
+  exception.cpp
   utilities_internal.cpp)
 
 # compute
@@ -61,11 +62,18 @@ target_sources(magmadnn
   compute/transpose/transposeop.cpp
   compute/variable.cpp)
 
+if (MAGMADNN_ENABLE_MKLDNN)
+target_sources(magmadnn
+  PRIVATE
+  compute/onednn/conv2dforwardop.cpp)
+endif()
+
 if (MAGMADNN_ENABLE_CUDA)
   target_sources(magmadnn
     PRIVATE
     compute/add/geadd_internal_device.cu
     compute/crossentropy/crossentropy_internal_device.cu
+    compute/cuda/conv2dforwardop.cpp
     compute/div/div_internal_device.cu
     compute/log/log_internal_device.cu
     compute/negative/negative_internal_device.cu
@@ -85,7 +93,9 @@ endif()
 target_sources(magmadnn
   PRIVATE
   data/utils.cpp
-  data/MNIST.cpp)
+  data/MNIST.cpp
+  data/CIFAR10.cpp
+  data/CIFAR100.cpp)
 
 # dataloader
 target_sources(magmadnn

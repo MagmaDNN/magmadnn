@@ -28,7 +28,7 @@ Tensor<T> *FlattenOp<T>::_eval(bool recompute) {
     input_tensor = input->eval(recompute);
 
 #if defined(MAGMADNN_HAVE_CUDA)
-    // Maake sure custream and cublas handle are set
+    // Make sure custream and cublas handle are set
     this->output_tensor->set_custream(this->get_custream());
     this->output_tensor->set_cublas_handle(this->get_cublas_handle());
 #endif

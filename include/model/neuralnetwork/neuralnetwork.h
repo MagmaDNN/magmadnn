@@ -67,6 +67,17 @@ class NeuralNetwork : public Model<T> {
 
     virtual std::vector<layer::Layer<T> *> get_layers() { return this->layers; }
 
+    // Return model memory type  
+    memory_t memory_type() { return this->network_output_tensor()->get_memory_type(); }
+
+    Tensor<T> *network_input_tensor() { return this->network_input_tensor_ptr; }
+    Tensor<T> *network_output_tensor() { return this->network_output_tensor_ptr; }
+    Tensor<T> *ground_truth_tensor() const { return this->ground_truth_tensor_ptr; }
+
+    op::Operation<T> *lossfun() { return this->_obj; }
+
+    std::vector<op::Operation<T> *>& weights() { return this->_vars; }
+
    protected:
     typename std::vector<layer::Layer<T> *> layers;
     optimizer::loss_t loss_func;

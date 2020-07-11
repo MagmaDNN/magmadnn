@@ -6,6 +6,7 @@
 #include "compute/operation.h"
 #include "compute/product/productop.h"
 #include "compute/reducesum/reducesumop.h"
+#include "compute/scalarproduct/scalarproductop.h"
 #include "math/crossentropy.h"
 #include "tensor/tensor.h"
 

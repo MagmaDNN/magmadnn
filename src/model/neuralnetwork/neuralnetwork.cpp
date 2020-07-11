@@ -59,21 +59,21 @@ NeuralNetwork<T>::NeuralNetwork(std::vector<layer::Layer<T> *> layers, optimizer
     switch (optimizer) {
         case optimizer::SGD:
             this->optim = new optimizer::GradientDescent<T>(
-                static_cast<T>(params.learning_rate) / static_cast<T>(params.batch_size),
+                static_cast<T>(params.learning_rate),
                 static_cast<T>(params.momentum));
             break;
         case optimizer::ADAGRAD:
             this->optim =
-                new optimizer::AdaGrad<T>(static_cast<T>(params.learning_rate) / static_cast<T>(params.batch_size));
+                new optimizer::AdaGrad<T>(static_cast<T>(params.learning_rate));
             break;
         case optimizer::RMSPROP:
             this->optim =
-                new optimizer::RMSProp<T>(static_cast<T>(params.learning_rate) / static_cast<T>(params.batch_size),
+                new optimizer::RMSProp<T>(static_cast<T>(params.learning_rate),
                                           static_cast<T>(params.decaying_factor));
             break;
         case optimizer::ADAM:
             this->optim =
-                new optimizer::Adam<T>(static_cast<T>(params.learning_rate) / static_cast<T>(params.batch_size),
+                new optimizer::Adam<T>(static_cast<T>(params.learning_rate),
                                        static_cast<T>(params.beta1), static_cast<T>(params.beta2));
             break;
         default:
@@ -239,7 +239,7 @@ Tensor<T> *NeuralNetwork<T>::predict(Tensor<T> *sample) {
 
 template <typename T>
 unsigned int NeuralNetwork<T>::predict_class(Tensor<T> *sample) {
-    assert(T_IS_VECTOR(sample));
+   // assert(T_IS_VECTOR(sample));
 
     /* copy sample into beginning of input tensor */
     this->network_input_tensor_ptr->copy_from(*sample, 0, sample->get_size());

@@ -5,6 +5,10 @@
 #include "math/pooling.h"
 #include "tensor/tensor.h"
 
+#if defined(MAGMADNN_HAVE_MKLDNN)
+#include "dnnl.hpp"
+#endif
+
 namespace magmadnn {
 namespace op {
 
@@ -35,6 +39,20 @@ class PoolingOp : public Operation<T> {
 #if defined(MAGMADNN_HAVE_CUDA)
     math::cudnn_pooling_settings_t settings;
 #endif
+
+#if defined(MAGMADNN_HAVE_MKLDNN)
+   dnnl::engine dnnl_cpu_engine_;
+
+   //
+   // DNNL forward
+   //
+   
+   // Pooling DNNL primitive descriptor
+   std::unique_ptr<dnnl::pooling_forward::primitive_desc> dnnl_fwd_pdesc_;
+   // Pooling DNNL primitive
+   std::unique_ptr<dnnl::pooling_forward> dnnl_fwd_;
+#endif
+
 };
 
 template <typename T>

@@ -48,6 +48,9 @@ class GradTable {
      */
     void clear();
 
+    // Zero all gradients in table.
+    void zero();
+   
    protected:
     std::map<Operation<T>*, Tensor<T>*> _table;  // the underlying table to store data
     typename std::map<Operation<T>*, Tensor<T>*>::iterator tmp_map_iterator;

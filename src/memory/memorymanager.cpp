@@ -285,7 +285,8 @@ magmadnn_error_t MemoryManager<T>::sync(bool gpu_was_modified) {
 
     if (mem_type == CUDA_MANAGED) {
         // cudaErrchk(cudaDeviceSynchronize());
-        cudaStreamSynchronize(this->get_custream());
+        cudaErrchk(
+              cudaStreamSynchronize(this->get_custream()));
     } else if (mem_type == MANAGED) {
         if (gpu_was_modified) {
             cudaErrchk(
@@ -412,6 +413,36 @@ T* MemoryManager<T>::get_ptr() {
         default:
             return (T*) NULL;
     }
+}
+
+template <typename T>
+magmadnn_error_t MemoryManager<T>::zero() {
+
+   std::size_t sz = size * sizeof(T);
+
+   switch (mem_type) {
+    case HOST:
+       std::memset(this->host_ptr, 0, sz);
+       return (magmadnn_error_t) 0;
+#if defined(MAGMADNN_HAVE_CUDA)
+    case DEVICE:
+       cudaMemsetAsync(this->device_ptr, 0, sz, this->custream_);
+       return (magmadnn_error_t) 0;           
+    case MANAGED:
+       std::memset(this->host_ptr, 0, sz);
+       cudaMemsetAsync(this->device_ptr, 0, sz, this->custream_);       
+       cudaStreamSynchronize(this->custream_);
+       return (magmadnn_error_t) 0;
+    case CUDA_MANAGED:
+       std::memset(this->host_ptr, 0, sz);
+       cudaMemsetAsync(this->device_ptr, 0, sz, this->custream_);
+       cudaStreamSynchronize(this->custream_);
+       return (magmadnn_error_t) 0;
+#endif
+    }
+
+    return (magmadnn_error_t) 1;
+
 }
 
 /* COMPILE FOR INT, FLOAT, AND DOUBLE */

@@ -15,6 +15,10 @@
 #include "magma.h"
 #endif
 
+#if defined(MAGMADNN_HAVE_MPI)
+#include <mpi.h>
+#endif
+
 namespace magmadnn {
 
 /** Should be called at the start of every program.

@@ -8,6 +8,8 @@
  */
 #include "layer/pooling/poolinglayer.h"
 
+#include <iostream>
+
 namespace magmadnn {
 namespace layer {
 
@@ -64,7 +66,11 @@ template <typename T>
 PoolingLayer<T>* pooling(op::Operation<T>* input, const std::vector<unsigned int>& filter_shape,
                          const std::vector<unsigned int>& padding, const std::vector<unsigned int>& strides,
                          pooling_mode mode, bool propagate_nan) {
-    return new PoolingLayer<T>(input, filter_shape, padding, strides, mode, propagate_nan);
+
+   // std::cout << "Pooling parameters: " << std::endl;
+   // std::cout << "Padding: " << padding[0] << "x" << padding[1] << std::endl;
+
+   return new PoolingLayer<T>(input, filter_shape, padding, strides, mode, propagate_nan);
 }
 template PoolingLayer<int>* pooling(op::Operation<int>*, const std::vector<unsigned int>&,
                                     const std::vector<unsigned int>&, const std::vector<unsigned int>&, pooling_mode,
@@ -86,14 +92,19 @@ PoolingLayer<T>* pooling(op::Operation<T>* input, const std::vector<unsigned int
      * https://docs.nvidia.com/deeplearning/sdk/cudnn-developer-guide/index.html#cudnnGetPoolingNdForwardOutputDim */
     unsigned int padding_h, padding_w;
     if (padding == layer::SAME) {
-        unsigned int tempval_h = (input->get_output_shape(2) - 1) * (strides[0] - 1) + filter_shape[0];
-        unsigned int tempval_w = (input->get_output_shape(3) - 1) * (strides[1] - 1) + filter_shape[1];
+        unsigned int tempval_h = (input->get_output_shape(2) - 1) * (strides[0] - 1) + filter_shape[0] - 1;
+        unsigned int tempval_w = (input->get_output_shape(3) - 1) * (strides[1] - 1) + filter_shape[1] - 1;
         padding_h = tempval_h / 2;
         padding_w = tempval_w / 2;
+
     } else {
         padding_h = 0;
         padding_w = 0;
     }
+
+    // std::cout << "Pooling parameters: " << std::endl;
+    // std::cout << "Padding: " << padding_h << "x" << padding_w << std::endl;
+
     return new PoolingLayer<T>(input, filter_shape, {padding_h, padding_w}, strides, mode, propagate_nan);
 }
 template PoolingLayer<int>* pooling(op::Operation<int>*, const std::vector<unsigned int>&, layer::padding_t,

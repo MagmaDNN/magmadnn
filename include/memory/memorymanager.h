@@ -156,6 +156,11 @@ class MemoryManager {
      */
     memory_t get_memory_type() const { return mem_type; }
 
+    /** Zero out memory
+     *
+     */
+    magmadnn_error_t zero(); 
+   
    private:
     /** init with HOST parameters */
     void init_host();

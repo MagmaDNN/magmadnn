@@ -24,8 +24,15 @@ class LinearForwardOp : public Operation<T> {
     Tensor<T> *_eval(bool recompute);
     Tensor<T> *_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad);
 
+    // Initialize linear forward operation and create output tensor
+    void init_settings();
+
     void init_bias_settings(); /* init ones and bias_reduce_settings */
 
+#if defined(MAGMADNN_HAVE_MKLDNN)
+    void init_dnnl_settings();
+#endif
+   
     Operation<T> *input, *weights, *bias;
     Tensor<T> *input_tensor, *weights_tensor, *bias_tensor, *bias_ones;
 
@@ -35,6 +42,17 @@ class LinearForwardOp : public Operation<T> {
 #if defined(MAGMADNN_HAVE_CUDA)
     math::reduce_sum_cudnn_settings_t bias_reduce_settings;
 #endif
+
+#if defined(MAGMADNN_HAVE_MKLDNN)
+   dnnl::engine dnnl_cpu_engine_;
+
+   // Pooling DNNL primitive descriptor
+   std::unique_ptr<dnnl::inner_product_forward::primitive_desc> dnnl_fwd_pdesc_;
+
+   // Pooling DNNL primitive
+   std::unique_ptr<dnnl::inner_product_forward> dnnl_fwd_;
+#endif
+
 };
 
 /** Defines the forward and backward pass of a fully connected layer.

@@ -14,6 +14,12 @@ function(magmadnn_install_library name)
         )
 endfunction()
 
+include(GNUInstallDirs)
+set(DNNL_LIBDIR "lib")
+if(CMAKE_INSTALL_LIBDIR MATCHES ".*lib64$")
+  set(DNNL_LIBDIR "lib64")
+endif()
+
 function(magmadnn_install)
 
   # install the public header files
@@ -26,4 +32,23 @@ function(magmadnn_install)
     FILES_MATCHING PATTERN "*.h"
     )
 
+  if (MAGMADNN_ENABLE_MKLDNN)
+    install(DIRECTORY "${MagmaDNN_BINARY_DIR}/third_party/mkldnn/build/include/"
+      DESTINATION "${MAGMADNN_INSTALL_INCLUDE_DIR}/third_party/mkldnn"
+      FILES_MATCHING PATTERN "*.h")
+    install(DIRECTORY "${MagmaDNN_BINARY_DIR}/third_party/mkldnn/build/include/"
+      DESTINATION "${MAGMADNN_INSTALL_INCLUDE_DIR}/third_party/mkldnn"
+      FILES_MATCHING PATTERN "*.hpp")
+    install(
+      FILES "${MagmaDNN_BINARY_DIR}/third_party/mkldnn/build/${DNNL_LIBDIR}/libdnnl.so.1.2"
+      "${MagmaDNN_BINARY_DIR}/third_party/mkldnn/build/${DNNL_LIBDIR}/libdnnl.so.1"
+      "${MagmaDNN_BINARY_DIR}/third_party/mkldnn/build/${DNNL_LIBDIR}/libdnnl.so"
+      DESTINATION "${MAGMADNN_INSTALL_LIBRARY_DIR}/third_party/mkldnn"
+      )
+    #    install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink \
+    # ${MagmaDNN_BINARY_DIR}/third_party/mkldnn/build/lib/libdnnl.so.1.2 \
+    # ${MagmaDNN_BINARY_DIR}/third_party/mkldnn/build/lib/libdnnl.so)")
+
+  endif()
+  
 endfunction()

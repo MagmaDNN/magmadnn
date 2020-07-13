@@ -25,7 +25,8 @@ endif()
 option(MAGMADNN_ENABLE_CUDA "Enable use of CUDA library and compilation of CUDA kernel" OFF)
 option(MAGMADNN_ENABLE_MPI "Enable distributed memory routines using MPI" OFF)
 option(MAGMADNN_ENABLE_OMP "Enable parallelization using OpenMP library" OFF)
-option(MAGMADNN_ENABLE_MKLDNN "Enable use of MKLDNN library" OFF)
+option(MAGMADNN_ENABLE_MKLDNN "Enable use of MKLDNN library" ON)
+option(MAGMADNN_BUILD_MKLDNN "Enable build of MKLDNN from source" OFF)
 option(MAGMADNN_BUILD_DOC "Generate documentation" OFF)
 option(MAGMADNN_BUILD_EXAMPLES "Build MagmaDNN examples" ON)
 option(MAGMADNN_BUILD_TESTS "Generate build files for unit tests" OFF)
@@ -121,7 +122,7 @@ if (MAGMADNN_ENABLE_CUDA)
   
   add_definitions(-DHAVE_CUDA)
   add_definitions(-D_HAS_CUDA_)
-  add_definitions(-DMAGMADNN_HAVE_CUDA)
+  # add_definitions(-DMAGMADNN_HAVE_CUDA)
   
   set(MAGMADNN_HAVE_CUDA TRUE)
   
@@ -134,7 +135,8 @@ if (MAGMADNN_ENABLE_CUDA)
 
   ########################################
   # Find cuBLAS library
-  find_library(CUBLAS cublas)
+  find_library(CUBLAS cublas
+    HINT ${CMAKE_CUDA_IMPLICIT_LINK_DIRECTORIES})
 
   message(STATUS "cuBLAS: ${CUBLAS}")
 
@@ -229,11 +231,35 @@ endif()
 # MKLDNN
 
 if (MAGMADNN_ENABLE_MKLDNN)
-  
-  include(cmake/mkldnn.cmake)
 
-  add_definitions(-D MAGMADNN_HAVE_MKLDNN)
+
+  # add_definitions(-D MAGMADNN_HAVE_MKLDNN)
   set(MAGMADNN_HAVE_MKLDNN TRUE)
+  
+  if (MAGMADNN_BUILD_MKLDNN)
+    include(cmake/mkldnn.cmake)
+  else()
+
+
+    find_library(ONEDNN_LIBRARIES mkldnn)
+
+
+    if (ONEDNN_LIBRARIES)
+      set(ONEDNN_FOUND TRUE)
+    else ()
+      SET(ONEDNN_FOUND FALSE)
+    endif ()
+
+    if(ONEDNN_FOUND)
+      message(STATUS "oneDNN libraries: ${ONEDNN_LIBRARIES}")
+    else()  
+      message(FATAL_ERROR " oneDNN NOT found")
+    endif()
+
+
+    set(LIBS ${LIBS} ${ONEDNN_LIBRARIES})
+  endif()
+  
 
 endif()
 

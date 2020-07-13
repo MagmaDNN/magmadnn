@@ -11,6 +11,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cassert>
+#include <cstring>
 
 #include "magmadnn/config.h"
 #include "magmadnn/utilities_internal.h"

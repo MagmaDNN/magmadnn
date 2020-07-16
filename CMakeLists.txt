@@ -122,7 +122,7 @@ if (MAGMADNN_ENABLE_CUDA)
   
   add_definitions(-DHAVE_CUDA)
   add_definitions(-D_HAS_CUDA_)
-  # add_definitions(-DMAGMADNN_HAVE_CUDA)
+  add_definitions(-DMAGMADNN_HAVE_CUDA)
   
   set(MAGMADNN_HAVE_CUDA TRUE)
   

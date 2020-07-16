@@ -24,6 +24,11 @@ magmadnn_error_t magmadnn_init() {
     /* init the settings struct */
     internal::MAGMADNN_SETTINGS = new magmadnn_settings_t;
 
+    int rank = 0;
+#if defined(MAGMADNN_HAVE_MPI)
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+#endif
+
 #if defined(MAGMADNN_HAVE_CUDA)
     err = (magmadnn_error_t) magma_init();
     
@@ -37,10 +42,6 @@ magmadnn_error_t magmadnn_init() {
 
     internal::MAGMADNN_SETTINGS->n_devices = 1; /* TODO : read in number of devices */
 
-    int rank = 0;
-#if defined(MAGMADNN_HAVE_MPI)
-    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-#endif
     int num_devices;
 
     // query number of devices                                                                  

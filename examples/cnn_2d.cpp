@@ -20,8 +20,13 @@ Tensor<float> *read_mnist_labels(const char *file_name, uint32_t &n_labels, uint
 void print_image(uint32_t image_idx, Tensor<float> *images, Tensor<float> *labels, uint32_t n_rows, uint32_t n_cols);
 
 int main(int argc, char **argv) {
-    magmadnn_init();
 
+#if defined(MAGMADNN_HAVE_MPI)
+    MPI_Init(&argc, &argv);
+#endif
+
+    magmadnn_init();
+ 
     Tensor<float> *images_host, *labels_host;
     uint32_t n_images, n_rows, n_cols, n_labels, n_classes = 10;
     memory_t training_memory_type;
@@ -98,6 +103,10 @@ int main(int argc, char **argv) {
     delete output;
 
     magmadnn_finalize();
+
+#if defined(MAGMADNN_HAVE_MPI)
+    MPI_Finalize();
+#endif
 
     return 0;
 }

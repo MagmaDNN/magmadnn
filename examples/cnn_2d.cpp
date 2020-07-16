@@ -45,9 +45,9 @@ int main(int argc, char **argv) {
     params.n_epochs = 20;
     params.learning_rate = 0.05;
 
-#if defined(USE_GPU)
-    // training_memory_type = DEVICE;
-    training_memory_type = HOST;
+#if defined(MAGMADNN_HAVE_CUDA)
+    training_memory_type = DEVICE;
+    // training_memory_type = HOST;
 #else
     training_memory_type = HOST;
 #endif

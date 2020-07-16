@@ -1,6 +1,8 @@
 
 #pragma once
 
+#include "magmadnn/config.h"
+
 #include "compute/conv2dforward/conv2dforward_internal.h"
 #include "compute/operation.h"
 #include "math/conv2d.h"

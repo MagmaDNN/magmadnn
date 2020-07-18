@@ -54,6 +54,19 @@ Tensor<T> *Conv2DForwardOp<T>::_eval(bool recompute) {
     if (this->mem_type == HOST) {
         ::magmadnn::math::conv2d(this->input_tensor, this->filter_tensor, this->output_tensor, this->pad_h, this->pad_w,
                                  this->vertical_stride, this->horizontal_stride, this->dilation_h, this->dilation_w);
+        // if (true) {
+        //     Tensor<T> *gpu_filter = new Tensor<T>(this->filter_tensor->get_shape(), {NONE, {}}, DEVICE);
+        //     Tensor<T> *gpu_input = new Tensor<T>(this->input_tensor->get_shape(), {NONE, {}}, DEVICE);
+        //     Tensor<T> *gpu_out = new Tensor<T>(this->output_tensor->get_shape(), {NONE, {}}, DEVICE);
+        //     // *input = *(this->input_tensor);
+        //     gpu_input->copy_from(*(this->input_tensor));
+        //     gpu_filter->copy_from(*(this->filter_tensor));
+        //     this->cudnn_settings.handle = this->get_cudnn_handle();
+        //     ::magmadnn::math::conv2d_device(gpu_input, gpu_filter, gpu_out, this->cudnn_settings);
+        //     if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
+        //     printf("conv forward: ");
+        //     compare_tensor(gpu_out, this->output_tensor, false);
+        // }
     }
 #if defined(MAGMADNN_HAVE_CUDA)
     else {
@@ -109,7 +122,28 @@ Tensor<T> *Conv2DForwardOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, 
         this->input_tensor = this->input->eval(false);
 
         if (this->mem_type == HOST) {
-            ::magmadnn::math::conv2d_grad_filter(this->input_tensor, grad, out);
+            ::magmadnn::math::conv2d_grad_filter(this->input_tensor, grad, out, this->pad_h, this->pad_w,
+                                                 this->vertical_stride, this->horizontal_stride, this->dilation_h,
+                                                 this->dilation_w);
+
+            // if (true) {
+            //     // #if defined(MAGMADNN_HAVE_CUDA)
+            //     //                 print("Testing CPU conv requires GPU.\n");
+            //     //                 return;
+            //     // #endif
+            //     Tensor<T> *gpu_test = new Tensor<T>(out->get_shape(), {NONE, {}}, DEVICE);
+            //     Tensor<T> *input = new Tensor<T>(this->input_tensor->get_shape(), {NONE, {}}, DEVICE);
+            //     Tensor<T> *gpu_grad = new Tensor<T>(grad->get_shape(), {NONE, {}}, DEVICE);
+            //     // *input = *(this->input_tensor);
+            //     input->copy_from(*(this->input_tensor));
+            //     gpu_grad->copy_from(*(grad));
+            //     this->cudnn_settings.handle = this->get_cudnn_handle();
+            //     ::magmadnn::math::conv2d_grad_filter_device(input, gpu_grad, gpu_test, this->cudnn_settings);
+            //     if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
+            //     printf("conv backward grad: ");
+            //     compare_tensor(gpu_test, out, true);
+            //     // compare_tensor(input, this->input_tensor);
+            // }
         }
 #if defined(MAGMADNN_HAVE_CUDA)
         else {
@@ -133,7 +167,6 @@ void Conv2DForwardOp<T>::init_settings() {
     }
 #if defined(MAGMADNN_HAVE_CUDA)
     else {
-
         this->cudnn_settings.handle = this->get_cudnn_handle();
 
         /* init the conv descriptor */

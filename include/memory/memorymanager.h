@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include "magmadnn/config.h"
 #include "magmadnn/types.h"
 
 namespace magmadnn {

@@ -1,4 +1,6 @@
+#if defined(MAGMADNN_CMAKE_BUILD)
 #include "magmadnn/config.h"
+#endif
 #include "compute/negative/negative_internal.h"
 
 namespace magmadnn {

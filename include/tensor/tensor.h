@@ -11,7 +11,9 @@
 
 #include <vector>
 
+#if defined(MAGMADNN_CMAKE_BUILD)
 #include "magmadnn/config.h"
+#endif
 #include "magmadnn/exec_context.h"
 #include "magmadnn/types.h"
 #include "magmadnn/utilities_internal.h"

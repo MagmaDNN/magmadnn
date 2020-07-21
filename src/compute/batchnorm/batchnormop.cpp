@@ -1,7 +1,9 @@
 
 #include "compute/batchnorm/batchnormop.h"
 
+#if defined(MAGMADNN_CMAKE_BUILD)
 #include "magmadnn/config.h"
+#endif
 
 namespace magmadnn {
 namespace op {

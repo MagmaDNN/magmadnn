@@ -9,7 +9,9 @@
  */
 #include "math/matmul.h"
 
+#if defined(MAGMADNN_CMAKE_BUILD)
 #include "magmadnn/config.h"
+#endif
 #include "math/wrappers.h"
 
 #if defined(MAGMADNN_HAVE_CUDA)

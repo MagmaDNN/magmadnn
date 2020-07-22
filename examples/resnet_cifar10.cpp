@@ -93,15 +93,15 @@ int main(int argc, char** argv) {
    
    // Data type
    using T = float;
-
-   magmadnn::Arguments args;
-   args.parse(context, argc, argv);
    
 #if defined(MAGMADNN_HAVE_MPI)
    MPI_Init(&argc, &argv);
 #endif
 
    magmadnn_init();
+
+   magmadnn::Arguments args;
+   args.parse(context, argc, argv);
 
    // Location of the CIFAR-10 dataset
    std::string const cifar10_dir = ".";
@@ -114,16 +114,22 @@ int main(int argc, char** argv) {
    params.batch_size = 128;
    // params.batch_size = 256;
    params.n_epochs = 500;
-   // params.learning_rate = 0.1;
-   // params.learning_rate = 0.05;
-   // params.learning_rate = 0.01;
-   params.learning_rate = 0.001;
-   // params.learning_rate = 0.002;
-   // params.learning_rate = 1e-4;
-   // params.learning_rate = 1e-5;
-   // params.learning_rate = 1e-6;
-   // params.learning_rate = 1.0;
-   // params.decaying_factor = 0.99;
+
+   if (args.learning_rate > 0) {
+      params.learning_rate = args.learning_rate; 
+   }
+   else {
+      // params.learning_rate = 0.1;
+      // params.learning_rate = 0.05;
+      // params.learning_rate = 0.01;
+      params.learning_rate = 0.001;
+      // params.learning_rate = 0.002;
+      // params.learning_rate = 1e-4;
+      // params.learning_rate = 1e-5;
+      // params.learning_rate = 1e-6;
+      // params.learning_rate = 1.0;
+      // params.decaying_factor = 0.99;
+   }
    
    // Memory
    magmadnn::memory_t training_memory_type;
@@ -138,7 +144,7 @@ int main(int argc, char** argv) {
 #endif
 
    // bool enable_shortcut = true;
-   bool enable_shortcut = false;
+   bool enable_shortcut = args.enable_shortcut;
    
    std::cout << "[" << context << "] Image dimensions: " << train_set.nrows() << " x " << train_set.ncols() << std::endl;
    std::cout << "[" << context << "] Number of chanels: " << train_set.nchanels() << std::endl;

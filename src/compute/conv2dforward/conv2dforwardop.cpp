@@ -409,6 +409,13 @@ void Conv2DForwardOp<T>::calculate_and_set_output_shape() {
                               static_cast<unsigned int>(oc),
                               static_cast<unsigned int>(oh),
                               static_cast<unsigned int>(ow)};
+
+        // std::cout << "[Conv2DForwardOp<T>::calculate_and_set_output_shape]"
+        //           << " on = " << on 
+        //           << " oc = " << oc 
+        //           << " oh = " << oh 
+        //           << " ow = " << ow 
+        //           << std::endl;
     }
 #endif
 

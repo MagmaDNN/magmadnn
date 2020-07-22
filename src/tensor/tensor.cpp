@@ -287,6 +287,7 @@ template <typename T>
 void Tensor<T>::init_cudnn_descriptor() {
     int n = 1, c = 1, h = 1, w = 1;
 
+    
     cudnnCreateTensorDescriptor(&desc);
 
     if (shape.size() == 4) {
@@ -306,6 +307,13 @@ void Tensor<T>::init_cudnn_descriptor() {
     } else {
         fprintf(stderr, "Cannot create tensor descriptor for tensor of this shape\n");
     }
+
+    // std::cout << "[init_cudnn_descriptor]"
+    //           << " n = " << n 
+    //           << " c = " << c 
+    //           << " h = " << h 
+    //           << " w = " << w
+    //           << std::endl;
 
     cudnnSetTensor4dDescriptor(desc, CUDNN_TENSOR_NCHW, internal::get_cudnn_data_type((T) 0), n, c, h, w);
 }

@@ -20,16 +20,18 @@ std::vector<layer::Layer<T> *> basic_block(
       const std::vector<unsigned int> strides,
       bool enable_shorcut = true) {
 
+   std::vector<layer::Layer<T> *> layers;
+
    // In the resnet model, downsampling is achieved in the
    // convolutions by using a stride > 1.
    bool downsample = (strides[0] > 1);
    
-   std::cout << "[basic_block]"
-             << " input size = " << input->get_output_shape(0)
-             << ", " << input->get_output_shape(1)
-             << ", " << input->get_output_shape(2)
-             << ", " << input->get_output_shape(3)
-             << std::endl;
+   // std::cout << "[basic_block]"
+   //           << " input size = " << input->get_output_shape(0)
+   //           << ", " << input->get_output_shape(1)
+   //           << ", " << input->get_output_shape(2)
+   //           << ", " << input->get_output_shape(3)
+   //           << std::endl;
 
    auto conv2d1 = layer::conv2d<T>(input, {3, 3}, channels, {1, 1}, strides, {1, 1});
    auto bn1 = layer::batchnorm(conv2d1->out());
@@ -43,46 +45,77 @@ std::vector<layer::Layer<T> *> basic_block(
    // auto shortcut = op::add(input, conv2d2->out(), true, false);
    // auto shortcut = layer::shortcut(conv2d2->out(), input);
 
-   std::cout << "[basic_block]"
-             << " conv2 output size = " << bn2->out()->get_output_shape(0)
-             << ", " << bn2->out()->get_output_shape(1)
-             << ", " << bn2->out()->get_output_shape(2)
-             << ", " << bn2->out()->get_output_shape(3)
-             << std::endl;
+   // std::cout << "[basic_block]"
+   //           << " conv2 output size = " << bn2->out()->get_output_shape(0)
+   //           << ", " << bn2->out()->get_output_shape(1)
+   //           << ", " << bn2->out()->get_output_shape(2)
+   //           << ", " << bn2->out()->get_output_shape(3)
+   //           << std::endl;
 
+   layers.insert(std::end(layers), conv2d1);
+   layers.insert(std::end(layers), bn1);
+   layers.insert(std::end(layers), act1);
+
+   layers.insert(std::end(layers), conv2d2);
+   layers.insert(std::end(layers), bn2);
+   
    layer::Layer<T> *act2 = nullptr;
    
    if (enable_shorcut) {
       // Residual layer
       if (downsample) {
+         // Downsampling
+
          auto downsample_conv2d = layer::conv2d<T>(input, {1, 1}, channels, {0, 0}, strides, {1, 1});
+         // auto shortcut = op::add(bn2->out(), downsample_conv2d->out());
          auto downsample_bn = layer::batchnorm(downsample_conv2d->out());
-
-         std::cout << "[basic_block]"
-                   << " downsample_conv2d output size = " << downsample_conv2d->out()->get_output_shape(0)
-                   << ", " << downsample_conv2d->out()->get_output_shape(1)
-                   << ", " << downsample_conv2d->out()->get_output_shape(2)
-                   << ", " << downsample_conv2d->out()->get_output_shape(3)
-                   << std::endl;
-
          auto shortcut = op::add(bn2->out(), downsample_bn->out());
+
+         // auto downsample_pool = layer::pooling<T>(input, {1, 1}, {0, 0}, strides, MAX_POOL);
+
+         // std::cout << "[basic_block]"
+         //           << " downsample_pool output size = " << downsample_pool->out()->get_output_shape(0)
+         //           << ", " << downsample_pool->out()->get_output_shape(1)
+         //           << ", " << downsample_pool->out()->get_output_shape(2)
+         //           << ", " << downsample_pool->out()->get_output_shape(3)
+         //           << std::endl;
+
+         // auto shortcut = op::add(bn2->out(), downsample_pool->out());
+         
+         // std::cout << "[basic_block]"
+         //           << " downsample_conv2d output size = " << downsample_conv2d->out()->get_output_shape(0)
+         //           << ", " << downsample_conv2d->out()->get_output_shape(1)
+         //           << ", " << downsample_conv2d->out()->get_output_shape(2)
+         //           << ", " << downsample_conv2d->out()->get_output_shape(3)
+         //           << std::endl;
+
+         // layers.insert(std::end(layers), downsample_conv2d);
+         // layers.insert(std::end(layers), downsample_bn);
+
          act2 = layer::activation<T>(shortcut, layer::RELU);
+
+         // act2 = layer::activation<T>(bn2->out(), layer::RELU);
+
       }
       else {
+         auto shortcut = op::add(bn2->out(), input);
+
          // auto act2 = layer::activation<T>(conv2d2->out(), layer::RELU);
          // auto act2 = layer::activation<T>(shortcut->out(), layer::RELU);
-         act2 = layer::activation<T>(op::add(bn2->out(), input), layer::RELU);
+         act2 = layer::activation<T>(shortcut, layer::RELU);
       }
    }
    else {
       act2 = layer::activation<T>(bn2->out(), layer::RELU);
    }
-   
-   std::vector<layer::Layer<T> *> layers =
-      {conv2d1, bn1, act1,
-       conv2d2, bn2,
-       // shortcut,
-       act2};
+
+   layers.insert(std::end(layers), act2);
+
+   // std::vector<layer::Layer<T> *> layers =
+   //    {conv2d1, bn1, act1,
+   //     conv2d2, bn2,
+   //     // shortcut,
+   //     act2};
 
    return layers;
 }
@@ -113,7 +146,8 @@ int main(int argc, char** argv) {
    magmadnn::model::nn_params_t params;
    params.batch_size = 128;
    // params.batch_size = 256;
-   params.n_epochs = 500;
+   // params.n_epochs = 500;
+   params.n_epochs = 50;
 
    if (args.learning_rate > 0) {
       params.learning_rate = args.learning_rate; 
@@ -130,6 +164,10 @@ int main(int argc, char** argv) {
       // params.learning_rate = 1.0;
       // params.decaying_factor = 0.99;
    }
+
+   // Number of stacked blocks per filter sizes
+   // int num_stacked_blocks = 1;
+   int num_stacked_blocks = 2;
    
    // Memory
    magmadnn::memory_t training_memory_type;
@@ -159,23 +197,23 @@ int main(int argc, char** argv) {
 
    auto input = layer::input<T>(x_batch);
 
-   std::cout << "[" << context << "]"
-             << " input size = " << input->out()->get_output_shape(0)
-             << ", " << input->out()->get_output_shape(1)
-             << ", " << input->out()->get_output_shape(2)
-             << ", " << input->out()->get_output_shape(3)
-             << std::endl;
+   // std::cout << "[" << context << "]"
+   //           << " input size = " << input->out()->get_output_shape(0)
+   //           << ", " << input->out()->get_output_shape(1)
+   //           << ", " << input->out()->get_output_shape(2)
+   //           << ", " << input->out()->get_output_shape(3)
+   //           << std::endl;4
 
    auto conv2d1 = layer::conv2d<T>(input->out(), {3, 3}, 16, {1, 1}, {1, 1}, {1, 1});
    auto bn1 = layer::batchnorm(conv2d1->out());      
    auto act1 = layer::activation<T>(bn1->out(), layer::RELU);
 
-   std::cout << "[" << context << "]"
-             << " input size = " << act1->out()->get_output_shape(0)
-             << ", " << act1->out()->get_output_shape(1)
-             << ", " << act1->out()->get_output_shape(2)
-             << ", " << act1->out()->get_output_shape(3)
-             << std::endl;
+   // std::cout << "[" << context << "]"
+   //           << " input size = " << act1->out()->get_output_shape(0)
+   //           << ", " << act1->out()->get_output_shape(1)
+   //           << ", " << act1->out()->get_output_shape(2)
+   //           << ", " << act1->out()->get_output_shape(3)
+   //           << std::endl;
 
    // auto act1 = layer::activation<T>(conv2d1->out(), layer::RELU);
    // auto pool1 = layer::pooling<T>(act1->out(), {3, 3}, {1, 1}, {2, 2}, MAX_POOL);
@@ -184,33 +222,80 @@ int main(int argc, char** argv) {
    // auto block1 = basic_block(
    //       pool1->out(), 64, {1, 1});
 
-   std::cout << "[" << context << "] 16 filters layers" << std::endl;
+   // std::cout << "[" << context << "] 16 filters layers" << std::endl;
 
-   auto block1 = basic_block(
-         act1->out(), 16, {1, 1}, enable_shortcut);
-   auto block2 = basic_block(
-         block1.back()->out(), 16, {1, 1}, enable_shortcut);
+   std::vector<layer::Layer<T> *> blocks(0, nullptr);
 
-   std::cout << "[" << context << "] 32 filters layers" << std::endl;
+   for (int i = 0; i < num_stacked_blocks; ++i) {
 
-   auto block3 = basic_block(
-         block2.back()->out(), 32, {2, 2}, enable_shortcut);
-   auto block4 = basic_block(
-         block3.back()->out(), 32, {1, 1}, enable_shortcut);
+      op::Operation<T>* block1_input = nullptr;
+      
+      if (i == 0) {
+         // First block
+         block1_input = act1->out();
+      }
+      else {
+         // Subsequent block: input from previous stacked block output
+         block1_input = blocks.back()->out();
+      }
+         
+      auto block1 = basic_block(
+            block1_input, 16, {1, 1}, enable_shortcut);
+      auto block2 = basic_block(
+            block1.back()->out(), 16, {1, 1}, enable_shortcut);
 
-   std::cout << "[" << context << "] 64 filters layers" << std::endl;
+      blocks.insert(std::end(blocks), std::begin(block1), std::end(block1));
+      blocks.insert(std::end(blocks), std::begin(block2), std::end(block2));      
+   }
+   
+   // std::cout << "[" << context << "] 32 filters layers" << std::endl;
 
-   auto block5 = basic_block(
-         block4.back()->out(), 64, {2, 2}, enable_shortcut);
-   auto block6 = basic_block(
-         block5.back()->out(), 64, {1, 1}, enable_shortcut);
+   for (int i = 0; i < num_stacked_blocks; ++i) {
 
-   // auto pool2 = layer::pooling<T>(block1.back()->out(), {2, 2}, {0, 0}, {1, 1}, AVERAGE_POOL);
-   // auto pool2 = layer::pooling<T>(block2.back()->out(), {2, 2}, {0, 0}, {1, 1}, AVERAGE_POOL);
-   auto pool2 = layer::pooling<T>(block6.back()->out(), {2, 2}, {0, 0}, {1, 1}, AVERAGE_POOL);
-   // auto pool2 = layer::pooling<T>(block8.back()->out(), {2, 2}, {0, 0}, {1, 1}, AVERAGE_POOL);
+      std::vector<unsigned int> strides = {1, 1};
+      bool enable_shortcut_input = enable_shortcut; 
+      
+      if (i == 0) {
+         // Downsampling
+         strides = {2, 2};
+         // enable_shortcut_input = false;
+      }
+      
+      auto block3 = basic_block(
+            blocks.back()->out(), 32, strides, enable_shortcut_input);
+      auto block4 = basic_block(
+            block3.back()->out(), 32, {1, 1}, enable_shortcut);
+
+      blocks.insert(std::end(blocks), std::begin(block3), std::end(block3));
+      blocks.insert(std::end(blocks), std::begin(block4), std::end(block4));
+   }
+   
+   // std::cout << "[" << context << "] 64 filters layers" << std::endl;
+
+   for (int i = 0; i < num_stacked_blocks; ++i) {
+
+      std::vector<unsigned int> strides = {1, 1};
+      bool enable_shortcut_input = enable_shortcut; 
+
+      if (i == 0) {
+         // Downsampling
+         strides = {2, 2};
+         // enable_shortcut_input = false;
+      }
+
+      auto block5 = basic_block(
+            blocks.back()->out(), 64, strides, enable_shortcut_input);
+      auto block6 = basic_block(
+            block5.back()->out(), 64, {1, 1}, enable_shortcut);
+
+      blocks.insert(std::end(blocks), std::begin(block5), std::end(block5));
+      blocks.insert(std::end(blocks), std::begin(block6), std::end(block6));
+   }
+      
+   // auto pool2 = layer::pooling<T>(block6.back()->out(), {2, 2}, {0, 0}, {1, 1}, AVERAGE_POOL);
    // auto pool2 = layer::pooling<T>(act1->out(), {2, 2}, {0, 0}, {1, 1}, AVERAGE_POOL);
-
+   auto pool2 = layer::pooling<T>(blocks.back()->out(), {2, 2}, {0, 0}, {1, 1}, AVERAGE_POOL);
+   
    auto flatten = layer::flatten<T>(pool2->out());
 
    auto fc1 = layer::fullyconnected<T>(flatten->out(), train_set.nclasses(), false);
@@ -227,14 +312,16 @@ int main(int argc, char** argv) {
    layers.insert(std::end(layers), act1);
    // layers.insert(std::end(layers), pool1);
 
-   layers.insert(std::end(layers), std::begin(block1), std::end(block1));
-   layers.insert(std::end(layers), std::begin(block2), std::end(block2));
+   layers.insert(std::end(layers), std::begin(blocks), std::end(blocks));
 
-   layers.insert(std::end(layers), std::begin(block3), std::end(block3));
-   layers.insert(std::end(layers), std::begin(block4), std::end(block4));
+   // layers.insert(std::end(layers), std::begin(block1), std::end(block1));
+   // layers.insert(std::end(layers), std::begin(block1), std::end(block1));
 
-   layers.insert(std::end(layers), std::begin(block5), std::end(block5));
-   layers.insert(std::end(layers), std::begin(block6), std::end(block6));
+   // layers.insert(std::end(layers), std::begin(block3), std::end(block3));
+   // layers.insert(std::end(layers), std::begin(block4), std::end(block4));
+
+   // layers.insert(std::end(layers), std::begin(block5), std::end(block5));
+   // layers.insert(std::end(layers), std::begin(block6), std::end(block6));
 
    layers.insert(std::end(layers), pool2);
    layers.insert(std::end(layers), flatten);

@@ -38,6 +38,8 @@ namespace layer {
 
       virtual std::vector<op::Operation<T>*> get_weights();
 
+      virtual unsigned int get_num_params();
+
       op::Operation<T>* get_filter() { return filter; }
       op::Operation<T>* get_bias() { return bias; }
 

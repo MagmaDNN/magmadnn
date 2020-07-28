@@ -9,6 +9,7 @@
 #pragma once
 
 #include <cmath>
+#include <iomanip>
 #include <ctime>
 #include "compute/op_utilities.h"
 #include "dataloader/dataloaders.h"
@@ -64,6 +65,8 @@ class NeuralNetwork : public Model<T> {
     virtual magmadnn_error_t fit(Tensor<T> *x, Tensor<T> *y, metric_t &metric_out, bool verbose = false);
     virtual Tensor<T> *predict(Tensor<T> *sample);
     virtual unsigned int predict_class(Tensor<T> *sample);
+
+    virtual void summary();
 
     virtual std::vector<layer::Layer<T> *> get_layers() { return this->layers; }
 

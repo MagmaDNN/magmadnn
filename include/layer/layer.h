@@ -21,6 +21,11 @@ class Layer {
     virtual std::vector<op::Operation<T> *> get_weights() = 0;
 
     virtual op::Operation<T> *out() { return output; }
+    
+    /** Get the number of parameters for this layer
+     * @return unsigned int
+     */
+    virtual unsigned int get_num_params() {return 0;}
 
     /** Get the pointer to the input tensor for this layer
      * @return tensor<T>*

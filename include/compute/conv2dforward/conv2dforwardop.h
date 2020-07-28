@@ -1,7 +1,9 @@
 
 #pragma once
 
+#if defined(MAGMADNN_CMAKE_BUILD)
 #include "magmadnn/config.h"
+#endif
 
 #include "compute/conv2dforward/conv2dforward_internal.h"
 #include "compute/operation.h"

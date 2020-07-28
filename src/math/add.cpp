@@ -11,7 +11,9 @@
 
 #include <cassert>
 
+#if defined(MAGMADNN_CMAKE_BUILD)
 #include "magmadnn/config.h"
+#endif
 #include "math/wrappers.h"
 
 namespace magmadnn {

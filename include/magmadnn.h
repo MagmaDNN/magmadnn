@@ -21,7 +21,9 @@
 #define USE_GPU
 #endif
 
+#if defined(MAGMADNN_CMAKE_BUILD)
 #include "magmadnn/config.h"
+#endif
 #include "magmadnn/exec_context.h"
 #include "magmadnn/init_finalize.h"
 #include "magmadnn/types.h"

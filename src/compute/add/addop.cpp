@@ -7,7 +7,9 @@
  *
  * @copyright Copyright (c) 2019
  */
+#if defined(MAGMADNN_CMAKE_BUILD)
 #include "magmadnn/config.h"
+#endif
 #include "compute/add/addop.h"
 
 namespace magmadnn {

@@ -6,6 +6,12 @@
 # install location
 #prefix = /usr/local
 
+# set to 1 if you want to compile with MKLDNN
+#USE_MKLDNN = 0
+
+# set to 0 if you don't want to compile with CUDA
+#TRY_CUDA = 1
+
 # set if you want to make the library in debug mode (adds "-O0 -g -DDEBUG" to flags)
 #DEBUG = 1
 

@@ -37,6 +37,9 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 set(MAGMADNN_HAVE_CUDA FALSE)
 set(MAGMADNN_HAVE_OMP FALSE)
 
+
+add_definitions(-DMAGMADNN_CMAKE_BUILD)
+
 ########################################
 # BLAS
 set(LBLAS "" CACHE STRING "BLAS library")

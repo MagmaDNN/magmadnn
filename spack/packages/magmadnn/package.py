@@ -29,22 +29,9 @@ class Magmadnn(CMakePackage):
     depends_on('magma', when='+cuda')
     depends_on('onednn', when='+onednn')
     depends_on('mpi', when='+mpi')
-    depends_on('openmp', when='+openmp')
     depends_on('doxygen', when='+docs')
 
 
-    '''
-    option(MAGMADNN_ENABLE_CUDA "Enable use of CUDA library and compilation of CUDA kernel" OFF)
-    option(MAGMADNN_ENABLE_MPI "Enable distributed memory routines using MPI" OFF)
-    option(MAGMADNN_ENABLE_OMP "Enable parallelization using OpenMP library" OFF)
-    option(MAGMADNN_ENABLE_MKLDNN "Enable use of MKLDNN library" OFF)
-    option(MAGMADNN_BUILD_MKLDNN "Enable build of MKLDNN from source" OFF)
-    option(MAGMADNN_BUILD_DOC "Generate documentation" OFF)
-    option(MAGMADNN_BUILD_EXAMPLES "Build MagmaDNN examples" ON)
-    option(MAGMADNN_BUILD_TESTS "Generate build files for unit tests" OFF)
-    option(MAGMADNN_BUILD_SHARED_LIBS "Build shared (.so, .dylib, .dll) libraries" ON)
-    '''
-    
     def cmake_args(self):
         spec = self.spec
         return [

@@ -66,6 +66,8 @@ class NeuralNetwork : public Model<T> {
     virtual Tensor<T> *predict(Tensor<T> *sample);
     virtual unsigned int predict_class(Tensor<T> *sample);
 
+    /** Prints out a summary of the neural network
+     */
     virtual void summary();
 
     virtual std::vector<layer::Layer<T> *> get_layers() { return this->layers; }

@@ -71,6 +71,10 @@ class Model {
      */
     virtual std::string get_name() { return this->_name; }
 
+    /** prints a summary of the model
+     */
+    virtual void summary() = 0;
+
    protected:
     std::string _name;
     metric_t _last_training_metric;

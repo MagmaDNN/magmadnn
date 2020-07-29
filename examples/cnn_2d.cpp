@@ -62,39 +62,43 @@ int main(int argc, char **argv) {
     auto input = layer::input(x_batch);
 
     auto conv2d1 = layer::conv2d(input->out(), {5, 5}, 32, {0, 0}, {1, 1}, {1, 1}, true, false);
-    // auto conv2d1 = layer::conv2d(input->out(), {2, 2}, 32, {0, 0}, {1, 1}, {0, 0}, true, false);
     auto act1 = layer::activation(conv2d1->out(), layer::RELU);
-    // auto pool1 = layer::pooling(act1->out(), {2, 2}, {0, 0}, {2, 2}, MAX_POOL);
-    auto pool1 = layer::pooling<float>(act1->out(), {2, 2}, {0, 0}, {2, 2}, AVERAGE_POOL);
-    // auto dropout1 = layer::dropout(pool1->out(), 0.25);
+    auto pool1 = layer::pooling(act1->out(), {2, 2}, {0, 0}, {2, 2}, MAX_POOL);
 
-    // auto flatten = layer::flatten(input->out());
-    // auto flatten = layer::flatten(act1->out());
-    // auto flatten = layer::flatten(dropout1->out());
-    auto flatten = layer::flatten(pool1->out());
+    auto conv2d2 = layer::conv2d(pool1->out(), {5, 5}, 32, {0, 0}, {1, 1}, {1, 1}, true, false);
+    auto act2 = layer::activation(conv2d2->out(), layer::RELU);
+    auto pool2 = layer::pooling(act2->out(), {2, 2}, {0, 0}, {2, 2}, MAX_POOL);
+    
+    auto flatten = layer::flatten(pool2->out());
 
-    auto fc1 = layer::fullyconnected(flatten->out(), 128, true);
-    auto act2 = layer::activation(fc1->out(), layer::RELU);
-    auto fc2 = layer::fullyconnected(act2->out(), n_classes, false);
-    // auto fc2 = layer::fullyconnected(flatten->out(), n_classes, false);
+    auto fc1 = layer::fullyconnected(flatten->out(), 768, true);
+    auto act3 = layer::activation(fc1->out(), layer::RELU);
 
-    auto act3 = layer::activation(fc2->out(), layer::SOFTMAX);
+    auto fc2 = layer::fullyconnected(act3->out(), 500, true);
+    auto act4 = layer::activation(fc2->out(), layer::RELU);
 
-    auto output = layer::output(act3->out());
+    auto fc3 = layer::fullyconnected(act4->out(), n_classes, false);
+    auto act5 = layer::activation(fc3->out(), layer::SOFTMAX);
+
+    auto output = layer::output(act5->out());
 
     std::vector<layer::Layer<float> *> layers =
        {input,
         conv2d1, act1,
         pool1,
-        // dropout1,
+        conv2d2, act2,
+        pool2,
         flatten,
-        fc1,   act2,
-        fc2,  act3,
+        fc1,   act3,
+        fc2,  act4,
+        fc3,  act5,
         output};
 
     model::NeuralNetwork<float> model(layers, optimizer::CROSS_ENTROPY, optimizer::SGD, params);
 
     model::metric_t metrics;
+
+    model.summary();
 
     model.fit(images_host, labels_host, metrics, true);
 

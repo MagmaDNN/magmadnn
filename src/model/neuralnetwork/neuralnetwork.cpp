@@ -257,6 +257,39 @@ unsigned int NeuralNetwork<T>::predict_class(Tensor<T> *sample) {
     return argmax_tensor.get(0);
 }
 
+template <typename T>
+void NeuralNetwork<T>::summary() {
+
+    unsigned int name_w = 20, shape_w = 20, params_w = 16;
+    
+    std::cout << std::setw(name_w) << std::left << "Name";
+    std::cout << std::setw(shape_w) << std::right << "Output Shape";
+    std::cout << std::setw(params_w) << "# Params";
+    std::cout << std::endl;
+    std::cout << std::setfill('=') << std::setw(name_w + shape_w + params_w) << "";
+    std::cout << std::endl << std::setfill(' ');
+
+
+    for(int i = 0 ; i < this->layers.size(); i++){
+        if(this->layers[i]->get_name() == "Activation")
+            continue;
+
+        std::cout << std::setw(name_w) << std::left << this->layers[i]->get_name();
+
+        /*Make shape string*/
+        std::vector<unsigned int> output_shape = this->layers[i]->get_output_shape();
+        std::string shape = "(";
+        for(int j = 0; j < output_shape.size() - 1; j++){
+            shape += std::to_string(output_shape[j]) + ", "; 
+        }
+        shape += std::to_string(output_shape[output_shape.size() - 1]) + ")";
+
+        std::cout << std::setw(shape_w) << std::right << shape;
+        std::cout << std::setw(params_w) << this->layers[i]->get_num_params();
+        std::cout << std::endl;
+    }
+}
+
 template class NeuralNetwork<int>;
 template class NeuralNetwork<float>;
 template class NeuralNetwork<double>;

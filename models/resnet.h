@@ -135,7 +135,7 @@ public:
       // In the resnet model, upsampling is achieved in the
       // convolutions by using a stride > 1.
       bool upsample = (strides[0] > 1);
-
+      
       auto conv2d1 = layer::conv2d<T>(input, {1, 1}, channels/4, {1, 1}, strides, {1, 1});
       auto bn1 = layer::batchnorm(conv2d1->out());
       auto act1 = layer::activation<T>(bn1->out(), layer::RELU);
@@ -147,6 +147,44 @@ public:
       auto conv2d3 = layer::conv2d<T>(act1->out(), {1, 1}, channels, {1, 1}, {1, 1}, {1, 1});
       auto bn3 = layer::batchnorm(conv2d2->out());
 
+      layers.insert(std::end(layers), conv2d1);
+      layers.insert(std::end(layers), bn1);
+      layers.insert(std::end(layers), act1);
+
+      layers.insert(std::end(layers), conv2d2);
+      layers.insert(std::end(layers), bn2);
+      layers.insert(std::end(layers), act2);
+
+      layers.insert(std::end(layers), conv2d3);
+      layers.insert(std::end(layers), bn3);
+
+      layer::Layer<T> *act3 = nullptr;
+
+      if (enable_shorcut) {
+         // Residual layer
+         if (upsample) {
+            // Downsampling
+
+            auto upsample_conv2d = layer::conv2d<T>(input, {1, 1}, channels, {0, 0}, strides, {1, 1});
+            // auto shortcut = op::add(bn2->out(), downsample_conv2d->out());
+            auto upsample_bn = layer::batchnorm(upsample_conv2d->out());
+            auto shortcut = op::add(bn3->out(), upsample_bn->out());
+
+            act3 = layer::activation(shortcut, layer::RELU);
+         }
+         else {
+
+            auto shortcut = op::add(bn3->out(), input);
+
+            act3 = layer::activation(shortcut, layer::RELU);
+         }
+      }
+      else {
+         act3 = layer::activation<T>(bn3->out(), layer::RELU);
+      }
+
+      layers.insert(std::end(layers), act3);
+      
       return layers;
    }
 

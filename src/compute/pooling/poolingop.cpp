@@ -1,6 +1,8 @@
 #include "compute/pooling/poolingop.h"
 
+#if defined(MAGMADNN_CMAKE_BUILD)
 #include "magmadnn/config.h"
+#endif
 
 #include <iostream>
 

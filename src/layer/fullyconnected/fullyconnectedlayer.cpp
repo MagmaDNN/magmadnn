@@ -33,6 +33,9 @@ std::vector<op::Operation<T>*> FullyConnectedLayer<T>::get_weights() {
 }
 
 template <typename T>
+unsigned int FullyConnectedLayer<T>::get_num_params() {return this->weights->get_output_size() + this->hidden_units;}
+
+template <typename T>
 void FullyConnectedLayer<T>::init() {
     this->name = "FullyConnected";
 

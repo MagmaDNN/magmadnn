@@ -12,7 +12,9 @@
 #include <map>
 #include <string>
 
+#if defined(MAGMADNN_CMAKE_BUILD)
 #include "magmadnn/config.h"
+#endif
 #include "tensor/tensor.h"
 #if defined(MAGMADNN_HAVE_CUDA)
 #include "cuda.h"   
@@ -274,10 +276,11 @@ public:
     std::map<uintptr_t, Tensor<T> *> _grad_cache; /* this will cache the tensors for the gradient computation */
     std::string name = "DefaultOpName";
 
+    bool has_been_computed;
+    
     Tensor<T> *output_tensor; /* the return tensor */
 
     bool needs_grad;
-    bool has_been_computed;
     bool has_grad_been_computed;
 
 private:

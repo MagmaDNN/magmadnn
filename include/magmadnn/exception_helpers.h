@@ -1,6 +1,8 @@
 #pragma once
 
+#if defined(MAGMADNN_CMAKE_BUILD)
 #include "magmadnn/config.h"
+#endif
 #include "magmadnn/exception.h"
 
 namespace magmadnn {

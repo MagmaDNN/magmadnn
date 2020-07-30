@@ -13,7 +13,9 @@
 #include <cassert>
 #include <cstring>
 
+#if defined(MAGMADNN_CMAKE_BUILD)
 #include "magmadnn/config.h"
+#endif
 #include "magmadnn/utilities_internal.h"
 #if defined(MAGMADNN_HAVE_CUDA)
 #include "memory/memory_internal_device.h"

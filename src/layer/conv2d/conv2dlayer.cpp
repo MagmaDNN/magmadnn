@@ -64,6 +64,12 @@ std::vector<op::Operation<T>*> Conv2dLayer<T>::get_weights() {
 }
 
 template <typename T>
+unsigned int Conv2dLayer<T>::get_num_params() {
+    return this->filter_tensor->get_shape(2) * this->filter_tensor->get_shape(3) * this->in_channels * this->out_channels;
+
+}
+
+template <typename T>
 void Conv2dLayer<T>::init(const std::vector<unsigned int>& filter_shape) {
     this->name = "Conv2d";
 

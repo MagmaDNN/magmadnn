@@ -134,9 +134,9 @@ int main(int argc, char** argv) {
          block1_input = blocks.back()->out();
       }
          
-      auto block1 = basic_block(
+      auto block1 = Resnet<T>::basic_block(
             block1_input, 16, {1, 1}, enable_shortcut);
-      auto block2 = basic_block(
+      auto block2 = Resnet<T>::basic_block(
             block1.back()->out(), 16, {1, 1}, enable_shortcut);
 
       blocks.insert(std::end(blocks), std::begin(block1), std::end(block1));
@@ -156,9 +156,9 @@ int main(int argc, char** argv) {
          // enable_shortcut_input = false;
       }
       
-      auto block3 = basic_block(
+      auto block3 = Resnet<T>::basic_block(
             blocks.back()->out(), 32, strides, enable_shortcut_input);
-      auto block4 = basic_block(
+      auto block4 = Resnet<T>::basic_block(
             block3.back()->out(), 32, {1, 1}, enable_shortcut);
 
       blocks.insert(std::end(blocks), std::begin(block3), std::end(block3));
@@ -178,9 +178,9 @@ int main(int argc, char** argv) {
          // enable_shortcut_input = false;
       }
 
-      auto block5 = basic_block(
+      auto block5 = Resnet<T>::basic_block(
             blocks.back()->out(), 64, strides, enable_shortcut_input);
-      auto block6 = basic_block(
+      auto block6 = Resnet<T>::basic_block(
             block5.back()->out(), 64, {1, 1}, enable_shortcut);
 
       blocks.insert(std::end(blocks), std::begin(block5), std::end(block5));

@@ -18,6 +18,10 @@ int main(int argc, char** argv) {
    // Data type
    using T = float;
 
+#if defined(MAGMADNN_HAVE_MPI)
+   MPI_Init(&argc, &argv);
+#endif
+   
    magmadnn_init();
 
    // Location of the CIFAR-10 dataset
@@ -125,6 +129,10 @@ int main(int argc, char** argv) {
 
    magmadnn_finalize();
 
+#if defined(MAGMADNN_HAVE_MPI)
+   MPI_Finalize();
+#endif
+   
    return 0;
 
 }

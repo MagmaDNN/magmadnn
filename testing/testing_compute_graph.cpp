@@ -708,7 +708,5 @@ void test_meansquarederror(memory_t mem_type, unsigned int size) {
 
     MAGMADNN_TEST_ASSERT_FEQUAL_DEFAULT(loss_tensor->get(0), expected_loss);
 
-    delete mse_loss;
-
     show_success();
 }

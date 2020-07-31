@@ -38,17 +38,15 @@ jobs:
       run: |
         cd build
         make -j8
-
-  test:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
+    
+    # Build Tests
     - name: Build Tests
       run: |
         cd build
         cmake .. -DMAGMADNN_BUILD_TESTS=TRUE
         make -j8
     
+    # Run Tests
     - name: Run Tests
       run: ctest
       

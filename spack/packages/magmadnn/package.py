@@ -1,6 +1,6 @@
 from spack import *
 
-class Magmadnn(CMakePackage):
+class Magmadnn(CMakePackage, CudaPackage):
     """
     High Performance Deep Learning Package
     """
@@ -14,7 +14,6 @@ class Magmadnn(CMakePackage):
     version('1.0', commit='cd7db2727a08dbe25875875fe9086b780577596e')
     version('develop', branch='dev')
 
-    variant('cuda', default=False, description='Build with CUDA support')
     variant('mpi', default=False, description='Build with MPI support')
     variant('openmp', default=False, description='Build with OpenMP support')
     variant('onednn', default=False, description='Build with OneDNN support')

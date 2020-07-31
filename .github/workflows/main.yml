@@ -37,4 +37,5 @@ jobs:
     # Run makefiles
     - name: Build MagmaDNN
       run: |
+        cd build
         make -j4

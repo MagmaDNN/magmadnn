@@ -26,20 +26,20 @@ class Conv2DForwardOp : public Operation<T> {
    protected:
     Tensor<T> *_eval(bool recompute);
     Tensor<T> *_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad);
-   
+
     void calculate_and_set_output_shape();
 
 #if defined(MAGMADNN_HAVE_CUDA)
     void cuda_forward();
 #endif
-   
+
     void init_settings();
 
 #if defined(MAGMADNN_HAVE_MKLDNN)
     void onednn_backward_data(Tensor<T> *grad, Tensor<T> *out);
 
     void onednn_backward_weights(Tensor<T> *grad, Tensor<T> *out);
-   
+
     void onednn_forward();
 
     void onednn_init_settings();
@@ -56,15 +56,14 @@ class Conv2DForwardOp : public Operation<T> {
 #endif
 
 #if defined(MAGMADNN_HAVE_MKLDNN)
-   dnnl::engine dnnl_cpu_engine_;
+    dnnl::engine dnnl_cpu_engine_;
 
-   // Pooling DNNL primitive descriptor
-   std::unique_ptr<dnnl::convolution_forward::primitive_desc> dnnl_fwd_pdesc_;
+    // Pooling DNNL primitive descriptor
+    std::unique_ptr<dnnl::convolution_forward::primitive_desc> dnnl_fwd_pdesc_;
 
-   // Pooling DNNL primitive
-   std::unique_ptr<dnnl::convolution_forward> dnnl_fwd_;
+    // Pooling DNNL primitive
+    std::unique_ptr<dnnl::convolution_forward> dnnl_fwd_;
 #endif
-
 };
 
 template <typename T>

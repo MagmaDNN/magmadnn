@@ -9,8 +9,8 @@
 #pragma once
 
 #include <cmath>
-#include <iomanip>
 #include <ctime>
+#include <iomanip>
 #include "compute/op_utilities.h"
 #include "dataloader/dataloaders.h"
 #include "layer/layers.h"
@@ -72,7 +72,7 @@ class NeuralNetwork : public Model<T> {
 
     virtual std::vector<layer::Layer<T> *> get_layers() { return this->layers; }
 
-    // Return model memory type  
+    // Return model memory type
     memory_t memory_type() { return this->network_output_tensor()->get_memory_type(); }
 
     Tensor<T> *network_input_tensor() { return this->network_input_tensor_ptr; }
@@ -81,7 +81,7 @@ class NeuralNetwork : public Model<T> {
 
     op::Operation<T> *lossfun() { return this->_obj; }
 
-    std::vector<op::Operation<T> *>& weights() { return this->_vars; }
+    std::vector<op::Operation<T> *> &weights() { return this->_vars; }
 
    protected:
     typename std::vector<layer::Layer<T> *> layers;

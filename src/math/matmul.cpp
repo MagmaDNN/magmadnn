@@ -49,11 +49,11 @@ void matmul(float alpha, bool trans_A, Tensor<float> *A, bool trans_B, Tensor<fl
         // cblas_sgemm(CblasRowMajor, a_trans, b_trans, M, N, K, alpha, A->get_ptr(), ldda, B->get_ptr(), lddb, beta,
         //             C->get_ptr(), lddc);
 
-       // Assuming row-major storage 
-       operation a_trans = (trans_A) ? OP_T : OP_N;
-       operation b_trans = (trans_B) ? OP_T : OP_N;
-       
-       gemm(b_trans, a_trans, N, M, K, alpha, B->get_ptr(), lddb, A->get_ptr(), ldda, beta, C->get_ptr(), lddc);
+        // Assuming row-major storage
+        operation a_trans = (trans_A) ? OP_T : OP_N;
+        operation b_trans = (trans_B) ? OP_T : OP_N;
+
+        gemm(b_trans, a_trans, N, M, K, alpha, B->get_ptr(), lddb, A->get_ptr(), ldda, beta, C->get_ptr(), lddc);
 
     }
 #if defined(MAGMADNN_HAVE_CUDA)
@@ -62,19 +62,19 @@ void matmul(float alpha, bool trans_A, Tensor<float> *A, bool trans_B, Tensor<fl
         // i.e. (AB)^T = (C)^T and the fact that (AB)^T = (B^T)(A^T)
 
         if (C->get_cublas_handle()) {
-           cublasOperation_t a_trans = (trans_A) ? CUBLAS_OP_T : CUBLAS_OP_N;
-           cublasOperation_t b_trans = (trans_B) ? CUBLAS_OP_T : CUBLAS_OP_N;
+            cublasOperation_t a_trans = (trans_A) ? CUBLAS_OP_T : CUBLAS_OP_N;
+            cublasOperation_t b_trans = (trans_B) ? CUBLAS_OP_T : CUBLAS_OP_N;
 
-           cublasSgemm(C->get_cublas_handle(), b_trans, a_trans, N, M, K, &alpha, B->get_ptr(), lddb, A->get_ptr(), ldda, &beta, C->get_ptr(), lddc);
-        }
-        else {
-           magma_trans_t a_trans = (trans_A) ? MagmaTrans : MagmaNoTrans;
-           magma_trans_t b_trans = (trans_B) ? MagmaTrans : MagmaNoTrans;
+            cublasSgemm(C->get_cublas_handle(), b_trans, a_trans, N, M, K, &alpha, B->get_ptr(), lddb, A->get_ptr(),
+                        ldda, &beta, C->get_ptr(), lddc);
+        } else {
+            magma_trans_t a_trans = (trans_A) ? MagmaTrans : MagmaNoTrans;
+            magma_trans_t b_trans = (trans_B) ? MagmaTrans : MagmaNoTrans;
 
-           MAGMA_SGEMM_ROWMAJOR(A->get_ptr(), B->get_ptr(), C->get_ptr(), M, N, K, alpha, beta, a_trans, b_trans, ldda,
-                                lddb, lddc);
+            MAGMA_SGEMM_ROWMAJOR(A->get_ptr(), B->get_ptr(), C->get_ptr(), M, N, K, alpha, beta, a_trans, b_trans, ldda,
+                                 lddb, lddc);
         }
-        // TODO: CUDA error management 
+        // TODO: CUDA error management
     }
 #endif
 }
@@ -83,7 +83,7 @@ template <>
 void matmul(double alpha, bool trans_A, Tensor<double> *A, bool trans_B, Tensor<double> *B, double beta,
             Tensor<double> *C) {
     // unsigned int M, N, K, ldda, lddb, lddc;
-   int M, N, K, ldda, lddb, lddc;
+    int M, N, K, ldda, lddb, lddc;
 
     /* op(A) : MxK ; op(B) : KxN ; C : MxN */
     /* lddX is the leading dimension of X or the number of elements between rows.  */
@@ -108,7 +108,7 @@ void matmul(double alpha, bool trans_A, Tensor<double> *A, bool trans_B, Tensor<
 
         operation a_trans = (trans_A) ? OP_T : OP_N;
         operation b_trans = (trans_B) ? OP_T : OP_N;
-       
+
         gemm(b_trans, a_trans, N, M, K, alpha, B->get_ptr(), lddb, A->get_ptr(), ldda, beta, C->get_ptr(), lddc);
 
     }
@@ -118,17 +118,17 @@ void matmul(double alpha, bool trans_A, Tensor<double> *A, bool trans_B, Tensor<
         // i.e. (AB)^T = (C)^T and the fact that (AB)^T = (B^T)(A^T)
 
         if (C->get_cublas_handle()) {
-           cublasOperation_t a_trans = (trans_A) ? CUBLAS_OP_T : CUBLAS_OP_N;
-           cublasOperation_t b_trans = (trans_B) ? CUBLAS_OP_T : CUBLAS_OP_N;
+            cublasOperation_t a_trans = (trans_A) ? CUBLAS_OP_T : CUBLAS_OP_N;
+            cublasOperation_t b_trans = (trans_B) ? CUBLAS_OP_T : CUBLAS_OP_N;
 
-           cublasDgemm(C->get_cublas_handle(), b_trans, a_trans, N, M, K, &alpha, B->get_ptr(), lddb, A->get_ptr(), ldda, &beta, C->get_ptr(), lddc);
-        }
-        else {
-           magma_trans_t a_trans = (trans_A) ? MagmaTrans : MagmaNoTrans;
-           magma_trans_t b_trans = (trans_B) ? MagmaTrans : MagmaNoTrans;
+            cublasDgemm(C->get_cublas_handle(), b_trans, a_trans, N, M, K, &alpha, B->get_ptr(), lddb, A->get_ptr(),
+                        ldda, &beta, C->get_ptr(), lddc);
+        } else {
+            magma_trans_t a_trans = (trans_A) ? MagmaTrans : MagmaNoTrans;
+            magma_trans_t b_trans = (trans_B) ? MagmaTrans : MagmaNoTrans;
 
-           MAGMA_DGEMM_ROWMAJOR(A->get_ptr(), B->get_ptr(), C->get_ptr(), M, N, K, alpha, beta, a_trans, b_trans, ldda,
-                                lddb, lddc);
+            MAGMA_DGEMM_ROWMAJOR(A->get_ptr(), B->get_ptr(), C->get_ptr(), M, N, K, alpha, beta, a_trans, b_trans, ldda,
+                                 lddb, lddc);
         }
     }
 #endif

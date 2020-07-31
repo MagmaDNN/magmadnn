@@ -144,9 +144,7 @@ class MemoryManager {
     T* get_ptr();
 
 #if defined(MAGMADNN_HAVE_CUDA)
-    void set_custream(cudaStream_t custream) {
-       this->custream_ = custream;
-    }
+    void set_custream(cudaStream_t custream) { this->custream_ = custream; }
 #endif
 
     /** Returns the size of this memorymanager
@@ -162,8 +160,8 @@ class MemoryManager {
     /** Zero out memory
      *
      */
-    magmadnn_error_t zero(); 
-   
+    magmadnn_error_t zero();
+
    private:
     /** init with HOST parameters */
     void init_host();

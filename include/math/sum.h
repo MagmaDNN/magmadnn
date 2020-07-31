@@ -13,7 +13,7 @@
 
 namespace magmadnn {
 namespace math {
-   
+
 template <typename T>
 void sum(const std::vector<Tensor<T>*>& tensors, Tensor<T>* out);
 

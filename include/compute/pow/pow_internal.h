@@ -10,7 +10,7 @@ namespace internal {
 
 template <typename T>
 void pow_grad_cpu(Tensor<T> *x, int power, Tensor<T> *grad, Tensor<T> *out);
-      
+
 template <typename T>
 void pow_grad(Tensor<T> *x, int power, Tensor<T> *grad, Tensor<T> *out);
 

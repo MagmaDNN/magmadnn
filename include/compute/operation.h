@@ -17,7 +17,7 @@
 #endif
 #include "tensor/tensor.h"
 #if defined(MAGMADNN_HAVE_CUDA)
-#include "cuda.h"   
+#include "cuda.h"
 #endif
 
 namespace magmadnn {
@@ -25,35 +25,11 @@ namespace op {
 
 template <typename T>
 class Operation {
-public:
-
-   /** The operation class serves as an abstract object, which all tensors operations descend
+   public:
+    /** The operation class serves as an abstract object, which all tensors operations descend
      *  from. It is used to build a computation tree.
      */
-   Operation() : has_been_computed(false), output_tensor(nullptr) {
-#if defined(MAGMADNN_HAVE_CUDA)
-      // Use default stream for CUDA kernels
-      // this->custream_ = nullptr;
-      this->set_custream(nullptr);
-
-      this->set_cudnn_handle(magmadnn::internal::MAGMADNN_SETTINGS->cudnn_handle);
-
-      this->set_cublas_handle(magmadnn::internal::MAGMADNN_SETTINGS->cublas_handle);
-
-      this->set_async(false);
-#endif
-   }
-
-   Operation(std::vector<Operation<T> *> inputs, bool needs_grad = true)
-      : inputs(inputs), needs_grad(needs_grad), output_tensor(nullptr) {
-      
-        for (auto vit = inputs.begin(); vit != inputs.end(); vit++) {
-            if (needs_grad) { /* TODO : verify this is necessary */
-                (*vit)->add_consumer(this);
-            }
-            this->_grad_cache.insert(std::make_pair((uintptr_t)(*vit), (Tensor<T> *) NULL));
-        }
-        
+    Operation() : has_been_computed(false), output_tensor(nullptr) {
 #if defined(MAGMADNN_HAVE_CUDA)
         // Use default stream for CUDA kernels
         // this->custream_ = nullptr;
@@ -65,11 +41,32 @@ public:
 
         this->set_async(false);
 #endif
-   }
+    }
 
-   virtual ~Operation() {
-      for (unsigned int i = 0; i < inputs.size(); i++)
-           delete inputs[i];
+    Operation(std::vector<Operation<T> *> inputs, bool needs_grad = true)
+        : inputs(inputs), needs_grad(needs_grad), output_tensor(nullptr) {
+        for (auto vit = inputs.begin(); vit != inputs.end(); vit++) {
+            if (needs_grad) { /* TODO : verify this is necessary */
+                (*vit)->add_consumer(this);
+            }
+            this->_grad_cache.insert(std::make_pair((uintptr_t)(*vit), (Tensor<T> *) NULL));
+        }
+
+#if defined(MAGMADNN_HAVE_CUDA)
+        // Use default stream for CUDA kernels
+        // this->custream_ = nullptr;
+        this->set_custream(nullptr);
+
+        this->set_cudnn_handle(magmadnn::internal::MAGMADNN_SETTINGS->cudnn_handle);
+
+        this->set_cublas_handle(magmadnn::internal::MAGMADNN_SETTINGS->cublas_handle);
+
+        this->set_async(false);
+#endif
+    }
+
+    virtual ~Operation() {
+        for (unsigned int i = 0; i < inputs.size(); i++) delete inputs[i];
 
         /*  TODO : figure out why this peice of code caused SEGFAULTS
         if (this->output_tensor != NULL) {
@@ -187,70 +184,64 @@ public:
     /* Update CUDA execution context including CUDA stream, cuBLAS
        handle and cuDNN handle
     */
-    void cuda_exec_context(CudaExecContext const& cuda_ctx) {
-       // Update CUDA stream
-       this->set_custream(cuda_ctx.stream());
-       // Update cuBLAS handle
-       this->set_cublas_handle(cuda_ctx.cublas_handle());
-       // Update cuDNN handle
-       this->set_cudnn_handle(cuda_ctx.cudnn_handle());
+    void cuda_exec_context(CudaExecContext const &cuda_ctx) {
+        // Update CUDA stream
+        this->set_custream(cuda_ctx.stream());
+        // Update cuBLAS handle
+        this->set_cublas_handle(cuda_ctx.cublas_handle());
+        // Update cuDNN handle
+        this->set_cudnn_handle(cuda_ctx.cudnn_handle());
     }
 
     cudaStream_t get_custream() const { return custream_; }
 
     void set_custream(cudaStream_t custream) {
+        // Make sure operations and inputs have the same custream
+        for (auto vit = inputs.begin(); vit != inputs.end(); vit++) {
+            Operation<T> *input_op = (*vit);
+            input_op->set_custream(custream);
+        }
 
-       // Make sure operations and inputs have the same custream
-       for (auto vit = inputs.begin(); vit != inputs.end(); vit++) {
-          Operation<T> *input_op = (*vit);
-          input_op->set_custream(custream);
-       }
-      
-       if (this->output_tensor)
-          this->output_tensor->set_custream(custream);
+        if (this->output_tensor) this->output_tensor->set_custream(custream);
 
-       this->custream_ = custream;
+        this->custream_ = custream;
     }
 
     cudnnHandle_t get_cudnn_handle() const { return cudnn_handle_; }
 
     void set_cudnn_handle(cudnnHandle_t cudnn_handle) {
+        // Make sure operations and inputs have the same custream
+        for (auto vit = inputs.begin(); vit != inputs.end(); vit++) {
+            Operation<T> *input_op = (*vit);
+            input_op->set_cudnn_handle(cudnn_handle);
+        }
 
-       // Make sure operations and inputs have the same custream
-       for (auto vit = inputs.begin(); vit != inputs.end(); vit++) {
-          Operation<T> *input_op = (*vit);
-          input_op->set_cudnn_handle(cudnn_handle);
-       }
-      
-       this->cudnn_handle_ = cudnn_handle;
+        this->cudnn_handle_ = cudnn_handle;
     }
 
     cublasHandle_t get_cublas_handle() const { return cublas_handle_; }
 
     void set_cublas_handle(cublasHandle_t cublas_handle) {
+        // Make sure operations and inputs have the same custream
+        for (auto vit = inputs.begin(); vit != inputs.end(); vit++) {
+            Operation<T> *input_op = (*vit);
+            input_op->set_cublas_handle(cublas_handle);
+        }
 
-       // Make sure operations and inputs have the same custream
-       for (auto vit = inputs.begin(); vit != inputs.end(); vit++) {
-          Operation<T> *input_op = (*vit);
-          input_op->set_cublas_handle(cublas_handle);
-       }
+        if (this->output_tensor) this->output_tensor->set_cublas_handle(cublas_handle);
 
-       if (this->output_tensor)
-          this->output_tensor->set_cublas_handle(cublas_handle);
-
-       this->cublas_handle_ = cublas_handle;
+        this->cublas_handle_ = cublas_handle;
     }
 
     bool get_async() const { return async_; }
 
     void set_async(bool async) {
-       
-       for (auto vit = inputs.begin(); vit != inputs.end(); vit++) {
-          Operation<T> *input_op = (*vit);
-          input_op->set_async(async);
-       }
-       
-       this->async_ = async;
+        for (auto vit = inputs.begin(); vit != inputs.end(); vit++) {
+            Operation<T> *input_op = (*vit);
+            input_op->set_async(async);
+        }
+
+        this->async_ = async;
     }
 #endif
 
@@ -268,7 +259,7 @@ public:
      * @return Tensor<T>*
      */
     virtual Tensor<T> *_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad) = 0;
-   
+
     std::vector<Operation<T> *> inputs;
     std::vector<Operation<T> *> consumers;
     std::vector<unsigned int> output_shape;
@@ -277,20 +268,20 @@ public:
     std::string name = "DefaultOpName";
 
     bool has_been_computed;
-    
+
     Tensor<T> *output_tensor; /* the return tensor */
 
     bool needs_grad;
     bool has_grad_been_computed;
 
-private:
+   private:
 #if defined(MAGMADNN_HAVE_CUDA)
     cudaStream_t custream_;
     cudnnHandle_t cudnn_handle_;
     cublasHandle_t cublas_handle_;
-   /*
-    * Determine whether CUDA kernels should be called asynchronously
-    */
+    /*
+     * Determine whether CUDA kernels should be called asynchronously
+     */
     bool async_;
 #endif
 };

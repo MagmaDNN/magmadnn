@@ -22,44 +22,39 @@ NegativeOp<T>::NegativeOp(Operation<T> *x, bool copy, bool needs_grad)
 
 template <typename T>
 Tensor<T> *NegativeOp<T>::_eval(bool recompute) {
-   
-   x_tensor = x->eval(recompute);
+    x_tensor = x->eval(recompute);
 
-   if (!copy) this->output_tensor = x_tensor;
+    if (!copy) this->output_tensor = x_tensor;
 
-   // internal::negative_full(x_tensor, this->output_tensor);
-   if (this->output_tensor->get_memory_type() == HOST) {
-      magmadnn::internal::negative_full_cpu(x_tensor, this->output_tensor);
-   }
+    // internal::negative_full(x_tensor, this->output_tensor);
+    if (this->output_tensor->get_memory_type() == HOST) {
+        magmadnn::internal::negative_full_cpu(x_tensor, this->output_tensor);
+    }
 #if defined(MAGMADNN_HAVE_CUDA)
-   else {
-      // magmadnn::internal::negative_full_device(x_tensor, this->output_tensor);
-      magmadnn::internal::negative_full_device(
-            this->get_custream(), x_tensor, this->output_tensor);
-      if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
-   }
+    else {
+        // magmadnn::internal::negative_full_device(x_tensor, this->output_tensor);
+        magmadnn::internal::negative_full_device(this->get_custream(), x_tensor, this->output_tensor);
+        if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
+    }
 #endif
-    
-   return this->output_tensor;
+
+    return this->output_tensor;
 }
 
 template <typename T>
-Tensor<T> *NegativeOp<T>::_grad(
-      Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad) {
-
-   /* grad : -grad */
-   if (grad->get_memory_type() == HOST) {
-      magmadnn::internal::negative_full_cpu(grad, grad);
-   }
+Tensor<T> *NegativeOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad) {
+    /* grad : -grad */
+    if (grad->get_memory_type() == HOST) {
+        magmadnn::internal::negative_full_cpu(grad, grad);
+    }
 #if defined(MAGMADNN_HAVE_CUDA)
-   else {
-      magmadnn::internal::negative_full_device(
-            this->get_custream(), grad, grad);
-      if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
-   }
+    else {
+        magmadnn::internal::negative_full_device(this->get_custream(), grad, grad);
+        if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
+    }
 #endif
 
-   return grad;
+    return grad;
 }
 
 template class NegativeOp<int>;

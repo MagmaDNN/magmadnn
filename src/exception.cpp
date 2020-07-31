@@ -7,39 +7,35 @@
 namespace magmadnn {
 
 #if defined(MAGMADNN_HAVE_MKLDNN)
-std::string DnnlError::get_error(int64 error_code)
-{
-#define MAGMADNN_REGISTER_DNNL_ERROR(error_name)           \
+std::string DnnlError::get_error(int64 error_code) {
+#define MAGMADNN_REGISTER_DNNL_ERROR(error_name)        \
     if (error_code == static_cast<int64>(error_name)) { \
         return #error_name;                             \
     }
-   MAGMADNN_REGISTER_DNNL_ERROR(dnnl_success);
-   MAGMADNN_REGISTER_DNNL_ERROR(dnnl_out_of_memory);
-   MAGMADNN_REGISTER_DNNL_ERROR(dnnl_invalid_arguments); 
-   MAGMADNN_REGISTER_DNNL_ERROR(dnnl_unimplemented); 
-   MAGMADNN_REGISTER_DNNL_ERROR(dnnl_iterator_ends);
-   MAGMADNN_REGISTER_DNNL_ERROR(dnnl_runtime_error); 
-   MAGMADNN_REGISTER_DNNL_ERROR(dnnl_not_required);
-   return "Unknown error";
+    MAGMADNN_REGISTER_DNNL_ERROR(dnnl_success);
+    MAGMADNN_REGISTER_DNNL_ERROR(dnnl_out_of_memory);
+    MAGMADNN_REGISTER_DNNL_ERROR(dnnl_invalid_arguments);
+    MAGMADNN_REGISTER_DNNL_ERROR(dnnl_unimplemented);
+    MAGMADNN_REGISTER_DNNL_ERROR(dnnl_iterator_ends);
+    MAGMADNN_REGISTER_DNNL_ERROR(dnnl_runtime_error);
+    MAGMADNN_REGISTER_DNNL_ERROR(dnnl_not_required);
+    return "Unknown error";
 
 #undef MAGMADNN_REGISTER_DNNL_ERROR
 }
 #endif
 
 #if defined(MAGMADNN_HAVE_CUDA)
-std::string CudaError::get_error(int64 error_code)
-{
+std::string CudaError::get_error(int64 error_code) {
     std::string name = cudaGetErrorName(static_cast<cudaError>(error_code));
-    std::string message =
-        cudaGetErrorString(static_cast<cudaError>(error_code));
+    std::string message = cudaGetErrorString(static_cast<cudaError>(error_code));
     return name + ": " + message;
 }
 #endif
 
 #if defined(MAGMADNN_HAVE_CUDA)
-std::string CublasError::get_error(int64 error_code)
-{
-#define MAGMADNN_REGISTER_CUBLAS_ERROR(error_name)           \
+std::string CublasError::get_error(int64 error_code) {
+#define MAGMADNN_REGISTER_CUBLAS_ERROR(error_name)      \
     if (error_code == static_cast<int64>(error_name)) { \
         return #error_name;                             \
     }
@@ -60,11 +56,10 @@ std::string CublasError::get_error(int64 error_code)
 #endif
 
 #if defined(MAGMADNN_HAVE_CUDA)
-std::string CudnnError::get_error(int64 error_code)
-{
+std::string CudnnError::get_error(int64 error_code) {
 #define MAGMADNN_REGISTER_CUDNN_ERROR(error_name)       \
     if (error_code == static_cast<int64>(error_name)) { \
-       return #error_name;                              \
+        return #error_name;                             \
     }
     MAGMADNN_REGISTER_CUDNN_ERROR(CUDNN_STATUS_SUCCESS);
     MAGMADNN_REGISTER_CUDNN_ERROR(CUDNN_STATUS_NOT_INITIALIZED);
@@ -82,4 +77,4 @@ std::string CudnnError::get_error(int64 error_code)
 }
 #endif
 
-} // magmadnn namespace
+}  // namespace magmadnn

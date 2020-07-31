@@ -90,12 +90,12 @@ Tensor<T> *MatmulOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor<
                 /* grad.B^T has shape of B^T */
                 out = new Tensor<T>({b_tensor->get_shape(1), b_tensor->get_shape(0)}, {NONE, {}}, this->mem_type);
             }
-            
+
 #if defined(MAGMADNN_HAVE_CUDA)
             out->set_custream(this->get_custream());
             out->set_cublas_handle(this->get_cublas_handle());
 #endif
-      
+
             this->_grad_cache[(uintptr_t) a] = out;
         }
 
@@ -122,7 +122,7 @@ Tensor<T> *MatmulOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor<
             out->set_custream(this->get_custream());
             out->set_cublas_handle(this->get_cublas_handle());
 #endif
-            
+
             this->_grad_cache[(uintptr_t) b] = out;
         }
 

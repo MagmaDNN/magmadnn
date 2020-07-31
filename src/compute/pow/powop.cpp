@@ -21,54 +21,50 @@ PowOp<T>::PowOp(Operation<T> *input, int power, bool copy, bool needs_grad)
 
 template <typename T>
 Tensor<T> *PowOp<T>::_eval(bool recompute) {
-   
-   input_tensor = input->eval(recompute);
+    input_tensor = input->eval(recompute);
 
-   if (this->output_tensor->get_memory_type() == HOST) {
-      magmadnn::math::pow_cpu(input_tensor, this->power, this->output_tensor);
-   }
+    if (this->output_tensor->get_memory_type() == HOST) {
+        magmadnn::math::pow_cpu(input_tensor, this->power, this->output_tensor);
+    }
 #if defined(MAGMADNN_HAVE_CUDA)
-   else {
-      magmadnn::math::pow_device(
-            this->get_custream(), input_tensor, this->power,
-            this->output_tensor);
-      if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
-   }
+    else {
+        magmadnn::math::pow_device(this->get_custream(), input_tensor, this->power, this->output_tensor);
+        if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
+    }
 #endif
 
-   return this->output_tensor;
+    return this->output_tensor;
 }
 
 template <typename T>
 Tensor<T> *PowOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad) {
-   /* return gradient in here ... */
-   Tensor<T> *out = this->_grad_cache[(uintptr_t) var];
-   
-   input_tensor = input->eval(false);
+    /* return gradient in here ... */
+    Tensor<T> *out = this->_grad_cache[(uintptr_t) var];
 
-   if (out == NULL) {
-      out = new Tensor<T>(this->output_shape, {NONE, {}}, this->mem_type);
+    input_tensor = input->eval(false);
+
+    if (out == NULL) {
+        out = new Tensor<T>(this->output_shape, {NONE, {}}, this->mem_type);
 #if defined(MAGMADNN_HAVE_CUDA)
-      out->set_custream(this->get_custream());
-      out->set_cublas_handle(this->get_cublas_handle());
+        out->set_custream(this->get_custream());
+        out->set_cublas_handle(this->get_cublas_handle());
 #endif
-      this->_grad_cache[(uintptr_t) var] = out;
-   }
+        this->_grad_cache[(uintptr_t) var] = out;
+    }
 
-   /* G * power * x^(power-1) */
-   // internal::pow_grad(input_tensor, power, grad, out);
-   if (out->get_memory_type() == HOST) {
-      magmadnn::internal::pow_grad_cpu(input_tensor, power, grad, out);
-   }
+    /* G * power * x^(power-1) */
+    // internal::pow_grad(input_tensor, power, grad, out);
+    if (out->get_memory_type() == HOST) {
+        magmadnn::internal::pow_grad_cpu(input_tensor, power, grad, out);
+    }
 #if defined(MAGMADNN_HAVE_CUDA)
-   else {
-      magmadnn::internal::pow_grad_device(
-            this->get_custream(), input_tensor, power, grad, out);
-      if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
-   }
+    else {
+        magmadnn::internal::pow_grad_device(this->get_custream(), input_tensor, power, grad, out);
+        if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
+    }
 #endif
 
-   return out;
+    return out;
 }
 
 template class PowOp<int>;

@@ -40,7 +40,6 @@ ProductOp<T>::ProductOp(T alpha, Operation<T> *a, Operation<T> *b, bool copy, bo
 
 template <typename T>
 Tensor<T> *ProductOp<T>::_eval(bool recompute) {
-
     a_tensor = a->eval(recompute);
     b_tensor = b->eval(recompute);
 

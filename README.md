@@ -36,4 +36,4 @@ All development takes place on the [github site](https://github.com/MagmaDNN/mag
 
 _author:_ Daniel Nichols
 
-_co-author:_ Sedrick Keh
+_co-authors:_ Florent Lopez, Sedrick Keh, Rocco Febbo

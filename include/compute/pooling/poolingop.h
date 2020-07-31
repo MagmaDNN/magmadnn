@@ -1,6 +1,8 @@
 #pragma once
 
+#if defined(MAGMADNN_CMAKE_BUILD)
 #include "magmadnn/config.h"
+#endif
 #include "compute/operation.h"
 #include "math/pooling.h"
 #include "tensor/tensor.h"
@@ -41,18 +43,17 @@ class PoolingOp : public Operation<T> {
 #endif
 
 #if defined(MAGMADNN_HAVE_MKLDNN)
-   dnnl::engine dnnl_cpu_engine_;
+    dnnl::engine dnnl_cpu_engine_;
 
-   //
-   // DNNL forward
-   //
-   
-   // Pooling DNNL primitive descriptor
-   std::unique_ptr<dnnl::pooling_forward::primitive_desc> dnnl_fwd_pdesc_;
-   // Pooling DNNL primitive
-   std::unique_ptr<dnnl::pooling_forward> dnnl_fwd_;
+    //
+    // DNNL forward
+    //
+
+    // Pooling DNNL primitive descriptor
+    std::unique_ptr<dnnl::pooling_forward::primitive_desc> dnnl_fwd_pdesc_;
+    // Pooling DNNL primitive
+    std::unique_ptr<dnnl::pooling_forward> dnnl_fwd_;
 #endif
-
 };
 
 template <typename T>

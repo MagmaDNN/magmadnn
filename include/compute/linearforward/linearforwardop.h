@@ -32,7 +32,7 @@ class LinearForwardOp : public Operation<T> {
 #if defined(MAGMADNN_HAVE_MKLDNN)
     void init_dnnl_settings();
 #endif
-   
+
     Operation<T> *input, *weights, *bias;
     Tensor<T> *input_tensor, *weights_tensor, *bias_tensor, *bias_ones;
 
@@ -44,15 +44,14 @@ class LinearForwardOp : public Operation<T> {
 #endif
 
 #if defined(MAGMADNN_HAVE_MKLDNN)
-   dnnl::engine dnnl_cpu_engine_;
+    dnnl::engine dnnl_cpu_engine_;
 
-   // Pooling DNNL primitive descriptor
-   std::unique_ptr<dnnl::inner_product_forward::primitive_desc> dnnl_fwd_pdesc_;
+    // Pooling DNNL primitive descriptor
+    std::unique_ptr<dnnl::inner_product_forward::primitive_desc> dnnl_fwd_pdesc_;
 
-   // Pooling DNNL primitive
-   std::unique_ptr<dnnl::inner_product_forward> dnnl_fwd_;
+    // Pooling DNNL primitive
+    std::unique_ptr<dnnl::inner_product_forward> dnnl_fwd_;
 #endif
-
 };
 
 /** Defines the forward and backward pass of a fully connected layer.

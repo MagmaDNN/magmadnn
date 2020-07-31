@@ -7,7 +7,9 @@
  * @copyright Copyright (c) 2019
  */
 
+#if defined(MAGMADNN_CMAKE_BUILD)
 #include "magmadnn/config.h"
+#endif
 #include "tensor/fill_internal.h"
 
 #include <cassert>

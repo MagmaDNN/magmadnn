@@ -23,6 +23,8 @@ class FullyConnectedLayer : public Layer<T> {
 
     virtual std::vector<op::Operation<T> *> get_weights();
 
+    virtual unsigned int get_num_params();
+
     op::Operation<T> *get_weight() { return weights; }
     op::Operation<T> *get_bias() { return bias; }
 

@@ -11,7 +11,9 @@
 
 #include <vector>
 
+#if defined(MAGMADNN_CMAKE_BUILD)
 #include "magmadnn/config.h"
+#endif
 #include "magmadnn/exec_context.h"
 #include "magmadnn/types.h"
 #include "magmadnn/utilities_internal.h"
@@ -177,16 +179,16 @@ class Tensor {
        handle and cuDNN handle
     */
     void cuda_exec_context(CudaExecContext const& cuda_ctx) {
-       // Update CUDA stream
-       this->set_custream(cuda_ctx.stream());
-       // Update cuBLAS handle
-       this->set_cublas_handle(cuda_ctx.cublas_handle());
-    } 
-   
+        // Update CUDA stream
+        this->set_custream(cuda_ctx.stream());
+        // Update cuBLAS handle
+        this->set_cublas_handle(cuda_ctx.cublas_handle());
+    }
+
     void set_custream(cudaStream_t custream) {
         // Update memory manager with CUDA stream
         if (this->mem_manager) {
-          this->mem_manager->set_custream(custream);
+            this->mem_manager->set_custream(custream);
         }
 
         this->custream_ = custream;
@@ -261,7 +263,6 @@ class Tensor {
     // Return the amount of memory needed to store the tensor data
     std::size_t get_memory_size() const { return get_size() * sizeof(T); }
 
-   
     /** Zero out memory
      *
      */

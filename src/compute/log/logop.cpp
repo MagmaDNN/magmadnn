@@ -1,6 +1,8 @@
 #include "compute/log/logop.h"
 
+#if defined(MAGMADNN_CMAKE_BUILD)
 #include "magmadnn/config.h"
+#endif
 
 namespace magmadnn {
 namespace op {
@@ -25,13 +27,12 @@ Tensor<T> *LogOp<T>::_eval(bool recompute) {
     if (!copy) this->output_tensor = x_tensor;
 
     if (this->output_tensor->get_memory_type() == HOST) {
-       magmadnn::internal::log_full_cpu(x_tensor, this->output_tensor, stable);
+        magmadnn::internal::log_full_cpu(x_tensor, this->output_tensor, stable);
     }
 #if defined(MAGMADNN_HAVE_CUDA)
     else {
-       magmadnn::internal::log_full_device(
-             this->get_custream(), x_tensor, this->output_tensor, stable);
-       if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
+        magmadnn::internal::log_full_device(this->get_custream(), x_tensor, this->output_tensor, stable);
+        if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
     }
 #endif
 
@@ -56,13 +57,12 @@ Tensor<T> *LogOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> 
     }
 
     if (out->get_memory_type() == HOST) {
-       magmadnn::internal::log_grad_cpu(x_tensor, grad, out, stable);
+        magmadnn::internal::log_grad_cpu(x_tensor, grad, out, stable);
     }
 #if defined(MAGMADNN_HAVE_CUDA)
     else {
-       magmadnn::internal::log_grad_device(
-             this->get_custream(), x_tensor, grad, out, stable);
-       if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
+        magmadnn::internal::log_grad_device(this->get_custream(), x_tensor, grad, out, stable);
+        if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
     }
 #endif
 

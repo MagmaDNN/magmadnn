@@ -1,17 +1,20 @@
 #include "compute/dropout/dropoutop.h"
 
+#if defined(MAGMADNN_CMAKE_BUILD)
 #include "magmadnn/config.h"
+#endif
 
 namespace magmadnn {
 namespace op {
 
 template <typename T>
-DropoutOp<T>::DropoutOp(
-      Operation<T> *input, float dropout_rate, unsigned long long seed,
-      bool copy, bool needs_grad)
-    : Operation<T>::Operation({input}, needs_grad), input(input),
-   dropout_rate(dropout_rate), seed(seed), copy(copy), mask_tensor(nullptr) {
-   
+DropoutOp<T>::DropoutOp(Operation<T> *input, float dropout_rate, unsigned long long seed, bool copy, bool needs_grad)
+    : Operation<T>::Operation({input}, needs_grad),
+      input(input),
+      dropout_rate(dropout_rate),
+      seed(seed),
+      copy(copy),
+      mask_tensor(nullptr) {
     /* setup code in here */
     assert(dropout_rate >= 0 && dropout_rate <= 1);
 
@@ -23,13 +26,11 @@ DropoutOp<T>::DropoutOp(
     this->output_tensor = new Tensor<T>(this->output_shape, {NONE, {}}, this->mem_type);
 
     if (this->mem_type == HOST) {
-       T p = 1.0f - dropout_rate;
-       this->mask_tensor =
-          new Tensor<T>(
-                this->output_shape,
-                {MASK, {static_cast<T>(p), static_cast<T>(1.0f / p)}}, this->mem_type);
+        T p = 1.0f - dropout_rate;
+        this->mask_tensor =
+            new Tensor<T>(this->output_shape, {MASK, {static_cast<T>(p), static_cast<T>(1.0f / p)}}, this->mem_type);
     }
-    
+
 #if defined(MAGMADNN_HAVE_CUDA)
     init_settings();
 #endif
@@ -55,9 +56,9 @@ Tensor<T> *DropoutOp<T>::_eval(bool recompute) {
     }
 #if defined(MAGMADNN_HAVE_CUDA)
     else {
-       settings.handle = this->get_cudnn_handle();    
-       math::dropout_device(input_tensor, this->output_tensor, this->settings, this->shared_settings);
-       if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
+        settings.handle = this->get_cudnn_handle();
+        math::dropout_device(input_tensor, this->output_tensor, this->settings, this->shared_settings);
+        if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
     }
 #endif
 
@@ -91,9 +92,9 @@ Tensor<T> *DropoutOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor
     }
 #if defined(MAGMADNN_HAVE_CUDA)
     else {
-       settings.handle = this->get_cudnn_handle();
-       math::dropout_grad_device(grad, out, this->grad_settings, this->shared_settings);
-       if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
+        settings.handle = this->get_cudnn_handle();
+        math::dropout_grad_device(grad, out, this->grad_settings, this->shared_settings);
+        if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
     }
 #endif
 

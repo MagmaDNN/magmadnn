@@ -8,22 +8,21 @@
  */
 #pragma once
 
+#if defined(MAGMADNN_CMAKE_BUILD)
 #include "magmadnn/config.h"
+#endif
 #include "tensor/tensor.h"
 
 namespace magmadnn {
 namespace math {
 
 template <typename T>
-void sgd_momentum_cpu(
-      T learning_rate, T momentum, Tensor<T> *prev, Tensor<T> *grad,
-      Tensor<T> *out);
+void sgd_momentum_cpu(T learning_rate, T momentum, Tensor<T> *prev, Tensor<T> *grad, Tensor<T> *out);
 
 template <typename T>
-void sgd_momentum_cpu(
-      T learning_rate, T momentum, Tensor<T> *prev, Tensor<T> *grad,
-      std::vector<int> *idxs, Tensor<T> *out);   
-   
+void sgd_momentum_cpu(T learning_rate, T momentum, Tensor<T> *prev, Tensor<T> *grad, std::vector<int> *idxs,
+                      Tensor<T> *out);
+
 /** Do the SGD update with momentum.
  * @tparam T
  * @param learning_rate
@@ -40,7 +39,8 @@ template <typename T>
 void sgd_momentum_device(T learning_rate, T momentum, Tensor<T> *prev, Tensor<T> *grad, Tensor<T> *out);
 
 template <typename T>
-void sgd_momentum_device(cudaStream_t custream, T learning_rate, T momentum, Tensor<T> *prev, Tensor<T> *grad, Tensor<T> *out);
+void sgd_momentum_device(cudaStream_t custream, T learning_rate, T momentum, Tensor<T> *prev, Tensor<T> *grad,
+                         Tensor<T> *out);
 #endif
 
 }  // namespace math

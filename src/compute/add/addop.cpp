@@ -7,7 +7,9 @@
  *
  * @copyright Copyright (c) 2019
  */
+#if defined(MAGMADNN_CMAKE_BUILD)
 #include "magmadnn/config.h"
+#endif
 #include "compute/add/addop.h"
 
 namespace magmadnn {
@@ -34,63 +36,64 @@ AddOp<T>::AddOp(Operation<T> *a, Operation<T> *b, bool copy, bool needs_grad)
 
 template <typename T>
 Tensor<T> *AddOp<T>::_eval(bool recompute) {
-   
-   a_tensor = a->eval(recompute);
-   b_tensor = b->eval(recompute);
+    // std::cout << "[AddOp<T>::_eval]" << std::endl;
 
-   if (a_tensor->get_size() == 1) {
+    a_tensor = a->eval(recompute);
+    b_tensor = b->eval(recompute);
+    // return this->output_tensor;
 
-      a_tensor->get_memory_manager()->sync(true);
-      if (this->output_tensor->get_memory_type() == HOST) {
-         internal::tensor_scalar_add_full_cpu(
-               a_tensor->get(0), b_tensor, this->output_tensor);
-      }
+    // std::cout << "[AddOp<T>::_eval] a size = " << a_tensor->get_size() << std::endl;
+    // std::cout << "[AddOp<T>::_eval] b size = " << b_tensor->get_size() << std::endl;
+    // std::cout << "[AddOp<T>::_eval] output size = " << this->output_tensor->get_size() << std::endl;
+
+    if (a_tensor->get_size() == 1) {
+        a_tensor->get_memory_manager()->sync(true);
+        if (this->output_tensor->get_memory_type() == HOST) {
+            internal::tensor_scalar_add_full_cpu(a_tensor->get(0), b_tensor, this->output_tensor);
+        }
 #if defined(MAGMADNN_HAVE_CUDA)
-      else {
-         internal::tensor_scalar_add_full_device(
-               this->get_custream(),
-               a_tensor->get(0), b_tensor, this->output_tensor);
-         if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
-      }      
+        else {
+            internal::tensor_scalar_add_full_device(this->get_custream(), a_tensor->get(0), b_tensor,
+                                                    this->output_tensor);
+            if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
+        }
 #endif
-   }
-   else if (b_tensor->get_size() == 1) {
-
-      b_tensor->get_memory_manager()->sync(true);
-      if (this->output_tensor->get_memory_type() == HOST) {
-         internal::tensor_scalar_add_full_cpu(
-               b_tensor->get(0), a_tensor, this->output_tensor);
-      }
+    } else if (b_tensor->get_size() == 1) {
+        b_tensor->get_memory_manager()->sync(true);
+        if (this->output_tensor->get_memory_type() == HOST) {
+            internal::tensor_scalar_add_full_cpu(b_tensor->get(0), a_tensor, this->output_tensor);
+        }
 #if defined(MAGMADNN_HAVE_CUDA)
-      else {
-         internal::tensor_scalar_add_full_device(
-               this->get_custream(),
-               b_tensor->get(0), a_tensor, this->output_tensor);            
-         if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
-      }      
+        else {
+            internal::tensor_scalar_add_full_device(this->get_custream(), b_tensor->get(0), a_tensor,
+                                                    this->output_tensor);
+            if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
+        }
 #endif
-   }
-   else {
-
-      if (this->output_tensor->get_memory_type() == HOST) {
-         internal::geadd_full_cpu(
-               (T) 1, a_tensor, (T) 1, b_tensor, this->output_tensor);
-      }
+    } else {
+        if (this->output_tensor->get_memory_type() == HOST) {
+            internal::geadd_full_cpu((T) 1, a_tensor, (T) 1, b_tensor, this->output_tensor);
+        }
 #if defined(MAGMADNN_HAVE_CUDA)
-      else {
-         internal::geadd_full_device(
-               this->get_custream(),
-               (T) 1, a_tensor, (T) 1, b_tensor, this->output_tensor);
-         if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
-      }  
-#endif
-   }
+        else {
+            // internal::tensor_scalar_add_full_device(
+            //       this->get_custream(),
+            //       T(1.0), b_tensor, this->output_tensor);
 
-   return this->output_tensor;
+            internal::geadd_full_device(this->get_custream(), (T) 1, a_tensor, (T) 1, b_tensor, this->output_tensor);
+            if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
+        }
+#endif
+    }
+
+    return this->output_tensor;
 }
 
 template <typename T>
 Tensor<T> *AddOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor<T> *grad) {
+    // this->_grad_cache[(uintptr_t) var] = grad;
+    // std::cout << "[AddOp<T>::_grad]" << std::endl;
+    // std::cout << "[AddOp<T>::_grad] grad = " << grad << std::endl;
     return grad;
 }
 template class AddOp<int>;

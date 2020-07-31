@@ -7,8 +7,11 @@
  * @copyright Copyright (c) 2019
  */
 #include "compute/gradients.h"
+#include "math/add.h"
 
+#if defined(MAGMADNN_CMAKE_BUILD)
 #include "magmadnn/config.h"
+#endif
 
 namespace magmadnn {
 namespace op {
@@ -31,7 +34,7 @@ magmadnn_error_t get_grad_table(const std::vector<Operation<T> *> &vars, Operati
 #endif
     /* init Loss in grad table to one */
     grad_loss->fill_memory({ONE, {}});
-       
+
     table.set(graph, grad_loss);
 
     /* compute the gradients for each variable */
@@ -97,7 +100,7 @@ magmadnn_error_t build_grad(op::Operation<T> *var, op::Operation<T> *graph, op::
         bprop = consumer->grad(consumer, var, tmp_grad);
         bprops.push_back(bprop);
     }
-
+    // std::cout << "bprops.size() = " << bprops.size()  << std::endl;
     /* sum of each partial gradient is the total gradient */
     /* TODO : no need to sum if just one */
     if (bprops.size() == 0) {
@@ -106,11 +109,35 @@ magmadnn_error_t build_grad(op::Operation<T> *var, op::Operation<T> *graph, op::
         result = bprops.at(0);
     } else if (bprops.size() == 2) {
         /*
-        result = op::add(bprops.at(0), bprops.at(1), true, false);
+          result = op::add(bprops.at(0), bprops.at(1), true, false);
         */
         /* TODO : Add and sum tensors */
-        result = NULL;
-        fprintf(stderr, "Implement add in gradients\n");
+        // result = NULL;
+        // fprintf(stderr, "Implement add in gradients\n");
+        auto *g0 = bprops.at(0);
+        auto *g1 = bprops.at(1);
+
+        // result = new Tensor<T>(g0->get_shape(), {NONE, {}}, g0->get_memory_type());
+        // result->fill_memory({ZERO, {}});
+        // result->copy_from(*g0);
+        result = g0;
+        // result = g1;
+
+        // std::cout << "[build_grad] g0 size = "
+        //           << g0->get_size()
+        //           << ", g1 size = "
+        //           << g1->get_size()
+        //           << std::endl;
+
+        if (result->get_memory_type() == HOST) {
+            magmadnn::math::add_in_place_cpu(g1, result);
+        }
+#if defined(MAGMADNN_HAVE_CUDA)
+        else {  // DEVICE
+            magmadnn::math::add_in_place_device(var->get_cudnn_handle(), g1, result);
+        }
+#endif
+
     } else {
         /* currently sum cannot handle scalar values, so just tetrate adds for
          * now */

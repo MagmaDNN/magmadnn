@@ -8,7 +8,9 @@
  */
 #include "compute/product/productop.h"
 
+#if defined(MAGMADNN_CMAKE_BUILD)
 #include "magmadnn/config.h"
+#endif
 
 namespace magmadnn {
 namespace op {
@@ -38,7 +40,6 @@ ProductOp<T>::ProductOp(T alpha, Operation<T> *a, Operation<T> *b, bool copy, bo
 
 template <typename T>
 Tensor<T> *ProductOp<T>::_eval(bool recompute) {
-
     a_tensor = a->eval(recompute);
     b_tensor = b->eval(recompute);
 

@@ -1,7 +1,9 @@
 
 #include "compute/batchnorm/batchnormop.h"
 
+#if defined(MAGMADNN_CMAKE_BUILD)
 #include "magmadnn/config.h"
+#endif
 
 namespace magmadnn {
 namespace op {
@@ -37,11 +39,8 @@ Tensor<T> *BatchNormOp<T>::_eval(bool recompute) {
 #if defined(MAGMADNN_HAVE_CUDA)
     else {
         this->settings.handle = this->get_cudnn_handle();
-        math::batchnorm_device(
-              input_tensor, this->output_tensor, bn_scale, bn_bias,
-              running_mean, running_variance,
-              saved_mean, saved_variance, num_calls,
-              this->settings);
+        math::batchnorm_device(input_tensor, this->output_tensor, bn_scale, bn_bias, running_mean, running_variance,
+                               saved_mean, saved_variance, num_calls, this->settings);
         if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
     }
 #endif
@@ -68,13 +67,10 @@ Tensor<T> *BatchNormOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tens
     }
 #if defined(MAGMADNN_HAVE_CUDA)
     else {
-       this->settings.handle = this->get_cudnn_handle();
-       math::batchnorm_grad_device(
-             this->input_tensor, grad, out, bn_scale, bn_scale_diff,
-             bn_bias_diff, saved_mean,
-             saved_variance,
-             this->settings);
-       if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
+        this->settings.handle = this->get_cudnn_handle();
+        math::batchnorm_grad_device(this->input_tensor, grad, out, bn_scale, bn_scale_diff, bn_bias_diff, saved_mean,
+                                    saved_variance, this->settings);
+        if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
     }
 #endif
 

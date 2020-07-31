@@ -10,7 +10,9 @@
 #pragma once
 
 #include <cmath>
+#if defined(MAGMADNN_CMAKE_BUILD)
 #include "magmadnn/config.h"
+#endif
 #include "tensor/tensor.h"
 
 namespace magmadnn {
@@ -18,7 +20,7 @@ namespace math {
 
 template <typename T>
 void pow_cpu(Tensor<T> *x, int power, Tensor<T> *out);
-   
+
 template <typename T>
 void pow(Tensor<T> *x, int power, Tensor<T> *out);
 

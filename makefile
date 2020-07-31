@@ -1,11 +1,17 @@
 # This makefile can build and install the magmadnn library
 
-# incluse any user-defined compile options (pre-sets)
+# include any user-defined compile options (pre-sets)
 include make.inc
 
 # compilers for c++ and cu
 CXX ?= g++
 NVCC ?= nvcc
+
+#MKLDNN flag
+USE_MKLDNN ?= 0
+
+# CUDA flag
+TRY_CUDA ?= 1
 
 # locations of cuda and magma installations
 CUDADIR ?= /usr/local/cuda
@@ -41,16 +47,24 @@ ifneq ($(CUDNN_LIB_DIR),)
 LIBDIRS += -L$(CUDNN_LIB_DIR)
 endif
 
-# use nvcc to determine if we should compile for gpu or not
+ifeq ($(USE_MKLDNN),1)
+MKLDNN_MACRO = -DMAGMADNN_HAVE_MKLDNN
+LIBS += -lmkldnn
+endif
+
+
 USE_CUDA = 0
+ifeq ($(TRY_CUDA),1)
+# use nvcc to determine if we should compile for gpu or not
 GPU_TARGET ?= Kepler
 ifneq ($(shell which nvcc),)
 include make.device
-CUDA_MACRO = -D_HAS_CUDA_
+CUDA_MACRO = -DMAGMADNN_HAVE_CUDA -D_HAS_CUDA_
 INC += -I$(CUDADIR)/include -I$(MAGMADIR)/include
 LIBDIRS += -L$(CUDADIR)/lib64 -L$(MAGMADIR)/lib
 LIBS += -lcudart -lcudnn -lmagma
 USE_CUDA=1
+endif
 endif
 
 
@@ -75,7 +89,7 @@ OPTIMIZATION_LEVEL = -O0
 endif
 
 # the entire flags for compilation
-CXXFLAGS := $(OPTIMIZATION_LEVEL) $(WARNINGS) $(CXX_VERSION) $(CUDA_MACRO) $(FPIC) -MMD $(OPENMP_FLAGS) $(PROFILE_FLAGS)
+CXXFLAGS := $(OPTIMIZATION_LEVEL) $(WARNINGS) $(CXX_VERSION) $(CUDA_MACRO) $(MKLDNN_MACRO) $(FPIC) -MMD $(OPENMP_FLAGS) $(PROFILE_FLAGS)
 NVCCFLAGS := $(CXX_VERSION) $(OPTIMIZATION_LEVEL) -Xcompiler "$(CXXFLAGS)" $(NV_SM) $(NV_COMP)
 LD_FLAGS := $(LIBDIRS) $(LIBS)
 
@@ -103,6 +117,7 @@ export NVCCFLAGS
 export LIBDIRS
 export LIBS
 export USE_MPI
+export USE_MKLDNN
 
 # default extension for object files
 o_ext ?= o
@@ -202,12 +217,12 @@ install: lib
 
 
 # build the docs files and the refman.pdf
-DOCS_DIR ?= docs
-docs:
-ifneq ($(shell which doxygen),)
-	doxygen doxygen.config
-	$(MAKE) -C $(DOCS_DIR)/latex
-endif
+# DOCS_DIR ?= docs
+# docs:
+# ifneq ($(shell which doxygen),)
+# 	doxygen doxygen.config
+# 	$(MAKE) -C $(DOCS_DIR)/latex
+# endif
 
 
 # TODO: change to call clean on subdirectory makefiles

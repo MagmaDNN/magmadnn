@@ -1,4 +1,6 @@
+#if defined(MAGMADNN_CMAKE_BUILD)
 #include "magmadnn/config.h"
+#endif
 #include "compute/reducesum/reducesumop.h"
 
 namespace magmadnn {
@@ -93,26 +95,25 @@ ReduceSumOp<T>::~ReduceSumOp() {
 
 template <typename T>
 Tensor<T> *ReduceSumOp<T>::_eval(bool recompute) {
+    x_tensor = x->eval(recompute);
 
-   x_tensor = x->eval(recompute);
+    if (!copy) {
+        std::fprintf(stderr, "Non-Copy ReduceSum not supported.\n");
+        return this->output_tensor;
+    }
 
-   if (!copy) {
-      std::fprintf(stderr, "Non-Copy ReduceSum not supported.\n");
-      return this->output_tensor;
-   }
-
-   if (this->mem_type == HOST) {
-      math::reduce_sum(x_tensor, axis, ones, this->output_tensor);
-   }
+    if (this->mem_type == HOST) {
+        math::reduce_sum(x_tensor, axis, ones, this->output_tensor);
+    }
 #if defined(MAGMADNN_HAVE_CUDA)
-   else {
-      this->reduce_settings.cudnn_handle = this->get_cudnn_handle();
-      math::reduce_sum_device(x_tensor, axis, this->output_tensor, this->reduce_settings);
-      // Assume cudnn_handle is associated with custream
-      if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
-   }
+    else {
+        this->reduce_settings.cudnn_handle = this->get_cudnn_handle();
+        math::reduce_sum_device(x_tensor, axis, this->output_tensor, this->reduce_settings);
+        // Assume cudnn_handle is associated with custream
+        if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
+    }
 #endif
-   return this->output_tensor;
+    return this->output_tensor;
 }
 
 template <typename T>

@@ -8,7 +8,9 @@
  */
 #pragma once
 
+#if defined(MAGMADNN_CMAKE_BUILD)
 #include "magmadnn/config.h"
+#endif
 #include "tensor/tensor.h"
 
 namespace magmadnn {
@@ -16,7 +18,7 @@ namespace math {
 
 template <typename T>
 void bias_add_cpu(Tensor<T> *x, Tensor<T> *bias, Tensor<T> *out);
-   
+
 template <typename T>
 void bias_add(Tensor<T> *x, Tensor<T> *bias, Tensor<T> *out);
 

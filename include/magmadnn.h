@@ -21,16 +21,19 @@
 #define USE_GPU
 #endif
 
+#if defined(MAGMADNN_CMAKE_BUILD)
 #include "magmadnn/config.h"
+#endif
 #include "magmadnn/exec_context.h"
 #include "magmadnn/init_finalize.h"
 #include "magmadnn/types.h"
 #include "magmadnn/utilities_internal.h"
 
-#include "magmadnn/data/Dataset.h"
-#include "magmadnn/data/MNIST.h"
 #include "magmadnn/data/CIFAR10.h"
 #include "magmadnn/data/CIFAR100.h"
+#include "magmadnn/data/Dataset.h"
+#include "magmadnn/data/MNIST.h"
+//#include "magmadnn/data/ImageNet2012.h"
 
 #include "magmadnn/exception.h"
 #include "magmadnn/exception_helpers.h"

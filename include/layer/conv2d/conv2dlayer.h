@@ -18,48 +18,43 @@
 namespace magmadnn {
 namespace layer {
 
-   enum padding_t { SAME, VALID };
+enum padding_t { SAME, VALID };
 
-   template <typename T>
-   class Conv2dLayer : public Layer<T> {
+template <typename T>
+class Conv2dLayer : public Layer<T> {
    public:
-      Conv2dLayer(
-            op::Operation<T>* input,
-            const std::vector<unsigned int>& filter_shape = {3, 3},
-            int out_channels = 1,
-            const std::vector<unsigned int>& padding = {0, 0},
-            const std::vector<unsigned int>& strides = {1, 1},
-            const std::vector<unsigned int>& dilation_rates = {1, 1},
-            bool use_cross_correlation = true,
-            bool use_bias = false, tensor_filler_t<T> filter_initializer = {GLOROT, {0.0, 0.2f}},
-            tensor_filler_t<T> bias_initializer = {GLOROT, {0.0, 0.2f}});
+    Conv2dLayer(op::Operation<T>* input, const std::vector<unsigned int>& filter_shape = {3, 3}, int out_channels = 1,
+                const std::vector<unsigned int>& padding = {0, 0}, const std::vector<unsigned int>& strides = {1, 1},
+                const std::vector<unsigned int>& dilation_rates = {1, 1}, bool use_cross_correlation = true,
+                bool use_bias = false, tensor_filler_t<T> filter_initializer = {GLOROT, {0.0, 0.2f}},
+                tensor_filler_t<T> bias_initializer = {GLOROT, {0.0, 0.2f}});
 
-      virtual ~Conv2dLayer();
+    virtual ~Conv2dLayer();
 
-      virtual std::vector<op::Operation<T>*> get_weights();
+    virtual std::vector<op::Operation<T>*> get_weights();
 
-      op::Operation<T>* get_filter() { return filter; }
-      op::Operation<T>* get_bias() { return bias; }
+    virtual unsigned int get_num_params();
 
-      std::size_t get_memory_size() const {
-         return this->filter_tensor->get_memory_size();
-      }
-      
+    op::Operation<T>* get_filter() { return filter; }
+    op::Operation<T>* get_bias() { return bias; }
+
+    std::size_t get_memory_size() const { return this->filter_tensor->get_memory_size(); }
+
    protected:
-      void init(const std::vector<unsigned int>& filter_shape);
+    void init(const std::vector<unsigned int>& filter_shape);
 
-      Tensor<T>* filter_tensor;
-      Tensor<T>* bias_tensor;
+    Tensor<T>* filter_tensor;
+    Tensor<T>* bias_tensor;
 
-      op::Operation<T>* filter;
-      op::Operation<T>* bias;
+    op::Operation<T>* filter;
+    op::Operation<T>* bias;
 
-      int in_channels, out_channels;
-      bool use_cross_correlation, use_bias;
-      int pad_h, pad_w, stride_h, stride_w, dilation_h, dilation_w;
+    int in_channels, out_channels;
+    bool use_cross_correlation, use_bias;
+    int pad_h, pad_w, stride_h, stride_w, dilation_h, dilation_w;
 
-      tensor_filler_t<T> filter_initializer, bias_initializer;
-   };
+    tensor_filler_t<T> filter_initializer, bias_initializer;
+};
 
 /** Create a Conv2d Layer. Computes the output on the GPU. Uses CuDNN. No host functionality.
  * @tparam T numeric

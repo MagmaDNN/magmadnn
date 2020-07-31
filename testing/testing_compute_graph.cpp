@@ -642,7 +642,7 @@ void test_crossentropy(memory_t mem_type, unsigned int size) {
     Tensor<double> *actual = new Tensor<double>({3, 3}, {ZERO, {}}, mem_type);
     Tensor<double> *predicted = new Tensor<double>({3, 3}, {ZERO, {}}, mem_type);
 
-    double expected_loss = -(log(0.5 + 1E-8) + log(0.5 + 1E-8) + log(0.1 + 1E-8));
+    double expected_loss = -1.0 / 3.0 * (log(0.5 + 1E-8) + log(0.5 + 1E-8) + log(0.1 + 1E-8));
 
     /* 	0 0 1
             0 0 1
@@ -707,8 +707,6 @@ void test_meansquarederror(memory_t mem_type, unsigned int size) {
     expected_loss /= (float) size;
 
     MAGMADNN_TEST_ASSERT_FEQUAL_DEFAULT(loss_tensor->get(0), expected_loss);
-
-    delete mse_loss;
 
     show_success();
 }

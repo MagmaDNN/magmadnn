@@ -11,7 +11,9 @@
 #include <cassert>
 #include <iostream>
 
+#if defined(MAGMADNN_CMAKE_BUILD)
 #include "magmadnn/config.h"
+#endif
 
 namespace magmadnn {
 
@@ -307,6 +309,13 @@ void Tensor<T>::init_cudnn_descriptor() {
         fprintf(stderr, "Cannot create tensor descriptor for tensor of this shape\n");
     }
 
+    // std::cout << "[init_cudnn_descriptor]"
+    //           << " n = " << n
+    //           << " c = " << c
+    //           << " h = " << h
+    //           << " w = " << w
+    //           << std::endl;
+
     cudnnSetTensor4dDescriptor(desc, CUDNN_TENSOR_NCHW, internal::get_cudnn_data_type((T) 0), n, c, h, w);
 }
 
@@ -318,9 +327,9 @@ void Tensor<T>::free_cudnn_descriptor() {
 
 template <typename T>
 magmadnn_error_t Tensor<T>::zero() {
-   return this->mem_manager->zero();
+    return this->mem_manager->zero();
 }
-   
+
 /* COMPILE FOR INT, FLOAT, AND DOUBLE */
 template class Tensor<int>;
 template class Tensor<float>;

@@ -1,7 +1,9 @@
 
 #pragma once
 
+#if defined(MAGMADNN_CMAKE_BUILD)
 #include "magmadnn/config.h"
+#endif
 #include "tensor/tensor.h"
 
 namespace magmadnn {
@@ -9,7 +11,7 @@ namespace internal {
 
 template <typename T>
 void scalarproduct_full_cpu(T alpha, Tensor<T> *x, Tensor<T> *out);
-   
+
 template <typename T>
 void scalarproduct_full(T alpha, Tensor<T> *x, Tensor<T> *out);
 

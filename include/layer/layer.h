@@ -22,6 +22,11 @@ class Layer {
 
     virtual op::Operation<T> *out() { return output; }
 
+    /** Get the number of parameters for this layer
+     * @return unsigned int
+     */
+    virtual unsigned int get_num_params() { return 0; }
+
     /** Get the pointer to the input tensor for this layer
      * @return tensor<T>*
      */
@@ -38,8 +43,7 @@ class Layer {
     /** Returns a copy of the output shape as a vector
      * @return std::vector<unsigned int>
      */
-    std::vector<unsigned int> get_output_shape() const {
-       return this->output->get_output_shape(); }
+    std::vector<unsigned int> get_output_shape() const { return this->output->get_output_shape(); }
 
     /** Gets the size of the i-th axis of the input tensor
      * @param i axis
@@ -70,13 +74,12 @@ class Layer {
      */
     std::string get_name() const { return this->name; }
 
-   // Return an estimate of the memory needed to store the data for
-   // this layer
-   std::size_t get_memory_size() const { return 0; }
-   
+    // Return an estimate of the memory needed to store the data for
+    // this layer
+    std::size_t get_memory_size() const { return 0; }
+
    protected:
-    Layer(std::vector<unsigned int> input_shape, op::Operation<T> *input)
-       : input_shape(input_shape), input(input) {}
+    Layer(std::vector<unsigned int> input_shape, op::Operation<T> *input) : input_shape(input_shape), input(input) {}
 
     std::vector<unsigned int> input_shape;
     std::vector<unsigned int> output_shape;

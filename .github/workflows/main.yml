@@ -1,0 +1,69 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  push:
+    branches: [ dev ]
+  pull_request:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build-and-test:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    - name: Setup CMake
+      uses: jwlawson/actions-setup-cmake@v1.3
+      with:
+        cmake-version: '3.16.x'
+        
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v2
+
+    # Build makefiles
+    - name: Run CMake
+      run: |
+        mkdir build
+        cd build
+        cmake ..
+    
+    # Run makefiles
+    - name: Build MagmaDNN
+      run: |
+        cd build
+        make -j8
+    
+    # Build Tests
+    - name: Build Tests
+      run: |
+        cd build
+        cmake .. -DMAGMADNN_BUILD_TESTS=TRUE
+        make -j8
+    
+    # Run Tests
+    - name: Run Tests
+      run: |
+        cd build
+        ctest
+  
+  lint:
+    runs-on: ubuntu-latest
+
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: DoozyX/clang-format-lint-action@v0.8
+      with:
+        source: './src ./include'
+        exclude: ''
+        extensions: 'h,cpp'
+        clangFormatVersion: 9
+        style: file
+
+      

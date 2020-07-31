@@ -8,7 +8,9 @@
  */
 #include "compute/sigmoid/sigmoidop.h"
 
+#if defined(MAGMADNN_CMAKE_BUILD)
 #include "magmadnn/config.h"
+#endif
 
 namespace magmadnn {
 namespace op {
@@ -30,22 +32,20 @@ SigmoidOp<T>::SigmoidOp(Operation<T> *x, bool copy, bool fast)
 
 template <typename T>
 Tensor<T> *SigmoidOp<T>::_eval(bool recompute) {
+    x_tensor = x->eval(recompute);
 
-   x_tensor = x->eval(recompute);
-
-   internal::sigmoid_full(x_tensor, this->output_tensor, fast);
-   if (this->output_tensor->get_memory_type() == HOST) {
-      magmadnn::internal::sigmoid_full_cpu(x_tensor, this->output_tensor, fast);
-   }
+    internal::sigmoid_full(x_tensor, this->output_tensor, fast);
+    if (this->output_tensor->get_memory_type() == HOST) {
+        magmadnn::internal::sigmoid_full_cpu(x_tensor, this->output_tensor, fast);
+    }
 #if defined(MAGMADNN_HAVE_CUDA)
-   else {
-      magmadnn::internal::sigmoid_full_device(
-            this->get_custream(), x_tensor, this->output_tensor, fast);
-      if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
-   }
+    else {
+        magmadnn::internal::sigmoid_full_device(this->get_custream(), x_tensor, this->output_tensor, fast);
+        if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
+    }
 #endif
 
-   return this->output_tensor;
+    return this->output_tensor;
 }
 
 template <typename T>
@@ -57,22 +57,21 @@ Tensor<T> *SigmoidOp<T>::_grad(Operation<T> *consumer, Operation<T> *var, Tensor
     out = this->_grad_cache[(uintptr_t) var];
 
     if (out == NULL) {
-       out = new Tensor<T>(this->output_shape, {NONE, {}}, this->mem_type);
+        out = new Tensor<T>(this->output_shape, {NONE, {}}, this->mem_type);
 #if defined(MAGMADNN_HAVE_CUDA)
-       out->set_custream(this->get_custream());
-       out->set_cublas_handle(this->get_cublas_handle());
+        out->set_custream(this->get_custream());
+        out->set_cublas_handle(this->get_cublas_handle());
 #endif
-       this->_grad_cache[(uintptr_t) var] = out;
+        this->_grad_cache[(uintptr_t) var] = out;
     }
 
     if (out->get_memory_type() == HOST) {
-       magmadnn::internal::sigmoid_grad_cpu(output, grad, out);
+        magmadnn::internal::sigmoid_grad_cpu(output, grad, out);
     }
 #if defined(MAGMADNN_HAVE_CUDA)
     else {
-       magmadnn::internal::sigmoid_grad_device(
-             this->get_custream(), output, grad, out);
-       if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
+        magmadnn::internal::sigmoid_grad_device(this->get_custream(), output, grad, out);
+        if (!this->get_async()) cudaStreamSynchronize(this->get_custream());
     }
 #endif
 

@@ -54,15 +54,15 @@ Tensor<T>* Variable<T>::_grad(Operation<T>* consumer, Operation<T>* var, Tensor<
     if (var == this) {
         out = this->_grad_cache[(uintptr_t) var];
         if (out == NULL) {
-           // out = new Tensor<T>({1}, {ONE, {}}, this->mem_type);
-           out = new Tensor<T>({1}, {NONE, {}}, this->mem_type);
+            // out = new Tensor<T>({1}, {ONE, {}}, this->mem_type);
+            out = new Tensor<T>({1}, {NONE, {}}, this->mem_type);
 #if defined(MAGMADNN_HAVE_CUDA)
-           out->set_custream(this->get_custream());
-           out->set_cublas_handle(this->get_cublas_handle());
+            out->set_custream(this->get_custream());
+            out->set_cublas_handle(this->get_cublas_handle());
 #endif
-           out->fill_memory({ONE, {}});
-            
-           this->_grad_cache[(uintptr_t) var] = out;
+            out->fill_memory({ONE, {}});
+
+            this->_grad_cache[(uintptr_t) var] = out;
         }
         return out;
     }

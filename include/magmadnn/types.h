@@ -19,11 +19,11 @@
 namespace magmadnn {
 
 typedef enum memory_t {
-                       HOST,
+    HOST,
 #if defined(MAGMADNN_HAVE_CUDA)
-                       DEVICE,
-                       MANAGED,
-                       CUDA_MANAGED
+    DEVICE,
+    MANAGED,
+    CUDA_MANAGED
 #endif
 } memory_t;
 
@@ -54,7 +54,7 @@ struct tensor_filler_t {
     tensor_fill_t fill_type;
     std::vector<T> values;
 };
-   
+
 /**
  * Integral type used for allocation quantities.
  */
@@ -70,12 +70,10 @@ using int8 = std::int8_t;
  */
 using int16 = std::int16_t;
 
-
 /**
  * 32-bit signed integral type.
  */
 using int32 = std::int32_t;
-
 
 /**
  * 64-bit signed integral type.
@@ -92,18 +90,15 @@ using uint8 = std::uint8_t;
  */
 using uint16 = std::uint16_t;
 
-
 /**
  * 32-bit unsigned integral type.
  */
 using uint32 = std::uint32_t;
 
-
 /**
  * 64-bit unsigned integral type.
  */
 using uint64 = std::uint64_t;
-
 
 /**
  *
@@ -114,7 +109,6 @@ using uintptr = std::uintptr_t;
  * Single precision floating point type.
  */
 using float32 = float;
-
 
 /**
  * Double precision floating point type.

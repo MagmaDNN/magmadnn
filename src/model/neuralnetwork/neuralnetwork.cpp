@@ -58,23 +58,19 @@ NeuralNetwork<T>::NeuralNetwork(std::vector<layer::Layer<T> *> layers, optimizer
     /* init optimizer */
     switch (optimizer) {
         case optimizer::SGD:
-            this->optim = new optimizer::GradientDescent<T>(
-                static_cast<T>(params.learning_rate),
-                static_cast<T>(params.momentum));
+            this->optim = new optimizer::GradientDescent<T>(static_cast<T>(params.learning_rate),
+                                                            static_cast<T>(params.momentum));
             break;
         case optimizer::ADAGRAD:
-            this->optim =
-                new optimizer::AdaGrad<T>(static_cast<T>(params.learning_rate));
+            this->optim = new optimizer::AdaGrad<T>(static_cast<T>(params.learning_rate));
             break;
         case optimizer::RMSPROP:
             this->optim =
-                new optimizer::RMSProp<T>(static_cast<T>(params.learning_rate),
-                                          static_cast<T>(params.decaying_factor));
+                new optimizer::RMSProp<T>(static_cast<T>(params.learning_rate), static_cast<T>(params.decaying_factor));
             break;
         case optimizer::ADAM:
-            this->optim =
-                new optimizer::Adam<T>(static_cast<T>(params.learning_rate),
-                                       static_cast<T>(params.beta1), static_cast<T>(params.beta2));
+            this->optim = new optimizer::Adam<T>(static_cast<T>(params.learning_rate), static_cast<T>(params.beta1),
+                                                 static_cast<T>(params.beta2));
             break;
         default:
             std::fprintf(stderr, "Unknown optimizer.\n");
@@ -239,7 +235,7 @@ Tensor<T> *NeuralNetwork<T>::predict(Tensor<T> *sample) {
 
 template <typename T>
 unsigned int NeuralNetwork<T>::predict_class(Tensor<T> *sample) {
-   // assert(T_IS_VECTOR(sample));
+    // assert(T_IS_VECTOR(sample));
 
     /* copy sample into beginning of input tensor */
     this->network_input_tensor_ptr->copy_from(*sample, 0, sample->get_size());
@@ -255,6 +251,36 @@ unsigned int NeuralNetwork<T>::predict_class(Tensor<T> *sample) {
     math::argmax(&output_tensor_host, 0, &argmax_tensor);
 
     return argmax_tensor.get(0);
+}
+
+template <typename T>
+void NeuralNetwork<T>::summary() {
+    unsigned int name_w = 20, shape_w = 20, params_w = 16;
+
+    std::cout << std::setw(name_w) << std::left << "Name";
+    std::cout << std::setw(shape_w) << std::right << "Output Shape";
+    std::cout << std::setw(params_w) << "# Params";
+    std::cout << std::endl;
+    std::cout << std::setfill('=') << std::setw(name_w + shape_w + params_w) << "";
+    std::cout << std::endl << std::setfill(' ');
+
+    for (int i = 0; i < this->layers.size(); i++) {
+        if (this->layers[i]->get_name() == "Activation") continue;
+
+        std::cout << std::setw(name_w) << std::left << this->layers[i]->get_name();
+
+        /*Make shape string*/
+        std::vector<unsigned int> output_shape = this->layers[i]->get_output_shape();
+        std::string shape = "(";
+        for (int j = 0; j < output_shape.size() - 1; j++) {
+            shape += std::to_string(output_shape[j]) + ", ";
+        }
+        shape += std::to_string(output_shape[output_shape.size() - 1]) + ")";
+
+        std::cout << std::setw(shape_w) << std::right << shape;
+        std::cout << std::setw(params_w) << this->layers[i]->get_num_params();
+        std::cout << std::endl;
+    }
 }
 
 template class NeuralNetwork<int>;

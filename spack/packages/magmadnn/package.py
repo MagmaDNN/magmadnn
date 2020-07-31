@@ -33,7 +33,6 @@ class Magmadnn(CMakePackage):
 
 
     def cmake_args(self):
-        spec = self.spec
         return [
             self.define_from_variant('MAGMADNN_ENABLE_CUDA', 'cuda'),
             self.define_from_variant('MAGMADNN_ENABLE_MPI', 'mpi'),

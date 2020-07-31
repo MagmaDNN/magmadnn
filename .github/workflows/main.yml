@@ -48,5 +48,7 @@ jobs:
     
     # Run Tests
     - name: Run Tests
-      run: ctest
+      run: |
+        cd build
+        ctest
       

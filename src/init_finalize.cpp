@@ -31,7 +31,7 @@ magmadnn_error_t magmadnn_init() {
 
 #if defined(MAGMADNN_HAVE_CUDA)
     err = (magmadnn_error_t) magma_init();
-    
+
     // TODO: Create stream and init handles with it. DO NOT use
     // default stream
     /* init cudnn */
@@ -44,11 +44,11 @@ magmadnn_error_t magmadnn_init() {
 
     int num_devices;
 
-    // query number of devices                                                                  
+    // query number of devices
     cudaError_t cuerr;
-    cuerr = cudaGetDeviceCount( &num_devices );
-    assert( cuerr == 0 || cuerr == cudaErrorNoDevice );
-    cudaSetDevice(rank%num_devices); 
+    cuerr = cudaGetDeviceCount(&num_devices);
+    assert(cuerr == 0 || cuerr == cudaErrorNoDevice);
+    cudaSetDevice(rank % num_devices);
 #endif
 
     return err;

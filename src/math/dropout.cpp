@@ -45,13 +45,9 @@ template void dropout_grad(Tensor<double> *grad, Tensor<double> *out, Tensor<dou
 template <typename T>
 void dropout_device(Tensor<T> *x, Tensor<T> *out, cudnn_dropout_settings_t settings,
                     cudnn_dropout_shared_settings_t shared) {
-    cudnnErrchk(
-          cudnnDropoutForward(
-                settings.handle, shared.dropoutDesc,
-                settings.xdesc, (void *) x->get_ptr(),
-                settings.ydesc, (void *) out->get_ptr(),
-                shared.reserveSpace,
-                shared.reserveSpaceSizeInBytes));
+    cudnnErrchk(cudnnDropoutForward(settings.handle, shared.dropoutDesc, settings.xdesc, (void *) x->get_ptr(),
+                                    settings.ydesc, (void *) out->get_ptr(), shared.reserveSpace,
+                                    shared.reserveSpaceSizeInBytes));
 }
 template void dropout_device(Tensor<int> *x, Tensor<int> *out, cudnn_dropout_settings_t settings,
                              cudnn_dropout_shared_settings_t shared);
@@ -63,12 +59,9 @@ template void dropout_device(Tensor<double> *x, Tensor<double> *out, cudnn_dropo
 template <typename T>
 void dropout_grad_device(Tensor<T> *grad, Tensor<T> *out, cudnn_dropout_grad_settings_t settings,
                          cudnn_dropout_shared_settings_t shared) {
-    cudnnErrchk(
-          cudnnDropoutBackward(
-                settings.handle, shared.dropoutDesc, settings.dydesc,
-                (void *) grad->get_ptr(), settings.dxdesc,
-                (void *) out->get_ptr(), shared.reserveSpace,
-                shared.reserveSpaceSizeInBytes));
+    cudnnErrchk(cudnnDropoutBackward(settings.handle, shared.dropoutDesc, settings.dydesc, (void *) grad->get_ptr(),
+                                     settings.dxdesc, (void *) out->get_ptr(), shared.reserveSpace,
+                                     shared.reserveSpaceSizeInBytes));
 }
 template void dropout_grad_device(Tensor<int> *grad, Tensor<int> *out, cudnn_dropout_grad_settings_t settings,
                                   cudnn_dropout_shared_settings_t shared);

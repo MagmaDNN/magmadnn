@@ -34,8 +34,7 @@ template <typename T>
 void sigmoid_full_device(Tensor<T> *x, Tensor<T> *out, bool fast = true);
 
 template <typename T>
-void sigmoid_full_device(
-      cudaStream_t custream, Tensor<T> *x, Tensor<T> *out, bool fast = true);
+void sigmoid_full_device(cudaStream_t custream, Tensor<T> *x, Tensor<T> *out, bool fast = true);
 #endif
 
 template <typename T>
@@ -49,8 +48,7 @@ template <typename T>
 void sigmoid_grad_device(Tensor<T> *output, Tensor<T> *grad, Tensor<T> *out);
 
 template <typename T>
-void sigmoid_grad_device(
-      cudaStream_t custream, Tensor<T> *output, Tensor<T> *grad, Tensor<T> *out);
+void sigmoid_grad_device(cudaStream_t custream, Tensor<T> *output, Tensor<T> *grad, Tensor<T> *out);
 #endif
 
 }  // namespace internal

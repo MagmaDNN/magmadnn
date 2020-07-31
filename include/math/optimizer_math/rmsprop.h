@@ -23,14 +23,11 @@ namespace math {
  * @param out
  */
 template <typename T>
-void rmsprop(T learning_rate, T decaying_factor,
-             Tensor<T> *decaying_squares_average, Tensor<T> *grad,
-             Tensor<T> *out);
+void rmsprop(T learning_rate, T decaying_factor, Tensor<T> *decaying_squares_average, Tensor<T> *grad, Tensor<T> *out);
 
 #if defined(MAGMADNN_HAVE_CUDA)
 template <typename T>
-void rmsprop_device(T learning_rate, T decaying_factor,
-                    Tensor<T> *decaying_squares_average, Tensor<T> *grad,
+void rmsprop_device(T learning_rate, T decaying_factor, Tensor<T> *decaying_squares_average, Tensor<T> *grad,
                     Tensor<T> *out);
 #endif
 

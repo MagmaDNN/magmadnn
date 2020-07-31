@@ -18,7 +18,7 @@ namespace math {
 
 template <typename T>
 void bias_add_cpu(Tensor<T> *x, Tensor<T> *bias, Tensor<T> *out);
-   
+
 template <typename T>
 void bias_add(Tensor<T> *x, Tensor<T> *bias, Tensor<T> *out);
 

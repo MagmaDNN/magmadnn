@@ -289,7 +289,6 @@ template <typename T>
 void Tensor<T>::init_cudnn_descriptor() {
     int n = 1, c = 1, h = 1, w = 1;
 
-    
     cudnnCreateTensorDescriptor(&desc);
 
     if (shape.size() == 4) {
@@ -311,9 +310,9 @@ void Tensor<T>::init_cudnn_descriptor() {
     }
 
     // std::cout << "[init_cudnn_descriptor]"
-    //           << " n = " << n 
-    //           << " c = " << c 
-    //           << " h = " << h 
+    //           << " n = " << n
+    //           << " c = " << c
+    //           << " h = " << h
     //           << " w = " << w
     //           << std::endl;
 
@@ -328,9 +327,9 @@ void Tensor<T>::free_cudnn_descriptor() {
 
 template <typename T>
 magmadnn_error_t Tensor<T>::zero() {
-   return this->mem_manager->zero();
+    return this->mem_manager->zero();
 }
-   
+
 /* COMPILE FOR INT, FLOAT, AND DOUBLE */
 template class Tensor<int>;
 template class Tensor<float>;

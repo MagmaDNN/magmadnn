@@ -8,9 +8,9 @@
  */
 #include "memory/memorymanager.h"
 
+#include <cassert>
 #include <cstdio>
 #include <cstdlib>
-#include <cassert>
 #include <cstring>
 
 #if defined(MAGMADNN_CMAKE_BUILD)
@@ -51,29 +51,29 @@ MemoryManager<T>::MemoryManager(unsigned int size, memory_t mem_type, device_t d
 
 template <typename T>
 void MemoryManager<T>::init_host() {
-   // TODO: replace use of `malloc` with `new`
-   host_ptr = (T*) std::malloc(size * sizeof(T));
+    // TODO: replace use of `malloc` with `new`
+    host_ptr = (T*) std::malloc(size * sizeof(T));
 }
 
 #if defined(MAGMADNN_HAVE_CUDA)
 template <typename T>
 void MemoryManager<T>::init_device() {
-   this->set_custream(nullptr);
-   cudaErrchk(cudaMalloc((void**) &device_ptr, size * sizeof(T)));
+    this->set_custream(nullptr);
+    cudaErrchk(cudaMalloc((void**) &device_ptr, size * sizeof(T)));
 }
 
 template <typename T>
 void MemoryManager<T>::init_managed() {
-   this->set_custream(nullptr);
-   // TODO: replace use of `malloc` with `new`
-   host_ptr = (T*) std::malloc(size * sizeof(T));
-   cudaErrchk(cudaMalloc((void**) &device_ptr, size * sizeof(T)));
+    this->set_custream(nullptr);
+    // TODO: replace use of `malloc` with `new`
+    host_ptr = (T*) std::malloc(size * sizeof(T));
+    cudaErrchk(cudaMalloc((void**) &device_ptr, size * sizeof(T)));
 }
 
 template <typename T>
 void MemoryManager<T>::init_cuda_managed() {
-   this->set_custream(nullptr);
-   cudaErrchk(cudaMallocManaged((void**) &cuda_managed_ptr, size * sizeof(T)));
+    this->set_custream(nullptr);
+    cudaErrchk(cudaMallocManaged((void**) &cuda_managed_ptr, size * sizeof(T)));
 }
 #endif
 
@@ -98,16 +98,16 @@ template <typename T>
 MemoryManager<T>::~MemoryManager<T>() {
     switch (mem_type) {
         case HOST:
-           // TODO: replace use of `free` with `delete`
-           std::free(host_ptr);
+            // TODO: replace use of `free` with `delete`
+            std::free(host_ptr);
             break;
 #if defined(MAGMADNN_HAVE_CUDA)
         case DEVICE:
             cudaErrchk(cudaFree(device_ptr));
             break;
         case MANAGED:
-           // TODO: replace use of `free` with `delete`
-           std::free(host_ptr);
+            // TODO: replace use of `free` with `delete`
+            std::free(host_ptr);
             break;
             cudaErrchk(cudaFree(device_ptr));
             break;
@@ -162,10 +162,8 @@ magmadnn_error_t MemoryManager<T>::copy_from_host(T* src, unsigned int begin_idx
 #if defined(MAGMADNN_HAVE_CUDA)
         case DEVICE:
             // host --> device
-            cudaErrchk(
-                  cudaMemcpyAsync(
-                        device_ptr, src + begin_idx, copy_size * sizeof(T),
-                        cudaMemcpyHostToDevice, this->get_custream()));
+            cudaErrchk(cudaMemcpyAsync(device_ptr, src + begin_idx, copy_size * sizeof(T), cudaMemcpyHostToDevice,
+                                       this->get_custream()));
             cudaStreamSynchronize(this->get_custream());
             return (magmadnn_error_t) 0;
         case MANAGED:
@@ -192,24 +190,24 @@ magmadnn_error_t MemoryManager<T>::copy_from_device(T* src, unsigned int begin_i
     switch (mem_type) {
         case HOST:
             // device --> host
-           cudaErrchk(
-                 cudaMemcpyAsync(host_ptr, src + begin_idx, copy_size * sizeof(T), cudaMemcpyDeviceToHost, this->get_custream()));
+            cudaErrchk(cudaMemcpyAsync(host_ptr, src + begin_idx, copy_size * sizeof(T), cudaMemcpyDeviceToHost,
+                                       this->get_custream()));
             break;
         case DEVICE:
             // device --> device
-            cudaErrchk(
-                  cudaMemcpyAsync(device_ptr, src + begin_idx, copy_size * sizeof(T), cudaMemcpyDeviceToDevice, this->get_custream()));
+            cudaErrchk(cudaMemcpyAsync(device_ptr, src + begin_idx, copy_size * sizeof(T), cudaMemcpyDeviceToDevice,
+                                       this->get_custream()));
             break;
         case MANAGED:
             // device --> managed
-            cudaErrchk(
-                  cudaMemcpyAsync(device_ptr, src + begin_idx, copy_size * sizeof(T), cudaMemcpyDeviceToDevice, this->get_custream()));
+            cudaErrchk(cudaMemcpyAsync(device_ptr, src + begin_idx, copy_size * sizeof(T), cudaMemcpyDeviceToDevice,
+                                       this->get_custream()));
             sync(true);
             return err;
         case CUDA_MANAGED:
             // device --> cmanaged
-            cudaErrchk(
-                  cudaMemcpyAsync(cuda_managed_ptr, src + begin_idx, copy_size * sizeof(T), cudaMemcpyDeviceToDevice, this->get_custream()));
+            cudaErrchk(cudaMemcpyAsync(cuda_managed_ptr, src + begin_idx, copy_size * sizeof(T),
+                                       cudaMemcpyDeviceToDevice, this->get_custream()));
             sync(true);
             return err;
     }
@@ -230,10 +228,8 @@ magmadnn_error_t MemoryManager<T>::copy_from_managed(T* host_src, T* device_src,
             return (magmadnn_error_t) 0;
         case DEVICE:
             // managed --> device
-            cudaErrchk(
-                  cudaMemcpyAsync(
-                        device_ptr, device_src + begin_idx, copy_size * sizeof(T),
-                        cudaMemcpyDeviceToDevice, this->get_custream()));
+            cudaErrchk(cudaMemcpyAsync(device_ptr, device_src + begin_idx, copy_size * sizeof(T),
+                                       cudaMemcpyDeviceToDevice, this->get_custream()));
             cudaStreamSynchronize(this->get_custream());
             return (magmadnn_error_t) 0;
         case MANAGED:
@@ -260,10 +256,8 @@ magmadnn_error_t MemoryManager<T>::copy_from_cudamanaged(T* src, unsigned int be
             return (magmadnn_error_t) 0;
         case DEVICE:
             // cmanaged --> device
-            cudaErrchk(
-                  cudaMemcpyAsync(
-                        device_ptr, src + begin_idx, copy_size * sizeof(T),
-                        cudaMemcpyDeviceToDevice, this->get_custream()));
+            cudaErrchk(cudaMemcpyAsync(device_ptr, src + begin_idx, copy_size * sizeof(T), cudaMemcpyDeviceToDevice,
+                                       this->get_custream()));
             cudaStreamSynchronize(this->get_custream());
             return (magmadnn_error_t) 0;
         case MANAGED:
@@ -288,20 +282,15 @@ magmadnn_error_t MemoryManager<T>::sync(bool gpu_was_modified) {
 
     if (mem_type == CUDA_MANAGED) {
         // cudaErrchk(cudaDeviceSynchronize());
-        cudaErrchk(
-              cudaStreamSynchronize(this->get_custream()));
+        cudaErrchk(cudaStreamSynchronize(this->get_custream()));
     } else if (mem_type == MANAGED) {
         if (gpu_was_modified) {
             cudaErrchk(
-                  cudaMemcpyAsync(
-                        host_ptr, device_ptr, size * sizeof(T),
-                        cudaMemcpyDeviceToHost, this->get_custream()));
-            
+                cudaMemcpyAsync(host_ptr, device_ptr, size * sizeof(T), cudaMemcpyDeviceToHost, this->get_custream()));
+
         } else {
             cudaErrchk(
-                  cudaMemcpyAsync(
-                        device_ptr, host_ptr, size * sizeof(T),
-                        cudaMemcpyHostToDevice, this->get_custream()));
+                cudaMemcpyAsync(device_ptr, host_ptr, size * sizeof(T), cudaMemcpyHostToDevice, this->get_custream()));
         }
         cudaStreamSynchronize(this->get_custream());
     }
@@ -319,7 +308,7 @@ T MemoryManager<T>::get(unsigned int idx) const {
     assert(idx < size);
 
     T res;
-    
+
     switch (mem_type) {
         case HOST:
             return host_ptr[idx];
@@ -327,11 +316,9 @@ T MemoryManager<T>::get(unsigned int idx) const {
         case DEVICE:
             // cudaErrchk( cudaSetDevice(device_id) );   /* TODO -- fix MagmaDNN's device selection system */
             // return internal::get_device_array_element(device_ptr, idx);
-           cudaMemcpyAsync(
-                 &res, &device_ptr[idx], sizeof(T),
-                 cudaMemcpyDeviceToHost, this->get_custream());
-           cudaStreamSynchronize(this->get_custream());
-           return res;
+            cudaMemcpyAsync(&res, &device_ptr[idx], sizeof(T), cudaMemcpyDeviceToHost, this->get_custream());
+            cudaStreamSynchronize(this->get_custream());
+            return res;
         case MANAGED:
             return host_ptr[idx];
         case CUDA_MANAGED:
@@ -420,32 +407,30 @@ T* MemoryManager<T>::get_ptr() {
 
 template <typename T>
 magmadnn_error_t MemoryManager<T>::zero() {
+    std::size_t sz = size * sizeof(T);
 
-   std::size_t sz = size * sizeof(T);
-
-   switch (mem_type) {
-    case HOST:
-       std::memset(this->host_ptr, 0, sz);
-       return (magmadnn_error_t) 0;
+    switch (mem_type) {
+        case HOST:
+            std::memset(this->host_ptr, 0, sz);
+            return (magmadnn_error_t) 0;
 #if defined(MAGMADNN_HAVE_CUDA)
-    case DEVICE:
-       cudaMemsetAsync(this->device_ptr, 0, sz, this->custream_);
-       return (magmadnn_error_t) 0;           
-    case MANAGED:
-       std::memset(this->host_ptr, 0, sz);
-       cudaMemsetAsync(this->device_ptr, 0, sz, this->custream_);       
-       cudaStreamSynchronize(this->custream_);
-       return (magmadnn_error_t) 0;
-    case CUDA_MANAGED:
-       std::memset(this->host_ptr, 0, sz);
-       cudaMemsetAsync(this->device_ptr, 0, sz, this->custream_);
-       cudaStreamSynchronize(this->custream_);
-       return (magmadnn_error_t) 0;
+        case DEVICE:
+            cudaMemsetAsync(this->device_ptr, 0, sz, this->custream_);
+            return (magmadnn_error_t) 0;
+        case MANAGED:
+            std::memset(this->host_ptr, 0, sz);
+            cudaMemsetAsync(this->device_ptr, 0, sz, this->custream_);
+            cudaStreamSynchronize(this->custream_);
+            return (magmadnn_error_t) 0;
+        case CUDA_MANAGED:
+            std::memset(this->host_ptr, 0, sz);
+            cudaMemsetAsync(this->device_ptr, 0, sz, this->custream_);
+            cudaStreamSynchronize(this->custream_);
+            return (magmadnn_error_t) 0;
 #endif
     }
 
     return (magmadnn_error_t) 1;
-
 }
 
 /* COMPILE FOR INT, FLOAT, AND DOUBLE */

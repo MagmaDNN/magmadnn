@@ -14,7 +14,7 @@ namespace op {
 template <typename T>
 GradTable<T>::GradTable() {
     // init
-   this->clear();
+    this->clear();
 }
 
 template <typename T>
@@ -23,7 +23,7 @@ unsigned int GradTable<T>::get_size() {
 }
 
 template <typename T>
-Tensor<T> *GradTable<T>::get(Operation<T>* var) {
+Tensor<T> *GradTable<T>::get(Operation<T> *var) {
     tmp_map_iterator = _table.find(var);
 
     // return NULL if not found
@@ -48,13 +48,12 @@ void GradTable<T>::clear() {
 
 template <typename T>
 void GradTable<T>::zero() {
-
-   for (auto& entry : this->_table) {
-      Tensor<T> *grad = entry.second;
-      grad->zero();
-   }
+    for (auto &entry : this->_table) {
+        Tensor<T> *grad = entry.second;
+        grad->zero();
+    }
 }
-   
+
 template class GradTable<int>;
 template class GradTable<float>;
 template class GradTable<double>;

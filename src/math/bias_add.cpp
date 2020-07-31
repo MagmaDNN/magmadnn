@@ -20,39 +20,36 @@ namespace math {
 
 template <typename T>
 void bias_add_cpu(Tensor<T> *x, Tensor<T> *bias, Tensor<T> *out) {
+    T *x_ptr = x->get_ptr();
+    T *bias_ptr = bias->get_ptr();
+    T *out_ptr = out->get_ptr();
 
-   T *x_ptr = x->get_ptr();
-   T *bias_ptr = bias->get_ptr();
-   T *out_ptr = out->get_ptr();
+    unsigned int x_rows = x->get_shape(0);
+    unsigned int x_cols = x->get_shape(1);
+    // unsigned int x_size = x_rows*x_cols;
 
-   unsigned int x_rows = x->get_shape(0);
-   unsigned int x_cols = x->get_shape(1);
-   // unsigned int x_size = x_rows*x_cols;
-
-   for (unsigned int r = 0; r < x_rows; r++) {
-      for (unsigned int c = 0; c < x_cols; c++) {
-         out_ptr[r * x_cols + c] = x_ptr[r * x_cols + c] + bias_ptr[r];
-      }
-   }
-
+    for (unsigned int r = 0; r < x_rows; r++) {
+        for (unsigned int c = 0; c < x_cols; c++) {
+            out_ptr[r * x_cols + c] = x_ptr[r * x_cols + c] + bias_ptr[r];
+        }
+    }
 }
 template void bias_add_cpu(Tensor<int> *x, Tensor<int> *bias, Tensor<int> *out);
 template void bias_add_cpu(Tensor<float> *x, Tensor<float> *bias, Tensor<float> *out);
 template void bias_add_cpu(Tensor<double> *x, Tensor<double> *bias, Tensor<double> *out);
-   
+
 template <typename T>
 void bias_add(Tensor<T> *x, Tensor<T> *bias, Tensor<T> *out) {
+    assert(T_IS_SAME_MEMORY_TYPE(x, bias));
+    assert(T_IS_SAME_MEMORY_TYPE(bias, out));
 
-   assert(T_IS_SAME_MEMORY_TYPE(x, bias) );
-   assert(T_IS_SAME_MEMORY_TYPE(bias, out));
-
-   if (out->get_memory_type() == HOST) {
-      bias_add_cpu(x, bias, out);
-   }
+    if (out->get_memory_type() == HOST) {
+        bias_add_cpu(x, bias, out);
+    }
 #if defined(MAGMADNN_HAVE_CUDA)
-   else {
-      bias_add_device(x, bias, out);
-   }
+    else {
+        bias_add_device(x, bias, out);
+    }
 #endif
 }
 template void bias_add(Tensor<int> *x, Tensor<int> *bias, Tensor<int> *out);

@@ -11,7 +11,7 @@ namespace internal {
 
 template <typename T>
 void scalarproduct_full_cpu(T alpha, Tensor<T> *x, Tensor<T> *out);
-   
+
 template <typename T>
 void scalarproduct_full(T alpha, Tensor<T> *x, Tensor<T> *out);
 

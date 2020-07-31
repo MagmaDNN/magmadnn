@@ -11,7 +11,7 @@
 /* only include this class if MPI is available */
 #if defined(MPI_VERSION) && defined(MPI_SUBVERSION)
 #if !defined(_HAS_MPI_)
-  #define _HAS_MPI_
+#define _HAS_MPI_
 #endif
 
 #if defined(MAGMADNN_HAVE_CUDA)
@@ -26,8 +26,8 @@
 #include "compute/operation.h"
 #include "optimizer/optimizer.h"
 
-#include "math/scalar_tensor_product.h"
 #include "math/add.h"
+#include "math/scalar_tensor_product.h"
 
 namespace magmadnn {
 namespace optimizer {
@@ -35,11 +35,11 @@ namespace optimizer {
 template <typename T>
 class DistributedGradientDescent : public Optimizer<T> {
    public:
- DistributedGradientDescent(T learning_rate): learning_rate(learning_rate) {
+    DistributedGradientDescent(T learning_rate) : learning_rate(learning_rate) {
         this->_name = "DistributedGradientDescentOptimizer";
 
         nnodes = 1;
-        
+
 #if defined(_HAS_MPI_)
         MPI_Comm_size(MPI_COMM_WORLD, &nnodes);
         assert(nnodes >= 1);
@@ -47,18 +47,17 @@ class DistributedGradientDescent : public Optimizer<T> {
 
 #if defined(MAGMADNN_HAVE_CUDA)
         int num_devices;
-        
+
         // query number of devices
         cudaError_t err;
-        err = cudaGetDeviceCount( &num_devices );
-        assert( err == 0 || err == cudaErrorNoDevice );
+        err = cudaGetDeviceCount(&num_devices);
+        assert(err == 0 || err == cudaErrorNoDevice);
         // cudaErrchk(cudaSetDevice(this->rank%num_devices));
 #endif
 #endif
     }
 
-    ~DistributedGradientDescent() {
-    }
+    ~DistributedGradientDescent() {}
 
     virtual void minimize(op::Operation<T> *obj_func, const std::vector<op::Operation<T> *> &wrt) {
         typename std::vector<op::Operation<T> *>::const_iterator vit;

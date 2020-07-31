@@ -51,9 +51,9 @@ template class CrossEntropyOp<double>;
 
 template <typename T>
 Operation<T> *crossentropy(Operation<T> *ground_truth, Operation<T> *predicted, bool copy, bool needs_grad) {
-   auto size = ground_truth->get_output_shape(0);
-   T norm = static_cast<T>(1.0) / static_cast<T>(size);
-   return negative(op::scalarproduct(norm, reducesum(reducesum(product(ground_truth, log(predicted, true)), 1), 0)));
+    auto size = ground_truth->get_output_shape(0);
+    T norm = static_cast<T>(1.0) / static_cast<T>(size);
+    return negative(op::scalarproduct(norm, reducesum(reducesum(product(ground_truth, log(predicted, true)), 1), 0)));
 }
 template Operation<int> *crossentropy(Operation<int> *, Operation<int> *, bool, bool);
 template Operation<float> *crossentropy(Operation<float> *, Operation<float> *, bool, bool);

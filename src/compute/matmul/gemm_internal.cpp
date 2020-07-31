@@ -19,7 +19,8 @@ namespace magmadnn {
 namespace internal {
 
 template <typename T>
-bool gemm_check(Tensor<T> *A, Tensor<T> *B, Tensor<T> *C, /*unsigned*/ int &M, /*unsigned*/ int &N, /*unsigned*/ int &K) {
+bool gemm_check(Tensor<T> *A, Tensor<T> *B, Tensor<T> *C, /*unsigned*/ int &M, /*unsigned*/ int &N,
+                /*unsigned*/ int &K) {
     // must have same memory types
     assert(A->get_memory_type() == B->get_memory_type());
     assert(B->get_memory_type() == C->get_memory_type());
@@ -74,15 +75,16 @@ void gemm_full(float alpha, Tensor<float> *A, Tensor<float> *B, float beta, Tens
 
     if (A->get_memory_type() == HOST) {
         // specify ROW MAJOR, since tensors are stored in row-major
-        // cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, M, N, K, alpha, A->get_ptr(), K, B->get_ptr(), N, beta,
+        // cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, M, N, K, alpha, A->get_ptr(), K, B->get_ptr(), N,
+        // beta,
         //             C->get_ptr(), N);
 
         int lda = K;
         int ldb = N;
         int ldc = N;
-        
-        gemm(magmadnn::math::OP_N, magmadnn::math::OP_N,
-             N, M, K, alpha, B->get_ptr(), ldb, A->get_ptr(), lda, beta, C->get_ptr(), ldc);
+
+        gemm(magmadnn::math::OP_N, magmadnn::math::OP_N, N, M, K, alpha, B->get_ptr(), ldb, A->get_ptr(), lda, beta,
+             C->get_ptr(), ldc);
 
     }
 #if defined(MAGMADNN_HAVE_CUDA)
@@ -104,15 +106,16 @@ void gemm_full(double alpha, Tensor<double> *A, Tensor<double> *B, double beta, 
 
     if (A->get_memory_type() == HOST) {
         // specify ROW MAJOR, since tensors are stored in row-major
-        // cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, M, N, K, alpha, A->get_ptr(), K, B->get_ptr(), N, beta,
+        // cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, M, N, K, alpha, A->get_ptr(), K, B->get_ptr(), N,
+        // beta,
         //             C->get_ptr(), N);
 
         int lda = K;
         int ldb = N;
         int ldc = N;
-        
-        gemm(magmadnn::math::OP_N, magmadnn::math::OP_N,
-             N, M, K, alpha, B->get_ptr(), ldb, A->get_ptr(), lda, beta, C->get_ptr(), ldc);
+
+        gemm(magmadnn::math::OP_N, magmadnn::math::OP_N, N, M, K, alpha, B->get_ptr(), ldb, A->get_ptr(), lda, beta,
+             C->get_ptr(), ldc);
 
     }
 #if defined(MAGMADNN_HAVE_CUDA)

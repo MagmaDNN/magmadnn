@@ -6,18 +6,17 @@
  *
  * @copyright Copyright (c) 2019
  */
-#include <iostream>
 #include "layer/conv2d/conv2dlayer.h"
+#include <iostream>
 
 namespace magmadnn {
 namespace layer {
 
 template <typename T>
-Conv2dLayer<T>::Conv2dLayer(
-      op::Operation<T>* input, const std::vector<unsigned int>& filter_shape, int out_channels,
-      const std::vector<unsigned int>& padding, const std::vector<unsigned int>& strides,
-      const std::vector<unsigned int>& dilation_rates, bool use_cross_correlation, bool use_bias,
-      tensor_filler_t<T> filter_initializer, tensor_filler_t<T> bias_initializer)
+Conv2dLayer<T>::Conv2dLayer(op::Operation<T>* input, const std::vector<unsigned int>& filter_shape, int out_channels,
+                            const std::vector<unsigned int>& padding, const std::vector<unsigned int>& strides,
+                            const std::vector<unsigned int>& dilation_rates, bool use_cross_correlation, bool use_bias,
+                            tensor_filler_t<T> filter_initializer, tensor_filler_t<T> bias_initializer)
     : Layer<T>::Layer(input->get_output_shape(), input),
       out_channels(out_channels),
       use_cross_correlation(use_cross_correlation),
@@ -65,8 +64,8 @@ std::vector<op::Operation<T>*> Conv2dLayer<T>::get_weights() {
 
 template <typename T>
 unsigned int Conv2dLayer<T>::get_num_params() {
-    return this->filter_tensor->get_shape(2) * this->filter_tensor->get_shape(3) * this->in_channels * this->out_channels;
-
+    return this->filter_tensor->get_shape(2) * this->filter_tensor->get_shape(3) * this->in_channels *
+           this->out_channels;
 }
 
 template <typename T>
@@ -87,23 +86,22 @@ void Conv2dLayer<T>::init(const std::vector<unsigned int>& filter_shape) {
 
     /* create the bias tensor if need be */
     if (use_bias) {
-       /* TODO */
+        /* TODO */
     }
 
     if (use_bias) {
-       /* TODO */
+        /* TODO */
     } else {
-       this->output = op::conv2dforward(
-             this->input, filter, pad_h, pad_w, stride_h, stride_w, dilation_h,
-             dilation_w, use_cross_correlation);
+        this->output = op::conv2dforward(this->input, filter, pad_h, pad_w, stride_h, stride_w, dilation_h, dilation_w,
+                                         use_cross_correlation);
     }
 }
 
-   // template <typename T>
-   // std::size_t Conv2dLayer<T>::get_memory_size() const {
-   //    return this->filter_tensor->get_memory_size();
-   // }
-   
+// template <typename T>
+// std::size_t Conv2dLayer<T>::get_memory_size() const {
+//    return this->filter_tensor->get_memory_size();
+// }
+
 template class Conv2dLayer<int>;
 template class Conv2dLayer<float>;
 template class Conv2dLayer<double>;

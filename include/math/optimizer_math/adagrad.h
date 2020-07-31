@@ -21,13 +21,11 @@ namespace math {
  * @param out
  */
 template <typename T>
-void adagrad(T learning_rate, Tensor<T> *scaling_tensors,
-             Tensor<T> *grad, Tensor<T> *out);
+void adagrad(T learning_rate, Tensor<T> *scaling_tensors, Tensor<T> *grad, Tensor<T> *out);
 
 #if defined(MAGMADNN_HAVE_CUDA)
 template <typename T>
-void adagrad_device(T learning_rate, Tensor<T> *scaling_tensors,
-                    Tensor<T> *grad, Tensor<T> *out);
+void adagrad_device(T learning_rate, Tensor<T> *scaling_tensors, Tensor<T> *grad, Tensor<T> *out);
 #endif
 
 }  // namespace math

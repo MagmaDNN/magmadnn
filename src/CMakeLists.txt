@@ -92,6 +92,7 @@ endif()
 # data
 target_sources(magmadnn
   PRIVATE
+  data/ImageNet2012.cpp
   data/utils.cpp
   data/MNIST.cpp
   data/CIFAR10.cpp

@@ -26,6 +26,7 @@ option(MAGMADNN_ENABLE_CUDA "Enable use of CUDA library and compilation of CUDA 
 option(MAGMADNN_ENABLE_MPI "Enable distributed memory routines using MPI" OFF)
 option(MAGMADNN_ENABLE_OMP "Enable parallelization using OpenMP library" OFF)
 option(MAGMADNN_ENABLE_MKLDNN "Enable use of MKLDNN library" OFF)
+option(MAGMADNN_ENABLE_OPENCV "Enable use of OpenCV library" OFF)
 option(MAGMADNN_BUILD_MKLDNN "Enable build of MKLDNN from source" OFF)
 option(MAGMADNN_BUILD_DOC "Generate documentation" OFF)
 option(MAGMADNN_BUILD_EXAMPLES "Build MagmaDNN examples" ON)
@@ -281,6 +282,29 @@ if (MAGMADNN_ENABLE_MPI)
   set(LIBS ${LIBS} ${MPI_CXX_LIBRARIES})
 
 endif()
+
+########################################
+# OpenCV
+
+if(MAGMADNN_ENABLE_OPENCV)
+  find_package(OpenCV QUIET COMPONENTS core highgui imgproc imgcodecs)
+  if(NOT OpenCV_FOUND) # if not OpenCV 3.x, then imgcodecs are not found
+    find_package(OpenCV REQUIRED COMPONENTS core highgui imgproc)
+  endif()
+
+  if(OpenCV_FOUND)
+    
+    message(STATUS "OpenCV found (${OpenCV_CONFIG_PATH})")
+
+    set(LIBS ${LIBS} ${OpenCV_LIBS})
+
+    add_definitions(-D MAGMADNN_HAVE_OPENCV)
+    set(MAGMADNN_HAVE_OPENCV TRUE)
+  else()
+    message(FATAL_ERROR "OpenCV NOT found")
+  endif()
+endif()
+
 
 ########################################
 # Configuration file

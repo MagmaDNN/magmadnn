@@ -33,7 +33,7 @@
 #include "magmadnn/data/CIFAR100.h"
 #include "magmadnn/data/Dataset.h"
 #include "magmadnn/data/MNIST.h"
-//#include "magmadnn/data/ImageNet2012.h"
+#include "magmadnn/data/ImageNet2012.h"
 
 #include "magmadnn/exception.h"
 #include "magmadnn/exception_helpers.h"

@@ -1,5 +1,5 @@
 magmadnn_add_example(alexnet.cpp)
-#magmadnn_add_example(alexnet_imagenet2012.cpp)
+magmadnn_add_example(alexnet_imagenet2012.cpp)
 magmadnn_add_example(cifar10_interactive.cpp)
 magmadnn_add_example(cnn_2d.cpp)
 magmadnn_add_example(lenet5.cpp)

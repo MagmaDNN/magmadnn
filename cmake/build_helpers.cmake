@@ -21,7 +21,11 @@ function(magmadnn_default_includes name)
   if (MAGMADNN_ENABLE_MKLDNN)
     target_include_directories("${name}" PRIVATE ${MKLDNN_INCLUDE_DIRS}) 
   endif ()
-    
+
+  if (MAGMADNN_ENABLE_OPENCV)
+    target_include_directories("${name}" PRIVATE ${OpenCV_INCLUDE_DIRS})
+  endif ()
+
 endfunction()
 
 function(magmadnn_compile_features name)

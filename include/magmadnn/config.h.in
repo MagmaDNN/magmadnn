@@ -21,3 +21,6 @@
 
 // Has MagmaDNN been compiled with MPI 
 #cmakedefine MAGMADNN_HAVE_MPI
+
+// Has MagmaDNN been compiled with OpenCV 
+#cmakedefine MAGMADNN_HAVE_OPENCV

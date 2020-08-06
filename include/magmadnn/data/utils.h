@@ -5,6 +5,8 @@
 namespace magmadnn {
 namespace data {
 
+bool get_jpeg_size(const uint8_t* data, uint32_t data_size, int64_t *width, int64_t *height);
+   
 // MNIST
 
 magmadnn::Tensor<float>* read_mnist_images(const char* file_name, uint32_t& n_images, uint32_t& n_rows,

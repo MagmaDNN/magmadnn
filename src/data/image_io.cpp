@@ -48,12 +48,12 @@ magmadnn::Tensor<T>* read_image(
       image_tensor = new magmadnn::Tensor<T>(
             {nchannels, nrows, ncols}, {magmadnn::NONE, {}}, magmadnn::HOST);
 
-      for (int h = 0; h < nrows; ++h) {
-         const uchar* ptr = cv_img.ptr<uchar>(h);
+      for (int row = 0; row < nrows; ++row) {
+         const uchar* ptr = cv_img.ptr<uchar>(row);
          int img_index = 0;
-         for (int w = 0; w < ncols; ++w) {
-            for (int c = 0; c < nchannels; ++c) {
-               int tensor_index = (w * nrows + h) * nchannels + c;
+         for (int col = 0; col < ncols; ++col) {
+            for (int ch = 0; ch < nchannels; ++ch) {
+               int tensor_index = (col * nrows + row) * nchannels + ch;
                image_tensor.set(tensor_index, static_cast<T>(ptr[img_index]));
                img_index++;
             }

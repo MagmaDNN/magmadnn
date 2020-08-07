@@ -1,4 +1,6 @@
 #include "magmadnn/data/image_io.h"
+#include "tensor/tensor.h"
+
 #include <stdexcept>
 #include <string>
 
@@ -6,7 +8,7 @@ namespace magmadnn {
 namespace data {
 
 #if defined(MAGMADNN_HAVE_OPENCV)
-cv::Mat cv_read_and_resize_img(
+cv::Mat cv_read_image(
       const std::string& filename,
       const int height, const int width, const bool is_color) {
    cv::Mat cv_img;
@@ -26,6 +28,46 @@ cv::Mat cv_read_and_resize_img(
    return cv_img;
 }
 #endif
+
+template<typename T>
+magmadnn::Tensor<T>* read_image(
+      const std::string& filename,
+      const int height, const int width, const bool is_color) {
+
+   magmadnn::Tensor<T>* image_tensor = nullptr;
+      
+#if defined(MAGMADNN_HAVE_OPENCV)
+
+   cv::Mat cv_img = cv_read_image(filename, height, width, is_color);
+
+   if (cv_img.data) {
+      auto nchannels = cv_img.channels();
+      auto nrows = cv_img.rows;
+      auto ncols = cv_img.cols;
+
+      image_tensor = new magmadnn::Tensor<T>(
+            {nchannels, nrows, ncols}, {magmadnn::NONE, {}}, magmadnn::HOST);
+
+      for (int h = 0; h < nrows; ++h) {
+         const uchar* ptr = cv_img.ptr<uchar>(h);
+         int img_index = 0;
+         for (int w = 0; w < ncols; ++w) {
+            for (int c = 0; c < nchannels; ++c) {
+               int tensor_index = (w * nrows + h) * nchannels + c;
+               image_tensor.set(tensor_index, static_cast<T>(ptr[img_index]));
+               img_index++;
+            }
+         }
+      }
+
+   }
+   
+#else
+   throw std::runtime_error("OpenCV must be enabled to read images");   
+#endif
+
+   return image_tensor;
+}
    
 // http://www.64lines.com/jpeg-width-height
 // Gets the JPEG size from the array of data passed to the function,

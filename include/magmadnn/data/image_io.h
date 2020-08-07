@@ -15,7 +15,7 @@ namespace magmadnn {
 namespace data {
 
 #if defined(MAGMADNN_HAVE_OPENCV)
-cv::Mat cv_read_and_resize_img(
+cv::Mat cv_read_image(
       const std::string& filename,
       const int height, const int width, const bool is_color);
 #endif

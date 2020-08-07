@@ -1,5 +1,6 @@
 #include "magmadnn/data/ImageNet2012.h"
 #include "magmadnn/data/image_io.h"
+#include "tensor/tensor.h"
 
 // STD
 #include <cassert>
@@ -37,46 +38,68 @@ ImageNet2012<T>::ImageNet2012(
       // Count the number of images in the dataset
       int num_images = 0;
 
+      DIR *dir;
+      struct dirent *ent;
+      unsigned char isFile = 0x8;
+
       for (const auto& class_name: this->class_names) {
+
+         // Directory path for current class
+         std::string path = root + "/" + class_name;
+
          if ((dir = opendir (path.c_str())) != NULL) {
             while ((ent = readdir (dir)) != NULL) {
                if ( ent->d_type == isFile) {
                   // Make sure current iterate is a file.
                   //
                   //TODO: Make sure it is a valid JPEG file.
-                  num_files++;
+                  num_images++;
                }
             }
             closedir (dir);
          }
       }
 
-      // Allocate tensors on host side
+      std::cout << "[ImageNet2012] number of images = " << num_images << std::endl;
 
-      // Label tensor
-      this->labels = new magmadnn::Tensor<T>(
-            {num_images, this->nclasses_}, {magmadnn::ZERO, {}}, magmadnn::HOST);
-      // Image tensor
-      this->nimages_ = new magmadnn::Tensor<T>(
-            {num_images, nchannels, height, width}, {magmadnn::NONE, {}}, magmadnn::HOST);
-
-      // Go through the dataset and fill tensor
-      for (const auto& class_name: this->class_names) {
-
-         std::string path = root + "/" + class_name;
-
-         std::cout << "[ImageNet2012] path = " << path << std::endl;
+      // Set number of images/labels
+      this->nlabels_ = num_images;
+      this->nimages_ = num_images;
       
-         // for (const auto& entry : std::filesystem::directory_iterator(path)) {
-         //    std::cout << entry.path() << std::endl;
-         // }
+      // Initialize tensor pointers
+      this->labels_ = nullptr;
+      this->images_ = nullptr;
+
+      // Images should be in colors, no alpha channel
+      this->nchanels_ = 3;      
       
-         DIR *dir;
-         struct dirent *ent;
-         unsigned char isFile = 0x8;
+      if (num_images > 0) {
 
+         // Allocate tensors on host side
+         magmadnn::Tensor<T> *imagenet2012_images = nullptr;
+         magmadnn::Tensor<T> *imagenet2012_labels = nullptr;
 
-         if (num_files > 0) {
+         // Label tensor
+         imagenet2012_labels = new magmadnn::Tensor<T>(
+               {this->nlabels_, this->nclasses_}, {magmadnn::ZERO, {}}, magmadnn::HOST);
+         // Image tensor
+         imagenet2012_images = new magmadnn::Tensor<T>(
+               {this->nimages_, this->nchanels_, height, width}, {magmadnn::NONE, {}}, magmadnn::HOST);
+
+         this->images_.reset(imagenet2012_images);
+         this->labels_.reset(imagenet2012_labels);
+         
+         // Go through the dataset and fill tensor
+         // for (const auto& class_name: this->class_names) {
+         for (int cidx = 0; cidx < this->class_names.size(); ++cidx) {
+
+            // Get current class name
+            auto const& class_name = this->class_names[cidx];
+            // Directory path for current class            
+            std::string path = root + "/" + class_name;
+
+            std::cout << "[ImageNet2012] path = " << path << std::endl;
+            
             if ((dir = opendir (path.c_str())) != NULL) {
                while ((ent = readdir (dir)) != NULL) {
 

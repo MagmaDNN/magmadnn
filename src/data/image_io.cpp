@@ -12,7 +12,11 @@ cv::Mat cv_read_image(
       const std::string& filename,
       const int height, const int width, const bool is_color) {
    cv::Mat cv_img;
-   int cv_read_flag = (is_color ? cv::IMREAD_COLOR :
+   // IMREAD_COLOR: Always convert image to the 3 channel BGR color image.
+   // IMREAD_GRAYSCALE: Always convert image to the single channel
+   // grayscale image.
+   int cv_read_flag = (is_color ?
+                       cv::IMREAD_COLOR :
                        cv::IMREAD_GRAYSCALE );
    cv::Mat cv_img_origin = cv::imread(filename, cv_read_flag);
    if (!cv_img_origin.data) {

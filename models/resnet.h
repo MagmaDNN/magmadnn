@@ -1,11 +1,13 @@
 /**
- * @file resnet_cifar10.cpp
+ * @file resnet.h
  * @author Florent Lopez
  * @version 1.0
  * @date 2020-07-30
  *
  * @copyright Copyright (c) 2020
  */
+#pragma once
+
 #include "magmadnn.h"
 
 namespace magmadnn {

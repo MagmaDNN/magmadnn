@@ -42,7 +42,7 @@ template<typename T>
 void add_image_to_tensor(
       const std::string& filename,
       const int height, const int width, const bool is_color,
-      magmadnn::Tensor<T>* images_tensor, unsigned int image_idx) {
+      magmadnn::Tensor<T>* images_tensor, unsigned int idx) {
 
 #if defined(MAGMADNN_HAVE_OPENCV)
 
@@ -57,6 +57,8 @@ void add_image_to_tensor(
       auto nchannels = cv_img.channels();
       auto nrows = cv_img.rows;
       auto ncols = cv_img.cols;
+
+      // std::cout << "[add_image_to_tensor] nrows = " << nrows << ", ncols = " << ncols << std::endl;
       
       // auto set_tensor_sa = std::chrono::high_resolution_clock::now();
       for (unsigned int row = 0; row < nrows; ++row) {
@@ -64,10 +66,16 @@ void add_image_to_tensor(
          int img_index = 0;
          for (unsigned int col = 0; col < ncols; ++col) {
             for (unsigned int ch = 0; ch < nchannels; ++ch) {
-               unsigned int tensor_index = (col * nrows + row) * nchannels + ch;
-               tensor_index = image_idx * nrows * ncols * nchannels + ch * ncols * ncols + row * ncols + col;     
-               images_tensor->set(tensor_index, static_cast<T>(ptr[img_index]));
-               // images_tensor->set({image_idx, ch, row, col}, static_cast<T>(ptr[img_index]));
+               T val = static_cast<T>(ptr[img_index]);
+               // Normalize entry value
+               val = (val / 128.0f) - 1.0f;
+               
+               unsigned int tensor_index;
+               tensor_index = idx * nrows * ncols * nchannels + ch * ncols * ncols + row * ncols + col;  
+               // images_tensor->set(tensor_index, val);               
+               // std::cout << "[add_image_to_tensor] val = " << val << std::endl;
+               images_tensor->set({idx, ch, row, col}, val);
+               
                img_index++;
             }
          }

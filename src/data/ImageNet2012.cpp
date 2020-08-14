@@ -15,7 +15,7 @@ template <typename T>
 ImageNet2012<T>::ImageNet2012(
       std::string const& root, dataset_type type,
       int const height, int const width,
-      std::string const& imagenet_labels) {
+      std::string const& imagenet_labels/*, int const num_images_per_labels=2000*/) {
 
    // std::cout << "[ImageNet2012]" << std::endl;
 
@@ -23,7 +23,7 @@ ImageNet2012<T>::ImageNet2012(
    const bool is_color = true;
       
    if (!imagenet_labels.empty()) {
-
+      
       // Get collection of class names
       std::ifstream labels_file(imagenet_labels);
 
@@ -85,6 +85,9 @@ ImageNet2012<T>::ImageNet2012(
       
       if (num_images > 0) {
 
+         this->nrows_ = height;
+         this->ncols_ = width;
+
          // Allocate tensors on host side
          magmadnn::Tensor<T> *imagenet2012_images = nullptr;
          magmadnn::Tensor<T> *imagenet2012_labels = nullptr;
@@ -104,6 +107,8 @@ ImageNet2012<T>::ImageNet2012(
          // Go through the dataset and fill tensor
          // for (const auto& class_name: this->class_names) {
          for (int cidx = 0; cidx < this->class_names.size(); ++cidx) {
+
+            auto load_class_sa = std::chrono::high_resolution_clock::now();
 
             // Get current class name
             auto const& class_name = this->class_names[cidx];
@@ -137,12 +142,20 @@ ImageNet2012<T>::ImageNet2012(
                      add_image_to_tensor(
                            image_path, height, width, is_color,
                            this->images_.get(), image_idx);
+
+                     // Set label corresponding to current image to 1.
+                     this->labels_->set(image_idx * this->nclasses_ + cidx, T(1));
                      
                      ++image_idx;
                   }
                }
                closedir (dir);
             }
+            auto load_class_en = std::chrono::high_resolution_clock::now();
+            double t_load_class = std::chrono::duration<double>(
+            load_class_en-load_class_sa).count();
+            std::cout << "Load class time (s) = " << t_load_class << std::endl;
+
          }
       }
    }

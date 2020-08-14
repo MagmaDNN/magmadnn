@@ -73,8 +73,9 @@ void add_image_to_tensor(
                unsigned int tensor_index;
                tensor_index = idx * nrows * ncols * nchannels + ch * ncols * ncols + row * ncols + col;  
                // images_tensor->set(tensor_index, val);               
-               // std::cout << "[add_image_to_tensor] val = " << val << std::endl;
+               // std::cout << "[add_image_to_tensor] val = " << val << std::endl; 
                images_tensor->set({idx, ch, row, col}, val);
+               // images_tensor->set({idx, ch, col, row}, val);
                
                img_index++;
             }

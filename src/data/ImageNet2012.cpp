@@ -15,7 +15,8 @@ template <typename T>
 ImageNet2012<T>::ImageNet2012(
       std::string const& root, dataset_type type,
       int const height, int const width,
-      std::string const& imagenet_labels/*, int const num_images_per_labels=2000*/) {
+      std::string const& imagenet_labels
+      /*, int const num_images_per_labels=2000*/) {
 
    // std::cout << "[ImageNet2012]" << std::endl;
 

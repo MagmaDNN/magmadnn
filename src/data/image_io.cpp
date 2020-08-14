@@ -33,6 +33,55 @@ cv::Mat cv_read_image(
 }
 #endif
 
+
+// Read image whose path is set in `filename` and add the
+// corresponding to the image pixels to the tensor `images_tensor` at
+// `data_idx` index. The output image size can be specified with
+// `height` and `width` parameters.
+template<typename T>
+void add_image_to_tensor(
+      const std::string& filename,
+      const int height, const int width, const bool is_color,
+      magmadnn::Tensor<T>* images_tensor, unsigned int image_idx) {
+
+#if defined(MAGMADNN_HAVE_OPENCV)
+
+   cv::Mat cv_img = cv_read_image(filename, height, width, is_color);
+
+   if (cv_img.data) {
+      auto nchannels = cv_img.channels();
+      auto nrows = cv_img.rows;
+      auto ncols = cv_img.cols;
+      
+      for (unsigned int row = 0; row < nrows; ++row) {
+         const uchar* ptr = cv_img.ptr<uchar>(row);
+         int img_index = 0;
+         for (unsigned int col = 0; col < ncols; ++col) {
+            for (unsigned int ch = 0; ch < nchannels; ++ch) {
+               // int tensor_index = (col * nrows + row) * nchannels + ch;
+               // image_tensor.set(tensor_index, static_cast<T>(ptr[img_index]));
+               images_tensor->set({image_idx, ch, row, col}, static_cast<T>(ptr[img_index]));
+               img_index++;
+            }
+         }
+      }
+
+   }
+
+#else
+   throw std::runtime_error("OpenCV must be enabled to read images");   
+#endif
+
+}
+
+template void add_image_to_tensor<float>(
+      const std::string& filename,
+      const int height, const int width, const bool is_color,
+      magmadnn::Tensor<float>* images_tensor, unsigned int image_idx);
+   
+// Read image whose path is set in `filename` and return a tensor
+// corresponding to the image pixels. The output image size can be
+// specified with `height` and `width` parameters.
 template<typename T>
 magmadnn::Tensor<T>* read_image(
       const std::string& filename,
@@ -57,8 +106,9 @@ magmadnn::Tensor<T>* read_image(
          int img_index = 0;
          for (int col = 0; col < ncols; ++col) {
             for (int ch = 0; ch < nchannels; ++ch) {
-               int tensor_index = (col * nrows + row) * nchannels + ch;
-               image_tensor.set(tensor_index, static_cast<T>(ptr[img_index]));
+               // int tensor_index = (col * nrows + row) * nchannels + ch;
+               // image_tensor.set(tensor_index, static_cast<T>(ptr[img_index]));
+               image_tensor.set({ch, row, col}, static_cast<T>(ptr[img_index]));
                img_index++;
             }
          }

@@ -19,6 +19,9 @@ ImageNet2012<T>::ImageNet2012(
 
    // std::cout << "[ImageNet2012]" << std::endl;
 
+   // TODO Add `is_color` as part of the ImageDataset structure
+   const bool is_color = true;
+      
    if (!imagenet_labels.empty()) {
 
       // Get collection of class names
@@ -42,6 +45,9 @@ ImageNet2012<T>::ImageNet2012(
       struct dirent *ent;
       unsigned char isFile = 0x8;
 
+      int64_t original_width;
+      int64_t original_height;
+
       for (const auto& class_name: this->class_names) {
 
          // Directory path for current class
@@ -53,6 +59,10 @@ ImageNet2012<T>::ImageNet2012(
                   // Make sure current iterate is a file.
                   //
                   //TODO: Make sure it is a valid JPEG file.
+
+                  // std::string image_filename(ent->d_name); 
+                  // std::string image_path = path + "/" + image_filename;
+
                   num_images++;
                }
             }
@@ -88,6 +98,8 @@ ImageNet2012<T>::ImageNet2012(
 
          this->images_.reset(imagenet2012_images);
          this->labels_.reset(imagenet2012_labels);
+
+         std::size_t image_idx = 0;
          
          // Go through the dataset and fill tensor
          // for (const auto& class_name: this->class_names) {
@@ -105,25 +117,28 @@ ImageNet2012<T>::ImageNet2012(
 
                   if ( ent->d_type == isFile) {
 
-                     // printf ("%s\n", ent->d_name);
                      std::string image_filename(ent->d_name); 
-                     std::cout << "[ImageNet2012] image_filename = " << image_filename << std::endl;
                      std::string image_path = path + "/" + image_filename;
-                     std::ifstream image_file(image_path, std::ios::binary | std::ios::ate);
-                     size_t fsize = image_file.tellg();
-                     image_file.seekg(0, std::ios::beg);
-                     std::cout << "[ImageNet2012] fsize = " << fsize << std::endl;
-                     std::shared_ptr<uint8_t> buff(new uint8_t[fsize], std::default_delete<uint8_t[]>());
-                     image_file.read(reinterpret_cast<char*>(buff.get()), fsize);
 
-                     int64_t width;
-                     int64_t height;
+                     // printf ("%s\n", ent->d_name);
+                     // std::cout << "[ImageNet2012] image_filename = " << image_filename << std::endl;
+                     // std::ifstream image_file(image_path, std::ios::binary | std::ios::ate);
+                     // size_t fsize = image_file.tellg();
+                     // image_file.seekg(0, std::ios::beg);
+                     // std::cout << "[ImageNet2012] fsize = " << fsize << std::endl;
+                     // std::shared_ptr<uint8_t> buff(new uint8_t[fsize], std::default_delete<uint8_t[]>());
+                     // image_file.read(reinterpret_cast<char*>(buff.get()), fsize);
             
-                     if(get_jpeg_size(buff.get(), fsize, &width, &height)) {
-                        std::cout << "[ImageNet2012] width = " << width
-                                  << ", height = " << height << std::endl;
-                     }
-               
+                     // if(get_jpeg_size(buff.get(), fsize, &original_width, &original_height)) {
+                     //    std::cout << "[ImageNet2012] width = " << width
+                     //              << ", height = " << height << std::endl;                        
+                     // }
+
+                     add_image_to_tensor(
+                           image_path, height, width, is_color,
+                           this->images_.get(), image_idx);
+                     
+                     ++image_idx;
                   }
                }
                closedir (dir);

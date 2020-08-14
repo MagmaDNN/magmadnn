@@ -46,25 +46,36 @@ void add_image_to_tensor(
 
 #if defined(MAGMADNN_HAVE_OPENCV)
 
+   // auto read_image_sa = std::chrono::high_resolution_clock::now();
    cv::Mat cv_img = cv_read_image(filename, height, width, is_color);
-
+   // auto read_image_en = std::chrono::high_resolution_clock::now();
+   // double t_read_image = std::chrono::duration<double>(
+         // read_image_en-read_image_sa).count();
+   // std::cout << "Read image time (s) = " << t_read_image << std::endl;
+   
    if (cv_img.data) {
       auto nchannels = cv_img.channels();
       auto nrows = cv_img.rows;
       auto ncols = cv_img.cols;
       
+      // auto set_tensor_sa = std::chrono::high_resolution_clock::now();
       for (unsigned int row = 0; row < nrows; ++row) {
          const uchar* ptr = cv_img.ptr<uchar>(row);
          int img_index = 0;
          for (unsigned int col = 0; col < ncols; ++col) {
             for (unsigned int ch = 0; ch < nchannels; ++ch) {
-               // int tensor_index = (col * nrows + row) * nchannels + ch;
-               // image_tensor.set(tensor_index, static_cast<T>(ptr[img_index]));
-               images_tensor->set({image_idx, ch, row, col}, static_cast<T>(ptr[img_index]));
+               unsigned int tensor_index = (col * nrows + row) * nchannels + ch;
+               tensor_index = image_idx * nrows * ncols * nchannels + ch * ncols * ncols + row * ncols + col;     
+               images_tensor->set(tensor_index, static_cast<T>(ptr[img_index]));
+               // images_tensor->set({image_idx, ch, row, col}, static_cast<T>(ptr[img_index]));
                img_index++;
             }
          }
       }
+      // auto set_tensor_en = std::chrono::high_resolution_clock::now();
+      // double t_set_tensor = std::chrono::duration<double>(
+         // set_tensor_en-set_tensor_sa).count();
+      // std::cout << "Set tensor time (s) = " << t_set_tensor << std::endl;
 
    }
 
